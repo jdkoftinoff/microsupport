@@ -123,7 +123,8 @@ us_printraw_init(
   if( self && raw_memory )
   {
     self->m_buffer = (char *)raw_memory;
-
+    self->m_max_length = raw_memory_length;
+    self->m_cur_length = 0;
     self->m_base.destroy = us_printraw_destroy;
     self->m_base.printf = us_printraw_printf;
     self->m_base.vprintf = us_printraw_vprintf;
@@ -140,6 +141,7 @@ us_printraw_destroy(
                         )
 {
     /* Do Nothing */
+  (void)self;
 }
 
 
