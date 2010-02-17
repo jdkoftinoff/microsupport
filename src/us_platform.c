@@ -1,5 +1,4 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#include "us_world.h"
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -28,42 +27,86 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef US_WORLD_H
-#include "us_world.h"
+#ifdef _WIN32
+
+#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+#define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
+#else
+#define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 #endif
 
-#ifdef __cplusplus
-extern "C" {
+#if 0
+struct timezone
+{
+  int  tz_minuteswest; /* minutes W of Greenwich */
+  int  tz_dsttime;     /* type of dst correction */
+};
 #endif
 
-  /** \addtogroup us_buf
-  */
-  /*@{*/
+int gettimeofday(struct timeval *tv, struct timezone *tz)
+{
+  FILETIME ft;
+  unsigned __int64 tmpres = 0;
+  static int tzflag;
 
-  typedef struct us_buf_s
+  if (NULL != tv)
   {
-    int m_next_in;
-    int m_next_out;
-    int m_buf_size;
-    uint8_t *m_buf;
-  } us_buf_t;
+    GetSystemTimeAsFileTime(&ft);
 
+    tmpres |= ft.dwHighDateTime;
+    tmpres <<= 32;
+    tmpres |= ft.dwLowDateTime;
 
-  void us_buf_init(
-                      us_buf_t *self,
-                      uint8_t *buf,
-                      int buf_size
-                      );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
-
-  /*@}*/
-
-#ifdef __cplusplus
+    /*converting file time to unix epoch*/
+    tmpres /= 10;  /*convert into microseconds*/
+    tmpres -= US_DELTA_EPOCH_IN_MICROSECS;
+    tv->tv_sec = (long)(tmpres / 1000000UL);
+    tv->tv_usec = (long)(tmpres % 1000000UL);
+  }
+  return 0;
 }
+
+bool us_platform_init_winsock( void )
+{
+  WSADATA wsaData;
+  WORD version;
+  int error;
+
+  version = MAKEWORD( 2, 2 );
+
+  error = WSAStartup( version, &wsaData );
+
+  if ( error != 0 )
+  {
+    return false;
+  }
+  if ( version != wsaData.wVersion )
+  {
+    return false;
+  }
+  return true;
+}
+
 #endif
 
 
-#endif
+void us_gettimeofday( struct timeval *tv )
+{
+  int r;
+  struct timezone tz;
+  tz.tz_minuteswest = 0;
+  tz.tz_dsttime = 0;
+
+  r = gettimeofday( tv, &tz );
+  if( r!=0 )
+  {
+    perror( "gettimeofday" );
+    abort();
+  }
+}
+
+
+
+
+
+

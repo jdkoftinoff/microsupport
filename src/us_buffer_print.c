@@ -1,5 +1,9 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#include "us_world.h"
+
+#include "us_buffer_print.h"
+#include "us_buffer.h"
+#include "us_print.h"
+#include "us_logger_syslog.h"
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -28,42 +32,38 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef US_WORLD_H
-#include "us_world.h"
-#endif
+#if US_ENABLE_PRINTING
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-  /** \addtogroup us_buf
-  */
-  /*@{*/
-
-  typedef struct us_buf_s
+bool
+us_buffer_print(
+        us_buffer_t *self,
+        us_print_t *printer
+        )
+{
+  bool r = false;
+  if (self && printer)
   {
-    int m_next_in;
-    int m_next_out;
-    int m_buf_size;
-    uint8_t *m_buf;
-  } us_buf_t;
+    r = true;
+    r &= printer->printf(
+            printer,
+            "length: 0x%x\nContents:\n",
+            self->m_cur_length
+            );
 
-
-  void us_buf_init(
-                      us_buf_t *self,
-                      uint8_t *buf,
-                      int buf_size
-                      );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
-
-  /*@}*/
-
-#ifdef __cplusplus
+    if (r)
+    {
+      int32_t i;
+      for (i = 0; i < self->m_cur_length; ++i)
+      {
+        r &= printer->printf(printer, "%02x ", self->m_buffer[ i ]);
+        if (!r)
+          break;
+      }
+      r&=printer->printf(printer,"\n");
+    }
+  }
+  return r;
 }
-#endif
-
 
 #endif
+

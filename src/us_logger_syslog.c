@@ -1,5 +1,6 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#include "us_world.h"
+#include "us_print.h"
+#include "us_logger_syslog.h"
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -28,42 +29,72 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef US_WORLD_H
-#include "us_world.h"
-#endif
+#if US_ENABLE_SYSLOG
+#include <syslog.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+bool us_logger_syslog_start( const char *ident )
+{
+  openlog( ident, 0, LOG_DAEMON );
 
-  /** \addtogroup us_buf
-  */
-  /*@{*/
+  us_log_error_proc = us_log_error_syslog;
+  us_log_warn_proc = us_log_warn_syslog;
+  us_log_info_proc = us_log_info_syslog;
+  us_log_debug_proc = us_log_debug_syslog;
+  us_logger_finish = us_logger_syslog_finish;
 
-  typedef struct us_buf_s
-  {
-    int m_next_in;
-    int m_next_out;
-    int m_buf_size;
-    uint8_t *m_buf;
-  } us_buf_t;
-
-
-  void us_buf_init(
-                      us_buf_t *self,
-                      uint8_t *buf,
-                      int buf_size
-                      );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
-
-  /*@}*/
-
-#ifdef __cplusplus
+  return true;
 }
-#endif
 
 
+void us_logger_syslog_finish()
+{
+  closelog();
+  us_log_error_proc = us_log_null;
+  us_log_warn_proc = us_log_null;
+  us_log_info_proc = us_log_null;
+  us_log_debug_proc = us_log_null;
+  us_logger_finish = us_logger_null_finish;
+}
+
+void us_log_error_syslog( const char *fmt, ... )
+{
+  va_list ap;
+  va_start( ap, fmt );
+
+  syslog( LOG_ERR, fmt, ap );
+
+  va_end(ap);
+}
+
+void us_log_warn_syslog( const char *fmt, ... )
+{
+  va_list ap;
+  va_start( ap, fmt );
+
+  syslog( LOG_WARNING, fmt, ap );
+
+  va_end(ap);
+}
+
+void us_log_info_syslog( const char *fmt, ... )
+{
+  va_list ap;
+  va_start( ap, fmt );
+
+  syslog( LOG_INFO, fmt, ap );
+
+  va_end(ap);
+}
+
+void us_log_debug_syslog( const char *fmt, ... )
+{
+  va_list ap;
+  va_start( ap, fmt );
+
+  syslog( LOG_DEBUG, fmt, ap );
+
+  va_end(ap);
+}
+
 #endif
+

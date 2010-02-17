@@ -1,5 +1,5 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#ifndef US_PLATFORM_H
+#define US_PLATFORM_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -28,42 +28,76 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef US_WORLD_H
 #include "us_world.h"
-#endif
+
+/**
+ \addtogroup us_platform  Platform Specific Configuration
+ */
+/*@{*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  /** \addtogroup us_buf
-  */
-  /*@{*/
+#define US_GET_BYTE_3(v) (uint8_t)((( (v) & 0xff000000) >> 24)&0xff)
+#define US_GET_BYTE_2(v) (uint8_t)((( (v) & 0xff0000) >> 16)&0xff)
+#define US_GET_BYTE_1(v) (uint8_t)((( (v) & 0xff00) >> 8)&0xff)
+#define US_GET_BYTE_0(v) (uint8_t)((( (v) & 0xff) >> 0)&0xff)
 
-  typedef struct us_buf_s
+#ifndef __cplusplus
+# ifndef true
+  typedef int bool;
+# define true (1)
+# define false (0)
+# endif
+#endif
+
+#if US_ENABLE_BSD_SOCKETS
+# ifndef WIN32
+  static inline void closesocket(int fd)
   {
-    int m_next_in;
-    int m_next_out;
-    int m_buf_size;
-    uint8_t *m_buf;
-  } us_buf_t;
+    close(fd);
+  }
+# endif
+
+# ifdef WIN32
+  bool us_platform_init_winsock( void );
+# endif
+
+# ifndef WIN32
+#  include <netdb.h>
+#  include <unistd.h>
+#  include <netinet/in.h>
+# endif
+#endif
+
+#ifdef WIN32
+# if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+#  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
+# else
+#  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
+# endif
+
+  struct timezone
+  {
+    int tz_minuteswest; /* minutes W of Greenwich */
+    int tz_dsttime; /* type of dst correction */
+  };
+
+  int gettimeofday(struct timeval *tv, struct timezone *tz);
+#endif
 
 
-  void us_buf_init(
-                      us_buf_t *self,
-                      uint8_t *buf,
-                      int buf_size
-                      );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
-
-  /*@}*/
+#if US_ENABLE_LWIP_STACK
+# include "lwip/opt.h"
+# include "lwip/arch.h"
+# include "lwip/api.h"
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
+/*@}*/
 
 #endif

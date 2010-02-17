@@ -1,5 +1,5 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#ifndef US_TESTUTIL_H
+#define US_TESTUTIL_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -28,42 +28,72 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef US_WORLD_H
 #include "us_world.h"
+
+#include "us_buffer.h"
+
+#include "us_logger.h"
+
+/**
+ \addtogroup us_testutil  Test Utilities
+ */
+/*@{*/
+
+#if US_ENABLE_PRINTING
+#include "us_print.h"
+#endif
+
+#ifndef US_TESTUTIL_PRINTBUFFER_SIZE
+# define US_TESTUTIL_PRINTBUFFER_SIZE (8192)
+#endif
+
+#ifndef US_TESTUTIL_BUFFER_SIZE_IN_WORDS
+# define US_TESTUTIL_BUFFER_SIZE_IN_WORDS (4096)
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-  /** \addtogroup us_buf
-  */
-  /*@{*/
+  bool us_testutil_start(
+                             int32_t sys_allocator_size,
+                             int32_t session_allocator_size
+                             );
 
-  typedef struct us_buf_s
-  {
-    int m_next_in;
-    int m_next_out;
-    int m_buf_size;
-    uint8_t *m_buf;
-  } us_buf_t;
+  void us_testutil_finish(void);
 
 
-  void us_buf_init(
-                      us_buf_t *self,
-                      uint8_t *buf,
-                      int buf_size
-                      );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
+  extern us_allocator_t *us_testutil_sys_allocator;
+  extern us_allocator_t *us_testutil_session_allocator;
 
-  /*@}*/
+#if US_ENABLE_PRINTING
+  extern us_print_t *us_testutil_printer_stdout;
+  extern us_print_t *us_testutil_printer_stderr;
+
+#if US_ENABLE_STDIO
+  extern us_print_file_t us_testutil_printer_stdout_impl;
+  extern us_print_file_t us_testutil_printer_stderr_impl;
+#else
+  extern us_printbuf_t us_testutil_printer_stdout_impl;
+  extern us_printbuf_t us_testutil_printer_stderr_impl;
+  extern char us_testutil_printbuffer_stdout[ US_TESTUTIL_PRINTBUFFER_SIZE ];
+  extern char us_testutil_printbuffer_stderr[ US_TESTUTIL_PRINTBUFFER_SIZE ];
+#endif
+#endif
+
+#if !US_ENABLE_MALLOC
+  extern int32_t us_testutil_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
+  extern int32_t us_testutil_session_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
+#endif
+
+  extern us_allocator_t us_testutil_sys_allocator_impl;
+  extern us_allocator_t us_testutil_session_allocator_impl;
 
 #ifdef __cplusplus
 }
 #endif
 
+/*@}*/
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#ifndef US_ALLOCATOR_PRINT_H
+#define US_ALLOCATOR_PRINT_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -28,42 +28,43 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef US_WORLD_H
 #include "us_world.h"
-#endif
+
+#include "us_allocator.h"
+
+/**
+ \addtogroup us_allocator Memory Allocator
+ */
+/*@{*/
+
+#if US_ENABLE_PRINTING
+
+#include "us_print.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  /** \addtogroup us_buf
-  */
-  /*@{*/
+  /** us_allocator_print
 
-  typedef struct us_buf_s
-  {
-    int m_next_in;
-    int m_next_out;
-    int m_buf_size;
-    uint8_t *m_buf;
-  } us_buf_t;
+      Print the internal details of the allocator to the printbuf
 
+      @param self allocator to print
+      @param printer us_printbuf_t to print to
+   */
 
-  void us_buf_init(
-                      us_buf_t *self,
-                      uint8_t *buf,
-                      int buf_size
-                      );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
+  bool us_allocator_print(
+    us_allocator_t *self,
+    us_print_t *printer
+    );
 
-  /*@}*/
 
 #ifdef __cplusplus
 }
 #endif
 
+#endif
+
+/*@}*/
 
 #endif

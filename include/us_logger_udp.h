@@ -1,5 +1,5 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#ifndef US_LOGGER_UDP_H
+#define US_LOGGER_UDP_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -28,42 +28,54 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef US_WORLD_H
 #include "us_world.h"
-#endif
+#include "us_logger.h"
+
+/**
+ \addtogroup us_logger Logger
+ */
+/*@{*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  /** \addtogroup us_buf
-  */
-  /*@{*/
 
-  typedef struct us_buf_s
-  {
-    int m_next_in;
-    int m_next_out;
-    int m_buf_size;
-    uint8_t *m_buf;
-  } us_buf_t;
+# ifndef US_LOGGER_UDP_DEFAULT_DEST_ADDR
+#  define US_LOGGER_UDP_DEFAULT_DEST_ADDR "255.255.255.255"
+# endif
+
+# ifndef US_LOGGER_UDP_DEFAULT_DEST_PORT
+#  define US_LOGGER_UDP_DEFAULT_DEST_PORT (9001)
+# endif
 
 
-  void us_buf_init(
-                      us_buf_t *self,
-                      uint8_t *buf,
-                      int buf_size
-                      );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
+#if US_ENABLE_NETWORK && US_ENABLE_BSD_SOCKETS && US_ENABLE_PRINTING
 
-  /*@}*/
+  extern int us_logger_udp_socket;
+
+  extern char us_logger_udp_buffer[1500];
+  extern us_print_t *us_logger_udp_printer;
+  extern us_printraw_t us_logger_udp_printer_impl;
+
+  extern struct sockaddr_in us_logger_udp_dest_sockaddr;
+
+  void us_log_udp_send();
+
+  bool us_logger_udp_start( const char *dest_addr, int16_t dest_port );
+  void us_logger_udp_finish(void);
+
+  void us_log_error_udp( const char *fmt, ... );
+  void us_log_warn_udp( const char *fmt, ... );
+  void us_log_info_udp( const char *fmt, ... );
+  void us_log_debug_udp( const char *fmt, ... );
+
+
+# endif
 
 #ifdef __cplusplus
 }
 #endif
-
+/*@}*/
 
 #endif

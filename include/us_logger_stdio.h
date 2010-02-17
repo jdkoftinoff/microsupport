@@ -1,5 +1,5 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#ifndef US_LOGGER_STDIO_H
+#define US_LOGGER_STDIO_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -28,42 +28,35 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef US_WORLD_H
 #include "us_world.h"
-#endif
+#include "us_logger.h"
+
+/**
+ \addtogroup us_logger Logger
+ */
+/*@{*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  /** \addtogroup us_buf
-  */
-  /*@{*/
+  extern bool us_logger_stdio_files;
+  extern FILE *us_logger_stdio_out;
+  extern FILE *us_logger_stdio_err;
 
-  typedef struct us_buf_s
-  {
-    int m_next_in;
-    int m_next_out;
-    int m_buf_size;
-    uint8_t *m_buf;
-  } us_buf_t;
+  bool us_logger_stdio_start( FILE *outfile, FILE *errfile );
+  bool us_logger_stdio_start_files( const char *outfilename, const char *errfilename );
+  void us_logger_stdio_finish();
 
-
-  void us_buf_init(
-                      us_buf_t *self,
-                      uint8_t *buf,
-                      int buf_size
-                      );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
-
-  /*@}*/
+  void us_log_error_stdio( const char *fmt, ... );
+  void us_log_warn_stdio( const char *fmt, ... );
+  void us_log_info_stdio( const char *fmt, ... );
+  void us_log_debug_stdio( const char *fmt, ... );
 
 #ifdef __cplusplus
 }
 #endif
 
+/*@}*/
 
 #endif
