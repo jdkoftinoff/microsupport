@@ -87,6 +87,7 @@ extern "C" {
   int gettimeofday(struct timeval *tv, struct timezone *tz);
 #endif
 
+  void us_gettimeofday(struct timeval *tv);
 
 #if US_ENABLE_LWIP_STACK
 # include "lwip/opt.h"

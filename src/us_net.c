@@ -161,7 +161,7 @@ int us_net_create_tcp_socket(
 
 
 
-void  us_net_timout_add( struct timeval *result, struct timeval *cur_time, uint32_t microseconds_to_add )
+void  us_net_timeout_add( struct timeval *result, struct timeval *cur_time, uint32_t microseconds_to_add )
 {
   int32_t secs = microseconds_to_add/1000000;
   int32_t micros = microseconds_to_add%1000000;

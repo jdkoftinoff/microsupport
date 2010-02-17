@@ -57,7 +57,7 @@ extern "C" {
                                bool do_bind
                                );
 
-  void us_net_timout_add( struct timeval *result, struct timeval *cur_time, uint32_t microseconds_to_add );
+  void us_net_timeout_add( struct timeval *result, struct timeval *cur_time, uint32_t microseconds_to_add );
   bool us_net_timeout_calc( struct timeval *result, struct timeval *cur_time, struct timeval *next_time );
   bool us_net_timeout_hit( struct timeval *cur_time, struct timeval *next_time );
 
