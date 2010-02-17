@@ -52,6 +52,7 @@ void us_simple_allocator_destroy(
                                      )
 {
   /* Do Nothing */
+  (void)self;
 }
 
 void *us_simple_allocator_alloc(

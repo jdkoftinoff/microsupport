@@ -42,6 +42,7 @@ void (*us_logger_finish)( void ) = us_logger_null_finish;
 
 void us_log_null( const char *fmt, ... )
 {
+  (void)fmt;
 }
 
 void us_logger_null_finish( void )

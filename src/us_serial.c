@@ -247,6 +247,7 @@ int us_serial_net_open( const char *serial_device, const char *serial_options )
   char dest_ip[256]="127.0.0.1";
   char dest_port[64]="7777";
 
+  (void)serial_options; /* ignored for now */
   if( strlen( connect_addr ) >0 )
   {
     char *end_ip;
