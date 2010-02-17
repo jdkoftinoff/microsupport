@@ -94,15 +94,18 @@ bool us_testutil_start(
   us_testutil_sys_allocator=
     us_malloc_allocator_init(
                                &us_testutil_sys_allocator_impl,
-                               (int32_t)(US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof(int32_t))
+                               (int32_t)(sys_allocator_size * sizeof(int32_t))
                                );
 
   us_testutil_session_allocator=
     us_malloc_allocator_init(
                                &us_testutil_session_allocator_impl,
-                               (int32_t)(US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof(int32_t))
+                               (int32_t)(session_allocator_size * sizeof(int32_t))
                                );
 #else
+
+  (void)sys_allocator_size;
+  (void)session_allocator_size;
 
   /*
     or with statically allocated bss segment data if we don't have malloc
