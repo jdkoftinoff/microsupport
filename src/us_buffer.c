@@ -322,9 +322,18 @@ bool us_buffer_read_data(
                              int32_t *data_length
                              )
 {
-    // TODO: read data
   bool r=false;
 
+  int32_t avail = self->m_cur_length - self->m_cur_read_pos;
+  if( avail > 0 )
+  {
+    if( max_data_length > avail )
+      max_data_length = avail;
+    memcpy(data, &self->m_buffer[ self->m_cur_read_pos ], max_data_length );
+    self->m_cur_read_pos += max_data_length;
+    *data_length = max_data_length;
+    r=true;
+  }
   return r;
 }
 
@@ -364,9 +373,20 @@ bool us_buffer_read_rounded_data(
                                      int32_t *data_length
                                      )
 {
-    // TODO: read rounded_data
   bool r=false;
 
+  int32_t avail = self->m_cur_length - self->m_cur_read_pos;
+  if( avail > 0 )
+  {
+    if( max_data_length > avail )
+      max_data_length = avail;
+    max_data_length = us_round_size( max_data_length );
+    memcpy(data, &self->m_buffer[ self->m_cur_read_pos ], max_data_length );
+    self->m_cur_read_pos += max_data_length;
+    *data_length = max_data_length;
+
+    r=true;
+  }
   return r;
 }
 
@@ -440,6 +460,7 @@ us_buffer_destroy(
         us_buffer_t *self
         )
 {
+  (void)self;
   /* Do Nothing */
 }
 
