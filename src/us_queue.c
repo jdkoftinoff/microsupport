@@ -1,5 +1,5 @@
 #include "us_world.h"
-#include "us_buf.h"
+#include "us_queue.h"
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
