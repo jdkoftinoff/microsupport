@@ -225,7 +225,8 @@ bool us_buffer_append_float32(
         )
 {
   bool r = true;
-  int32_t int_value = *((int32_t *) & value);
+  float *value_ptr = &value;
+  int32_t int_value = *((int32_t *) value_ptr);
   r &= us_buffer_append_int32(
           self,
           int_value
@@ -253,19 +254,30 @@ bool us_buffer_read_float32(
 
 #if US_ENABLE_DOUBLE
 
+union us_float64_splitter_u
+{
+  double value;
+  uint32_t ints[2];
+};
+
 bool us_buffer_append_float64(
         us_buffer_t *self,
         double value
         )
 {
   bool r = true;
+  union us_float64_splitter_u splitter;
+  uint32_t low_int_value;
+  uint32_t high_int_value;
+
+  splitter.value = value;
 
 #if US_BIG_ENDIAN
-  int32_t low_int_value = *(((int32_t *) & value) + 0);
-  int32_t high_int_value = *(((int32_t *) & value) + 1);
+  low_int_value = splitter.ints[0];
+  high_int_value = splitter.ints[1];
 #else
-  int32_t low_int_value = *(((int32_t *) & value) + 1);
-  int32_t high_int_value = *(((int32_t *) & value) + 0);
+  low_int_value = splitter.ints[1];
+  high_int_value = splitter.ints[0];
 #endif
   r &= us_buffer_append_int32(
           self,
@@ -284,21 +296,28 @@ bool us_buffer_read_float64(
                                 )
 {
   bool r=true;
+  union us_float64_splitter_u splitter;
+  uint32_t *low_int_value_ptr;
+  uint32_t *high_int_value_ptr;
 
 #if US_BIG_ENDIAN
-  uint32_t low_int_value = *(((uint32_t *) value_ptr) + 0);
-  uint32_t high_int_value = *(((uint32_t *) value_ptr) + 1);
+  low_int_value_ptr = &splitter.ints[0];
+  high_int_value_ptr = &splitter.ints[1];
 #else
-  uint32_t low_int_value = *(((uint32_t *) value_ptr) + 1);
-  uint32_t high_int_value = *(((uint32_t *) value_ptr) + 0);
+  low_int_value_ptr = &splitter.ints[1];
+  high_int_value_ptr = &splitter.ints[0];
 #endif
 
-  r&=us_buffer_read_uint64(self, &high_int_value, &low_int_value );
+  r&=us_buffer_read_uint64(self, high_int_value_ptr, low_int_value_ptr );
 
-  /* check for NaN and refuse to accept it */
-  if( *value_ptr != *value_ptr )
-    r=false;
+  if( r )
+  {
+    *value_ptr = splitter.value;
 
+    /* check for NaN and refuse to accept it */
+    if( *value_ptr != *value_ptr )
+      r=false;
+  }
   return r;
 }
 

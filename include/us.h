@@ -32,8 +32,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #endif
 
+#include "us_options.h"
+#include "us_platform.h"
+#include "us_queue.h"
+#include "us_buffer.h"
+#include "us_allocator.h"
 #include "us_net.h"
+#include "us_logger.h"
+#include "us_logger_printer.h"
+#include "us_logger_stdio.h"
+#include "us_logger_udp.h"
+#include "us_serial.h"
+#include "us_slip.h"
+#include "us_testutil.h"
+#include "us_time.h"
 
+#include "us_print.h"
+#include "us_allocator_print.h"
+#include "us_buffer_print.h"
 
 /**
  \mainpage US API Reference
