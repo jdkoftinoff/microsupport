@@ -413,6 +413,7 @@ bool us_buffer_read_rounded_data(
 us_buffer_t *
 us_buffer_init(
         us_buffer_t *self,
+        us_allocator_t *allocator,
         void *raw_memory,
         int32_t raw_memory_length
         )
@@ -426,6 +427,7 @@ us_buffer_init(
 #if US_ENABLE_PRINTING
     self->print = us_buffer_print;
 #endif
+    self->m_allocator = allocator;
     self->m_buffer = (uint8_t *) raw_memory;
     self->m_cur_write_ptr = self->m_buffer;
     self->m_cur_read_pos = 0;
@@ -466,6 +468,7 @@ us_buffer_create(
   {
     r = us_buffer_init(
             self,
+            allocator,
             allocator->alloc(allocator, max_length, 1),
             max_length
             );
@@ -479,8 +482,8 @@ us_buffer_destroy(
         us_buffer_t *self
         )
 {
-  (void)self;
-  /* Do Nothing */
+  if( self->m_allocator )
+    self->m_allocator->free( self->m_allocator, self->m_buffer);
 }
 
 bool

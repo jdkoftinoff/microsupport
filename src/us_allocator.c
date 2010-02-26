@@ -44,6 +44,8 @@ us_simple_allocator_init(
   self->m_current_position = 0;
   self->destroy = us_simple_allocator_destroy;
   self->alloc = us_simple_allocator_alloc;
+  self->free = us_simple_allocator_free;
+
   return self;
 }
 
@@ -74,6 +76,15 @@ void *us_simple_allocator_alloc(
   return result;
 }
 
+void us_simple_allocator_free(
+    struct us_allocator_s *self,
+    void *ptr
+    )
+{
+  /* Do nothing; the simple allocator never frees */
+}
+
+
 void
 us_allocator_reset(
                        us_allocator_t *self
@@ -96,6 +107,7 @@ us_malloc_allocator_init(
   self->m_current_position = 0;
   self->destroy = us_malloc_allocator_destroy;
   self->alloc = us_simple_allocator_alloc;
+  self->free = us_simple_allocator_free;
   return self;
 }
 

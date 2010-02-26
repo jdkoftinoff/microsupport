@@ -50,6 +50,10 @@ extern "C" {
 #define us_new( ALLOCATOR, T ) \
   (T *)((ALLOCATOR)->alloc( (ALLOCATOR), (int32_t)sizeof( T ), 1 ))
 
+#define us_delete( ALLOCATOR, PTR ) \
+  (ALLOCATOR)->free( (ALLOCATOR), (PTR))
+
+
   /** us_new_array
 
    A define which simulates c++ new [] operator, except it accepts an
@@ -89,7 +93,10 @@ extern "C" {
                    int32_t length,
                    int32_t count
                    );
-
+    void (*free)(
+                   struct us_allocator_s *self,
+                   void *ptr
+                   );
     /** pointer to the raw memory pool to allocate from */
     void *m_raw_memory;
 
@@ -147,6 +154,10 @@ extern "C" {
     int32_t count
     );
 
+  void us_simple_allocator_free(
+      struct us_allocator_s *self,
+      void *ptr
+      );
 #if US_ENABLE_MALLOC
   /**
    us_malloc_allocator_init

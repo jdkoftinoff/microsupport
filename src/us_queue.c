@@ -28,11 +28,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-void us_buf_init(
-                    us_buf_t *self,
-                    uint8_t *buf,
-                    int buf_size
-                    )
+void us_queue_init(
+    us_queue_t *self,
+    uint8_t *buf,
+    int buf_size
+    )
 {
   self->m_buf = buf;
   self->m_buf_size = buf_size;
@@ -40,7 +40,7 @@ void us_buf_init(
   self->m_next_out = 0;
 }
 
-int us_buf_readable_count( us_buf_t *self )
+int us_queue_readable_count( us_queue_t *self )
 {
   int c = self->m_next_in - self->m_next_out;
   if( c<0 )
@@ -50,7 +50,7 @@ int us_buf_readable_count( us_buf_t *self )
   return c;
 }
 
-void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt )
+void us_queue_read( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt )
 {
   int i;
   for( i=0; i<dest_data_cnt; ++i )
@@ -63,13 +63,13 @@ void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt )
   }
 }
 
-int us_buf_writeable_count( us_buf_t *self )
+int us_queue_writeable_count( us_queue_t *self )
 {
   int c = us_buf_readable_count(self);
   return self->m_buf_size - c - 1;
 }
 
-void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt )
+void us_queue_write( us_queue_t *self, uint8_t *src_data, int src_data_cnt )
 {
   int i;
   for (i=0; i<src_data_cnt; i++)

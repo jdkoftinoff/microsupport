@@ -1,5 +1,5 @@
-#ifndef US_BUF_H
-#define US_BUF_H
+#ifndef US_QUEUE_H
+#define US_QUEUE_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -36,28 +36,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-  /** \addtogroup us_buf
+  /** \addtogroup us_queue
   */
   /*@{*/
 
-  typedef struct us_buf_s
+  typedef struct us_queue_s
   {
     int m_next_in;
     int m_next_out;
     int m_buf_size;
     uint8_t *m_buf;
-  } us_buf_t;
+  } us_queue_t;
 
 
-  void us_buf_init(
-                      us_buf_t *self,
+  void us_queue_init(
+                      us_queue_t *self,
                       uint8_t *buf,
                       int buf_size
                       );
-  int us_buf_readable_count( us_buf_t *self );
-  void us_buf_read( us_buf_t *self, uint8_t *dest_data, int dest_data_cnt );
-  int us_buf_writeable_count( us_buf_t *self );
-  void us_buf_write( us_buf_t *self, uint8_t *src_data, int src_data_cnt );
+  int us_queue_readable_count( us_queue_t *self );
+  void us_queue_read( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt );
+  int us_queue_writeable_count( us_queue_t *self );
+  void us_queue_write( us_queue_t *self, uint8_t *src_data, int src_data_cnt );
 
   /*@}*/
 

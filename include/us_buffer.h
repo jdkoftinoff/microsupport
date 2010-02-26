@@ -87,6 +87,7 @@ extern "C" {
                   us_print_t * printer
                   );
 #endif
+    us_allocator_t *m_allocator;
     uint8_t *m_buffer;
     uint8_t *m_cur_write_ptr;
     int32_t m_cur_read_pos;
@@ -107,6 +108,7 @@ extern "C" {
   us_buffer_t *
   us_buffer_init(
                      us_buffer_t *self,
+                     us_allocator_t *allocator,
                      void *raw_memory,
                      int32_t raw_memory_length
                      );
