@@ -1,3 +1,6 @@
+#
+# defintions
+#
 PROJECT=microsupport
 PROJECT_NAME=microsupport
 PROJECT_VERSION=20100216
