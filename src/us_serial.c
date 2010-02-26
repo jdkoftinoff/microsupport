@@ -2,6 +2,7 @@
 #include "us_net.h"
 #include "us_serial.h"
 
+#if US_CONFIG_POSIX
 #include <termios.h>
 
 /*
@@ -343,3 +344,5 @@ void us_serial_close( int fd )
   if( fd!=-1 )
     close( fd );
 }
+
+#endif
