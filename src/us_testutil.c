@@ -58,11 +58,14 @@ us_allocator_t us_testutil_session_allocator_impl;
 
 bool us_testutil_start(
                          int32_t sys_allocator_size,
-                         int32_t session_allocator_size
+                         int32_t session_allocator_size,
+                         int argc,
+                         char **argv
                          )
 {
   bool r=true;
-
+  (void)argc;
+  (void)argv;
   /*
     On windows, initialize winsock
   */

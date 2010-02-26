@@ -72,7 +72,7 @@ bool us_test_buffer( void )
 int main( int argc, char **argv )
 {
   int r=1;
-  if( us_testutil_start(2048,2048) )
+  if( us_testutil_start(2048,2048,argc,argv) )
   {
 #if US_ENABLE_LOGGING
     us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );

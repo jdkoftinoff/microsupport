@@ -57,9 +57,11 @@ extern "C"
 #endif
 
   bool us_testutil_start(
-                             int32_t sys_allocator_size,
-                             int32_t session_allocator_size
-                             );
+      int32_t sys_allocator_size,
+      int32_t session_allocator_size,
+      int argc,
+      char **argv
+      );
 
   void us_testutil_finish(void);
 

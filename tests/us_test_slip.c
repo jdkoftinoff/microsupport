@@ -76,6 +76,7 @@ us_buffer_t * us_test_slip_fill_buffer( void )
 
 void us_test_slip_callback( us_slip_decoder_t *self, us_buffer_t *buf )
 {
+  (void)self;
   us_log_info( "Successfully parsed slip encoded buffer" );
 #if US_ENABLE_PRINTING
   us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "contents of decoded buffer:\n" );
@@ -125,7 +126,7 @@ bool us_test_slip( void )
 int main( int argc, char **argv )
 {
   int r=1;
-  if( us_testutil_start(4096,4096) )
+  if( us_testutil_start(4096,4096,argc,argv) )
   {
 #if US_ENABLE_LOGGING
     us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
