@@ -2,7 +2,7 @@
 #include "us_net.h"
 #include "us_serial.h"
 
-#if US_CONFIG_POSIX
+#if defined(US_CONFIG_POSIX)
 #include <termios.h>
 
 /*
