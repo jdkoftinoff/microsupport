@@ -21,4 +21,6 @@ PRECOMPILED_HEADER=$(TOP)/include/us_world.h
 
 STRIP=true
 
+LIB_SRC_DIR+=
+LIB_EXAMPLES_DIR+=
 
