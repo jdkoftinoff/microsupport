@@ -13,25 +13,25 @@
 #include <assert.h>
 #include <locale.h>
 
-#include "JSON_parser.h"
+#include "us_json_parser.h"
 
 static int print(void* ctx, int type, const JSON_value* value);
 
 int main(int argc, char* argv[]) {
     int count = 0, result = 0;
     FILE* input;
-        
+
     JSON_config config;
 
     struct JSON_parser_struct* jc = NULL;
-    
+
     init_JSON_config(&config);
-    
+
     config.depth                  = 20;
     config.callback               = &print;
     config.allow_comments         = 1;
     config.handle_floats_manually = 0;
-    
+
     /* Important! Set locale before parser is created.*/
     if (argc >= 2) {
         if (!setlocale(LC_ALL, argv[1])) {
@@ -40,9 +40,9 @@ int main(int argc, char* argv[]) {
     } else {
         fprintf(stderr, "No locale provided, C locale is used\n");
     }
-    
+
     jc = new_JSON_parser(&config);
-    
+
     input = stdin;
     for (; input ; ++count) {
         int next_char = fgetc(input);
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
         result = 1;
         goto done;
     }
-    
+
 done:
     delete_JSON_parser(jc);
     return result;
@@ -75,17 +75,17 @@ static int s_IsKey = 0;
 static void print_indention()
 {
     size_t i;
-    
+
     for (i = 0; i < s_Level; ++i) {
         printf("%s", s_pIndention);
     }
 }
- 
+
 
 static int print(void* ctx, int type, const JSON_value* value)
 {
     switch(type) {
-    case JSON_T_ARRAY_BEGIN:    
+    case JSON_T_ARRAY_BEGIN:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
         printf("[\n");
@@ -138,7 +138,7 @@ static int print(void* ctx, int type, const JSON_value* value)
         s_IsKey = 1;
         print_indention();
         printf("key = '%s', value = ", value->vu.str.value);
-        break;   
+        break;
     case JSON_T_STRING:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
@@ -148,7 +148,7 @@ static int print(void* ctx, int type, const JSON_value* value)
         assert(0);
         break;
     }
-    
+
     return 1;
 }
 
