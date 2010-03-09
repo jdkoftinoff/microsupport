@@ -65,7 +65,7 @@ void us_queue_read( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt )
 
 int us_queue_writeable_count( us_queue_t *self )
 {
-  int c = us_buf_readable_count(self);
+  int c = us_queue_readable_count(self);
   return self->m_buf_size - c - 1;
 }
 
