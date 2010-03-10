@@ -52,7 +52,7 @@ extern "C" {
     us_http_header_item_t * (*find)( const char *key );
 
     us_allocator_t *m_allocator;
-    us_http_header_item_list_t *m_first;
+    us_http_header_item_t *m_first;
   } us_http_header_item_list_t;
 
   us_http_header_item_list_t *
@@ -70,7 +70,7 @@ extern "C" {
   void
   us_http_header_item_list_remove(
                                   us_http_header_item_list_t *self,
-                                  http_header_item_list_t *item
+                                  us_http_header_item_list_t *item
                                   );
 
   void
@@ -108,8 +108,13 @@ extern "C" {
     us_allocator_t *m_allocator;
     int m_code;
     us_http_header_item_list_t *m_items;
-  }
+  } us_http_response_header_t;
 
+  us_http_response_header_t *
+  us_http_response_header_create( us_allocator_t *allocator );
+  
+  void us_http_response_header_destroy( us_http_response_header_t *self );
+  
 #ifdef __cplusplus
 }
 #endif

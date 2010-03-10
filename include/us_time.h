@@ -39,11 +39,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-  void us_timeout_add( struct timeval *result, struct timeval *cur_time, uint32_t microseconds_to_add );
-
-  bool us_timeout_calc( struct timeval *result, struct timeval *cur_time, struct timeval *next_time );
-
-  bool us_timeout_hit( struct timeval *cur_time, struct timeval *next_time );
 
 
 #ifdef __cplusplus

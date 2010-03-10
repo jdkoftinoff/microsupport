@@ -55,6 +55,7 @@ SOFTWARE.
 */
 
 
+#include "us_world.h"
 
 #include <assert.h>
 #include <ctype.h>
@@ -74,9 +75,7 @@ SOFTWARE.
 #endif
 
 
-#define true  1
-#define false 0
-#define __   -1     /* the universal error code */
+#define __   (-1)     /* the universal error code */
 
 /* values chosen so that the object size is approx equal to one page (4K) */
 #ifndef JSON_PARSER_STACK_SIZE
