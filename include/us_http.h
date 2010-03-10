@@ -73,7 +73,7 @@ extern "C" {
                                   us_http_header_item_list_t *item
                                   );
 
-  void
+  us_http_header_item_t *
   us_http_header_item_list_find(
                                 us_http_header_item_list_t *self,
                                 const char *key
@@ -101,6 +101,37 @@ extern "C" {
   void us_http_request_header_destroy( us_http_request_header_t *self );
 
 
+  us_http_request_header_t *
+  us_http_request_header_create_get(
+                                    us_allocator_t *allocator,
+                                    const char *path
+                                     );
+
+  us_http_request_header_t *
+  us_http_request_header_create_delete(
+                                       us_allocator_t *allocator,
+                                       const char *path
+                                       );
+
+
+  us_http_request_header_t *
+  us_http_request_header_create_post(
+                                     us_allocator_t *allocator,
+                                     const char *path,
+                                     const char *content_type,
+                                     uint32_t content_length
+                                     );
+
+  us_http_request_header_t *
+  us_http_request_header_create_put(
+                                    us_allocator_t *allocator,
+                                    const char *path,
+                                    const char *content_type,
+                                    uint32_t content_length
+                                    );
+
+
+
   typedef struct us_http_response_header_s
   {
     void (*destroy)( struct us_http_request_header_s * );
@@ -112,9 +143,31 @@ extern "C" {
 
   us_http_response_header_t *
   us_http_response_header_create( us_allocator_t *allocator );
-  
+
   void us_http_response_header_destroy( us_http_response_header_t *self );
-  
+
+  us_http_response_header_t *
+  us_http_response_header_create_error(
+                                       us_allocator_t *allocator,
+                                       int32_t http_error_code,
+                                       const char *content_type,
+                                       uint32_t content_length
+                                        );
+
+  us_http_response_header_t *
+  us_http_response_header_create_redirect(
+                                          us_allocator_t *allocator,
+                                          int32_t http_redirect_code,
+                                          const char *redirect_to_url
+                                           );
+
+  us_http_response_header_t *
+  us_http_response_header_create_ok(
+                                    us_allocator_t *allocator,
+                                    const char *content_type,
+                                    uint32_t content_length
+                                    );
+
 #ifdef __cplusplus
 }
 #endif

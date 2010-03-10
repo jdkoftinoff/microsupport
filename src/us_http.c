@@ -2,7 +2,7 @@
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -13,7 +13,7 @@
  * Neither the name of the <organization> nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -31,4 +31,164 @@
 #include "us_logger_syslog.h"
 #include "us_http.h"
 
+us_http_header_item_list_t *
+us_http_header_item_list_create( us_allocator_t *allocator )
+{
+  return 0; /* TODO: */
+}
+
+
+void us_http_header_item_list_destroy( us_http_header_item_list_t *self )
+{
+  /* TODO: */
+}
+
+us_http_header_item_list_t *
+us_http_header_item_list_add(
+                             us_http_header_item_list_t *self,
+                             const char *key,
+                             const char *value
+                             )
+{
+  /* TODO: */
+  return 0;
+}
+
+
+
+void
+us_http_header_item_list_remove(
+                                us_http_header_item_list_t *self,
+                                us_http_header_item_list_t *item
+                                )
+{
+  /* TODO: */
+}
+
+
+
+us_http_header_item_t *
+us_http_header_item_list_find(
+                              us_http_header_item_list_t *self,
+                              const char *key
+                              )
+{
+  /* TODO: */
+  return 0;
+}
+
+
+
+
+us_http_request_header_t *
+us_http_request_header_create( us_allocator_t *allocator )
+{
+  /* TODO: */
+  return 0;
+}
+
+
+
+void us_http_request_header_destroy( us_http_request_header_t *self )
+{
+  /* TODO: */
+}
+
+
+
+us_http_response_header_t *
+us_http_response_header_create( us_allocator_t *allocator )
+{
+  /* TODO: */
+  return 0;
+}
+
+
+
+void us_http_response_header_destroy( us_http_response_header_t *self )
+{
+  /* TODO: */
+}
+
+
+us_http_request_header_t *
+us_http_request_header_create_get(
+                                  us_allocator_t *allocator,
+                                  const char *path
+                                  )
+{
+  /* TODO: */
+  return 0;
+}
+
+us_http_request_header_t *
+us_http_request_header_create_delete(
+                                     us_allocator_t *allocator,
+                                     const char *path
+                                     )
+{
+  /* TODO: */
+  return 0;
+}
+
+
+us_http_request_header_t *
+us_http_request_header_create_post(
+                                   us_allocator_t *allocator,
+                                   const char *path,
+                                   const char *content_type,
+                                   uint32_t content_length
+                                   )
+{
+  /* TODO: */
+  return 0;
+}
+
+
+us_http_request_header_t *
+us_http_request_header_create_put(
+                                  us_allocator_t *allocator,
+                                  const char *path,
+                                  const char *content_type,
+                                  uint32_t content_length
+                                  )
+{
+  /* TODO: */
+  return 0;
+}
+
+
+us_http_response_header_t *
+us_http_response_header_create_error(
+                                     us_allocator_t *allocator,
+                                     int32_t http_error_code,
+                                     const char *content_type,
+                                     uint32_t content_length
+                                     )
+{
+  /* TODO: */
+  return 0;
+}
+
+us_http_response_header_t *
+us_http_response_header_create_redirect(
+                                        us_allocator_t *allocator,
+                                        int32_t http_redirect_code,
+                                        const char *redirect_to_url
+                                        )
+{
+  /* TODO: */
+  return 0;
+}
+
+us_http_response_header_t *
+us_http_response_header_create_ok(
+                                  us_allocator_t *allocator,
+                                  const char *content_type,
+                                  uint32_t content_length
+                                  )
+{
+  /* TODO: */
+  return 0;
+}
 
