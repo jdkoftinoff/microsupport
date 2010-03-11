@@ -47,13 +47,16 @@ char us_testutil_printbuffer_stderr[ US_TESTUTIL_PRINTBUFFER_SIZE ];
 #endif
 #endif
 
-#if !US_ENABLE_MALLOC
+#if US_ENABLE_MALLOC
+us_malloc_allocator_t us_testutil_sys_allocator_impl;
+us_malloc_allocator_t us_testutil_session_allocator_impl;
+#else
+us_simple_allocator_t us_testutil_sys_allocator_impl;
+us_simple_allocator_t us_testutil_session_allocator_impl;
 int32_t us_testutil_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 int32_t us_testutil_session_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 #endif
 
-us_allocator_t us_testutil_sys_allocator_impl;
-us_allocator_t us_testutil_session_allocator_impl;
 
 
 bool us_testutil_start(
@@ -96,14 +99,12 @@ bool us_testutil_start(
 
   us_testutil_sys_allocator=
     us_malloc_allocator_init(
-                               &us_testutil_sys_allocator_impl,
-                               (int32_t)(sys_allocator_size * sizeof(int32_t))
-                               );
+                             &us_testutil_sys_allocator_impl
+                             );
 
   us_testutil_session_allocator=
     us_malloc_allocator_init(
-                               &us_testutil_session_allocator_impl,
-                               (int32_t)(session_allocator_size * sizeof(int32_t))
+                               &us_testutil_session_allocator_impl
                                );
 #else
 

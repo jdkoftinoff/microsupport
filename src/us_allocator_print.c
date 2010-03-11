@@ -34,10 +34,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if US_ENABLE_PRINTING
 
-bool us_allocator_print(
-                            us_allocator_t *self,
-                            us_print_t *printer
-                            )
+bool us_simple_allocator_print(
+                               us_simple_allocator_t *self,
+                               us_print_t *printer
+                               )
 {
   bool r=true;
 
