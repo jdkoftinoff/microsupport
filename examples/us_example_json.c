@@ -43,7 +43,14 @@ int main(int argc, char* argv[])
 
   jc = us_json_parser_create(allocator,&config);
 
-  input = stdin;
+  if( argc>1 )
+  {
+    input = fopen( argv[1], "rt" );
+  }
+  else
+  {
+    input = stdin;
+  }
   for (; input ; ++count) {
     int next_char = fgetc(input);
     if (next_char <= 0) {
@@ -63,6 +70,8 @@ int main(int argc, char* argv[])
 
  done:
   us_json_parser_destroy(jc);
+  if( input != stdin )
+    fclose(input);
   return result;
 }
 
