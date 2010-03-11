@@ -381,10 +381,10 @@ us_json_parser_create(us_allocator_t *allocator, us_json_config_t* config)
   us_json_config_t default_config;
 
   us_json_parser_t jc = us_new( allocator, struct us_json_parser_struct );
-  jc->allocator = allocator;
 
   memset(jc, 0, sizeof(*jc));
 
+  jc->allocator = allocator;
 
   /* initialize configuration */
   us_json_config_init(&default_config);
