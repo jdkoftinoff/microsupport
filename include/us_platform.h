@@ -44,6 +44,8 @@ extern "C" {
 #define US_GET_BYTE_1(v) (uint8_t)((( (v) & 0xff00) >> 8)&0xff)
 #define US_GET_BYTE_0(v) (uint8_t)((( (v) & 0xff) >> 0)&0xff)
 
+#define US_COUNTOF(x) (sizeof(x)/sizeof(x[0]))
+
 #ifndef __cplusplus
 # ifndef true
   typedef int bool;

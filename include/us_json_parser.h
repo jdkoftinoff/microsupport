@@ -1,77 +1,96 @@
+/*
+Copyright (c) 2005 JSON.org
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+The Software shall be used for Good, not Evil.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #ifndef US_JSON_PARSER_H
 #define US_JSON_PARSER_H
 
-/* JSON_parser.h */
-
-
-#include <stddef.h>
-
-#define JSON_PARSER_DLL_API 
+#include "us_world.h"
 
 /* Determine the integer type use to parse non-floating point numbers */
 #if __STDC_VERSION__ >= 199901L || HAVE_LONG_LONG == 1
-typedef long long JSON_int_t;
-#define JSON_PARSER_INTEGER_SSCANF_TOKEN "%lld"
-#define JSON_PARSER_INTEGER_SPRINTF_TOKEN "%lld"
-#else 
-typedef long JSON_int_t;
-#define JSON_PARSER_INTEGER_SSCANF_TOKEN "%ld"
-#define JSON_PARSER_INTEGER_SPRINTF_TOKEN "%ld"
+typedef long long us_json_int_t;
+#define US_JSON_PARSER_INTEGER_SSCANF_TOKEN "%lld"
+#define US_JSON_PARSER_INTEGER_SPRINTF_TOKEN "%lld"
+#else
+typedef long us_json_int_t;
+#define US_JSON_PARSER_INTEGER_SSCANF_TOKEN "%ld"
+#define US_JSON_PARSER_INTEGER_SPRINTF_TOKEN "%ld"
 #endif
 
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
-typedef enum 
+typedef enum
 {
-    JSON_T_NONE = 0,
-    JSON_T_ARRAY_BEGIN,
-    JSON_T_ARRAY_END,
-    JSON_T_OBJECT_BEGIN,
-    JSON_T_OBJECT_END,
-    JSON_T_INTEGER,
-    JSON_T_FLOAT,
-    JSON_T_NULL,
-    JSON_T_TRUE,
-    JSON_T_FALSE,
-    JSON_T_STRING,
-    JSON_T_KEY,
-    JSON_T_MAX
-} JSON_type;
+    US_JSON_T_NONE = 0,
+    US_JSON_T_ARRAY_BEGIN,
+    US_JSON_T_ARRAY_END,
+    US_JSON_T_OBJECT_BEGIN,
+    US_JSON_T_OBJECT_END,
+    US_JSON_T_INTEGER,
+    US_JSON_T_FLOAT,
+    US_JSON_T_NULL,
+    US_JSON_T_TRUE,
+    US_JSON_T_FALSE,
+    US_JSON_T_STRING,
+    US_JSON_T_KEY,
+    US_JSON_T_MAX
+} us_json_type;
 
-typedef struct JSON_value_struct {
+typedef struct us_json_value_struct {
     union {
-        JSON_int_t integer_value;
-        
+        us_json_int_t integer_value;
+
         double float_value;
-        
+
         struct {
             const char* value;
             size_t length;
         } str;
     } vu;
-} JSON_value;
+} us_json_value_t;
 
-typedef struct JSON_parser_struct* JSON_parser;
+typedef struct us_json_parser_struct* us_json_parser_t;
 
-/*! \brief JSON parser callback 
+/*! \brief JSON parser callback
 
-    \param ctx The pointer passed to new_JSON_parser.
-    \param type An element of JSON_type but not JSON_T_NONE.    
+    \param ctx The pointer passed to new_us_json_parser.
+    \param type An element of us_json_type but not US_JSON_T_NONE.
     \param value A representation of the parsed value. This parameter is NULL for
-        JSON_T_ARRAY_BEGIN, JSON_T_ARRAY_END, JSON_T_OBJECT_BEGIN, JSON_T_OBJECT_END,
-        JSON_T_NULL, JSON_T_TRUE, and SON_T_FALSE. String values are always returned
+        US_JSON_T_ARRAY_BEGIN, US_JSON_T_ARRAY_END, US_JSON_T_OBJECT_BEGIN, US_JSON_T_OBJECT_END,
+        US_JSON_T_NULL, US_JSON_T_TRUE, and SON_T_FALSE. String values are always returned
         as zero-terminated C strings.
 
     \return Non-zero if parsing should continue, else zero.
-*/    
-typedef int (*JSON_parser_callback)(void* ctx, int type, const struct JSON_value_struct* value);
+*/
+typedef int (*us_json_parser_callback)(void* ctx, int type, const struct us_json_value_struct* value);
 
 
-/*! \brief The structure used to configure a JSON parser object 
-    
+/*! \brief The structure used to configure a JSON parser object
+
     \param depth If negative, the parser can parse arbitrary levels of JSON, otherwise
         the depth is the limit
     \param Pointer to a callback. This parameter may be NULL. In this case the input is merely checked for validity.
@@ -79,16 +98,16 @@ typedef int (*JSON_parser_callback)(void* ctx, int type, const struct JSON_value
     \param depth. Specifies the levels of nested JSON to allow. Negative numbers yield unlimited nesting.
     \param allowComments. To allow C style comments in JSON, set to non-zero.
     \param handleFloatsManually. To decode floating point numbers manually set this parameter to non-zero.
-    
+
     \return The parser object.
 */
 typedef struct {
-    JSON_parser_callback     callback;
+    us_json_parser_callback     callback;
     void*                    callback_ctx;
     int                      depth;
     int                      allow_comments;
     int                      handle_floats_manually;
-} JSON_config;
+} us_json_config_t;
 
 
 /*! \brief Initializes the JSON parser configuration structure to default values.
@@ -100,44 +119,44 @@ typedef struct {
 
     \param config. Used to configure the parser.
 */
-JSON_PARSER_DLL_API void init_JSON_config(JSON_config* config);
+void us_json_init_config(us_json_config_t* config);
 
-/*! \brief Create a JSON parser object 
-    
-    \param config. Used to configure the parser. Set to NULL to use the default configuration. 
-        See init_JSON_config
-    
+/*! \brief Create a JSON parser object
+
+    \param config. Used to configure the parser. Set to NULL to use the default configuration.
+        See init_json_config_t
+
     \return The parser object.
 */
-JSON_PARSER_DLL_API extern JSON_parser new_JSON_parser(JSON_config* config);
+extern us_json_parser_t new_json_parser(us_json_config_t* config);
 
 /*! \brief Destroy a previously created JSON parser object. */
-JSON_PARSER_DLL_API extern void delete_JSON_parser(JSON_parser jc);
+extern void delete_json_parser(us_json_parser_t jc);
 
 /*! \brief Parse a character.
 
     \return Non-zero, if all characters passed to this function are part of are valid JSON.
 */
-JSON_PARSER_DLL_API extern int JSON_parser_char(JSON_parser jc, int next_char);
+extern int us_json_parser_char(us_json_parser_t jc, int next_char);
 
 /*! \brief Finalize parsing.
 
     Call this method once after all input characters have been consumed.
-    
+
     \return Non-zero, if all parsed characters are valid JSON, zero otherwise.
 */
-JSON_PARSER_DLL_API extern int JSON_parser_done(JSON_parser jc);
+extern int us_json_parser_done(us_json_parser_t jc);
 
-/*! \brief Determine if a given string is valid JSON white space 
+/*! \brief Determine if a given string is valid JSON white space
 
     \return Non-zero if the string is valid, zero otherwise.
 */
-JSON_PARSER_DLL_API extern int JSON_parser_is_legal_white_space_string(const char* s);
+extern int us_json_parser_is_legal_white_space_string(const char* s);
 
 
 #ifdef __cplusplus
 }
-#endif 
-    
+#endif
+
 
 #endif /* JSON_PARSER_H */

@@ -110,35 +110,35 @@ typedef unsigned char uint8_t;
 
 #endif
 
-
+#include <assert.h>
+#include <ctype.h>
+#include <float.h>
+#include <stddef.h>
+#include <locale.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <fcntl.h>
+#include <stdarg.h>
 
 #if defined(US_CONFIG_POSIX)
 # include <sys/types.h>
 # include <unistd.h>
-# include <stdlib.h>
-# include <stdio.h>
 # include <pthread.h>
 # include <signal.h>
 # include <sys/stat.h>
 # include <sys/time.h>
-# include <string.h>
 # include <unistd.h>
 # include <netdb.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <sys/poll.h>
-# include <fcntl.h>
-# include <stdarg.h>
-# include <math.h>
 # include <errno.h>
 #endif
 
 #if defined(_WIN32)
-# include <stdio.h>
-# include <math.h>
 # include <io.h>
-# include <fcntl.h>
-# include <stdarg.h>
 #endif
 
 #include "us_platform.h"

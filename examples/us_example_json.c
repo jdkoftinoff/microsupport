@@ -15,17 +15,17 @@
 
 #include "us_json_parser.h"
 
-static int print(void* ctx, int type, const JSON_value* value);
+static int print(void* ctx, int type, const us_json_value_t* value);
 
 int main(int argc, char* argv[]) {
     int count = 0, result = 0;
     FILE* input;
 
-    JSON_config config;
+    us_json_config_t config;
 
-    struct JSON_parser_struct* jc = NULL;
+    us_json_parser_t jc = NULL;
 
-    init_JSON_config(&config);
+    us_json_init_config(&config);
 
     config.depth                  = 20;
     config.callback               = &print;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "No locale provided, C locale is used\n");
     }
 
-    jc = new_JSON_parser(&config);
+    jc = new_json_parser(&config);
 
     input = stdin;
     for (; input ; ++count) {
@@ -49,20 +49,20 @@ int main(int argc, char* argv[]) {
         if (next_char <= 0) {
             break;
         }
-        if (!JSON_parser_char(jc, next_char)) {
+        if (!us_json_parser_char(jc, next_char)) {
             fprintf(stderr, "JSON_parser_char: syntax error, byte %d\n", count);
             result = 1;
             goto done;
         }
     }
-    if (!JSON_parser_done(jc)) {
+    if (!us_json_parser_done(jc)) {
         fprintf(stderr, "JSON_parser_end: syntax error\n");
         result = 1;
         goto done;
     }
 
 done:
-    delete_JSON_parser(jc);
+    delete_json_parser(jc);
     return result;
 }
 
@@ -82,64 +82,64 @@ static void print_indention()
 }
 
 
-static int print(void* ctx, int type, const JSON_value* value)
+static int print(void* ctx, int type, const us_json_value_t* value)
 {
     switch(type) {
-    case JSON_T_ARRAY_BEGIN:
+    case US_JSON_T_ARRAY_BEGIN:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
         printf("[\n");
         ++s_Level;
         break;
-    case JSON_T_ARRAY_END:
+    case US_JSON_T_ARRAY_END:
         assert(!s_IsKey);
         if (s_Level > 0) --s_Level;
         print_indention();
         printf("]\n");
         break;
-   case JSON_T_OBJECT_BEGIN:
+   case US_JSON_T_OBJECT_BEGIN:
        if (!s_IsKey) print_indention();
        s_IsKey = 0;
        printf("{\n");
         ++s_Level;
         break;
-    case JSON_T_OBJECT_END:
+    case US_JSON_T_OBJECT_END:
         assert(!s_IsKey);
         if (s_Level > 0) --s_Level;
         print_indention();
         printf("}\n");
         break;
-    case JSON_T_INTEGER:
+    case US_JSON_T_INTEGER:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
-        printf("integer: "JSON_PARSER_INTEGER_SPRINTF_TOKEN"\n", value->vu.integer_value);
+        printf("integer: "US_JSON_PARSER_INTEGER_SPRINTF_TOKEN"\n", value->vu.integer_value);
         break;
-    case JSON_T_FLOAT:
+    case US_JSON_T_FLOAT:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
         printf("float: %f\n", value->vu.float_value); /* We wanted stringified floats */
         break;
-    case JSON_T_NULL:
+    case US_JSON_T_NULL:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
         printf("null\n");
         break;
-    case JSON_T_TRUE:
+    case US_JSON_T_TRUE:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
         printf("true\n");
         break;
-    case JSON_T_FALSE:
+    case US_JSON_T_FALSE:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
         printf("false\n");
         break;
-    case JSON_T_KEY:
+    case US_JSON_T_KEY:
         s_IsKey = 1;
         print_indention();
         printf("key = '%s', value = ", value->vu.str.value);
         break;
-    case JSON_T_STRING:
+    case US_JSON_T_STRING:
         if (!s_IsKey) print_indention();
         s_IsKey = 0;
         printf("string: '%s'\n", value->vu.str.value);
