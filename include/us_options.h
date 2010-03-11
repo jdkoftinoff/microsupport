@@ -101,6 +101,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # define US_DEFAULT_MALLOC malloc
 #endif
 
+#ifndef US_DEFAULT_REALLOC
+# define US_DEFAULT_REALLOC realloc
+#endif
+
 #ifndef US_DEFAULT_FREE
 # define US_DEFAULT_FREE free
 #endif
