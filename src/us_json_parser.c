@@ -84,6 +84,7 @@
 typedef unsigned short UTF16;
 
 struct us_json_parser_struct {
+  us_allocator_t *allocator;
   us_json_parser_callback callback;
   void* ctx;
   signed char state, before_comment_state, type, escaped, comment, allow_comments, handle_floats_manually;
@@ -304,10 +305,10 @@ push(us_json_parser_t jc, int mode)
       jc->stack_capacity *= 2;
       bytes_to_allocate = jc->stack_capacity * sizeof(jc->static_stack[0]);
       if (jc->stack == &jc->static_stack[0]) {
-        jc->stack = (signed char*)malloc(bytes_to_allocate);
+        jc->stack = (signed char *)jc->allocator->alloc( jc->allocator, bytes_to_allocate, 1 );
         memcpy(jc->stack, jc->static_stack, sizeof(jc->static_stack));
       } else {
-        jc->stack = (signed char*)realloc(jc->stack, bytes_to_allocate);
+        jc->stack = (signed char *)jc->allocator->realloc( jc->allocator, jc->stack, bytes_to_allocate, 1 );
       }
     }
   } else {
@@ -353,18 +354,18 @@ void us_json_parser_destroy(us_json_parser_t jc)
 {
   if (jc) {
     if (jc->stack != &jc->static_stack[0]) {
-      free((void*)jc->stack);
+      jc->allocator->free(jc->allocator,(void*)jc->stack);
     }
     if (jc->parse_buffer != &jc->static_parse_buffer[0]) {
-      free((void*)jc->parse_buffer);
+      jc->allocator->free(jc->allocator,(void*)jc->parse_buffer);
     }
-    free((void*)jc);
+    jc->allocator->free(jc->allocator,(void*)jc);
   }
 }
 
 
 us_json_parser_t
-us_json_parser_create(us_json_config_t* config)
+us_json_parser_create(us_allocator_t *allocator, us_json_config_t* config)
 {
   /*
     new_json_parser starts the checking process by constructing a us_json_parser
@@ -379,7 +380,8 @@ us_json_parser_create(us_json_config_t* config)
   int depth = 0;
   us_json_config_t default_config;
 
-  us_json_parser_t jc = malloc(sizeof(struct us_json_parser_struct));
+  us_json_parser_t jc = us_new( allocator, struct us_json_parser_struct );
+  jc->allocator = allocator;
 
   memset(jc, 0, sizeof(*jc));
 
