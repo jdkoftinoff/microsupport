@@ -349,7 +349,7 @@ pop(us_json_parser_t jc, int mode)
         jc->parse_buffer[jc->parse_buffer_count] = 0;\
     } while (0)
 
-void delete_json_parser(us_json_parser_t jc)
+void us_json_parser_destroy(us_json_parser_t jc)
 {
     if (jc) {
         if (jc->stack != &jc->static_stack[0]) {
@@ -364,7 +364,7 @@ void delete_json_parser(us_json_parser_t jc)
 
 
 us_json_parser_t
-new_json_parser(us_json_config_t* config)
+us_json_parser_create(us_json_config_t* config)
 {
 /*
     new_json_parser starts the checking process by constructing a us_json_parser
@@ -385,7 +385,7 @@ new_json_parser(us_json_config_t* config)
 
 
     /* initialize configuration */
-    us_json_init_config(&default_config);
+    us_json_config_init(&default_config);
 
     /* set to default configuration if none was provided */
     if (config == NULL) {
@@ -989,7 +989,7 @@ int us_json_parser_is_legal_white_space_string(const char* s)
 }
 
 
-void us_json_init_config(us_json_config_t* config)
+void us_json_config_init(us_json_config_t* config)
 {
     if (config) {
         memset(config, 0, sizeof(*config));

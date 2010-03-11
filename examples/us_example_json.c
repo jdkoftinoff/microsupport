@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 
     us_json_parser_t jc = NULL;
 
-    us_json_init_config(&config);
+    us_json_config_init(&config);
 
     config.depth                  = 20;
     config.callback               = &print;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "No locale provided, C locale is used\n");
     }
 
-    jc = new_json_parser(&config);
+    jc = us_json_parser_create(&config);
 
     input = stdin;
     for (; input ; ++count) {
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     }
 
 done:
-    delete_json_parser(jc);
+    us_json_parser_destroy(jc);
     return result;
 }
 

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2005 JSON.org
+Copyright (c) 2005 JSON.org with modifications by Jeff Koftinoff <jeffk@jdkoftinoff.com> 2010
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -119,7 +119,7 @@ typedef struct {
 
     \param config. Used to configure the parser.
 */
-void us_json_init_config(us_json_config_t* config);
+void us_json_config_init(us_json_config_t* config);
 
 /*! \brief Create a JSON parser object
 
@@ -128,10 +128,10 @@ void us_json_init_config(us_json_config_t* config);
 
     \return The parser object.
 */
-extern us_json_parser_t new_json_parser(us_json_config_t* config);
+extern us_json_parser_t us_json_parser_create(us_json_config_t* config);
 
 /*! \brief Destroy a previously created JSON parser object. */
-extern void delete_json_parser(us_json_parser_t jc);
+extern void us_json_parser_destroy(us_json_parser_t jc);
 
 /*! \brief Parse a character.
 
@@ -159,4 +159,5 @@ extern int us_json_parser_is_legal_white_space_string(const char* s);
 #endif
 
 
-#endif /* JSON_PARSER_H */
+#endif
+
