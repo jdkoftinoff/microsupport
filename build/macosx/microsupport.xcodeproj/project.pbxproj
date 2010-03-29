@@ -1,0 +1,161 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		BFF4CB7011612C0B002C7012 /* all */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = BFF4CB7611612C18002C7012 /* Build configuration list for PBXAggregateTarget "all" */;
+			buildPhases = (
+			);
+			dependencies = (
+				BFF4CB7811613B91002C7012 /* PBXTargetDependency */,
+			);
+			name = all;
+			productName = all;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXContainerItemProxy section */
+		BFF4CB6D11612BF6002C7012 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFF4CB6911612BF6002C7012 /* us.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC046055464E500DB518D /* libus.a */;
+			remoteInfo = us;
+		};
+		BFF4CB7711613B91002C7012 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFF4CB6911612BF6002C7012 /* us.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC045055464E500DB518D /* us */;
+			remoteInfo = us;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		BFF4CB6911612BF6002C7012 /* us.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us.xcodeproj; path = us/us.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		BFF4CB5211612B68002C7012 = {
+			isa = PBXGroup;
+			children = (
+				BFF4CB6911612BF6002C7012 /* us.xcodeproj */,
+			);
+			sourceTree = "<group>";
+		};
+		BFF4CB6A11612BF6002C7012 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFF4CB6E11612BF6002C7012 /* libus.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		BFF4CB5411612B68002C7012 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = BFF4CB5711612B68002C7012 /* Build configuration list for PBXProject "microsupport" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = BFF4CB5211612B68002C7012;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = BFF4CB6A11612BF6002C7012 /* Products */;
+					ProjectRef = BFF4CB6911612BF6002C7012 /* us.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				BFF4CB7011612C0B002C7012 /* all */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		BFF4CB6E11612BF6002C7012 /* libus.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libus.a;
+			remoteRef = BFF4CB6D11612BF6002C7012 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXTargetDependency section */
+		BFF4CB7811613B91002C7012 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us;
+			targetProxy = BFF4CB7711613B91002C7012 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		BFF4CB5511612B68002C7012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		BFF4CB5611612B68002C7012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Release;
+		};
+		BFF4CB7111612C0B002C7012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = all;
+			};
+			name = Debug;
+		};
+		BFF4CB7211612C0B002C7012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = all;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BFF4CB5711612B68002C7012 /* Build configuration list for PBXProject "microsupport" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFF4CB5511612B68002C7012 /* Debug */,
+				BFF4CB5611612B68002C7012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BFF4CB7611612C18002C7012 /* Build configuration list for PBXAggregateTarget "all" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFF4CB7111612C0B002C7012 /* Debug */,
+				BFF4CB7211612C0B002C7012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BFF4CB5411612B68002C7012 /* Project object */;
+}

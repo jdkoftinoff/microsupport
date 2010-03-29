@@ -1,0 +1,372 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BFF4CB9111613BB5002C7012 /* us_allocator_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7A11613BB5002C7012 /* us_allocator_print.h */; };
+		BFF4CB9211613BB5002C7012 /* us_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7B11613BB5002C7012 /* us_allocator.h */; };
+		BFF4CB9311613BB5002C7012 /* us_buffer_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7C11613BB5002C7012 /* us_buffer_print.h */; };
+		BFF4CB9411613BB5002C7012 /* us_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7D11613BB5002C7012 /* us_buffer.h */; };
+		BFF4CB9511613BB5002C7012 /* us_http.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7E11613BB5002C7012 /* us_http.h */; };
+		BFF4CB9611613BB5002C7012 /* us_json_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7F11613BB5002C7012 /* us_json_parser.h */; };
+		BFF4CB9711613BB5002C7012 /* us_json.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8011613BB5002C7012 /* us_json.h */; };
+		BFF4CB9811613BB5002C7012 /* us_logger_printer.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8111613BB5002C7012 /* us_logger_printer.h */; };
+		BFF4CB9911613BB5002C7012 /* us_logger_stdio.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8211613BB5002C7012 /* us_logger_stdio.h */; };
+		BFF4CB9A11613BB5002C7012 /* us_logger_syslog.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8311613BB5002C7012 /* us_logger_syslog.h */; };
+		BFF4CB9B11613BB5002C7012 /* us_logger_udp.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8411613BB5002C7012 /* us_logger_udp.h */; };
+		BFF4CB9C11613BB5002C7012 /* us_logger.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8511613BB5002C7012 /* us_logger.h */; };
+		BFF4CB9D11613BB5002C7012 /* us_net.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8611613BB5002C7012 /* us_net.h */; };
+		BFF4CB9E11613BB5002C7012 /* us_options.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8711613BB5002C7012 /* us_options.h */; };
+		BFF4CB9F11613BB5002C7012 /* us_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8811613BB5002C7012 /* us_platform.h */; };
+		BFF4CBA011613BB5002C7012 /* us_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8911613BB5002C7012 /* us_print.h */; };
+		BFF4CBA111613BB5002C7012 /* us_queue.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8A11613BB5002C7012 /* us_queue.h */; };
+		BFF4CBA211613BB5002C7012 /* us_serial.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8B11613BB5002C7012 /* us_serial.h */; };
+		BFF4CBA311613BB5002C7012 /* us_slip.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8C11613BB5002C7012 /* us_slip.h */; };
+		BFF4CBA411613BB5002C7012 /* us_testutil.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8D11613BB5002C7012 /* us_testutil.h */; };
+		BFF4CBA511613BB5002C7012 /* us_time.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8E11613BB5002C7012 /* us_time.h */; };
+		BFF4CBA611613BB5002C7012 /* us_world.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB8F11613BB5002C7012 /* us_world.h */; };
+		BFF4CBA711613BB5002C7012 /* us.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB9011613BB5002C7012 /* us.h */; };
+		BFF4CBBD11613BC5002C7012 /* us_allocator_print.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBA811613BC5002C7012 /* us_allocator_print.c */; };
+		BFF4CBBE11613BC5002C7012 /* us_allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBA911613BC5002C7012 /* us_allocator.c */; };
+		BFF4CBBF11613BC5002C7012 /* us_buffer_print.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBAA11613BC5002C7012 /* us_buffer_print.c */; };
+		BFF4CBC011613BC5002C7012 /* us_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBAB11613BC5002C7012 /* us_buffer.c */; };
+		BFF4CBC111613BC5002C7012 /* us_http.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBAC11613BC5002C7012 /* us_http.c */; };
+		BFF4CBC211613BC5002C7012 /* us_json_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBAD11613BC5002C7012 /* us_json_parser.c */; };
+		BFF4CBC311613BC5002C7012 /* us_json.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBAE11613BC5002C7012 /* us_json.c */; };
+		BFF4CBC411613BC5002C7012 /* us_logger_printer.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBAF11613BC5002C7012 /* us_logger_printer.c */; };
+		BFF4CBC511613BC5002C7012 /* us_logger_stdio.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB011613BC5002C7012 /* us_logger_stdio.c */; };
+		BFF4CBC611613BC5002C7012 /* us_logger_syslog.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB111613BC5002C7012 /* us_logger_syslog.c */; };
+		BFF4CBC711613BC5002C7012 /* us_logger_udp.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB211613BC5002C7012 /* us_logger_udp.c */; };
+		BFF4CBC811613BC5002C7012 /* us_logger.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB311613BC5002C7012 /* us_logger.c */; };
+		BFF4CBC911613BC5002C7012 /* us_net.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB411613BC5002C7012 /* us_net.c */; };
+		BFF4CBCA11613BC5002C7012 /* us_platform.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB511613BC5002C7012 /* us_platform.c */; };
+		BFF4CBCB11613BC5002C7012 /* us_print.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB611613BC5002C7012 /* us_print.c */; };
+		BFF4CBCC11613BC5002C7012 /* us_queue.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB711613BC5002C7012 /* us_queue.c */; };
+		BFF4CBCD11613BC5002C7012 /* us_serial.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB811613BC5002C7012 /* us_serial.c */; };
+		BFF4CBCE11613BC5002C7012 /* us_slip.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBB911613BC5002C7012 /* us_slip.c */; };
+		BFF4CBCF11613BC5002C7012 /* us_testutil.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBBA11613BC5002C7012 /* us_testutil.c */; };
+		BFF4CBD011613BC5002C7012 /* us_time.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBBB11613BC5002C7012 /* us_time.c */; };
+		BFF4CBD111613BC5002C7012 /* us_world.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBBC11613BC5002C7012 /* us_world.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		BFF4CB7A11613BB5002C7012 /* us_allocator_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_allocator_print.h; path = ../../../include/us_allocator_print.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB7B11613BB5002C7012 /* us_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_allocator.h; path = ../../../include/us_allocator.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB7C11613BB5002C7012 /* us_buffer_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_buffer_print.h; path = ../../../include/us_buffer_print.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB7D11613BB5002C7012 /* us_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_buffer.h; path = ../../../include/us_buffer.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB7E11613BB5002C7012 /* us_http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_http.h; path = ../../../include/us_http.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB7F11613BB5002C7012 /* us_json_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_json_parser.h; path = ../../../include/us_json_parser.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8011613BB5002C7012 /* us_json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_json.h; path = ../../../include/us_json.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8111613BB5002C7012 /* us_logger_printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_logger_printer.h; path = ../../../include/us_logger_printer.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8211613BB5002C7012 /* us_logger_stdio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_logger_stdio.h; path = ../../../include/us_logger_stdio.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8311613BB5002C7012 /* us_logger_syslog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_logger_syslog.h; path = ../../../include/us_logger_syslog.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8411613BB5002C7012 /* us_logger_udp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_logger_udp.h; path = ../../../include/us_logger_udp.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8511613BB5002C7012 /* us_logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_logger.h; path = ../../../include/us_logger.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8611613BB5002C7012 /* us_net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_net.h; path = ../../../include/us_net.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8711613BB5002C7012 /* us_options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_options.h; path = ../../../include/us_options.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8811613BB5002C7012 /* us_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_platform.h; path = ../../../include/us_platform.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8911613BB5002C7012 /* us_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_print.h; path = ../../../include/us_print.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8A11613BB5002C7012 /* us_queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_queue.h; path = ../../../include/us_queue.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8B11613BB5002C7012 /* us_serial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_serial.h; path = ../../../include/us_serial.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8C11613BB5002C7012 /* us_slip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_slip.h; path = ../../../include/us_slip.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8D11613BB5002C7012 /* us_testutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_testutil.h; path = ../../../include/us_testutil.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8E11613BB5002C7012 /* us_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_time.h; path = ../../../include/us_time.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB8F11613BB5002C7012 /* us_world.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_world.h; path = ../../../include/us_world.h; sourceTree = SOURCE_ROOT; };
+		BFF4CB9011613BB5002C7012 /* us.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us.h; path = ../../../include/us.h; sourceTree = SOURCE_ROOT; };
+		BFF4CBA811613BC5002C7012 /* us_allocator_print.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_allocator_print.c; path = ../../../src/us_allocator_print.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBA911613BC5002C7012 /* us_allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_allocator.c; path = ../../../src/us_allocator.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBAA11613BC5002C7012 /* us_buffer_print.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_buffer_print.c; path = ../../../src/us_buffer_print.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBAB11613BC5002C7012 /* us_buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_buffer.c; path = ../../../src/us_buffer.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBAC11613BC5002C7012 /* us_http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_http.c; path = ../../../src/us_http.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBAD11613BC5002C7012 /* us_json_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_json_parser.c; path = ../../../src/us_json_parser.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBAE11613BC5002C7012 /* us_json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_json.c; path = ../../../src/us_json.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBAF11613BC5002C7012 /* us_logger_printer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_logger_printer.c; path = ../../../src/us_logger_printer.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB011613BC5002C7012 /* us_logger_stdio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_logger_stdio.c; path = ../../../src/us_logger_stdio.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB111613BC5002C7012 /* us_logger_syslog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_logger_syslog.c; path = ../../../src/us_logger_syslog.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB211613BC5002C7012 /* us_logger_udp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_logger_udp.c; path = ../../../src/us_logger_udp.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB311613BC5002C7012 /* us_logger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_logger.c; path = ../../../src/us_logger.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB411613BC5002C7012 /* us_net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_net.c; path = ../../../src/us_net.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB511613BC5002C7012 /* us_platform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_platform.c; path = ../../../src/us_platform.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB611613BC5002C7012 /* us_print.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_print.c; path = ../../../src/us_print.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB711613BC5002C7012 /* us_queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_queue.c; path = ../../../src/us_queue.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB811613BC5002C7012 /* us_serial.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_serial.c; path = ../../../src/us_serial.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBB911613BC5002C7012 /* us_slip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_slip.c; path = ../../../src/us_slip.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBBA11613BC5002C7012 /* us_testutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_testutil.c; path = ../../../src/us_testutil.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBBB11613BC5002C7012 /* us_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_time.c; path = ../../../src/us_time.c; sourceTree = SOURCE_ROOT; };
+		BFF4CBBC11613BC5002C7012 /* us_world.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_world.c; path = ../../../src/us_world.c; sourceTree = SOURCE_ROOT; };
+		D2AAC046055464E500DB518D /* libus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libus.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D289987405E68DCB004EDB86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* us */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6A0FF2B0290797F04C91782 /* Documentation */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = us;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				BFF4CBA811613BC5002C7012 /* us_allocator_print.c */,
+				BFF4CBA911613BC5002C7012 /* us_allocator.c */,
+				BFF4CBAA11613BC5002C7012 /* us_buffer_print.c */,
+				BFF4CBAB11613BC5002C7012 /* us_buffer.c */,
+				BFF4CBAC11613BC5002C7012 /* us_http.c */,
+				BFF4CBAD11613BC5002C7012 /* us_json_parser.c */,
+				BFF4CBAE11613BC5002C7012 /* us_json.c */,
+				BFF4CBAF11613BC5002C7012 /* us_logger_printer.c */,
+				BFF4CBB011613BC5002C7012 /* us_logger_stdio.c */,
+				BFF4CBB111613BC5002C7012 /* us_logger_syslog.c */,
+				BFF4CBB211613BC5002C7012 /* us_logger_udp.c */,
+				BFF4CBB311613BC5002C7012 /* us_logger.c */,
+				BFF4CBB411613BC5002C7012 /* us_net.c */,
+				BFF4CBB511613BC5002C7012 /* us_platform.c */,
+				BFF4CBB611613BC5002C7012 /* us_print.c */,
+				BFF4CBB711613BC5002C7012 /* us_queue.c */,
+				BFF4CBB811613BC5002C7012 /* us_serial.c */,
+				BFF4CBB911613BC5002C7012 /* us_slip.c */,
+				BFF4CBBA11613BC5002C7012 /* us_testutil.c */,
+				BFF4CBBB11613BC5002C7012 /* us_time.c */,
+				BFF4CBBC11613BC5002C7012 /* us_world.c */,
+				BFF4CB7A11613BB5002C7012 /* us_allocator_print.h */,
+				BFF4CB7B11613BB5002C7012 /* us_allocator.h */,
+				BFF4CB7C11613BB5002C7012 /* us_buffer_print.h */,
+				BFF4CB7D11613BB5002C7012 /* us_buffer.h */,
+				BFF4CB7E11613BB5002C7012 /* us_http.h */,
+				BFF4CB7F11613BB5002C7012 /* us_json_parser.h */,
+				BFF4CB8011613BB5002C7012 /* us_json.h */,
+				BFF4CB8111613BB5002C7012 /* us_logger_printer.h */,
+				BFF4CB8211613BB5002C7012 /* us_logger_stdio.h */,
+				BFF4CB8311613BB5002C7012 /* us_logger_syslog.h */,
+				BFF4CB8411613BB5002C7012 /* us_logger_udp.h */,
+				BFF4CB8511613BB5002C7012 /* us_logger.h */,
+				BFF4CB8611613BB5002C7012 /* us_net.h */,
+				BFF4CB8711613BB5002C7012 /* us_options.h */,
+				BFF4CB8811613BB5002C7012 /* us_platform.h */,
+				BFF4CB8911613BB5002C7012 /* us_print.h */,
+				BFF4CB8A11613BB5002C7012 /* us_queue.h */,
+				BFF4CB8B11613BB5002C7012 /* us_serial.h */,
+				BFF4CB8C11613BB5002C7012 /* us_slip.h */,
+				BFF4CB8D11613BB5002C7012 /* us_testutil.h */,
+				BFF4CB8E11613BB5002C7012 /* us_time.h */,
+				BFF4CB8F11613BB5002C7012 /* us_world.h */,
+				BFF4CB9011613BB5002C7012 /* us.h */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC046055464E500DB518D /* libus.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C6A0FF2B0290797F04C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC043055464E500DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFF4CB9111613BB5002C7012 /* us_allocator_print.h in Headers */,
+				BFF4CB9211613BB5002C7012 /* us_allocator.h in Headers */,
+				BFF4CB9311613BB5002C7012 /* us_buffer_print.h in Headers */,
+				BFF4CB9411613BB5002C7012 /* us_buffer.h in Headers */,
+				BFF4CB9511613BB5002C7012 /* us_http.h in Headers */,
+				BFF4CB9611613BB5002C7012 /* us_json_parser.h in Headers */,
+				BFF4CB9711613BB5002C7012 /* us_json.h in Headers */,
+				BFF4CB9811613BB5002C7012 /* us_logger_printer.h in Headers */,
+				BFF4CB9911613BB5002C7012 /* us_logger_stdio.h in Headers */,
+				BFF4CB9A11613BB5002C7012 /* us_logger_syslog.h in Headers */,
+				BFF4CB9B11613BB5002C7012 /* us_logger_udp.h in Headers */,
+				BFF4CB9C11613BB5002C7012 /* us_logger.h in Headers */,
+				BFF4CB9D11613BB5002C7012 /* us_net.h in Headers */,
+				BFF4CB9E11613BB5002C7012 /* us_options.h in Headers */,
+				BFF4CB9F11613BB5002C7012 /* us_platform.h in Headers */,
+				BFF4CBA011613BB5002C7012 /* us_print.h in Headers */,
+				BFF4CBA111613BB5002C7012 /* us_queue.h in Headers */,
+				BFF4CBA211613BB5002C7012 /* us_serial.h in Headers */,
+				BFF4CBA311613BB5002C7012 /* us_slip.h in Headers */,
+				BFF4CBA411613BB5002C7012 /* us_testutil.h in Headers */,
+				BFF4CBA511613BB5002C7012 /* us_time.h in Headers */,
+				BFF4CBA611613BB5002C7012 /* us_world.h in Headers */,
+				BFF4CBA711613BB5002C7012 /* us.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC045055464E500DB518D /* us */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91EB08733DB70010E9CD /* Build configuration list for PBXNativeTarget "us" */;
+			buildPhases = (
+				D2AAC043055464E500DB518D /* Headers */,
+				D2AAC044055464E500DB518D /* Sources */,
+				D289987405E68DCB004EDB86 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = us;
+			productName = us;
+			productReference = D2AAC046055464E500DB518D /* libus.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "us" */;
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* us */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC045055464E500DB518D /* us */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC044055464E500DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFF4CBBD11613BC5002C7012 /* us_allocator_print.c in Sources */,
+				BFF4CBBE11613BC5002C7012 /* us_allocator.c in Sources */,
+				BFF4CBBF11613BC5002C7012 /* us_buffer_print.c in Sources */,
+				BFF4CBC011613BC5002C7012 /* us_buffer.c in Sources */,
+				BFF4CBC111613BC5002C7012 /* us_http.c in Sources */,
+				BFF4CBC211613BC5002C7012 /* us_json_parser.c in Sources */,
+				BFF4CBC311613BC5002C7012 /* us_json.c in Sources */,
+				BFF4CBC411613BC5002C7012 /* us_logger_printer.c in Sources */,
+				BFF4CBC511613BC5002C7012 /* us_logger_stdio.c in Sources */,
+				BFF4CBC611613BC5002C7012 /* us_logger_syslog.c in Sources */,
+				BFF4CBC711613BC5002C7012 /* us_logger_udp.c in Sources */,
+				BFF4CBC811613BC5002C7012 /* us_logger.c in Sources */,
+				BFF4CBC911613BC5002C7012 /* us_net.c in Sources */,
+				BFF4CBCA11613BC5002C7012 /* us_platform.c in Sources */,
+				BFF4CBCB11613BC5002C7012 /* us_print.c in Sources */,
+				BFF4CBCC11613BC5002C7012 /* us_queue.c in Sources */,
+				BFF4CBCD11613BC5002C7012 /* us_serial.c in Sources */,
+				BFF4CBCE11613BC5002C7012 /* us_slip.c in Sources */,
+				BFF4CBCF11613BC5002C7012 /* us_testutil.c in Sources */,
+				BFF4CBD011613BC5002C7012 /* us_time.c in Sources */,
+				BFF4CBD111613BC5002C7012 /* us_world.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91EC08733DB70010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = us;
+			};
+			name = Debug;
+		};
+		1DEB91ED08733DB70010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = us;
+			};
+			name = Release;
+		};
+		1DEB91F008733DB70010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../include;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		1DEB91F108733DB70010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../include;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91EB08733DB70010E9CD /* Build configuration list for PBXNativeTarget "us" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91EC08733DB70010E9CD /* Debug */,
+				1DEB91ED08733DB70010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "us" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91F008733DB70010E9CD /* Debug */,
+				1DEB91F108733DB70010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
