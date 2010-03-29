@@ -51,7 +51,7 @@ extern "C" {
   (T *)((ALLOCATOR)->alloc( (ALLOCATOR), (int32_t)sizeof( T ), 1 ))
 
 #define us_delete( ALLOCATOR, PTR )             \
-  (ALLOCATOR)->free( (ALLOCATOR), (PTR))
+  do { if( (ALLOCATOR)!=0 && (PTR)!=0 ) (ALLOCATOR)->free( (ALLOCATOR), (PTR)); } while(false)
 
 
   /** us_new_array
