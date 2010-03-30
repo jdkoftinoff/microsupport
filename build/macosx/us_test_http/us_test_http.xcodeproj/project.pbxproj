@@ -19,6 +19,13 @@
 			remoteGlobalIDString = D2AAC046055464E500DB518D;
 			remoteInfo = us;
 		};
+		BFB1B4951162801D00F0ADB9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA28711615AE3004D450A /* us.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC045055464E500DB518D;
+			remoteInfo = us;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -107,6 +114,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				BFB1B4961162801D00F0ADB9 /* PBXTargetDependency */,
 			);
 			name = us_test_http;
 			productInstallPath = "$(HOME)/bin";
@@ -157,6 +165,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BFB1B4961162801D00F0ADB9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us;
+			targetProxy = BFB1B4951162801D00F0ADB9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB928608733DD80010E9CD /* Debug */ = {

@@ -53,8 +53,26 @@ bool us_test_http_request( void )
                                                                   "/products/d-mitri/" 
                                                                   );
   if( req )
-  {      
-    /* TODO: flatten and print */
+  {
+    us_buffer_t *buf;
+    
+    
+    buf=us_buffer_create(us_testutil_session_allocator, 4096 );
+    if( buf )
+    {
+      r&=us_http_request_header_flatten(req, buf);
+
+      if( r )
+      {
+        us_buffer_print_string( buf, us_testutil_printer_stdout );        
+      }
+      buf->destroy( buf );
+    }
+    else 
+    {
+      r=0;
+    }
+
   }
   else 
   {
@@ -76,7 +94,24 @@ bool us_test_http_response( void )
                                                                       );
   if( resp )
   {      
-    /* TODO: flatten and print */
+    us_buffer_t *buf;
+
+    buf=us_buffer_create(us_testutil_session_allocator, 4096 );
+    if( buf )
+    {
+      r&=us_http_response_header_flatten(resp, buf);
+      
+      if( r )
+      {
+        us_buffer_print_string( buf, us_testutil_printer_stdout );        
+      }
+      buf->destroy( buf );
+    }
+    else 
+    {
+      r=0;
+    }
+    
   }
   else 
   {

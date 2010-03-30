@@ -150,6 +150,7 @@ extern "C" {
 
     us_allocator_t *m_allocator;
     int m_code;
+    const char *m_version;
     us_http_header_item_list_t *m_items;
   } us_http_response_header_t;
 
@@ -238,6 +239,9 @@ extern "C" {
                                  us_http_header_item_list_t *self,
                                  us_buffer_t *buf
                                  );
+  
+  const char *
+  us_http_reason_phrase( int code );
   
 #ifdef __cplusplus
 }

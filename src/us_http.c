@@ -186,6 +186,7 @@ us_http_response_header_create( us_allocator_t *allocator )
     self->m_allocator = allocator;
     self->destroy = us_http_response_header_destroy;
     self->m_code = 0;
+    self->m_version = "HTTP/1.1";
     self->m_items = us_http_header_item_list_create(allocator);
     if( !self->m_items )
     {
@@ -423,8 +424,24 @@ us_http_response_header_flatten(
                                 us_buffer_t *buf
                                 )
 {
-  /* TODO */
-  return false;
+  bool r=true;
+  
+  r&=us_buffer_append_string(buf, self->m_version );
+  r&=us_buffer_append_string(buf, " " );
+  
+  {
+    char status_code_str[16];
+    US_DEFAULT_SNPRINTF( status_code_str, 16, "%03d", (self->m_code%1000) );
+    r&=us_buffer_append_string(buf, status_code_str );
+  }
+  
+  r&=us_buffer_append_string(buf, " " );
+  r&=us_buffer_append_string(buf, us_http_reason_phrase( self->m_code ) );
+  r&=us_buffer_append_string(buf, "\r\n" );
+  
+  r&=us_http_header_item_list_flatten(self->m_items, buf);
+  
+  return r;
 }
 
 bool
@@ -433,8 +450,17 @@ us_http_request_header_flatten(
                                us_buffer_t *buf
                                )
 {
-  /* TODO */
-  return false;
+  bool r=true;
+  
+  r&=us_buffer_append_string(buf, self->m_method );
+  r&=us_buffer_append_string(buf, " ");
+  r&=us_buffer_append_string(buf, self->m_path );
+  r&=us_buffer_append_string(buf, " ");
+  r&=us_buffer_append_string(buf, self->m_version );
+  r&=us_buffer_append_string(buf, "\r\n");
+  
+  r&=us_http_header_item_list_flatten(self->m_items, buf);
+  return r;
 }
 
 bool
@@ -443,8 +469,22 @@ us_http_header_item_list_flatten(
                                  us_buffer_t *buf
                                  )
 {
-  /* TODO */
-  return false;
+  bool r=true;
+  us_http_header_item_t *item = self->m_first;
+  
+  while ( item )
+  {
+    r&=us_buffer_append_string(buf, item->m_key);
+    r&=us_buffer_append_string(buf, ": " );
+    r&=us_buffer_append_string(buf, item->m_value);    
+    r&=us_buffer_append_string(buf, "\r\n");    
+    
+    item = item->m_next;
+  }
+
+  r&=us_buffer_append_string(buf, "\r\n");
+  
+  return r;
 }
 
 bool
@@ -477,4 +517,54 @@ us_http_header_item_list_parse(
   return false;
 }
 
+const char *
+us_http_reason_phrase( int code )
+{
+  const char *r;
+  switch( code )
+  {
+    case 100:  r="Continue"; break;
+    case 101:  r="Switching Protocols"; break;
+    case 200:  r="OK"; break;
+    case 201:  r="Created"; break;
+    case 202:  r="Accepted"; break;
+    case 203:  r="Non-Authoritative Information"; break;
+    case 204:  r="No Content"; break;
+    case 205:  r="Reset Content"; break;
+    case 206:  r="Partial Content"; break;
+    case 300:  r="Multiple Choices"; break;
+    case 301:  r="Moved Permanently"; break;
+    case 302:  r="Found"; break;
+    case 303:  r="See Other"; break;
+    case 304:  r="Not Modified"; break;
+    case 305:  r="Use Proxy"; break;
+    case 307:  r="Temporary Redirect"; break;
+    case 400:  r="Bad Request"; break;
+    case 401:  r="Unauthorized"; break;
+    case 402:  r="Payment Required"; break;
+    case 403:  r="Forbidden"; break;
+    case 404:  r="Not Found"; break;
+    case 405:  r="Method Not Allowed"; break;
+    case 406:  r="Not Acceptable"; break;
+    case 407:  r="Proxy Authentication Required"; break;
+    case 408:  r="Request Time-out"; break;
+    case 409:  r="Conflict"; break;
+    case 410:  r="Gone"; break;
+    case 411:  r="Length Required"; break;
+    case 412:  r="Precondition Failed"; break;
+    case 413:  r="Request Entity Too Large"; break;
+    case 414:  r="Request-URI Too Large"; break;
+    case 415:  r="Unsupported Media Type"; break;
+    case 416:  r="Requested range not satisfiable"; break;
+    case 417:  r="Expectation Failed"; break;
+    case 500:  r="Internal Server Error"; break;
+    case 501:  r="Not Implemented"; break;
+    case 502:  r="Bad Gateway"; break;
+    case 503:  r="Service Unavailable"; break;
+    case 504:  r="Gateway Time-out"; break;
+    case 505:  r="HTTP Version not supported"; break;
+    default:   r="Unknown"; break;  
+  }
+  return r;  
+}
 
