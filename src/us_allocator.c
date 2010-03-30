@@ -32,6 +32,17 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+char * us_strdup( struct us_allocator_s *allocator, const char *src )
+{
+  int len=strlen( src );
+  char *p = us_new_array( allocator, char, len+1 );
+  if( p )
+  {
+    strcpy( p, src );
+  }
+  return p;
+}
+
 us_allocator_t *
 us_simple_allocator_init(
                          us_simple_allocator_t *self,

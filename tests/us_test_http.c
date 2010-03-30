@@ -35,16 +35,64 @@
  */
 
 
-/** \addtogroup us_test_net */
+/** \addtogroup us_test_http */
 /*@{*/
 
 
 bool us_test_http( void );
 
+bool us_test_http_request( void );
+bool us_test_http_response( void );
+
+bool us_test_http_request( void )
+{
+  bool r=true;
+  us_http_request_header_t *req = us_http_request_header_create_get(
+                                                                  us_testutil_session_allocator, 
+                                                                  "www.meyersound.com:80", 
+                                                                  "/products/d-mitri/" 
+                                                                  );
+  if( req )
+  {      
+    /* TODO: flatten and print */
+  }
+  else 
+  {
+    r=0;
+  }
+
+  return r;
+}
+
+bool us_test_http_response( void )
+{
+  bool r=true;
+  const char *html = "<html><head><title>Test</title></head><body><p>Hello There</p></body>";
+  us_http_response_header_t *resp = us_http_response_header_create_ok(
+                                                                      us_testutil_session_allocator, 
+                                                                      200, 
+                                                                      "text/html",
+                                                                      strlen(html)
+                                                                      );
+  if( resp )
+  {      
+    /* TODO: flatten and print */
+  }
+  else 
+  {
+    r=0;
+  }
+  
+  return r;
+  
+}
+
 bool us_test_http( void )
 {
-  bool r=false;
-  us_log_error( "Unimplemented" );
+  bool r=true;
+
+  r&=us_test_http_request();
+  r&=us_test_http_response();
   
   return r;
 }

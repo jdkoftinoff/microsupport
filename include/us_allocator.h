@@ -49,7 +49,7 @@ extern "C" {
 
 #define us_new( ALLOCATOR, T )                                      \
   (T *)((ALLOCATOR)->alloc( (ALLOCATOR), (int32_t)sizeof( T ), 1 ))
-
+  
 #define us_delete( ALLOCATOR, PTR )             \
   do { if( (ALLOCATOR)!=0 && (PTR)!=0 ) (ALLOCATOR)->free( (ALLOCATOR), (PTR)); } while(false)
 
@@ -70,6 +70,7 @@ extern "C" {
 #define us_round_size( VALUE )                                          \
   (((VALUE) + (uint32_t)(sizeof (uint32_t))-1) & (uint32_t)~(sizeof (uint32_t)-1))
 
+  
   /** us_allocator_t
 
       The us_allocator implements a
@@ -235,6 +236,9 @@ extern "C" {
 
 #endif
 
+  char * us_strdup( struct us_allocator_s *allocator, const char *src );
+  
+    
 #ifdef __cplusplus
 }
 #endif
