@@ -47,11 +47,14 @@ bool us_test_http_response( void );
 bool us_test_http_request( void )
 {
   bool r=true;
-  us_http_request_header_t *req = us_http_request_header_create_get(
-                                                                  us_testutil_session_allocator, 
-                                                                  "www.meyersound.com:80", 
-                                                                  "/products/d-mitri/" 
-                                                                  );
+  us_http_request_header_t *req;
+  
+  req = us_http_request_header_create_get(
+                                          us_testutil_session_allocator, 
+                                          "www.meyersound.com:80", 
+                                          "/products/d-mitri/" 
+                                          );
+  
   if( req )
   {
     us_buffer_t *buf;
@@ -64,15 +67,30 @@ bool us_test_http_request( void )
 
       if( r )
       {
+        us_log_info( "generated request:" );        
         us_buffer_print_string( buf, us_testutil_printer_stdout );        
+      
+        {
+          us_http_request_header_t *parsed_req;
+          parsed_req = us_http_request_header_create(us_testutil_session_allocator);
+          r&=us_http_request_header_parse( parsed_req, buf );
+          if( r )
+          {
+            us_log_info( "parsed request:" );
+            us_buffer_reset(buf);
+            us_buffer_print_string( buf, us_testutil_printer_stdout );
+            parsed_req->destroy( parsed_req );
+          }
+        }
       }
+      
       buf->destroy( buf );
     }
     else 
     {
-      r=0;
+      r=false;
     }
-
+    req->destroy( req );
   }
   else 
   {
@@ -85,13 +103,15 @@ bool us_test_http_request( void )
 bool us_test_http_response( void )
 {
   bool r=true;
-  const char *html = "<html><head><title>Test</title></head><body><p>Hello There</p></body>";
-  us_http_response_header_t *resp = us_http_response_header_create_ok(
-                                                                      us_testutil_session_allocator, 
-                                                                      200, 
-                                                                      "text/html",
-                                                                      strlen(html)
-                                                                      );
+  const char *html = "<html><head><title>Test</title></head><body><p>Hello There</p></body></html>";
+  us_http_response_header_t *resp;
+  
+  resp = us_http_response_header_create_ok(
+                                           us_testutil_session_allocator, 
+                                           200, 
+                                           "text/html",
+                                           strlen(html)
+                                           );
   if( resp )
   {      
     us_buffer_t *buf;
@@ -102,14 +122,29 @@ bool us_test_http_response( void )
       r&=us_http_response_header_flatten(resp, buf);
       
       if( r )
-      {
+      {        
+        us_log_info( "generated response:" );
         us_buffer_print_string( buf, us_testutil_printer_stdout );        
+        us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "%s\n", html );
+        {
+          us_http_response_header_t *parsed_resp;
+          parsed_resp = us_http_response_header_create(us_testutil_session_allocator);
+          r&=us_http_response_header_parse( parsed_resp, buf );
+          if( r )
+          {
+            us_log_info( "parsed response:" );
+            us_buffer_reset(buf);
+            us_buffer_print_string( buf, us_testutil_printer_stdout );
+            parsed_resp->destroy( parsed_resp );
+          }
+        }
       }
+      
       buf->destroy( buf );
     }
     else 
     {
-      r=0;
+      r=false;
     }
     
   }
@@ -126,8 +161,16 @@ bool us_test_http( void )
 {
   bool r=true;
 
-  r&=us_test_http_request();
-  r&=us_test_http_response();
+  if( !us_test_http_request() )
+  {
+    r=false;
+    us_log_error( "http request test failed" );
+  }
+  if( !us_test_http_response() )
+  {
+    r=false;
+    us_log_error( "http request test failed" );
+  }
   
   return r;
 }

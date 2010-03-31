@@ -40,20 +40,49 @@ extern "C" {
 
   typedef struct us_http_header_item_s
   {
-    char *m_key;
-    char *m_value;
+    const char *m_key;
+    const char *m_value;
     struct us_http_header_item_s *m_next;
   } us_http_header_item_t;
 
   typedef struct us_http_header_item_list_s
   {
-    void (*destroy)( struct us_http_header_item_list_s *self );
-    us_http_header_item_t * (*add)( struct us_http_header_item_list_s *self, const char *key, const char *value );
-    bool (*remove)( struct us_http_header_item_list_s *self, us_http_header_item_t *item );
-    us_http_header_item_t * (*find)( struct us_http_header_item_list_s *self, const char *key );
+    void 
+    (*destroy)( 
+               struct us_http_header_item_list_s *self 
+               );
+    
+    us_http_header_item_t * 
+    (*add)( 
+           struct us_http_header_item_list_s *self, 
+           const char *key, 
+           const char *value 
+           );
+
+    us_http_header_item_t * 
+    (*addn)( 
+            struct us_http_header_item_list_s *self, 
+            const char *key, 
+            int key_len,
+            const char *value,
+            int value_len
+           );
+    
+    bool 
+    (*remove)( 
+              struct us_http_header_item_list_s *self, 
+              us_http_header_item_t *item 
+              );
+    
+    us_http_header_item_t * 
+    (*find)( 
+            struct us_http_header_item_list_s *self, 
+            const char *key 
+            );
 
     us_allocator_t *m_allocator;
     us_http_header_item_t *m_first;
+    
   } us_http_header_item_list_t;
 
   us_http_header_item_list_t *
@@ -68,6 +97,15 @@ extern "C" {
                                const char *value
                                );
 
+  us_http_header_item_t *
+  us_http_header_item_list_addn(
+                                us_http_header_item_list_t *self,
+                                const char *key,
+                                int key_len,
+                                const char *value,
+                                int value_len
+                               );
+  
   bool
   us_http_header_item_list_remove(
                                   us_http_header_item_list_t *self,
@@ -83,12 +121,15 @@ extern "C" {
 
   typedef struct us_http_request_header_s
   {
-    void (*destroy)( struct us_http_request_header_s * );
+    void 
+    (*destroy)( 
+               struct us_http_request_header_s * 
+               );
 
     us_allocator_t *m_allocator;
 
     const char *m_method;
-    char *m_path;
+    const char *m_path;
     const char *m_version;
 
     us_http_header_item_list_t *m_items;
@@ -98,9 +139,46 @@ extern "C" {
 
   us_http_request_header_t *
   us_http_request_header_create( us_allocator_t *allocator );
-
+  
   void us_http_request_header_destroy( us_http_request_header_t *self );
 
+  bool
+  us_http_request_header_set_method( 
+                                    us_http_request_header_t *self, 
+                                    const char *method
+                                    );
+  bool
+  us_http_request_header_set_methodn( 
+                                     us_http_request_header_t *self, 
+                                     const char *method,
+                                     int len 
+                                     );
+  
+  bool
+  us_http_request_header_set_version( 
+                                     us_http_request_header_t *self, 
+                                     const char *version 
+                                     );
+  bool
+  us_http_request_header_set_versionn( 
+                                      us_http_request_header_t *self, 
+                                      const char *version,
+                                      int len
+                                      );
+  
+  bool
+  us_http_request_header_set_path( 
+                                  us_http_request_header_t *self, 
+                                  const char *path 
+                                  );
+  
+  bool
+  us_http_request_header_set_pathn( 
+                                   us_http_request_header_t *self, 
+                                   const char *path,
+                                   int len
+                                   );
+  
   us_http_request_header_t *
   us_http_request_header_create_helper(
                                        us_allocator_t *allocator,
@@ -159,6 +237,19 @@ extern "C" {
 
   void us_http_response_header_destroy( us_http_response_header_t *self );
 
+  bool
+  us_http_response_header_set_version(
+                                      us_http_response_header_t *self,
+                                      const char *version
+                                      );
+
+  bool
+  us_http_response_header_set_versionn(
+                                       us_http_response_header_t *self,
+                                       const char *version,
+                                       int len
+                                       );
+  
   bool
   us_http_response_header_set_content_length(
                                              us_http_response_header_t *self,

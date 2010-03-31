@@ -43,6 +43,19 @@ char * us_strdup( struct us_allocator_s *allocator, const char *src )
   return p;
 }
 
+char * us_strndup( struct us_allocator_s *allocator, const char *src, int chars_to_copy )
+{
+  int len=chars_to_copy;
+  char *p = us_new_array( allocator, char, len+1 );
+  if( p )
+  {
+    memcpy( p, src, len );
+    p[len]='\0';
+  }
+  return p;
+}
+
+
 us_allocator_t *
 us_simple_allocator_init(
                          us_simple_allocator_t *self,
@@ -91,7 +104,7 @@ void *us_simple_allocator_alloc(
 
 void *us_simple_allocator_realloc(
                                   struct us_allocator_s *self_,
-                                  void *orig_ptr,
+                                  const void *orig_ptr,
                                   int32_t length,
                                   int32_t count
                                   )
@@ -107,7 +120,7 @@ void *us_simple_allocator_realloc(
 
 void us_simple_allocator_free(
                               struct us_allocator_s *self_,
-                              void *ptr
+                              const void *ptr
                               )
 {
   /* Do nothing; the simple allocator never frees */
@@ -156,20 +169,20 @@ void *us_malloc_allocator_alloc(
 
 void *us_malloc_allocator_realloc(
                                   struct us_allocator_s *self,
-                                  void *orig_ptr,
+                                  const void *orig_ptr,
                                   int32_t length,
                                   int32_t count
                                   )
 {
-  return US_DEFAULT_REALLOC( orig_ptr, us_round_size(length*count) );
+  return US_DEFAULT_REALLOC( (void *)orig_ptr, us_round_size(length*count) );
 }
 
 void us_malloc_allocator_free(
                               struct us_allocator_s *self,
-                              void *ptr
+                              const void *ptr
                               )
 {
-  US_DEFAULT_FREE( ptr );
+  US_DEFAULT_FREE( (void *)ptr );
 }
 
 #endif

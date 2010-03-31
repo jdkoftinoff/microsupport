@@ -101,14 +101,14 @@ extern "C" {
     */
     void *(*realloc)(
                      struct us_allocator_s *self,
-                     void *orig_ptr,
+                     const void *orig_ptr,
                      int32_t length,
                      int32_t count
                      );
 
     void (*free)(
                  struct us_allocator_s *self,
-                 void *ptr
+                 const void *ptr
                  );
   } us_allocator_t;
 
@@ -174,14 +174,14 @@ extern "C" {
 
   void *us_simple_allocator_realloc(
                                     struct us_allocator_s *self,
-                                    void *orig_ptr,
+                                    const void *orig_ptr,
                                     int32_t length,
                                     int32_t count
                                     );
 
   void us_simple_allocator_free(
                                 struct us_allocator_s *self,
-                                void *ptr
+                                const void *ptr
                                 );
 
 #if US_ENABLE_MALLOC
@@ -223,14 +223,14 @@ extern "C" {
 
   void *us_malloc_allocator_realloc(
                                     struct us_allocator_s *self,
-                                    void *orig_ptr,
+                                    const void *orig_ptr,
                                     int32_t length,
                                     int32_t count
                                     );
 
   void us_malloc_allocator_free(
                                 struct us_allocator_s *self,
-                                void *ptr
+                                const void *ptr
                                 );
 
 
@@ -238,6 +238,7 @@ extern "C" {
 
   char * us_strdup( struct us_allocator_s *allocator, const char *src );
   
+  char * us_strndup( struct us_allocator_s *allocator, const char *src, int chars_to_copy );
     
 #ifdef __cplusplus
 }

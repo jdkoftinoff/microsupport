@@ -233,6 +233,15 @@ extern "C" {
                             char *value,
                             int32_t result_max_len
                             );
+  
+  bool
+  us_buffer_read_line(
+                      us_buffer_t *self,
+                      char *value,
+                      int32_t result_max_len
+                      );
+  
+  
 
   /**
    Append a null terminated ascii or utf-8 string to the buffer at the current position.

@@ -37,8 +37,9 @@ us_http_header_item_list_create( us_allocator_t *allocator )
   us_http_header_item_list_t *self = us_new( allocator, us_http_header_item_list_t );
   if( self )
   {
-    self->add = us_http_header_item_list_add;
     self->destroy = us_http_header_item_list_destroy;
+    self->add = us_http_header_item_list_add;
+    self->addn = us_http_header_item_list_addn;
     self->find = us_http_header_item_list_find;
     self->remove = us_http_header_item_list_remove;
     self->m_allocator = allocator;
@@ -90,6 +91,44 @@ us_http_header_item_list_add(
   return item;
 }
 
+us_http_header_item_t *
+us_http_header_item_list_addn(
+                              us_http_header_item_list_t *self,
+                              const char *key,
+                              int key_len,
+                              const char *value,
+                              int value_len
+                              )
+{
+  us_http_header_item_t *item;
+  item = us_new( self->m_allocator, us_http_header_item_t );
+  if( item )
+  {
+    item->m_key = 0;
+    item->m_value = 0;
+    
+    item->m_key = us_strndup(self->m_allocator, key, key_len );
+    if( item->m_key )
+    {          
+      item->m_value =us_strndup(self->m_allocator, value, value_len );
+    }
+    
+    if( item->m_key==0 || item->m_value==0 )
+    {
+      us_delete( self->m_allocator, item->m_key );
+      us_delete( self->m_allocator, item->m_value );
+      us_delete( self->m_allocator, item );
+      item = 0;
+    }
+    else 
+    {
+      item->m_next = self->m_first;
+      self->m_first = item;
+    }
+  }
+  return item;
+  
+}
 
 bool
 us_http_header_item_list_remove(
@@ -155,7 +194,7 @@ us_http_request_header_create( us_allocator_t *allocator )
     self->m_items = us_http_header_item_list_create(allocator);
     self->m_method = 0;
     self->m_path = 0;
-    self->m_version = "HTTP/1.1";
+    self->m_version = 0;
     if( self->m_items==0 )
     {
       us_delete( allocator, self );
@@ -170,10 +209,74 @@ us_http_request_header_create( us_allocator_t *allocator )
 void us_http_request_header_destroy( us_http_request_header_t *self )
 {
   self->m_items->destroy( self->m_items );
+  us_delete( self->m_allocator, self->m_method );
+  us_delete( self->m_allocator, self->m_version );
   us_delete( self->m_allocator, self->m_path );
   us_delete( self->m_allocator, self );  
 }
 
+bool
+us_http_request_header_set_method( 
+                                  us_http_request_header_t *self, 
+                                  const char *method 
+                                  )
+{
+  us_delete( self->m_allocator, self->m_method );
+  self->m_method = us_strdup(self->m_allocator, method);
+}
+
+bool
+us_http_request_header_set_methodn( 
+                                   us_http_request_header_t *self, 
+                                   const char *method,
+                                   int len
+                                  )
+{
+  us_delete( self->m_allocator, self->m_method );
+  self->m_method = us_strndup(self->m_allocator, method, len);
+}
+
+bool
+us_http_request_header_set_version( 
+                                   us_http_request_header_t *self, 
+                                   const char *version 
+                                   )
+{
+  us_delete( self->m_allocator, self->m_version );
+  self->m_version = us_strdup(self->m_allocator, version);
+}
+
+bool
+us_http_request_header_set_versionn( 
+                                    us_http_request_header_t *self, 
+                                    const char *version,
+                                    int len
+                                   )
+{
+  us_delete( self->m_allocator, self->m_version );
+  self->m_version = us_strndup(self->m_allocator, version, len);
+}
+
+bool
+us_http_request_header_set_path( 
+                                us_http_request_header_t *self, 
+                                const char *path 
+                                )
+{
+  us_delete( self->m_allocator, self->m_path );
+  self->m_path = us_strdup(self->m_allocator, path);
+}
+
+bool
+us_http_request_header_set_pathn( 
+                                 us_http_request_header_t *self, 
+                                 const char *path,
+                                 int len
+                                )
+{
+  us_delete( self->m_allocator, self->m_path );
+  self->m_path = us_strndup(self->m_allocator, path, len);
+}
 
 
 us_http_response_header_t *
@@ -186,11 +289,11 @@ us_http_response_header_create( us_allocator_t *allocator )
     self->m_allocator = allocator;
     self->destroy = us_http_response_header_destroy;
     self->m_code = 0;
-    self->m_version = "HTTP/1.1";
+    self->m_version = us_strdup( allocator, "HTTP/1.1" );
     self->m_items = us_http_header_item_list_create(allocator);
     if( !self->m_items )
     {
-      us_delete( allocator, self );
+      self->destroy( self );
       self = 0;
     }
   }
@@ -202,8 +305,32 @@ us_http_response_header_create( us_allocator_t *allocator )
 void us_http_response_header_destroy( us_http_response_header_t *self )
 {
   self->m_items->destroy( self->m_items );
+  us_delete( self->m_allocator, self->m_version );
   us_delete( self->m_allocator, self );
 }
+
+bool
+us_http_response_header_set_version(
+                                    us_http_response_header_t *self,
+                                    const char *version
+                                    )
+{
+  us_delete( self->m_allocator, self->m_version );
+  self->m_version = us_strdup(self->m_allocator, version );
+}
+
+bool
+us_http_response_header_set_versionn(
+                                     us_http_response_header_t *self,
+                                     const char *version,
+                                     int len
+                                     )
+{
+  us_delete( self->m_allocator, self->m_version );
+  self->m_version = us_strndup(self->m_allocator, version, len );
+}
+
+
 
 us_http_request_header_t *
 us_http_request_header_create_helper(
@@ -217,8 +344,9 @@ us_http_request_header_create_helper(
   self = us_http_request_header_create(allocator);
   if( self )
   {
-    self->m_method = method;
+    self->m_method = us_strdup( allocator, method );
     self->m_path = us_strdup(allocator, path);
+    self->m_version = us_strdup(allocator, "HTTP/1.1" );
     if( self->m_path==0 )
     {
       self->destroy( self );
@@ -493,7 +621,6 @@ us_http_response_header_parse(
                               us_buffer_t *buf
                               )
 {
-  /* TODO */
   return false;
 }
 
@@ -513,7 +640,7 @@ us_http_header_item_list_parse(
                                us_buffer_t *buf
                                )
 {
-  /* TODO */
+  
   return false;
 }
 

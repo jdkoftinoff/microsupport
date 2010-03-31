@@ -28,6 +28,11 @@
 #include "us_world.h"
 #include "us_allocator.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
+  
 /* Determine the integer type use to parse non-floating point numbers */
 #if __STDC_VERSION__ >= 199901L || HAVE_LONG_LONG == 1
 typedef long long us_json_int_t;
@@ -39,10 +44,6 @@ typedef long us_json_int_t;
 #define US_JSON_PARSER_INTEGER_SPRINTF_TOKEN "%ld"
 #endif
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
   typedef enum
     {

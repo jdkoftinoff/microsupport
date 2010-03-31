@@ -94,6 +94,38 @@ bool us_buffer_read_string(
   return r;
 }
 
+bool
+us_buffer_read_line(
+                    us_buffer_t *self,
+                    char *value,
+                    int32_t result_max_len
+                    )
+{
+  bool r=false;
+  int i=0;
+  while( i<result_max_len-1 && self->m_cur_read_pos < self->m_cur_length )
+  {
+    char c=*us_buffer_read_ptr(self);
+    self->m_cur_read_pos ++;
+
+    /* skip carriage returns */
+    if( c=='\r' )
+      continue;
+    
+    /* all other characters get placed into value */
+    value[i++]=c;
+    
+    /* eol means we are done */
+    if( c=='\n' )
+    {
+      value[i+1]='\0';
+      r=true;
+      break;
+    }
+  }
+  
+  return r;
+}
 
 bool us_buffer_append_rounded_string(
         us_buffer_t *self,
