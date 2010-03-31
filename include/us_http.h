@@ -313,15 +313,15 @@ extern "C" {
                                    );
 
   
-  bool
+  us_http_response_header_t *
   us_http_response_header_parse(
-                                us_http_response_header_t *self,
+                                us_allocator_t *allocator,
                                 us_buffer_t *buf
                                 );
   
-  bool
+  us_http_request_header_t *
   us_http_request_header_parse(
-                               us_http_request_header_t *self,
+                               us_allocator_t *allocator,
                                us_buffer_t *buf
                                );
   

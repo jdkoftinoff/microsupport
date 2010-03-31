@@ -94,6 +94,32 @@ bool us_buffer_read_string(
   return r;
 }
 
+int32_t
+us_buffer_find_string_len(
+                          us_buffer_t *self,
+                          char search_char,
+                          char eol_char
+                          )
+{
+  int32_t r=-1;
+  int32_t pos;
+  
+  for ( pos=self->m_cur_read_pos; pos<self->m_cur_length; ++pos )
+  {
+    if( self->m_buffer[ pos ] == search_char )
+    {
+      r=pos-self->m_cur_read_pos;
+      break;
+    }
+    if( self->m_buffer[ pos ] == eol_char )
+    {
+      break;
+    }
+  }
+  
+  return r;
+}
+
 bool
 us_buffer_read_line(
                     us_buffer_t *self,
@@ -125,6 +151,71 @@ us_buffer_read_line(
   }
   
   return r;
+}
+
+
+bool
+us_buffer_skip_to_delim(
+                        us_buffer_t *self,
+                        const char *delim_chars
+                        )
+{
+  bool r=false;
+  const char *p;
+  int delim_chars_len=strlen(delim_chars);
+  
+  while ( (p=us_buffer_read_ptr(self))!=0 )
+  {
+    int i;
+    for( i=0; i<delim_chars_len; ++i )
+    {
+      if( *p == delim_chars[i] )
+      {
+        r=true;
+        break;
+      }
+    }
+    if( r==true )
+    {
+      break;
+    }
+    us_buffer_advance(self, 1);
+  }
+  
+  return r;
+}
+
+bool
+us_buffer_skip_delim(
+                     us_buffer_t *self,
+                     const char *delim_chars
+                     )
+{
+  bool r=false;
+  const char *p;
+  int delim_chars_len=strlen(delim_chars);
+  
+  while ( (p=us_buffer_read_ptr(self))!=0 )
+  {
+    bool skip=false;
+    int i;
+    for( i=0; i<delim_chars_len; ++i )
+    {
+      if( *p == delim_chars[i] )
+      {
+        skip=true;
+        break;
+      }
+    }
+    if( !skip )
+    {
+      r=true;
+      break;
+    }
+    us_buffer_advance(self, 1);
+  }
+  
+  return r;  
 }
 
 bool us_buffer_append_rounded_string(

@@ -223,6 +223,8 @@ us_http_request_header_set_method(
 {
   us_delete( self->m_allocator, self->m_method );
   self->m_method = us_strdup(self->m_allocator, method);
+  return self->m_method!=0;
+
 }
 
 bool
@@ -234,6 +236,7 @@ us_http_request_header_set_methodn(
 {
   us_delete( self->m_allocator, self->m_method );
   self->m_method = us_strndup(self->m_allocator, method, len);
+  return self->m_method!=0;
 }
 
 bool
@@ -244,6 +247,7 @@ us_http_request_header_set_version(
 {
   us_delete( self->m_allocator, self->m_version );
   self->m_version = us_strdup(self->m_allocator, version);
+  return self->m_version!=0;
 }
 
 bool
@@ -255,6 +259,7 @@ us_http_request_header_set_versionn(
 {
   us_delete( self->m_allocator, self->m_version );
   self->m_version = us_strndup(self->m_allocator, version, len);
+  return self->m_version!=0;
 }
 
 bool
@@ -265,6 +270,7 @@ us_http_request_header_set_path(
 {
   us_delete( self->m_allocator, self->m_path );
   self->m_path = us_strdup(self->m_allocator, path);
+  return self->m_path!=0;
 }
 
 bool
@@ -276,6 +282,7 @@ us_http_request_header_set_pathn(
 {
   us_delete( self->m_allocator, self->m_path );
   self->m_path = us_strndup(self->m_allocator, path, len);
+  return self->m_path!=0;
 }
 
 
@@ -317,6 +324,7 @@ us_http_response_header_set_version(
 {
   us_delete( self->m_allocator, self->m_version );
   self->m_version = us_strdup(self->m_allocator, version );
+  return self->m_version!=0;
 }
 
 bool
@@ -328,6 +336,7 @@ us_http_response_header_set_versionn(
 {
   us_delete( self->m_allocator, self->m_version );
   self->m_version = us_strndup(self->m_allocator, version, len );
+  return self->m_version!=0;
 }
 
 
@@ -578,16 +587,20 @@ us_http_request_header_flatten(
                                us_buffer_t *buf
                                )
 {
-  bool r=true;
+  bool r=false;
   
-  r&=us_buffer_append_string(buf, self->m_method );
-  r&=us_buffer_append_string(buf, " ");
-  r&=us_buffer_append_string(buf, self->m_path );
-  r&=us_buffer_append_string(buf, " ");
-  r&=us_buffer_append_string(buf, self->m_version );
-  r&=us_buffer_append_string(buf, "\r\n");
-  
-  r&=us_http_header_item_list_flatten(self->m_items, buf);
+  if( self->m_method && self->m_path && self->m_version )
+  {    
+    r=true;
+    r&=us_buffer_append_string(buf, self->m_method );
+    r&=us_buffer_append_string(buf, " ");
+    r&=us_buffer_append_string(buf, self->m_path );
+    r&=us_buffer_append_string(buf, " ");
+    r&=us_buffer_append_string(buf, self->m_version );
+    r&=us_buffer_append_string(buf, "\r\n");
+    
+    r&=us_http_header_item_list_flatten(self->m_items, buf);
+  }
   return r;
 }
 
@@ -615,23 +628,126 @@ us_http_header_item_list_flatten(
   return r;
 }
 
-bool
+us_http_response_header_t *
 us_http_response_header_parse(
-                              us_http_response_header_t *self,
+                              us_allocator_t *allocator,
                               us_buffer_t *buf
                               )
 {
-  return false;
+  us_http_response_header_t *r=0;
+  us_http_response_header_t *self;
+  self = us_http_response_header_create(allocator);
+  
+  if( self )
+  {
+    int32_t len;
+    len = us_buffer_find_string_len(buf, ' ', '\n' );
+    if( len!=-1 )
+    {      
+      us_http_response_header_set_versionn(
+                                           self,
+                                           us_buffer_read_ptr(buf), 
+                                           len
+                                           );
+      
+      if( us_buffer_advance(buf, len+1) )
+      {      
+        len = us_buffer_find_string_len( buf, ' ', '\n' );
+        if( len==3 )
+        {
+          int status_code=0;
+          const char * p=us_buffer_read_ptr(buf);
+          status_code += (p[0] - '0') * 100;
+          status_code += (p[1] - '0') * 10;
+          status_code += (p[2] - '0') * 1;
+          self->m_code = status_code;
+          if( us_buffer_skip_to_delim(buf, "\n") )
+          {
+            if( us_buffer_advance(buf, 1) )
+            {
+              if( us_http_header_item_list_parse(self->m_items, buf) )
+              {
+                r=self;
+              }
+            }
+          }          
+        }
+      }
+    }
+  }
+  
+  if(r==0 && self!=0 )
+  {
+    self->destroy( self );
+  }
+  return r;
 }
 
-bool
+us_http_request_header_t *
 us_http_request_header_parse(
-                             us_http_request_header_t *self,
+                             us_allocator_t *allocator,
                              us_buffer_t *buf
                              )
 {
-  /* TODO */
-  return false;
+  us_http_request_header_t *r=0;
+  us_http_request_header_t *self;
+  self = us_http_request_header_create(allocator);
+  
+  if( self )
+  {
+    int32_t len;
+    len = us_buffer_find_string_len(buf, ' ', '\n' );
+    if( len!=-1 )
+    {      
+      us_http_request_header_set_methodn(
+                                         self,
+                                         us_buffer_read_ptr(buf), 
+                                         len
+                                         );
+      
+      if( us_buffer_advance(buf, len+1) )
+      {      
+        len = us_buffer_find_string_len( buf, ' ', '\n' );
+        if( len>0 )
+        {
+          us_http_request_header_set_pathn(
+                                          self,
+                                          us_buffer_read_ptr(buf),
+                                          len
+                                          );
+          if( us_buffer_advance(buf,len+1) )
+          {
+            len = us_buffer_find_string_len( buf, '\r', '\n' );
+            if( len>0 )
+            {
+              us_http_request_header_set_versionn(
+                                                  self, 
+                                                  us_buffer_read_ptr(buf),
+                                                  len                                                
+                                                  );
+              
+              if( self->m_method && self->m_path && self->m_version )
+              {
+                if( us_buffer_advance(buf, len+1) )
+                {                
+                  if( us_http_header_item_list_parse(self->m_items, buf) )
+                  {
+                    r=self;
+                  }
+                }
+              }
+            }
+          }          
+        }
+      }
+    }
+  }
+  
+  if(r==0 && self!=0 )
+  {
+    self->destroy( self );
+  }
+  return r;
 }
 
 bool
@@ -640,8 +756,52 @@ us_http_header_item_list_parse(
                                us_buffer_t *buf
                                )
 {
+  bool r=true;
+  bool done=false;
   
-  return false;
+  while (!done )
+  {  
+    const char *p = us_buffer_read_ptr(buf);
+    if( *p == '\r' || *p == '\n' )
+    {
+      us_buffer_advance(buf, 1);
+      p = us_buffer_read_ptr(buf);      
+      if( *p == '\n' )
+      {
+        p = us_buffer_read_ptr(buf);        
+        us_buffer_advance(buf, 1);
+      }
+      done=true;
+    }
+    else 
+    {
+      const char *key;
+      int key_len;
+      const char *value;
+      int value_len;
+            
+      key = p;
+      key_len = us_buffer_find_string_len(buf, ':', '\n');
+      
+      us_buffer_advance(buf, key_len+1 );
+      us_buffer_skip_delim(buf, " \t" );
+      value = us_buffer_read_ptr(buf);
+      value_len = us_buffer_find_string_len(buf, '\r', '\n');
+      us_buffer_advance(buf, value_len+1 );
+      
+      if( key && key_len>0 && value && value_len>0 )
+      {
+        self->addn( self, key, key_len, value, value_len );  
+      }
+      else 
+      {
+        r=false;
+        done=false;
+      }
+    }
+  }
+  
+  return r;
 }
 
 const char *
