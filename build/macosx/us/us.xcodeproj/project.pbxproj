@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF7524CE11653F8800913313 /* us_cgi.c in Sources */ = {isa = PBXBuildFile; fileRef = BF7524CD11653F8800913313 /* us_cgi.c */; };
 		BFF4CB9111613BB5002C7012 /* us_allocator_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7A11613BB5002C7012 /* us_allocator_print.h */; };
 		BFF4CB9211613BB5002C7012 /* us_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7B11613BB5002C7012 /* us_allocator.h */; };
 		BFF4CB9311613BB5002C7012 /* us_buffer_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BFF4CB7C11613BB5002C7012 /* us_buffer_print.h */; };
@@ -54,6 +55,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BF7524CD11653F8800913313 /* us_cgi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_cgi.c; path = ../../../src/us_cgi.c; sourceTree = SOURCE_ROOT; };
+		BF7524CF11653F9E00913313 /* us_cgi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_cgi.h; path = ../../../include/us_cgi.h; sourceTree = SOURCE_ROOT; };
 		BFF4CB7A11613BB5002C7012 /* us_allocator_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_allocator_print.h; path = ../../../include/us_allocator_print.h; sourceTree = SOURCE_ROOT; };
 		BFF4CB7B11613BB5002C7012 /* us_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_allocator.h; path = ../../../include/us_allocator.h; sourceTree = SOURCE_ROOT; };
 		BFF4CB7C11613BB5002C7012 /* us_buffer_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_buffer_print.h; path = ../../../include/us_buffer_print.h; sourceTree = SOURCE_ROOT; };
@@ -125,6 +128,8 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				BF7524CF11653F9E00913313 /* us_cgi.h */,
+				BF7524CD11653F8800913313 /* us_cgi.c */,
 				BFF4CBA811613BC5002C7012 /* us_allocator_print.c */,
 				BFF4CBA911613BC5002C7012 /* us_allocator.c */,
 				BFF4CBAA11613BC5002C7012 /* us_buffer_print.c */,
@@ -284,6 +289,7 @@
 				BFF4CBCF11613BC5002C7012 /* us_testutil.c in Sources */,
 				BFF4CBD011613BC5002C7012 /* us_time.c in Sources */,
 				BFF4CBD111613BC5002C7012 /* us_world.c in Sources */,
+				BF7524CE11653F8800913313 /* us_cgi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

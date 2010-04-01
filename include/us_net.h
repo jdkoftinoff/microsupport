@@ -12,14 +12,14 @@
  * Redistributions in binary form must reproduce the above copyright
  notice, this list of conditions and the following disclaimer in the
  documentation and/or other materials provided with the distribution.
- * Neither the name of the <organization> nor the
+ * Neither the name of the Meyer Sound Laboratories, Inc. nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
  
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ DISCLAIMED. IN NO EVENT SHALL MEYER SOUND LABORATORIES, INC. BE LIABLE FOR ANY
  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -31,6 +31,10 @@
 #ifndef US_WORLD_H
 #include "us_world.h"
 #endif
+
+#include "us_allocator.h"
+#include "us_buffer.h"
+#include "us_queue.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,6 +84,70 @@ extern "C" {
                      );
   
   
+  typedef struct us_net_handler_s
+  {
+    us_allocator_t *m_allocator;
+    int m_socket;
+    us_queue_t *m_incoming_queue;
+    us_queue_t *m_outgoing_queue;
+    
+    void (*destroy)( struct us_net_handler_s * );
+    bool (*data_was_read)( struct us_net_handler_s *);
+    bool (*data_was_written)( struct us_net_handler_s *);
+    bool (*timeout_hit)( struct us_net_handler_s * );
+    
+  } us_net_handler_t;
+  
+  us_net_handler_t *
+  us_net_handler_create( 
+                        us_allocator_t *allocator, 
+                        int32_t incoming_queue_size,
+                        int32_t outgoing_queue_size
+                        );
+  
+  void
+  us_net_handler_destroy(
+                         us_net_handler_t *self
+                         );
+  
+  
+  typedef struct us_net_reactor_s
+  {
+    us_allocator_t *m_allocator;    
+    
+    void (*destroy)( struct us_net_reactor_s * );
+    
+    fd_set m_readable;
+    fd_set m_writable;
+    struct timeval m_timeout;    
+    int32_t m_max_handlers;
+    us_net_handler_t **m_handlers;
+  } us_net_reactor_t;
+  
+  us_net_reactor_t *
+  us_net_reactor_create( 
+                        us_allocator_t *allocator,
+                        int32_t max_handlers
+                        );
+  
+  bool
+  us_net_reactor_add_handler(
+                             us_net_reactor_t *self,
+                             us_net_handler_t *handler
+                             );
+  
+  bool
+  us_net_reactor_remove_handler(
+                                us_net_reactor_t *self,
+                                us_net_handler_t *handler
+                                );
+  
+  bool
+  us_net_reactor_find_handler(
+                              us_net_reactor_t *self,
+                              int sock
+                              );
+
   
   /*@}*/
   
