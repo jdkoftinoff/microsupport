@@ -439,7 +439,7 @@ us_json_parser_create(us_allocator_t *allocator, us_json_config_t* config)
   return jc;
 }
 
-static void grow_parse_buffer(us_json_parser_t jc)
+static void us_json_grow_parse_buffer(us_json_parser_t jc)
 {
   size_t bytes_to_allocate;
   jc->parse_buffer_capacity *= 2;
@@ -452,14 +452,14 @@ static void grow_parse_buffer(us_json_parser_t jc)
   }
 }
 
-#define parse_buffer_push_back_char(jc, c)                              \
+#define us_json_parse_buffer_push_back_char(jc, c)                              \
   do {                                                                  \
-    if (jc->parse_buffer_count + 1 >= jc->parse_buffer_capacity) grow_parse_buffer(jc); \
+    if (jc->parse_buffer_count + 1 >= jc->parse_buffer_capacity) us_json_grow_parse_buffer(jc); \
     jc->parse_buffer[jc->parse_buffer_count++] = c;                     \
     jc->parse_buffer[jc->parse_buffer_count]   = 0;                     \
   } while (0)
 
-#define assert_is_non_container_type(jc)        \
+#define us_json_assert_is_non_container_type(jc)        \
   assert(                                       \
          jc->type == US_JSON_T_NULL ||          \
          jc->type == US_JSON_T_FALSE ||         \
@@ -475,7 +475,7 @@ static int parse_parse_buffer(us_json_parser_t jc)
     us_json_value_t value, *arg = NULL;
 
     if (jc->type != US_JSON_T_NONE) {
-      assert_is_non_container_type(jc);
+      us_json_assert_is_non_container_type(jc);
 
       switch(jc->type) {
         case US_JSON_T_FLOAT:
@@ -510,12 +510,12 @@ static int parse_parse_buffer(us_json_parser_t jc)
   return true;
 }
 
-#define IS_HIGH_SURROGATE(uc) (((uc) & 0xFC00) == 0xD800)
-#define IS_LOW_SURROGATE(uc)  (((uc) & 0xFC00) == 0xDC00)
-#define DECODE_SURROGATE_PAIR(hi,lo) ((((hi) & 0x3FF) << 10) + ((lo) & 0x3FF) + 0x10000)
-static unsigned char utf8_lead_bits[4] = { 0x00, 0xC0, 0xE0, 0xF0 };
+#define US_UTF_IS_HIGH_SURROGATE(uc) (((uc) & 0xFC00) == 0xD800)
+#define US_UTF_IS_LOW_SURROGATE(uc)  (((uc) & 0xFC00) == 0xDC00)
+#define US_UTF_DECODE_SURROGATE_PAIR(hi,lo) ((((hi) & 0x3FF) << 10) + ((lo) & 0x3FF) + 0x10000)
+static unsigned char us_utf8_lead_bits[4] = { 0x00, 0xC0, 0xE0, 0xF0 };
 
-static int decode_unicode_char(us_json_parser_t jc)
+static int us_utf_decode_unicode_char(us_json_parser_t jc)
 {
   int i;
   unsigned uc = 0;
@@ -548,8 +548,8 @@ static int decode_unicode_char(us_json_parser_t jc)
 
   /* attempt decoding ... */
   if (jc->utf16_high_surrogate) {
-    if (IS_LOW_SURROGATE(uc)) {
-      uc = DECODE_SURROGATE_PAIR(jc->utf16_high_surrogate, uc);
+    if (US_UTF_IS_LOW_SURROGATE(uc)) {
+      uc = US_UTF_DECODE_SURROGATE_PAIR(jc->utf16_high_surrogate, uc);
       trail_bytes = 3;
       jc->utf16_high_surrogate = 0;
     } else {
@@ -561,11 +561,11 @@ static int decode_unicode_char(us_json_parser_t jc)
       trail_bytes = 0;
     } else if (uc < 0x800) {
       trail_bytes = 1;
-    } else if (IS_HIGH_SURROGATE(uc)) {
+    } else if (US_UTF_IS_HIGH_SURROGATE(uc)) {
       /* save the high surrogate and wait for the low surrogate */
       jc->utf16_high_surrogate = uc;
       return true;
-    } else if (IS_LOW_SURROGATE(uc)) {
+    } else if (US_UTF_IS_LOW_SURROGATE(uc)) {
       /* low surrogate without a preceding high surrogate */
       return false;
     } else {
@@ -573,7 +573,7 @@ static int decode_unicode_char(us_json_parser_t jc)
     }
   }
 
-  jc->parse_buffer[jc->parse_buffer_count++] = (char) ((uc >> (trail_bytes * 6)) | utf8_lead_bits[trail_bytes]);
+  jc->parse_buffer[jc->parse_buffer_count++] = (char) ((uc >> (trail_bytes * 6)) | us_utf8_lead_bits[trail_bytes]);
 
   for (i = trail_bytes * 6 - 6; i >= 0; i -= 6) {
     jc->parse_buffer[jc->parse_buffer_count++] = (char) (((uc >> i) & 0x3F) | 0x80);
@@ -584,39 +584,39 @@ static int decode_unicode_char(us_json_parser_t jc)
   return true;
 }
 
-static int add_escaped_char_to_parse_buffer(us_json_parser_t jc, int next_char)
+static int us_json_add_escaped_char_to_parse_buffer(us_json_parser_t jc, int next_char)
 {
   jc->escaped = 0;
   /* remove the backslash */
   parse_buffer_pop_back_char(jc);
   switch(next_char) {
     case 'b':
-      parse_buffer_push_back_char(jc, '\b');
+      us_json_parse_buffer_push_back_char(jc, '\b');
       break;
     case 'f':
-      parse_buffer_push_back_char(jc, '\f');
+      us_json_parse_buffer_push_back_char(jc, '\f');
       break;
     case 'n':
-      parse_buffer_push_back_char(jc, '\n');
+      us_json_parse_buffer_push_back_char(jc, '\n');
       break;
     case 'r':
-      parse_buffer_push_back_char(jc, '\r');
+      us_json_parse_buffer_push_back_char(jc, '\r');
       break;
     case 't':
-      parse_buffer_push_back_char(jc, '\t');
+      us_json_parse_buffer_push_back_char(jc, '\t');
       break;
     case '"':
-      parse_buffer_push_back_char(jc, '"');
+      us_json_parse_buffer_push_back_char(jc, '"');
       break;
     case '\\':
-      parse_buffer_push_back_char(jc, '\\');
+      us_json_parse_buffer_push_back_char(jc, '\\');
       break;
     case '/':
-      parse_buffer_push_back_char(jc, '/');
+      us_json_parse_buffer_push_back_char(jc, '/');
       break;
     case 'u':
-      parse_buffer_push_back_char(jc, '\\');
-      parse_buffer_push_back_char(jc, 'u');
+      us_json_parse_buffer_push_back_char(jc, '\\');
+      us_json_parse_buffer_push_back_char(jc, 'u');
       break;
     default:
       return false;
@@ -625,20 +625,20 @@ static int add_escaped_char_to_parse_buffer(us_json_parser_t jc, int next_char)
   return true;
 }
 
-#define add_char_to_parse_buffer(jc, next_char, next_class)             \
+#define us_json_add_char_to_parse_buffer(jc, next_char, next_class)             \
   do {                                                                  \
     if (jc->escaped) {                                                  \
-      if (!add_escaped_char_to_parse_buffer(jc, next_char))             \
+      if (!us_json_add_escaped_char_to_parse_buffer(jc, next_char))             \
         return false;                                                   \
     } else if (!jc->comment) {                                          \
       if ((jc->type != US_JSON_T_NONE) | !((next_class == C_SPACE) | (next_class == C_WHITE)) /* non-white-space */) { \
-        parse_buffer_push_back_char(jc, (char)next_char);               \
+        us_json_parse_buffer_push_back_char(jc, (char)next_char);               \
       }                                                                 \
     }                                                                   \
   } while (0)
 
 
-#define assert_type_isnt_string_null_or_bool(jc)  \
+#define us_json_assert_type_isnt_string_null_or_bool(jc)  \
   assert(jc->type != US_JSON_T_FALSE);            \
   assert(jc->type != US_JSON_T_TRUE);             \
   assert(jc->type != US_JSON_T_NULL);             \
@@ -671,7 +671,7 @@ us_json_parser_char(us_json_parser_t jc, int next_char)
     }
   }
 
-  add_char_to_parse_buffer(jc, next_char, next_class);
+  us_json_add_char_to_parse_buffer(jc, next_char, next_class);
 
   /*
     Get the next state from the state transition table.
@@ -689,7 +689,7 @@ us_json_parser_char(us_json_parser_t jc, int next_char)
     switch (next_state) {
       /* Unicode character */
       case UC:
-        if(!decode_unicode_char(jc)) {
+        if(!us_utf_decode_unicode_char(jc)) {
           return false;
         }
         /* check if we need to read a second UTF-16 char */
@@ -722,14 +722,14 @@ us_json_parser_char(us_json_parser_t jc, int next_char)
 
         /* floating point number detected by exponent*/
       case DE:
-        assert_type_isnt_string_null_or_bool(jc);
+        us_json_assert_type_isnt_string_null_or_bool(jc);
         jc->type = US_JSON_T_FLOAT;
         jc->state = E1;
         break;
 
         /* floating point number detected by fraction */
       case DF:
-        assert_type_isnt_string_null_or_bool(jc);
+        us_json_assert_type_isnt_string_null_or_bool(jc);
         if (!jc->handle_floats_manually) {
           /*
             Some versions of strtod (which underlies sscanf) don't support converting

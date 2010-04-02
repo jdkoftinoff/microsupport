@@ -167,6 +167,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\us_cgi.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\us_http.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\us_json.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\us_json_parser.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\us_logger.c"
 				>
 			</File>
@@ -246,6 +262,22 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\include\us_buffer_print.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\us_cgi.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\us_http.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\us_json.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\us_json_parser.h"
 				>
 			</File>
 			<File

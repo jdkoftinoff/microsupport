@@ -46,7 +46,7 @@ extern "C" {
 
   bool us_logger_stdio_start( FILE *outfile, FILE *errfile );
   bool us_logger_stdio_start_files( const char *outfilename, const char *errfilename );
-  void us_logger_stdio_finish();
+  void us_logger_stdio_finish(void);
 
   void us_log_error_stdio( const char *fmt, ... );
   void us_log_warn_stdio( const char *fmt, ... );

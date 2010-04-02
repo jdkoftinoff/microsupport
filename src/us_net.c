@@ -74,7 +74,7 @@ int us_net_create_udp_socket(
       int on =1;
       r=s;
 
-      if(setsockopt(s, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on)) == -1)
+      if(setsockopt(s, SOL_SOCKET, SO_BROADCAST, (const char *)&on, sizeof(on)) == -1)
       {
         perror("setsockopt SO_BROADCAST:" );
         abort();
@@ -85,7 +85,7 @@ int us_net_create_udp_socket(
       {
         if( bind( s, ai->ai_addr, ai->ai_addrlen )==0 )
         {
-          if(setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1)
+          if(setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (const char *)&on, sizeof(on)) == -1)
           {
             perror("setsockopt SO_REUSEADDR:" );
             abort();

@@ -79,7 +79,7 @@ bool us_logger_init_stdio_files( const char *outfilename, const char *errfilenam
   return r;
 }
 
-void us_logger_stdio_finish()
+void us_logger_stdio_finish(void)
 {
   if( us_logger_stdio_files )
   {

@@ -168,7 +168,11 @@ us_http_header_item_list_find(
   us_http_header_item_t *i = self->m_first;
   while (i)
   {
+#ifdef _WIN32
+    if( strnicmp( i->m_key, key, strlen(key) )==0 )
+#else
     if( strncasecmp( i->m_key, key, strlen(key) )==0 )
+#endif
     {
       r= i;
       break;

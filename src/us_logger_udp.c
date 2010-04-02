@@ -80,7 +80,13 @@ bool us_logger_udp_start( const char *dest_addr, int16_t dest_port )
 
     us_logger_udp_dest_sockaddr.sin_family = AF_INET;
     us_logger_udp_dest_sockaddr.sin_port = htons(dest_port);
+
+#ifdef _WIN32
+    us_logger_udp_dest_sockaddr.sin_addr.S_un.S_addr = inet_addr( dest_addr );
+    if( us_logger_udp_dest_sockaddr.sin_addr.S_un.S_addr != INADDR_NONE )
+#else
     if( inet_aton( dest_addr, &us_logger_udp_dest_sockaddr.sin_addr ) )
+#endif
     {
       /*
         Create socket for this address
