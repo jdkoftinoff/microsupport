@@ -31,107 +31,104 @@
 #include "us_cgi.h"
 
 
+char us_cgi_tohexdigit[16] = 
+{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+char *us_cgi_rfc3986_reserved_chars =
+"!*'();:@&=+$,/?%#[]";
+
 bool us_cgi_is_escapable( char c )
 {
   bool r=true;
+  const char *p;
   
+  if( c&0x80 == 0x80 )
+  {
+    return true;
+  }
   if( isalnum(c) )
   {
-    r=false;
+    return false;
   }
-  else
-  {
-    if( strchr( ";/?:@&=+!*'(),$-_.%<>~", c )!=0 )
-      r=false;
+  for( p=us_cgi_rfc3986_reserved_chars; *p!=0; ++p )
+  {    
+    if( *p == c )
+      return true;
   }
-  return r;
-}
-
-bool us_cgi_is_escapable_char_with_amp( char c )
-{
-  bool r=true;
-  
-  if( isalnum(c) )
-  {
-    r=false;
-  }
-  else
-  {
-    if( strchr( ";/?:@=+!*'(),$-_.%<>~", c )!=0 )
-      r=false;
-  }
-  
-  return r;
-}
-
-
-bool us_cgi_is_escapable_char_for_var( char c )
-{
-  bool r=true;
-  
-  if( isalnum(c) )
-  {
-    r=false;
-  }
-  else
-  {
-    if( strchr( ";/?:@&=+!*'(),$-_.%<>~", c )!=0 )
-      r=true;
-  }
-  
-  return r;
-}
-
-bool us_cgi_is_escapable_char_with_amp_for_var( char c )
-{
-  bool r=true;
-  
-  if( isalnum(c) )
-  {
-    r=false;
-  }
-  else
-  {
-    if( strchr( ";/?:@=+!*'(),$-_.%<>~", c )!=0 )
-      r=true;
-  }
-  
-  return r;
+  return true;
 }
 
 
 bool us_cgi_unescape( const char *src, int src_len, us_buffer_t *dest_buf )
 {
-  /* TODO: */
-  return false;
+  int i;
+  int in_percent=0;
+  int partial=0;
+  
+  for( i=0; i<src_len; ++i )
+  {
+    char c=src[i];
+    if( in_percent )
+    {
+      c=toupper(c);
+      int v=c-'0';
+      if( c>9 )
+        v=c-'A'+10;
+      partial=partial<<4;
+      partial+=v;
+      in_percent--;
+      if( in_percent==0 )
+      {
+        c=(char)partial;
+        if( !dest_buf->append( dest_buf, &c, 1 ) )
+        {
+          return false;
+        }
+      }
+    }
+    else
+    if( c=='%' )
+    {
+      in_percent = 2;
+      partial=0;
+    }
+    else 
+    {
+      if( !dest_buf->append( dest_buf, &c, 1 ) )
+      {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 bool us_cgi_escape( const char *src, int src_len, us_buffer_t *dest_buf )
 {
-  /* TODO: */
-  return false;
+  int i;
+  for( i=0; i<src_len; ++i )
+  {
+    char c = src[i];
+    if( us_cgi_is_escapable(c) )
+    {
+      char escaped[4];
+      escaped[0] = '%';
+      escaped[1] = us_cgi_tohexdigit[ (c>>4)&0xf ];
+      escaped[2] = us_cgi_tohexdigit[ c&0xf ];
+      if( ! dest_buf->append( dest_buf, escaped, 3 ) )
+      {
+        return false;
+      }
+    }
+    else 
+    {
+      if( ! dest_buf->append( dest_buf, &c, 1 ) )
+      {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
-bool us_cgi_unescape_with_amp( const char *src, int src_len, us_buffer_t *dest_buf )
-{
-  /* TODO: */
-  return false;
-}
 
-bool us_cgi_escape_with_amp( const char *src, int src_len, us_buffer_t *dest_buf )
-{
-  /* TODO: */
-  return false;
-}
-
-bool us_cgi_extract_pair( const char *src, int src_len, char *key, int max_key_len, char *value, int max_value_len )
-{
-  /* TODO: */
-  return false;
-}
-
-bool us_cgi_encode_pair( const char *key, const char *value, us_buffer_t *dest_buf )
-{
-  /* TODO: */
-  return false;
-}

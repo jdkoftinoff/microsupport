@@ -39,17 +39,12 @@ extern "C" {
 #endif
   
   bool us_cgi_is_escapable( char c );
-  bool us_cgi_is_escapable_char_with_amp( char c );
-  bool us_cgi_is_escapable_char_for_var( char c );  
-  bool us_cgi_is_escapable_char_with_amp_for_var( char c );  
 
   bool us_cgi_unescape( const char *src, int src_len, us_buffer_t *dest_buf );
   bool us_cgi_escape( const char *src, int src_len, us_buffer_t *dest_buf );
-  bool us_cgi_unescape_with_amp( const char *src, int src_len, us_buffer_t *dest_buf );
-  bool us_cgi_escape_with_amp( const char *src, int src_len, us_buffer_t *dest_buf );
-  bool us_cgi_extract_pair( const char *src, int src_len, char *key, int max_key_len, char *value, int max_value_len );
-  bool us_cgi_encode_pair( const char *key, const char *value, us_buffer_t *dest_buf );
   
+  extern char us_cgi_tohexdigit[16];
+  extern char *us_cgi_rfc3986_reserved_chars;
 #ifdef __cplusplus
 }
 #endif
