@@ -1216,19 +1216,6 @@ TARGET_INSTALL_DIR?=$(TARGET_INSTALL_PREFIX)/$(PROJECT)-$(PROJECT_VERSION)
 TARGET_INSTALL_DEV_DIR?=$(TARGET_INSTALL_PREFIX)/$(PROJECT)-$(PROJECT_VERSION)-dev
 endif
 
-# Add include and lib to any destination prefix directories afterwards
-
-ifdef PREFIX
-INCLUDES+="$(PREFIX)/include"
-LDFLAGS+=-L$(PREFIX)/lib
-endif
-
-ifdef TARGET_INSTALL_DIR
-INCLUDES+="$(TARGET_INSTALL_DIR)/include"
-endif
-
-
-
 
 M4_DEFS+="-Dm4_PREFIX=$(PREFIX)" "-Dm4_TARGET_BIN_DIR=$(TARGET_BIN_DIR)" "-Dm4_TARGET_LIB_DIR=$(TARGET_LIB_DIR)"  "-Dm4_TARGET_INCLUDE_DIR=$(TARGET_INCLUDE_DIR)" "-Dm4_TARGET_DOCS_DIR=$(TARGET_DOCS_DIR)" "-Dm4_TARGET_SHARE_DIR=$(TARGET_SHARE_DIR)"  "-Dm4_TARGET_MAN_DIR=$(TARGET_MAN_DIR)"  "-Dm4_TARGET_ETC_DIR=$(TARGET_ETC_DIR)"
 
@@ -2305,7 +2292,7 @@ docs-dev : dirs $(wildcard $(LIB_DOCS_DEV_DIR)/Doxyfile)
 
 .PHONY : clean
 
-clean :
+clean : $(CLEAN_TARGETS) 
 	-@$(RM) -r -f $(BUILD_DIR) 2>/dev/null
 
 .PHONY : realclean
