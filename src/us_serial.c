@@ -2,6 +2,7 @@
 #include "us_net.h"
 #include "us_serial.h"
 
+
 #if defined(US_CONFIG_POSIX)
 #include <termios.h>
 
@@ -69,7 +70,7 @@ bool us_serial_setup( int fd, const char *serial_options )
    */
   if( serial_options && *serial_options )
   {
-    requested_baud = strtoul( serial_options,0,10);
+    requested_baud = (uint32_t)(strtoul( serial_options,0,10));
     if( requested_baud==0 )
     {
       fprintf( stderr, "invalid baud rate" );
@@ -117,15 +118,21 @@ bool us_serial_setup( int fd, const char *serial_options )
     case 38400:
       baud_code = B38400;
       break;
+#ifdef B57600
     case 57600:
       baud_code = B57600;
       break;
+#endif
+#ifdef B115200
     case 115200:
       baud_code = B115200;
       break;
+#endif
+#ifdef B230400
     case 230400:
       baud_code = B230400;
       break;
+#endif
     default:
       fprintf( stderr, "invalid baud rate: %d\n", requested_baud );
       close(fd);

@@ -79,7 +79,7 @@ int main( int argc, char **argv )
 #endif
 
     us_log_set_level( US_LOG_LEVEL_DEBUG );
-    us_log_info( "Hello world from us_test_buffer %s:%d compiled on %s", __FILE__, __LINE__, __DATE__ );
+    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
 
     if( us_test_buffer() )
       r=0;

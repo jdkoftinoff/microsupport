@@ -45,7 +45,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # define US_CONFIG_LINUX
 #endif
 
-#if defined(__APPLE__)
+
+#if defined(__AVR__)
+# define US_CONFIG_MICROCONTROLLER
+# undef US_CONFIG_POSIX
+#elif defined(__APPLE__)
 # undef US_CONFIG_MACOSX
 # define US_CONFIG_MACOSX
 # undef US_CONFIG_POSIX
@@ -110,20 +114,17 @@ typedef unsigned char uint8_t;
 
 #endif
 
-#include <assert.h>
-#include <ctype.h>
-#include <float.h>
-#include <stddef.h>
-#include <locale.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <fcntl.h>
-#include <stdarg.h>
 
 #if defined(US_CONFIG_POSIX)
+# define _BSD_SOURCE
+# define _POSIX_SOURCE 1
+# define _POSIX_C_SOURCE 1
+# define _DARWIN_C_SOURCE 1
+
+# include <locale.h>
+# include <fcntl.h>
 # include <sys/types.h>
+# include <sys/socket.h>
 # include <unistd.h>
 # include <pthread.h>
 # include <signal.h>
@@ -135,17 +136,24 @@ typedef unsigned char uint8_t;
 # include <arpa/inet.h>
 # include <sys/poll.h>
 # include <errno.h>
+# include <strings.h>
 #endif
+
+#include <assert.h>
+#include <ctype.h>
+#include <float.h>
+#include <stddef.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdarg.h>
 
 #if defined(_WIN32)
 # include <io.h>
 #endif
 
 #include "us_platform.h"
-
-#ifdef __cplusplus
-}
-#endif
 
 /*@}*/
 

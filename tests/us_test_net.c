@@ -59,7 +59,7 @@ int main( int argc, char **argv )
 #endif
     
     us_log_set_level( US_LOG_LEVEL_DEBUG );
-    us_log_info( "Hello world from %s %s:%d compiled on %s", argv[0], __FILE__, __LINE__, __DATE__ );
+    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
     
     if( us_test_net() )
       r=0;

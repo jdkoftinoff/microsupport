@@ -41,6 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 bool us_test_slip( void );
 us_buffer_t * us_test_slip_fill_buffer( void );
+void us_test_slip_callback( us_slip_decoder_t *self, us_buffer_t *buf );
 
 
 us_buffer_t * us_test_slip_fill_buffer( void )
@@ -133,7 +134,7 @@ int main( int argc, char **argv )
 #endif
 
     us_log_set_level( US_LOG_LEVEL_DEBUG );
-    us_log_info( "Hello world from us_test_slip %s:%d compiled on %s", __FILE__, __LINE__, __DATE__ );
+    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
 
     if( us_test_slip() )
       r=0;

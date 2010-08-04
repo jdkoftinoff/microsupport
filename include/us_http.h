@@ -266,9 +266,9 @@ extern "C" {
                                              const us_http_response_header_t *self
                                              );
   const char *
-  us_http_response_header_get_content_type(
-                                           const us_http_response_header_t *self
-                                           );
+  us_http_response_header_get_mime_type(
+                                        const us_http_response_header_t *self
+                                        );
   
   
   us_http_response_header_t *

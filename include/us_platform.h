@@ -89,8 +89,15 @@ extern "C" {
   int gettimeofday(struct timeval *tv, struct timezone *tz);
 #endif
 
+#ifdef __AVR__
+  struct timeval
+  {
+    int32_t tv_sec;
+    int32_t tv_usec;
+  };
+#endif
   void us_gettimeofday(struct timeval *tv);
-
+  bool us_platform_init_sockets(void);
 #if US_ENABLE_LWIP_STACK
 # include "lwip/opt.h"
 # include "lwip/arch.h"

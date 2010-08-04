@@ -40,8 +40,8 @@ us_print_t *us_testutil_printer_stderr;
 us_print_file_t us_testutil_printer_stdout_impl;
 us_print_file_t us_testutil_printer_stderr_impl;
 #else
-us_printbuf_t us_testutil_printer_stdout_impl;
-us_printbuf_t us_testutil_printer_stderr_impl;
+us_printraw_t us_testutil_printer_stdout_impl;
+us_printraw_t us_testutil_printer_stderr_impl;
 char us_testutil_printbuffer_stdout[ US_TESTUTIL_PRINTBUFFER_SIZE ];
 char us_testutil_printbuffer_stderr[ US_TESTUTIL_PRINTBUFFER_SIZE ];
 #endif
@@ -69,20 +69,15 @@ bool us_testutil_start(
   bool r=true;
   (void)argc;
   (void)argv;
-  /*
-    On windows, initialize winsock
-  */
 
-#ifdef WIN32
-  r = us_platform_init_winsock();
+#if US_ENABLE_NETWORK
+  r = us_platform_init_sockets();
 
   if( !r )
   {
     return r;
   }
-
 #endif
-
 
   /*
     Initialize the system and the session allocators
@@ -167,16 +162,16 @@ bool us_testutil_start(
     Using statically allocated character buffer if not
   */
   us_testutil_printer_stdout =
-    us_printbuf_init(
+    us_printraw_init(
                        &us_testutil_printer_stdout_impl,
-                       us_testutil_printbuffer,
+                       us_testutil_printbuffer_stdout,
                        US_TESTUTIL_PRINTBUFFER_SIZE
                        );
 
   us_testutil_printer_stderr =
-    us_printbuf_init(
+    us_printraw_init(
                        &us_testutil_printer_stderr_impl,
-                       us_testutil_printbuffer,
+                       us_testutil_printbuffer_stderr,
                        US_TESTUTIL_PRINTBUFFER_SIZE
                        );
 

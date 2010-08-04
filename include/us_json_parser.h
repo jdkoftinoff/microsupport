@@ -31,8 +31,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
-  
+
+
 /* Determine the integer type use to parse non-floating point numbers */
 #if __STDC_VERSION__ >= 199901L || HAVE_LONG_LONG == 1
 typedef long long us_json_int_t;
@@ -119,13 +119,14 @@ typedef long us_json_int_t;
     - no parsing, just checking for JSON syntax
     - no comments
 
-    \param config. Used to configure the parser.
+    \param config Used to configure the parser.
   */
   void us_json_config_init(us_json_config_t* config);
 
   /*! \brief Create a JSON parser object
 
-    \param config. Used to configure the parser. Set to NULL to use the default configuration.
+    \param allocator The memory allocator that the json object will use to allocate/deallocate memory
+    \param config Used to configure the parser. Set to NULL to use the default configuration.
     See init_json_config_t
 
     \return The parser object.

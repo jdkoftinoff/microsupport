@@ -1,7 +1,7 @@
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  * Neither the name of the Meyer Sound Laboratories, Inc. nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -31,7 +31,7 @@
 #include "us_cgi.h"
 
 
-char us_cgi_tohexdigit[16] = 
+char us_cgi_tohexdigit[16] =
 { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 char *us_cgi_rfc3986_reserved_chars =
@@ -39,10 +39,9 @@ char *us_cgi_rfc3986_reserved_chars =
 
 bool us_cgi_is_escapable( char c )
 {
-  bool r=true;
   const char *p;
-  
-  if( c&0x80 == 0x80 )
+
+  if( (c&0x80) == 0x80 )
   {
     return true;
   }
@@ -51,7 +50,7 @@ bool us_cgi_is_escapable( char c )
     return false;
   }
   for( p=us_cgi_rfc3986_reserved_chars; *p!=0; ++p )
-  {    
+  {
     if( *p == c )
       return true;
   }
@@ -64,14 +63,15 @@ bool us_cgi_unescape( const char *src, int src_len, us_buffer_t *dest_buf )
   int i;
   int in_percent=0;
   int partial=0;
-  
+
   for( i=0; i<src_len; ++i )
   {
     char c=src[i];
     if( in_percent )
     {
+      int v;
       c=toupper(c);
-      int v=c-'0';
+      v=c-'0';
       if( c>9 )
         v=c-'A'+10;
       partial=partial<<4;
@@ -92,7 +92,7 @@ bool us_cgi_unescape( const char *src, int src_len, us_buffer_t *dest_buf )
       in_percent = 2;
       partial=0;
     }
-    else 
+    else
     {
       if( !dest_buf->append( dest_buf, &c, 1 ) )
       {
@@ -120,7 +120,7 @@ bool us_cgi_escape( const char *src, int src_len, us_buffer_t *dest_buf )
         return false;
       }
     }
-    else 
+    else
     {
       if( ! dest_buf->append( dest_buf, &c, 1 ) )
       {

@@ -1,7 +1,5 @@
 #include "us_world.h"
-#include "us_allocator.h"
-#include "us_buffer.h"
-#include "us_json.h"
+#include "us_line_parse.h"
 
 #include "us_logger_printer.h"
 
@@ -10,7 +8,7 @@
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -21,7 +19,7 @@
  * Neither the name of the <organization> nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,16 +33,14 @@
  */
 
 
-/** \addtogroup us_test_json */
+/** \addtogroup us_test_line_parse */
 /*@{*/
 
+bool us_test_line_parse( void );
 
-bool us_test_json( void );
-
-bool us_test_json( void )
+bool us_test_line_parse( void )
 {
-  bool r=false;
-  us_log_error( "Unimplemented" );
+  bool r=true;
   
   return r;
 }
@@ -52,19 +48,19 @@ bool us_test_json( void )
 int main( int argc, char **argv )
 {
   int r=1;
-  if( us_testutil_start(4096,4096,argc,argv) )
+  if( us_testutil_start(2048,2048,argc,argv) )
   {
 #if US_ENABLE_LOGGING
     us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-    
+
     us_log_set_level( US_LOG_LEVEL_DEBUG );
     us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-    
-    if( us_test_json() )
+
+    if( us_test_line_parse() )
       r=0;
     
-    us_log_info("Finishing %s", argv[0] );
+    us_log_info("Finishing us_test_buffer" );
     us_logger_finish();
     us_testutil_finish();
   }
@@ -73,7 +69,3 @@ int main( int argc, char **argv )
 
 
 /*@}*/
-
-
-
-

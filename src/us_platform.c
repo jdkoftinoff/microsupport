@@ -66,7 +66,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
   return 0;
 }
 
-bool us_platform_init_winsock( void )
+bool us_platform_init_sockets( void )
 {
   WSADATA wsaData;
   WORD version;
@@ -87,17 +87,19 @@ bool us_platform_init_winsock( void )
   return true;
 }
 
-#endif
+#elif defined(US_CONFIG_POSIX)
 
+bool us_platform_init_sockets( void )
+{
+  signal(EPIPE,SIG_IGN);
+  return true;
+}
 
 void us_gettimeofday( struct timeval *tv )
 {
   int r;
-  struct timezone tz;
-  tz.tz_minuteswest = 0;
-  tz.tz_dsttime = 0;
 
-  r = gettimeofday( tv, &tz );
+  r = gettimeofday( tv, 0 );
   if( r!=0 )
   {
     perror( "gettimeofday" );
@@ -105,7 +107,33 @@ void us_gettimeofday( struct timeval *tv )
   }
 }
 
+#elif defined(TARGET_PLATFORM_AVR)
+bool us_platform_init_sockets( void )
+{
+  /* TODO */
+}
 
+void us_gettimeofday( struct timeval *tv )
+{
+  /* TODO */
+  tv->sec=0;
+  tv->usec=0;
+}
+
+#else
+bool us_platform_init_sockets( void )
+{
+  /* TODO */
+  return true;
+}
+
+void us_gettimeofday( struct timeval *tv )
+{
+  /* TODO */
+  tv->tv_sec=0;
+  tv->tv_usec=0;
+}
+#endif
 
 
 

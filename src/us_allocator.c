@@ -34,7 +34,7 @@
 
 char * us_strdup( struct us_allocator_s *allocator, const char *src )
 {
-  int len=strlen( src );
+  int len=(int)(strlen( src ));
   char *p = us_new_array( allocator, char, len+1 );
   if( p )
   {
@@ -155,7 +155,7 @@ void us_malloc_allocator_destroy(
                                  us_allocator_t *self_
                                  )
 {
-  // nothing to destroy, we do not keep track of all mallocs and frees
+  /* nothing to destroy, we do not keep track of all mallocs and frees */
 }
 
 void *us_malloc_allocator_alloc(

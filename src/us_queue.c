@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void us_queue_init(
     us_queue_t *self,
     uint8_t *buf,
-    int buf_size
+    uint16_t buf_size
     )
 {
   self->m_buf = buf;
@@ -40,19 +40,9 @@ void us_queue_init(
   self->m_next_out = 0;
 }
 
-int us_queue_readable_count( us_queue_t *self )
+void us_queue_read( us_queue_t *self, uint8_t *dest_data, uint16_t dest_data_cnt )
 {
-  int c = self->m_next_in - self->m_next_out;
-  if( c<0 )
-  {
-    c+=self->m_buf_size;
-  }
-  return c;
-}
-
-void us_queue_read( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt )
-{
-  int i;
+  uint16_t i;
   for( i=0; i<dest_data_cnt; ++i )
   {
     dest_data[ i ] = self->m_buf[ self->m_next_out ];
@@ -63,15 +53,10 @@ void us_queue_read( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt )
   }
 }
 
-int us_queue_writeable_count( us_queue_t *self )
-{
-  int c = us_queue_readable_count(self);
-  return self->m_buf_size - c - 1;
-}
 
-void us_queue_write( us_queue_t *self, uint8_t *src_data, int src_data_cnt )
+void us_queue_write( us_queue_t *self, uint8_t *src_data, uint16_t src_data_cnt )
 {
-  int i;
+  uint16_t i;
   for (i=0; i<src_data_cnt; i++)
   {
     self->m_buf[ self->m_next_in ] = src_data[i];

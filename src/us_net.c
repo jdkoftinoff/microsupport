@@ -1,5 +1,4 @@
 #include "us_world.h"
-
 #include "us_net.h"
 
 /*
@@ -29,7 +28,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#if US_ENABLE_BSD_SOCKETS
 struct addrinfo *us_net_get_addrinfo(
                                         const char *ip_addr,
                                         const char *ip_port,
@@ -210,6 +209,5 @@ bool us_net_timeout_hit( struct timeval *cur_time, struct timeval *next_time )
   return r;
 }
 
-
-
+#endif
 

@@ -3,6 +3,7 @@
 #include "us_print.h"
 #include "us_logger_udp.h"
 
+
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -40,8 +41,9 @@ us_printraw_t us_logger_udp_printer_impl; /**! printer object to use to form buf
 
 struct sockaddr_in us_logger_udp_dest_sockaddr; /**! ip address/port list to send to */
 
+void us_log_udp_send(void);
 
-void us_log_udp_send()
+void us_log_udp_send(void)
 {
   if( us_logger_udp_socket != -1 )
   {

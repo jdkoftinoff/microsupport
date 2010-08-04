@@ -77,8 +77,8 @@ extern "C"
   extern us_print_file_t us_testutil_printer_stdout_impl;
   extern us_print_file_t us_testutil_printer_stderr_impl;
 #else
-  extern us_printbuf_t us_testutil_printer_stdout_impl;
-  extern us_printbuf_t us_testutil_printer_stderr_impl;
+  extern us_printraw_t us_testutil_printer_stdout_impl;
+  extern us_printraw_t us_testutil_printer_stderr_impl;
   extern char us_testutil_printbuffer_stdout[ US_TESTUTIL_PRINTBUFFER_SIZE ];
   extern char us_testutil_printbuffer_stderr[ US_TESTUTIL_PRINTBUFFER_SIZE ];
 #endif

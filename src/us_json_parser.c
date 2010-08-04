@@ -65,7 +65,7 @@
 
 #ifdef _MSC_VER
 #   if _MSC_VER >= 1400 /* Visual Studio 2005 and up */
-#      pragma warning(disable:4996) // unsecure sscanf
+#      pragma warning(disable:4996) /* unsecure sscanf */
 #   endif
 #endif
 
@@ -305,10 +305,10 @@ push(us_json_parser_t jc, int mode)
       jc->stack_capacity *= 2;
       bytes_to_allocate = jc->stack_capacity * sizeof(jc->static_stack[0]);
       if (jc->stack == &jc->static_stack[0]) {
-        jc->stack = (signed char *)jc->allocator->alloc( jc->allocator, bytes_to_allocate, 1 );
+        jc->stack = (signed char *)jc->allocator->alloc( jc->allocator, (int32_t)bytes_to_allocate, 1 );
         memcpy(jc->stack, jc->static_stack, sizeof(jc->static_stack));
       } else {
-        jc->stack = (signed char *)jc->allocator->realloc( jc->allocator, jc->stack, bytes_to_allocate, 1 );
+        jc->stack = (signed char *)jc->allocator->realloc( jc->allocator, jc->stack, (int32_t)bytes_to_allocate, 1 );
       }
     }
   } else {
@@ -434,7 +434,8 @@ us_json_parser_create(us_allocator_t *allocator, us_json_config_t* config)
   jc->handle_floats_manually = config->handle_floats_manually != 0;
 
   /* set up decimal point */
-  jc->decimal_point = *localeconv()->decimal_point;
+  /*  jc->decimal_point = *localeconv()->decimal_point; */
+  jc->decimal_point = '.';
 
   return jc;
 }

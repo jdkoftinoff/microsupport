@@ -218,7 +218,6 @@ us_printbuf_create(
   if( self )
   {
     self->m_base.m_buffer = allocator->alloc( allocator, memory_length, 1 );
-
     self->m_base.m_base.destroy = us_printraw_destroy;
     self->m_base.m_base.printf = us_printraw_printf;
     self->m_base.m_base.vprintf = us_printraw_vprintf;
@@ -227,10 +226,13 @@ us_printbuf_create(
     {
       r = &self->m_base.m_base;
     }
+    else
+    {
+      us_delete( allocator, self );
+    }
   }
   return r;
 }
-
 
 
 #endif

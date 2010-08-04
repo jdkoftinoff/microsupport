@@ -42,13 +42,13 @@ int main( int argc, char **argv )
   int r=1;
   if( us_testutil_start(2048,2048,argc,argv) )
   {
+    char *b;
 #if US_ENABLE_LOGGING
     us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
 
-    char *b;
     us_log_set_level( US_LOG_LEVEL_DEBUG );
-    us_log_info( "Hello world from us_test_allocator %s:%d compiled on %s", __FILE__, __LINE__, __DATE__ );
+    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
 
     b = (char *)us_testutil_sys_allocator->alloc( us_testutil_sys_allocator, 512, 1 );
 
