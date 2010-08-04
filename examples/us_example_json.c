@@ -1,15 +1,24 @@
-/* main.c */
+/* us_example_json.c */
 
 /*
     This program demonstrates a simple application of JSON_parser. It reads
     a JSON text from STDIN, producing an error message if the text is rejected.
 
-        % JSON_parser <test/pass1.json
+        % us_example_json <test/pass1.json
 */
 
 #include "us_world.h"
 #include "us_allocator.h"
 #include "us_json_parser.h"
+
+#ifdef US_CONFIG_MICROCONTROLLER
+
+int main()
+{
+  return 0;
+}
+
+#else
 
 static int print(void* ctx, int type, const us_json_value_t* value);
 
@@ -19,11 +28,10 @@ int main(int argc, char* argv[])
   FILE* input;
   us_malloc_allocator_t malloc_allocator;
   us_allocator_t *allocator;
-  allocator = us_malloc_allocator_init( &malloc_allocator );
-
   us_json_config_t config;
-
   us_json_parser_t jc = NULL;
+
+  allocator = us_malloc_allocator_init( &malloc_allocator );
 
   us_json_config_init(&config);
 
@@ -33,6 +41,7 @@ int main(int argc, char* argv[])
   config.handle_floats_manually = 0;
 
   /* Important! Set locale before parser is created.*/
+#if 0
   if (argc >= 2) {
     if (!setlocale(LC_ALL, argv[1])) {
       fprintf(stderr, "Failed to set locale to '%s'\n", argv[1]);
@@ -40,6 +49,7 @@ int main(int argc, char* argv[])
   } else {
     fprintf(stderr, "No locale provided, C locale is used\n");
   }
+#endif
 
   jc = us_json_parser_create(allocator,&config);
 
@@ -162,3 +172,4 @@ static int print(void* ctx, int type, const us_json_value_t* value)
 }
 
 
+#endif
