@@ -62,11 +62,12 @@ uint8_t test_data_1[] = {
 
 void print_sysex ( us_midi_sysex_t *ex )
 {
+  int i;
   int l = us_midi_sysex_get_length( ex );
 
   us_log_info ( "Sysex Len=%d", l );
 
-  for ( int i=0; i<l; ++i )
+  for ( i=0; i<l; ++i )
   {
     us_log_info ("%02x ", ( int ) us_midi_sysex_get_data( ex, i ) );
   }
