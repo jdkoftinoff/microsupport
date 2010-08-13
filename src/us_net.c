@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #if US_ENABLE_BSD_SOCKETS
+
 struct addrinfo *us_net_get_addrinfo(
                                         const char *ip_addr,
                                         const char *ip_port,
@@ -39,7 +40,12 @@ struct addrinfo *us_net_get_addrinfo(
   struct addrinfo *ai;
   struct addrinfo hints;
   memset(&hints,'\0',sizeof(hints) );
+
+#ifdef AI_ADDRCONFIG
   hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;
+#else
+  hints.ai_flags = AI_PASSIVE | AI_NUMERICHOST;
+#endif
   hints.ai_socktype = type;
 
   do
@@ -55,7 +61,6 @@ struct addrinfo *us_net_get_addrinfo(
 
   return ai;
 }
-
 
 int us_net_create_udp_socket(
                                 struct addrinfo *ai,

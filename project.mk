@@ -1,9 +1,6 @@
-#
-# defintions
-#
 PROJECT=microsupport
 PROJECT_NAME=microsupport
-PROJECT_VERSION=20100216
+PROJECT_VERSION=1
 PROJECT_EMAIL=jeffk@meyersound.com
 PROJECT_LICENSE=private
 PROJECT_MAINTAINER=jeffk@meyersound.com
@@ -14,13 +11,11 @@ PROJECT_IDENTIFIER=com.meyersound.microsupport
 TOP_LIB_DIRS+=.
 CONFIG_TOOLS+=
 PKGCONFIG_PACKAGES+=
-COMPILE_FLAGS+=-Wall
+COMPILE_FLAGS+=-Wall -pedantic -std=c99
 
 ENABLE_PRECOMPILED_HEADERS?=0
 PRECOMPILED_HEADER=$(TOP)/include/us_world.h
 
 STRIP=true
 
-LIB_SRC_DIR+=
-LIB_EXAMPLES_DIR+=
 
