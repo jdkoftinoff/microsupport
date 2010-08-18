@@ -37,30 +37,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup us_test_allocator */
 /*@{*/
 
-int main( int argc, char **argv )
+int main ( int argc, char **argv )
 {
-  int r=1;
-  if( us_testutil_start(2048,2048,argc,argv) )
-  {
-    char *b;
+    int r = 1;
+    
+    if ( us_testutil_start ( 2048, 2048, argc, argv ) )
+    {
+        char *b;
 #if US_ENABLE_LOGGING
-    us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
+        us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-
-    us_log_set_level( US_LOG_LEVEL_DEBUG );
-    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-
-    b = (char *)us_testutil_sys_allocator->alloc( us_testutil_sys_allocator, 512, 1 );
-
-    us_log_debug( "result from alloc of 512 bytes: %p", b );
-
-    us_log_info("Finishing us_test_allocator" );
-    us_logger_finish();
-    us_testutil_finish();
-    r = 0;
-  }
-
-  return r;
+        us_log_set_level ( US_LOG_LEVEL_DEBUG );
+        us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+        b = ( char * ) us_testutil_sys_allocator->alloc ( us_testutil_sys_allocator, 512, 1 );
+        us_log_debug ( "result from alloc of 512 bytes: %p", b );
+        us_log_info ( "Finishing us_test_allocator" );
+        us_logger_finish();
+        us_testutil_finish();
+        r = 0;
+    }
+    
+    return r;
 }
 
 /*@}*/

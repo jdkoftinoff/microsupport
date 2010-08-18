@@ -59,168 +59,150 @@ int32_t us_testutil_session_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 
 
 
-bool us_testutil_start(
-                         int32_t sys_allocator_size,
-                         int32_t session_allocator_size,
-                         int argc,
-                         char **argv
-                         )
+bool us_testutil_start (
+    int32_t sys_allocator_size,
+    int32_t session_allocator_size,
+    int argc,
+    char **argv
+)
 {
-  bool r=true;
-  (void)argc;
-  (void)argv;
-
+    bool r = true;
+    ( void ) argc;
+    ( void ) argv;
 #if US_ENABLE_NETWORK
-  r = us_platform_init_sockets();
-
-  if( !r )
-  {
-    return r;
-  }
+    r = us_platform_init_sockets();
+    
+    if ( !r )
+    {
+        return r;
+    }
+    
 #endif
-
-  /*
-    Initialize the system and the session allocators
-  */
-
-  us_testutil_sys_allocator = 0;
-  us_testutil_session_allocator = 0;
-
+    /*
+      Initialize the system and the session allocators
+    */
+    us_testutil_sys_allocator = 0;
+    us_testutil_session_allocator = 0;
 #if US_ENABLE_MALLOC
-
-  /*
-    With malloc if we have it
-  */
-
-  us_testutil_sys_allocator=
-    us_malloc_allocator_init(
-                             &us_testutil_sys_allocator_impl
-                             );
-
-  us_testutil_session_allocator=
-    us_malloc_allocator_init(
-                               &us_testutil_session_allocator_impl
-                               );
+    /*
+      With malloc if we have it
+    */
+    us_testutil_sys_allocator =
+        us_malloc_allocator_init (
+            &us_testutil_sys_allocator_impl
+        );
+    us_testutil_session_allocator =
+        us_malloc_allocator_init (
+            &us_testutil_session_allocator_impl
+        );
 #else
-
-  (void)sys_allocator_size;
-  (void)session_allocator_size;
-
-  /*
-    or with statically allocated bss segment data if we don't have malloc
-  */
-  us_testutil_sys_allocator=
-    us_simple_allocator_init(
-                               &us_testutil_sys_allocator_impl,
-                               &us_testutil_session_sys_buffer,
-                               (int32_t)(US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof(int32_t))
-                               );
-
-
-  us_testutil_session_allocator=
-    us_simple_allocator_init(
-                               &us_testutil_session_allocator_impl,
-                               &us_testutil_session_sys_buffer,
-                               (int32_t)(US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof(int32_t))
-                               );
+    ( void ) sys_allocator_size;
+    ( void ) session_allocator_size;
+    /*
+      or with statically allocated bss segment data if we don't have malloc
+    */
+    us_testutil_sys_allocator =
+        us_simple_allocator_init (
+            &us_testutil_sys_allocator_impl,
+            &us_testutil_session_sys_buffer,
+            ( int32_t ) ( US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof ( int32_t ) )
+        );
+    us_testutil_session_allocator =
+        us_simple_allocator_init (
+            &us_testutil_session_allocator_impl,
+            &us_testutil_session_sys_buffer,
+            ( int32_t ) ( US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof ( int32_t ) )
+        );
 #endif
-
-  /*
-    check for allocation failure
-  */
-  if( !us_testutil_sys_allocator || !us_testutil_session_allocator )
-  {
-    r=false;
-  }
-
-  /*
-    Initialize any printing mechanism if enabled
-  */
+        
+    /*
+      check for allocation failure
+    */
+    if ( !us_testutil_sys_allocator || !us_testutil_session_allocator )
+    {
+        r = false;
+    }
+    
+    /*
+      Initialize any printing mechanism if enabled
+    */
 #if US_ENABLE_PRINTING
 #if US_ENABLE_STDIO
-
-  /*
-    Using stdio.h FILE stdout if available
-  */
-
-  us_testutil_printer_stdout =
-    us_print_file_init(
-                         &us_testutil_printer_stdout_impl,
-                         stdout
-                         );
-
-  us_testutil_printer_stderr =
-    us_print_file_init(
-                         &us_testutil_printer_stderr_impl,
-                         stderr
-                         );
-
-
+    /*
+      Using stdio.h FILE stdout if available
+    */
+    us_testutil_printer_stdout =
+        us_print_file_init (
+            &us_testutil_printer_stdout_impl,
+            stdout
+        );
+    us_testutil_printer_stderr =
+        us_print_file_init (
+            &us_testutil_printer_stderr_impl,
+            stderr
+        );
 #else
-
-  /*
-    Using statically allocated character buffer if not
-  */
-  us_testutil_printer_stdout =
-    us_printraw_init(
-                       &us_testutil_printer_stdout_impl,
-                       us_testutil_printbuffer_stdout,
-                       US_TESTUTIL_PRINTBUFFER_SIZE
-                       );
-
-  us_testutil_printer_stderr =
-    us_printraw_init(
-                       &us_testutil_printer_stderr_impl,
-                       us_testutil_printbuffer_stderr,
-                       US_TESTUTIL_PRINTBUFFER_SIZE
-                       );
-
+    /*
+      Using statically allocated character buffer if not
+    */
+    us_testutil_printer_stdout =
+        us_printraw_init (
+            &us_testutil_printer_stdout_impl,
+            us_testutil_printbuffer_stdout,
+            US_TESTUTIL_PRINTBUFFER_SIZE
+        );
+    us_testutil_printer_stderr =
+        us_printraw_init (
+            &us_testutil_printer_stderr_impl,
+            us_testutil_printbuffer_stderr,
+            US_TESTUTIL_PRINTBUFFER_SIZE
+        );
 #endif
-
-  /*
-    report any failure of the printer
-  */
-  if( !us_testutil_printer_stdout || !us_testutil_printer_stderr )
-  {
-    r=false;
-  }
-
-  us_stdout = us_testutil_printer_stdout;
-  us_stderr = us_testutil_printer_stderr;
-
+        
+    /*
+      report any failure of the printer
+    */
+    if ( !us_testutil_printer_stdout || !us_testutil_printer_stderr )
+    {
+        r = false;
+    }
+    
+    us_stdout = us_testutil_printer_stdout;
+    us_stderr = us_testutil_printer_stderr;
 #endif
-
-  return r;
+    return r;
 }
 
-void us_testutil_finish(void)
+void us_testutil_finish ( void )
 {
 #if US_ENABLE_PRINTING
 
-  /*
-    destroy/delete/deallocate/close any printer if printing is enabled
-  */
-  if( us_testutil_printer_stdout )
-  {
-    us_testutil_printer_stdout->destroy( us_testutil_printer_stdout );
-  }
-
-  if( us_testutil_printer_stderr )
-  {
-    us_testutil_printer_stderr->destroy( us_testutil_printer_stderr );
-  }
-
+    /*
+      destroy/delete/deallocate/close any printer if printing is enabled
+    */
+    if ( us_testutil_printer_stdout )
+    {
+        us_testutil_printer_stdout->destroy ( us_testutil_printer_stdout );
+    }
+    
+    if ( us_testutil_printer_stderr )
+    {
+        us_testutil_printer_stderr->destroy ( us_testutil_printer_stderr );
+    }
+    
 #endif
-  /*
-    deallocate any system of session allocators
-  */
-  if( us_testutil_sys_allocator )
-  {
-    us_testutil_sys_allocator->destroy( us_testutil_sys_allocator );
-  }
-  if( us_testutil_session_allocator )
-  {
-    us_testutil_session_allocator->destroy( us_testutil_session_allocator );
-  }
+    
+    /*
+      deallocate any system of session allocators
+    */
+    if ( us_testutil_sys_allocator )
+    {
+        us_testutil_sys_allocator->destroy ( us_testutil_sys_allocator );
+    }
+    
+    if ( us_testutil_session_allocator )
+    {
+        us_testutil_session_allocator->destroy ( us_testutil_session_allocator );
+    }
 }
 

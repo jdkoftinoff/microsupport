@@ -39,111 +39,117 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*@{*/
 
 
-bool us_test_slip( void );
-us_buffer_t * us_test_slip_fill_buffer( void );
-void us_test_slip_callback( us_slip_decoder_t *self, us_buffer_t *buf );
+bool us_test_slip ( void );
+us_buffer_t * us_test_slip_fill_buffer ( void );
+void us_test_slip_callback ( us_slip_decoder_t *self, us_buffer_t *buf );
 
 
-us_buffer_t * us_test_slip_fill_buffer( void )
+us_buffer_t * us_test_slip_fill_buffer ( void )
 {
-  bool r=false;
-  us_buffer_t *buf = us_buffer_create(us_testutil_sys_allocator,1024);
-  if( buf )
-  {
-    if( us_buffer_append_rounded_string( buf, "Rounded String" ) )
+    bool r = false;
+    us_buffer_t *buf = us_buffer_create ( us_testutil_sys_allocator, 1024 );
+    
+    if ( buf )
     {
-      if( us_buffer_append_int32( buf, 0x1234c078 ) ) /* note embedded C0 = slip END */
-      {
-        if( us_buffer_append_uint64( buf, 0x89abcdef, 0x012345db ) ) /* note embedded DB = slip ESC */
+        if ( us_buffer_append_rounded_string ( buf, "Rounded String" ) )
+        {
+            if ( us_buffer_append_int32 ( buf, 0x1234c078 ) ) /* note embedded C0 = slip END */
+            {
+                if ( us_buffer_append_uint64 ( buf, 0x89abcdef, 0x012345db ) ) /* note embedded DB = slip ESC */
+                {
+#if US_ENABLE_PRINTING
+                    us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of test buffer:\n" );
+                    buf->print ( buf, us_testutil_printer_stdout );
+                    us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
+#endif
+                    r = true;
+                }
+            }
+        }
+    }
+    
+    else
+    {
+        us_log_error ( "expected to allocate 1024 bytes from allocator for buffer but failed" );
+    }
+    
+    if ( !r )
+        buf = 0;
+        
+    return buf;
+}
+
+void us_test_slip_callback ( us_slip_decoder_t *self, us_buffer_t *buf )
+{
+    ( void ) self;
+    us_log_info ( "Successfully parsed slip encoded buffer" );
+#if US_ENABLE_PRINTING
+    us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of decoded buffer:\n" );
+    buf->print ( buf, us_testutil_printer_stdout );
+    us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
+#endif
+}
+
+bool us_test_slip ( void )
+{
+    bool r = false;
+    us_buffer_t *src_buf = us_test_slip_fill_buffer();
+    us_buffer_t *slipped_buf = us_buffer_create ( us_testutil_sys_allocator, 1024 );
+    us_slip_decoder_t *slip_decoder = us_slip_decoder_create (
+                                          us_testutil_sys_allocator,
+                                          1024,
+                                          us_test_slip_callback
+                                      );
+                                      
+    if ( src_buf && slipped_buf && slip_decoder )
+    {
+        us_log_info ( "encoding buffer" );
+        
+        if ( us_slip_encode ( slipped_buf, src_buf ) )
         {
 #if US_ENABLE_PRINTING
-          us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "contents of test buffer:\n" );
-          buf->print( buf, us_testutil_printer_stdout );
-          us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "\n" );
+            us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of encoded buffer:\n" );
+            slipped_buf->print ( slipped_buf, us_testutil_printer_stdout );
+            us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
 #endif
-          r=true;
+            us_log_info ( "decoding buffer" );
+            
+            if ( us_slip_decoder_parse_buffer ( slip_decoder, slipped_buf ) == 1 )
+            {
+                r = true;
+            }
         }
-      }
     }
-  }
-  else
-  {
-    us_log_error( "expected to allocate 1024 bytes from allocator for buffer but failed" );
-  }
-  if( !r )
-    buf=0;
-  return buf;
-}
-
-void us_test_slip_callback( us_slip_decoder_t *self, us_buffer_t *buf )
-{
-  (void)self;
-  us_log_info( "Successfully parsed slip encoded buffer" );
-#if US_ENABLE_PRINTING
-  us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "contents of decoded buffer:\n" );
-  buf->print( buf, us_testutil_printer_stdout );
-  us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "\n" );
-#endif
-}
-
-bool us_test_slip( void )
-{
-  bool r=false;
-  us_buffer_t *src_buf = us_test_slip_fill_buffer();
-  us_buffer_t *slipped_buf = us_buffer_create( us_testutil_sys_allocator, 1024 );
-
-  us_slip_decoder_t *slip_decoder = us_slip_decoder_create(
-                                                               us_testutil_sys_allocator,
-                                                               1024,
-                                                               us_test_slip_callback
-                                                               );
-
-  if( src_buf && slipped_buf && slip_decoder )
-  {
-    us_log_info( "encoding buffer" );
-    if( us_slip_encode( slipped_buf, src_buf ) )
+    
+    else
     {
-#if US_ENABLE_PRINTING
-      us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "contents of encoded buffer:\n" );
-      slipped_buf->print( slipped_buf, us_testutil_printer_stdout );
-      us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "\n" );
-#endif
-
-      us_log_info( "decoding buffer" );
-      if( us_slip_decoder_parse_buffer( slip_decoder, slipped_buf ) == 1 )
-      {
-        r=true;
-      }
+        us_log_error ( "Error allocating buffers or slip decoder" );
     }
-  }
-  else
-  {
-    us_log_error( "Error allocating buffers or slip decoder" );
-  }
-
-  return r;
+    
+    return r;
 }
 
-int main( int argc, char **argv )
+int main ( int argc, char **argv )
 {
-  int r=1;
-  if( us_testutil_start(4096,4096,argc,argv) )
-  {
+    int r = 1;
+    
+    if ( us_testutil_start ( 4096, 4096, argc, argv ) )
+    {
 #if US_ENABLE_LOGGING
-    us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
+        us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-
-    us_log_set_level( US_LOG_LEVEL_DEBUG );
-    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-
-    if( us_test_slip() )
-      r=0;
-
-    us_log_info("Finishing us_test_slip" );
-    us_logger_finish();
-    us_testutil_finish();
-  }
-  return r;
+        us_log_set_level ( US_LOG_LEVEL_DEBUG );
+        us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+        
+        if ( us_test_slip() )
+            r = 0;
+            
+        us_log_info ( "Finishing us_test_slip" );
+        us_logger_finish();
+        us_testutil_finish();
+    }
+    
+    return r;
 }
 
 
