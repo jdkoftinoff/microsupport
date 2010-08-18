@@ -41,111 +41,112 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-  #define US_SLIP_END (0300) /**! indicates end of packet */
-  #define US_SLIP_ESC (0333) /**! indicates byte stuffing */
-  #define US_SLIP_ESC_END (0334) /**! ESC ESC_END means END data byte */
-  #define US_SLIP_ESC_ESC (0335) /**! ESC ESC_ESC means ESC data byte */
+#define US_SLIP_END (0300) /**! indicates end of packet */
+#define US_SLIP_ESC (0333) /**! indicates byte stuffing */
+#define US_SLIP_ESC_END (0334) /**! ESC ESC_END means END data byte */
+#define US_SLIP_ESC_ESC (0335) /**! ESC ESC_ESC means ESC data byte */
 
-  /**
-      State machine states for parsing slip encoded frames
-  */
-  typedef enum us_slip_state_enum {
-    us_slip_state_before_packet,          /**! ignore any data between frames     */
-    us_slip_state_in_packet,              /**! stuff data into buffer             */
-    us_slip_state_in_esc                  /**! interpret next data code specially */
-  } us_slip_state_t;
-
-  struct us_slip_decoder_s;
-
-  /** type for a callback procedure which is called whenever the slip decoder forms a complete packet */
-  typedef void (*us_slip_decoder_proc)( struct us_slip_decoder_s *self, us_buffer_t *buf );
-
-  /** slip framing decoder
-   */
-  typedef struct us_slip_decoder_s
-  {
-    us_slip_state_t m_state;
-    us_buffer_t *m_buffer;
-    us_slip_decoder_proc m_packet_formed_callback;
-  } us_slip_decoder_t;
-
-  /**
-   Create a slip decoder object and associated buffer
-
-   @param allocator allocator to allocate memory from for the slip decoder and the buffer
-   @param max_packet_len maximum incoming packet length
-   @param packet_formed_callback callback function that is called when a packet is formed
-   @returns pointer to slip decoder initialized, or 0 on error
-   */
-  us_slip_decoder_t *
-  us_slip_decoder_create(
-                           us_allocator_t *allocator,
-                           int32_t max_packet_len,
-                           us_slip_decoder_proc packet_formed_callback
-                           );
-
-  /**
-   Initialize a slip decoder object
-
-   @param self pointer to allocated slip decoder object
-   @param buffer pointer to allocated buffer object
-   @param packet_formed_callback callback function that is called when a packet is formed
-   @returns pointer to slip decoder initialized, or 0 on error
-   */
-  us_slip_decoder_t *
-  us_slip_decoder_init(
-                         us_slip_decoder_t *self,
-                         us_buffer_t *buffer,
-                         us_slip_decoder_proc packet_formed_callback
-                         );
-
-  /**
-   Reset the state machine for a slip decoder object
-
-   @param self pointer to allocated slip decoder object
-   */
-  void us_slip_decoder_reset(
-                               us_slip_decoder_t *self
-                               );
-
-  /**
-   Parse a block of raw data for slip framing and call the packet_formed_callback
-   whenenever a full frame is formed in the buffer.
-
-   @param self pointer to allocated slip decoder object
-   @param data pointer to raw incoming data to parse
-   @param data_len length of raw incoming data to parse
-   @returns int count of packets parsed
-   */
-  int us_slip_decoder_parse(
-                               us_slip_decoder_t *self,
-                               const uint8_t *data,
-                               int data_len
-                               );
-
-  /**
-   Parse the entire contents of a buffer
-
-   @param self pointer to allocated slip decoder object
-   @param buffer pointer to buffer to parse
-   @returns int count of packets parsed
-   */
+    /**
+        State machine states for parsing slip encoded frames
+    */
+    typedef enum us_slip_state_enum {
+        us_slip_state_before_packet,          /**! ignore any data between frames     */
+        us_slip_state_in_packet,              /**! stuff data into buffer             */
+        us_slip_state_in_esc                  /**! interpret next data code specially */
+    }
+    us_slip_state_t;
+    
+    struct us_slip_decoder_s;
+    
+    /** type for a callback procedure which is called whenever the slip decoder forms a complete packet */
+    typedef void ( *us_slip_decoder_proc ) ( struct us_slip_decoder_s *self, us_buffer_t *buf );
+    
+    /** slip framing decoder
+     */
+    typedef struct us_slip_decoder_s
+    {
+        us_slip_state_t m_state;
+        us_buffer_t *m_buffer;
+        us_slip_decoder_proc m_packet_formed_callback;
+    } us_slip_decoder_t;
+    
+    /**
+     Create a slip decoder object and associated buffer
+    
+     @param allocator allocator to allocate memory from for the slip decoder and the buffer
+     @param max_packet_len maximum incoming packet length
+     @param packet_formed_callback callback function that is called when a packet is formed
+     @returns pointer to slip decoder initialized, or 0 on error
+     */
+    us_slip_decoder_t *
+    us_slip_decoder_create (
+        us_allocator_t *allocator,
+        int32_t max_packet_len,
+        us_slip_decoder_proc packet_formed_callback
+    );
+    
+    /**
+     Initialize a slip decoder object
+    
+     @param self pointer to allocated slip decoder object
+     @param buffer pointer to allocated buffer object
+     @param packet_formed_callback callback function that is called when a packet is formed
+     @returns pointer to slip decoder initialized, or 0 on error
+     */
+    us_slip_decoder_t *
+    us_slip_decoder_init (
+        us_slip_decoder_t *self,
+        us_buffer_t *buffer,
+        us_slip_decoder_proc packet_formed_callback
+    );
+    
+    /**
+     Reset the state machine for a slip decoder object
+    
+     @param self pointer to allocated slip decoder object
+     */
+    void us_slip_decoder_reset (
+        us_slip_decoder_t *self
+    );
+    
+    /**
+     Parse a block of raw data for slip framing and call the packet_formed_callback
+     whenenever a full frame is formed in the buffer.
+    
+     @param self pointer to allocated slip decoder object
+     @param data pointer to raw incoming data to parse
+     @param data_len length of raw incoming data to parse
+     @returns int count of packets parsed
+     */
+    int us_slip_decoder_parse (
+        us_slip_decoder_t *self,
+        const uint8_t *data,
+        int data_len
+    );
+    
+    /**
+     Parse the entire contents of a buffer
+    
+     @param self pointer to allocated slip decoder object
+     @param buffer pointer to buffer to parse
+     @returns int count of packets parsed
+     */
 #  define us_slip_decoder_parse_buffer( self, buffer ) us_slip_decoder_parse( (self), (buffer)->m_buffer, (buffer)->m_cur_length )
-
-  /** Encode a complete packet from src_buffer into
-   dest_buffer with slip packet framing. Does not clear the
-   dest_buffer first.
-
-   @param dest_buffer destination buffer
-   @param src_buffer source buffer
-   @returns bool true on success, even if src_buffer was empty.
-   */
-  bool us_slip_encode(
-                        us_buffer_t *dest_buffer,
-                        us_buffer_t *src_buffer
-                        );
-
-
+    
+    /** Encode a complete packet from src_buffer into
+     dest_buffer with slip packet framing. Does not clear the
+     dest_buffer first.
+    
+     @param dest_buffer destination buffer
+     @param src_buffer source buffer
+     @returns bool true on success, even if src_buffer was empty.
+     */
+    bool us_slip_encode (
+        us_buffer_t *dest_buffer,
+        us_buffer_t *src_buffer
+    );
+    
+    
 #ifdef __cplusplus
 }
 #endif

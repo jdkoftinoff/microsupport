@@ -56,44 +56,44 @@ extern "C"
 {
 #endif
 
-  bool us_testutil_start(
-      int32_t sys_allocator_size,
-      int32_t session_allocator_size,
-      int argc,
-      char **argv
-      );
-
-  void us_testutil_finish(void);
-
-
-  extern us_allocator_t *us_testutil_sys_allocator;
-  extern us_allocator_t *us_testutil_session_allocator;
-
+    bool us_testutil_start (
+        int32_t sys_allocator_size,
+        int32_t session_allocator_size,
+        int argc,
+        char **argv
+    );
+    
+    void us_testutil_finish ( void );
+    
+    
+    extern us_allocator_t *us_testutil_sys_allocator;
+    extern us_allocator_t *us_testutil_session_allocator;
+    
 #if US_ENABLE_PRINTING
-  extern us_print_t *us_testutil_printer_stdout;
-  extern us_print_t *us_testutil_printer_stderr;
-
+    extern us_print_t *us_testutil_printer_stdout;
+    extern us_print_t *us_testutil_printer_stderr;
+    
 #if US_ENABLE_STDIO
-  extern us_print_file_t us_testutil_printer_stdout_impl;
-  extern us_print_file_t us_testutil_printer_stderr_impl;
+    extern us_print_file_t us_testutil_printer_stdout_impl;
+    extern us_print_file_t us_testutil_printer_stderr_impl;
 #else
-  extern us_printraw_t us_testutil_printer_stdout_impl;
-  extern us_printraw_t us_testutil_printer_stderr_impl;
-  extern char us_testutil_printbuffer_stdout[ US_TESTUTIL_PRINTBUFFER_SIZE ];
-  extern char us_testutil_printbuffer_stderr[ US_TESTUTIL_PRINTBUFFER_SIZE ];
+    extern us_printraw_t us_testutil_printer_stdout_impl;
+    extern us_printraw_t us_testutil_printer_stderr_impl;
+    extern char us_testutil_printbuffer_stdout[ US_TESTUTIL_PRINTBUFFER_SIZE ];
+    extern char us_testutil_printbuffer_stderr[ US_TESTUTIL_PRINTBUFFER_SIZE ];
 #endif
 #endif
-
+    
 #if US_ENABLE_MALLOC
-  extern us_malloc_allocator_t us_testutil_sys_allocator_impl;
-  extern us_malloc_allocator_t us_testutil_session_allocator_impl;
+    extern us_malloc_allocator_t us_testutil_sys_allocator_impl;
+    extern us_malloc_allocator_t us_testutil_session_allocator_impl;
 #else
-  extern us_simple_allocator_t us_testutil_sys_allocator_impl;
-  extern us_simple_allocator_t us_testutil_session_allocator_impl;
-  extern int32_t us_testutil_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
-  extern int32_t us_testutil_session_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
+    extern us_simple_allocator_t us_testutil_sys_allocator_impl;
+    extern us_simple_allocator_t us_testutil_session_allocator_impl;
+    extern int32_t us_testutil_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
+    extern int32_t us_testutil_session_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 #endif
-
+    
 #ifdef __cplusplus
 }
 #endif

@@ -40,20 +40,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-  extern bool us_logger_stdio_files;
-  extern FILE *us_logger_stdio_out;
-  extern FILE *us_logger_stdio_err;
-
-  bool us_logger_stdio_start( FILE *outfile, FILE *errfile );
-  void us_logger_stdio_finish(void);
-
-  bool us_logger_init_stdio_files( const char *outfilename, const char *errfilename );
-  
-  void us_log_error_stdio( const char *fmt, ... );
-  void us_log_warn_stdio( const char *fmt, ... );
-  void us_log_info_stdio( const char *fmt, ... );
-  void us_log_debug_stdio( const char *fmt, ... );
-
+    extern bool us_logger_stdio_files;
+    extern FILE *us_logger_stdio_out;
+    extern FILE *us_logger_stdio_err;
+    
+    bool us_logger_stdio_start ( FILE *outfile, FILE *errfile );
+    void us_logger_stdio_finish ( void );
+    
+    bool us_logger_init_stdio_files ( const char *outfilename, const char *errfilename );
+    
+    void us_log_error_stdio ( const char *fmt, ... );
+    void us_log_warn_stdio ( const char *fmt, ... );
+    void us_log_info_stdio ( const char *fmt, ... );
+    void us_log_debug_stdio ( const char *fmt, ... );
+    
 #ifdef __cplusplus
 }
 #endif

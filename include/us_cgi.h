@@ -5,7 +5,7 @@
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -16,7 +16,7 @@
  * Neither the name of the Meyer Sound Laboratories, Inc. nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -37,14 +37,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
-  bool us_cgi_is_escapable( char c );
 
-  bool us_cgi_unescape( const char *src, int src_len, us_buffer_t *dest_buf );
-  bool us_cgi_escape( const char *src, int src_len, us_buffer_t *dest_buf );
-  
-  extern char us_cgi_tohexdigit[16];
-  extern char *us_cgi_rfc3986_reserved_chars;
+    bool us_cgi_is_escapable ( char c );
+    
+    bool us_cgi_unescape ( const char *src, int src_len, us_buffer_t *dest_buf );
+    bool us_cgi_escape ( const char *src, int src_len, us_buffer_t *dest_buf );
+    
+    extern char us_cgi_tohexdigit[16];
+    extern char *us_cgi_rfc3986_reserved_chars;
 #ifdef __cplusplus
 }
 #endif

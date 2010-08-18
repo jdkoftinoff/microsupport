@@ -32,157 +32,163 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-char * us_strdup( struct us_allocator_s *allocator, const char *src )
+char * us_strdup ( struct us_allocator_s *allocator, const char *src )
 {
-  int len=(int)(strlen( src ));
-  char *p = us_new_array( allocator, char, len+1 );
-  if( p )
-  {
-    strcpy( p, src );
-  }
-  return p;
+    int len = ( int ) ( strlen ( src ) );
+    char *p = us_new_array ( allocator, char, len + 1 );
+    
+    if ( p )
+    {
+        strcpy ( p, src );
+    }
+    
+    return p;
 }
 
-char * us_strndup( struct us_allocator_s *allocator, const char *src, int chars_to_copy )
+char * us_strndup ( struct us_allocator_s *allocator, const char *src, int chars_to_copy )
 {
-  int len=chars_to_copy;
-  char *p = us_new_array( allocator, char, len+1 );
-  if( p )
-  {
-    memcpy( p, src, len );
-    p[len]='\0';
-  }
-  return p;
+    int len = chars_to_copy;
+    char *p = us_new_array ( allocator, char, len + 1 );
+    
+    if ( p )
+    {
+        memcpy ( p, src, len );
+        p[len] = '\0';
+    }
+    
+    return p;
 }
 
 
 us_allocator_t *
-us_simple_allocator_init(
-                         us_simple_allocator_t *self,
-                         void *raw_memory,
-                         int32_t raw_memory_length
-                         )
+us_simple_allocator_init (
+    us_simple_allocator_t *self,
+    void *raw_memory,
+    int32_t raw_memory_length
+)
 {
-  self->m_raw_memory = raw_memory;
-  self->m_raw_memory_length = raw_memory_length;
-  self->m_current_position = 0;
-  self->base.destroy = us_simple_allocator_destroy;
-  self->base.alloc = us_simple_allocator_alloc;
-  self->base.realloc = us_simple_allocator_realloc;
-  self->base.free = us_simple_allocator_free;
-
-  return &self->base;
+    self->m_raw_memory = raw_memory;
+    self->m_raw_memory_length = raw_memory_length;
+    self->m_current_position = 0;
+    self->base.destroy = us_simple_allocator_destroy;
+    self->base.alloc = us_simple_allocator_alloc;
+    self->base.realloc = us_simple_allocator_realloc;
+    self->base.free = us_simple_allocator_free;
+    return &self->base;
 }
 
-void us_simple_allocator_destroy(
-                                 us_allocator_t *self
-                                 )
+void us_simple_allocator_destroy (
+    us_allocator_t *self
+)
 {
-  /* Do Nothing */
-  (void)self;
+    /* Do Nothing */
+    ( void ) self;
 }
 
-void *us_simple_allocator_alloc(
-                                us_allocator_t *self_,
-                                int32_t length,
-                                int32_t count
-                                )
+void *us_simple_allocator_alloc (
+    us_allocator_t *self_,
+    int32_t length,
+    int32_t count
+)
 {
-  us_simple_allocator_t *self = (us_simple_allocator_t *)self_;
-  void *result = 0;
-  /* round up total size to 32 bit alignment */
-  int32_t total_size_to_allocate = us_round_size( length*count );
-
-  if( (self->m_current_position + total_size_to_allocate)
-      <= (self->m_raw_memory_length) )
-  {
-    result = ((char *)self->m_raw_memory) + self->m_current_position;
-    self->m_current_position += total_size_to_allocate;
-  }
-  return result;
+    us_simple_allocator_t *self = ( us_simple_allocator_t * ) self_;
+    void *result = 0;
+    /* round up total size to 32 bit alignment */
+    int32_t total_size_to_allocate = us_round_size ( length * count );
+    
+    if ( ( self->m_current_position + total_size_to_allocate )
+            <= ( self->m_raw_memory_length ) )
+    {
+        result = ( ( char * ) self->m_raw_memory ) + self->m_current_position;
+        self->m_current_position += total_size_to_allocate;
+    }
+    
+    return result;
 }
 
-void *us_simple_allocator_realloc(
-                                  struct us_allocator_s *self_,
-                                  const void *orig_ptr,
-                                  int32_t length,
-                                  int32_t count
-                                  )
+void *us_simple_allocator_realloc (
+    struct us_allocator_s *self_,
+    const void *orig_ptr,
+    int32_t length,
+    int32_t count
+)
 {
-  void *new_ptr = self_->alloc( self_, length, count );
-  if( new_ptr )
-  {
-    memcpy( new_ptr, orig_ptr, us_round_size( length*count ) );
-    self_->free( self_, orig_ptr );
-  }
-  return new_ptr;
+    void *new_ptr = self_->alloc ( self_, length, count );
+    
+    if ( new_ptr )
+    {
+        memcpy ( new_ptr, orig_ptr, us_round_size ( length * count ) );
+        self_->free ( self_, orig_ptr );
+    }
+    
+    return new_ptr;
 }
 
-void us_simple_allocator_free(
-                              struct us_allocator_s *self_,
-                              const void *ptr
-                              )
+void us_simple_allocator_free (
+    struct us_allocator_s *self_,
+    const void *ptr
+)
 {
-  /* Do nothing; the simple allocator never frees */
+    /* Do nothing; the simple allocator never frees */
 }
 
 
 void
-us_allocator_reset(
-                   us_allocator_t *self_
-                   )
+us_allocator_reset (
+    us_allocator_t *self_
+)
 {
-  us_simple_allocator_t *self = (us_simple_allocator_t *)self_;
-  self->m_current_position=0;
+    us_simple_allocator_t *self = ( us_simple_allocator_t * ) self_;
+    self->m_current_position = 0;
 }
 
 
 #if US_ENABLE_MALLOC
 
 us_allocator_t *
-us_malloc_allocator_init(
-                         us_malloc_allocator_t *self
-                         )
+us_malloc_allocator_init (
+    us_malloc_allocator_t *self
+)
 {
-  self->base.destroy = us_malloc_allocator_destroy;
-  self->base.alloc = us_malloc_allocator_alloc;
-  self->base.realloc = us_malloc_allocator_realloc;
-  self->base.free = us_malloc_allocator_free;
-  return &self->base;
+    self->base.destroy = us_malloc_allocator_destroy;
+    self->base.alloc = us_malloc_allocator_alloc;
+    self->base.realloc = us_malloc_allocator_realloc;
+    self->base.free = us_malloc_allocator_free;
+    return &self->base;
 }
 
-void us_malloc_allocator_destroy(
-                                 us_allocator_t *self_
-                                 )
+void us_malloc_allocator_destroy (
+    us_allocator_t *self_
+)
 {
-  /* nothing to destroy, we do not keep track of all mallocs and frees */
+    /* nothing to destroy, we do not keep track of all mallocs and frees */
 }
 
-void *us_malloc_allocator_alloc(
-                                us_allocator_t *self,
-                                int32_t length,
-                                int32_t count
-                                )
+void *us_malloc_allocator_alloc (
+    us_allocator_t *self,
+    int32_t length,
+    int32_t count
+)
 {
-  return US_DEFAULT_MALLOC( us_round_size( length * count ) );
+    return US_DEFAULT_MALLOC ( us_round_size ( length * count ) );
 }
 
-void *us_malloc_allocator_realloc(
-                                  struct us_allocator_s *self,
-                                  const void *orig_ptr,
-                                  int32_t length,
-                                  int32_t count
-                                  )
+void *us_malloc_allocator_realloc (
+    struct us_allocator_s *self,
+    const void *orig_ptr,
+    int32_t length,
+    int32_t count
+)
 {
-  return US_DEFAULT_REALLOC( (void *)orig_ptr, us_round_size(length*count) );
+    return US_DEFAULT_REALLOC ( ( void * ) orig_ptr, us_round_size ( length * count ) );
 }
 
-void us_malloc_allocator_free(
-                              struct us_allocator_s *self,
-                              const void *ptr
-                              )
+void us_malloc_allocator_free (
+    struct us_allocator_s *self,
+    const void *ptr
+)
 {
-  US_DEFAULT_FREE( (void *)ptr );
+    US_DEFAULT_FREE ( ( void * ) ptr );
 }
 
 #endif

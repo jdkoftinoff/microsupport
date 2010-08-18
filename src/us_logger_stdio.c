@@ -38,118 +38,111 @@ bool us_logger_stdio_files = false;
 FILE *us_logger_stdio_out = 0;
 FILE *us_logger_stdio_err = 0;
 
-bool us_logger_stdio_start( FILE *outfile, FILE *errfile )
+bool us_logger_stdio_start ( FILE *outfile, FILE *errfile )
 {
-  us_logger_stdio_files = false;
-  us_logger_stdio_out = outfile;
-  us_logger_stdio_err = errfile;
-
-  us_log_error_proc = us_log_error_stdio;
-  us_log_warn_proc = us_log_warn_stdio;
-  us_log_info_proc = us_log_info_stdio;
-  us_log_debug_proc = us_log_debug_stdio;
-  us_logger_finish = us_logger_stdio_finish;
-
-  return true;
+    us_logger_stdio_files = false;
+    us_logger_stdio_out = outfile;
+    us_logger_stdio_err = errfile;
+    us_log_error_proc = us_log_error_stdio;
+    us_log_warn_proc = us_log_warn_stdio;
+    us_log_info_proc = us_log_info_stdio;
+    us_log_debug_proc = us_log_debug_stdio;
+    us_logger_finish = us_logger_stdio_finish;
+    return true;
 }
 
-bool us_logger_init_stdio_files( const char *outfilename, const char *errfilename )
+bool us_logger_init_stdio_files ( const char *outfilename, const char *errfilename )
 {
-  bool r=false;
-  us_logger_stdio_out = fopen( outfilename, "at" );
-  if( us_logger_stdio_out )
-  {
-    us_logger_stdio_err = fopen( errfilename, "at" );
-    if( us_logger_stdio_err )
+    bool r = false;
+    us_logger_stdio_out = fopen ( outfilename, "at" );
+    
+    if ( us_logger_stdio_out )
     {
-      us_logger_stdio_files = true;
-
-      us_log_error_proc = us_log_error_stdio;
-      us_log_warn_proc = us_log_warn_stdio;
-      us_log_info_proc = us_log_info_stdio;
-      us_log_debug_proc = us_log_debug_stdio;
-      us_logger_finish = us_logger_stdio_finish;
+        us_logger_stdio_err = fopen ( errfilename, "at" );
+        
+        if ( us_logger_stdio_err )
+        {
+            us_logger_stdio_files = true;
+            us_log_error_proc = us_log_error_stdio;
+            us_log_warn_proc = us_log_warn_stdio;
+            us_log_info_proc = us_log_info_stdio;
+            us_log_debug_proc = us_log_debug_stdio;
+            us_logger_finish = us_logger_stdio_finish;
+        }
+        
+        else
+        {
+            fclose ( us_logger_stdio_out );
+        }
     }
-    else
+    
+    return r;
+}
+
+void us_logger_stdio_finish ( void )
+{
+    if ( us_logger_stdio_files )
     {
-      fclose( us_logger_stdio_out );
+        if ( us_logger_stdio_out )
+        {
+            fflush ( us_logger_stdio_out );
+            fclose ( us_logger_stdio_out );
+            us_logger_stdio_out = 0;
+        }
+        
+        if ( us_logger_stdio_err )
+        {
+            fflush ( us_logger_stdio_err );
+            fclose ( us_logger_stdio_err );
+            us_logger_stdio_err = 0;
+        }
     }
-  }
-
-  return r;
+    
+    us_log_error_proc = us_log_null;
+    us_log_warn_proc = us_log_null;
+    us_log_info_proc = us_log_null;
+    us_log_debug_proc = us_log_null;
+    us_logger_finish = us_logger_null_finish;
 }
 
-void us_logger_stdio_finish(void)
+void us_log_error_stdio ( const char *fmt, ... )
 {
-  if( us_logger_stdio_files )
-  {
-    if( us_logger_stdio_out )
-    {
-      fflush( us_logger_stdio_out );
-      fclose( us_logger_stdio_out );
-      us_logger_stdio_out = 0;
-    }
-
-    if( us_logger_stdio_err )
-    {
-      fflush( us_logger_stdio_err );
-      fclose( us_logger_stdio_err );
-      us_logger_stdio_err = 0;
-    }
-  }
-  us_log_error_proc = us_log_null;
-  us_log_warn_proc = us_log_null;
-  us_log_info_proc = us_log_null;
-  us_log_debug_proc = us_log_null;
-  us_logger_finish = us_logger_null_finish;
+    va_list ap;
+    va_start ( ap, fmt );
+    US_DEFAULT_FPRINTF ( stderr, "ERROR:\t" );
+    US_DEFAULT_VFPRINTF ( stderr, fmt, ap );
+    US_DEFAULT_FPRINTF ( stderr, "\n" );
+    va_end ( ap );
 }
 
-void us_log_error_stdio( const char *fmt, ... )
+void us_log_warn_stdio ( const char *fmt, ... )
 {
-  va_list ap;
-  va_start( ap, fmt );
-
-  US_DEFAULT_FPRINTF( stderr, "ERROR:\t" );
-  US_DEFAULT_VFPRINTF( stderr, fmt, ap );
-  US_DEFAULT_FPRINTF( stderr, "\n" );
-
-  va_end(ap);
+    va_list ap;
+    va_start ( ap, fmt );
+    US_DEFAULT_FPRINTF ( stderr, "WARNING:\t" );
+    US_DEFAULT_VFPRINTF ( stderr, fmt, ap );
+    US_DEFAULT_FPRINTF ( stderr, "\n" );
+    va_end ( ap );
 }
 
-void us_log_warn_stdio( const char *fmt, ... )
+void us_log_info_stdio ( const char *fmt, ... )
 {
-  va_list ap;
-  va_start( ap, fmt );
-
-  US_DEFAULT_FPRINTF( stderr, "WARNING:\t" );
-  US_DEFAULT_VFPRINTF( stderr, fmt, ap );
-  US_DEFAULT_FPRINTF( stderr, "\n" );
-
-  va_end(ap);
+    va_list ap;
+    va_start ( ap, fmt );
+    US_DEFAULT_FPRINTF ( stdout, "INFO:\t" );
+    US_DEFAULT_VFPRINTF ( stdout, fmt, ap );
+    US_DEFAULT_FPRINTF ( stdout, "\n" );
+    va_end ( ap );
 }
 
-void us_log_info_stdio( const char *fmt, ... )
+void us_log_debug_stdio ( const char *fmt, ... )
 {
-  va_list ap;
-  va_start( ap, fmt );
-
-  US_DEFAULT_FPRINTF( stdout, "INFO:\t" );
-  US_DEFAULT_VFPRINTF( stdout, fmt, ap );
-  US_DEFAULT_FPRINTF( stdout, "\n" );
-
-  va_end(ap);
-}
-
-void us_log_debug_stdio( const char *fmt, ... )
-{
-  va_list ap;
-  va_start( ap, fmt );
-
-  US_DEFAULT_FPRINTF( stdout, "DEBUG:\t" );
-  US_DEFAULT_VFPRINTF( stdout, fmt, ap );
-  US_DEFAULT_FPRINTF( stdout, "\n" );
-
-  va_end(ap);
+    va_list ap;
+    va_start ( ap, fmt );
+    US_DEFAULT_FPRINTF ( stdout, "DEBUG:\t" );
+    US_DEFAULT_VFPRINTF ( stdout, fmt, ap );
+    US_DEFAULT_FPRINTF ( stdout, "\n" );
+    va_end ( ap );
 }
 
 

@@ -28,41 +28,45 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-void us_queue_init(
+void us_queue_init (
     us_queue_t *self,
     uint8_t *buf,
     uint16_t buf_size
-    )
+)
 {
-  self->m_buf = buf;
-  self->m_buf_size = buf_size;
-  self->m_next_in = 0;
-  self->m_next_out = 0;
+    self->m_buf = buf;
+    self->m_buf_size = buf_size;
+    self->m_next_in = 0;
+    self->m_next_out = 0;
 }
 
-void us_queue_read( us_queue_t *self, uint8_t *dest_data, uint16_t dest_data_cnt )
+void us_queue_read ( us_queue_t *self, uint8_t *dest_data, uint16_t dest_data_cnt )
 {
-  uint16_t i;
-  for( i=0; i<dest_data_cnt; ++i )
-  {
-    dest_data[ i ] = self->m_buf[ self->m_next_out ];
-    if( ++self->m_next_out == self->m_buf_size )
+    uint16_t i;
+    
+    for ( i = 0; i < dest_data_cnt; ++i )
     {
-      self->m_next_out = 0;
+        dest_data[ i ] = self->m_buf[ self->m_next_out ];
+        
+        if ( ++self->m_next_out == self->m_buf_size )
+        {
+            self->m_next_out = 0;
+        }
     }
-  }
 }
 
 
-void us_queue_write( us_queue_t *self, uint8_t *src_data, uint16_t src_data_cnt )
+void us_queue_write ( us_queue_t *self, uint8_t *src_data, uint16_t src_data_cnt )
 {
-  uint16_t i;
-  for (i=0; i<src_data_cnt; i++)
-  {
-    self->m_buf[ self->m_next_in ] = src_data[i];
-    if( ++self->m_next_in == self->m_buf_size )
+    uint16_t i;
+    
+    for ( i = 0; i < src_data_cnt; i++ )
     {
-      self->m_next_in=0;
+        self->m_buf[ self->m_next_in ] = src_data[i];
+        
+        if ( ++self->m_next_in == self->m_buf_size )
+        {
+            self->m_next_in = 0;
+        }
     }
-  }
 }

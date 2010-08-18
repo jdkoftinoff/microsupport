@@ -44,19 +44,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-  bool
-  us_buffer_print(
-                us_buffer_t *self,
-                us_print_t *printer
-                );
-
-  bool
-  us_buffer_print_string(
-                         us_buffer_t *self,
-                         us_print_t *printer
-                         );
-  
-
+    bool
+    us_buffer_print (
+        us_buffer_t *self,
+        us_print_t *printer
+    );
+    
+    bool
+    us_buffer_print_string (
+        us_buffer_t *self,
+        us_print_t *printer
+    );
+    
+    
 #ifdef __cplusplus
 }
 #endif

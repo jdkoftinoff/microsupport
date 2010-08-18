@@ -48,62 +48,62 @@ extern "C" {
 
 #ifndef __cplusplus
 # ifndef true
-  typedef int bool;
+    typedef int bool;
 # define true (1)
 # define false (0)
 # endif
 #endif
-
+    
 #if US_ENABLE_BSD_SOCKETS
 # ifndef WIN32
-  static inline void closesocket(int fd)
-  {
-    close(fd);
-  }
+    static inline void closesocket ( int fd )
+    {
+        close ( fd );
+    }
 # endif
-
+    
 # ifdef WIN32
-  bool us_platform_init_winsock( void );
+    bool us_platform_init_winsock ( void );
 # endif
-
+    
 # ifndef WIN32
 #  include <netdb.h>
 #  include <unistd.h>
 #  include <netinet/in.h>
 # endif
 #endif
-
+    
 #ifdef WIN32
 # if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
 #  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
 # else
 #  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 # endif
-
-  struct timezone
-  {
-    int tz_minuteswest; /* minutes W of Greenwich */
-    int tz_dsttime; /* type of dst correction */
-  };
-
-  int gettimeofday(struct timeval *tv, struct timezone *tz);
+    
+    struct timezone
+    {
+        int tz_minuteswest; /* minutes W of Greenwich */
+        int tz_dsttime; /* type of dst correction */
+    };
+    
+    int gettimeofday ( struct timeval *tv, struct timezone *tz );
 #endif
-
+    
 #ifdef __AVR__
-  struct timeval
-  {
-    int32_t tv_sec;
-    int32_t tv_usec;
-  };
+    struct timeval
+    {
+        int32_t tv_sec;
+        int32_t tv_usec;
+    };
 #endif
-  void us_gettimeofday(struct timeval *tv);
-  bool us_platform_init_sockets(void);
+    void us_gettimeofday ( struct timeval *tv );
+    bool us_platform_init_sockets ( void );
 #if US_ENABLE_LWIP_STACK
 # include "lwip/opt.h"
 # include "lwip/arch.h"
 # include "lwip/api.h"
 #endif
-
+    
 #ifdef __cplusplus
 }
 #endif
