@@ -358,16 +358,16 @@ pop ( us_json_parser_t jc, int mode )
 
 
 #define parse_buffer_clear(jc)                  \
-    do {                                          \
-        jc->parse_buffer_count = 0;                 \
-        jc->parse_buffer[0] = 0;                    \
+    do {                                        \
+        jc->parse_buffer_count = 0;             \
+        jc->parse_buffer[0] = 0;                \
     } while (0)
 
-#define parse_buffer_pop_back_char(jc)            \
-    do {                                            \
-        assert(jc->parse_buffer_count >= 1);          \
-        --jc->parse_buffer_count;                     \
-        jc->parse_buffer[jc->parse_buffer_count] = 0; \
+#define parse_buffer_pop_back_char(jc)                  \
+    do {                                                \
+        assert(jc->parse_buffer_count >= 1);            \
+        --jc->parse_buffer_count;                       \
+        jc->parse_buffer[jc->parse_buffer_count] = 0;   \
     } while (0)
 
 void us_json_parser_destroy ( us_json_parser_t jc )
@@ -485,20 +485,20 @@ static void us_json_grow_parse_buffer ( us_json_parser_t jc )
     }
 }
 
-#define us_json_parse_buffer_push_back_char(jc, c)                              \
-    do {                                                                  \
+#define us_json_parse_buffer_push_back_char(jc, c)                      \
+    do {                                                                \
         if (jc->parse_buffer_count + 1 >= jc->parse_buffer_capacity) us_json_grow_parse_buffer(jc); \
-        jc->parse_buffer[jc->parse_buffer_count++] = c;                     \
-        jc->parse_buffer[jc->parse_buffer_count]   = 0;                     \
+        jc->parse_buffer[jc->parse_buffer_count++] = c;                 \
+        jc->parse_buffer[jc->parse_buffer_count]   = 0;                 \
     } while (0)
 
-#define us_json_assert_is_non_container_type(jc)        \
-    assert(                                       \
-            jc->type == US_JSON_T_NULL ||          \
-            jc->type == US_JSON_T_FALSE ||         \
-            jc->type == US_JSON_T_TRUE ||          \
-            jc->type == US_JSON_T_FLOAT ||         \
-            jc->type == US_JSON_T_INTEGER ||       \
+#define us_json_assert_is_non_container_type(jc)    \
+    assert(                                         \
+            jc->type == US_JSON_T_NULL ||            \
+            jc->type == US_JSON_T_FALSE ||           \
+            jc->type == US_JSON_T_TRUE ||            \
+            jc->type == US_JSON_T_FLOAT ||           \
+            jc->type == US_JSON_T_INTEGER ||         \
             jc->type == US_JSON_T_STRING)
 
 
@@ -699,23 +699,23 @@ static int us_json_add_escaped_char_to_parse_buffer ( us_json_parser_t jc, int n
     return true;
 }
 
-#define us_json_add_char_to_parse_buffer(jc, next_char, next_class)             \
-    do {                                                                  \
-        if (jc->escaped) {                                                  \
-            if (!us_json_add_escaped_char_to_parse_buffer(jc, next_char))             \
-                return false;                                                   \
-        } else if (!jc->comment) {                                          \
+#define us_json_add_char_to_parse_buffer(jc, next_char, next_class)     \
+    do {                                                                \
+        if (jc->escaped) {                                              \
+            if (!us_json_add_escaped_char_to_parse_buffer(jc, next_char)) \
+                return false;                                           \
+        } else if (!jc->comment) {                                      \
             if ((jc->type != US_JSON_T_NONE) | !((next_class == C_SPACE) | (next_class == C_WHITE)) /* non-white-space */) { \
-                us_json_parse_buffer_push_back_char(jc, (char)next_char);               \
-            }                                                                 \
-        }                                                                   \
+                us_json_parse_buffer_push_back_char(jc, (char)next_char); \
+            }                                                           \
+        }                                                               \
     } while (0)
 
 
-#define us_json_assert_type_isnt_string_null_or_bool(jc)  \
-    assert(jc->type != US_JSON_T_FALSE);            \
-    assert(jc->type != US_JSON_T_TRUE);             \
-    assert(jc->type != US_JSON_T_NULL);             \
+#define us_json_assert_type_isnt_string_null_or_bool(jc)    \
+    assert(jc->type != US_JSON_T_FALSE);                    \
+    assert(jc->type != US_JSON_T_TRUE);                     \
+    assert(jc->type != US_JSON_T_NULL);                     \
     assert(jc->type != US_JSON_T_STRING)
 
 
@@ -913,7 +913,7 @@ us_json_parser_char ( us_json_parser_t jc, int next_char )
                 jc->state = C1;
                 jc->comment = 1;
                 break;
-                /* empty } */
+                /* empty closing curly brace */
             case -9:
                 parse_buffer_clear ( jc );
                 
@@ -929,6 +929,8 @@ us_json_parser_char ( us_json_parser_t jc, int next_char )
                 
                 jc->state = OK;
                 break;
+                /* closing curly brace */
+            case -8:
                 parse_buffer_pop_back_char ( jc );
                 
                 if ( !parse_parse_buffer ( jc ) )
@@ -949,62 +951,8 @@ us_json_parser_char ( us_json_parser_t jc, int next_char )
                 jc->type = US_JSON_T_NONE;
                 jc->state = OK;
                 break;
-                parse_buffer_pop_back_char ( jc );
-                
-                if ( !parse_parse_buffer ( jc ) )
-                {
-                    return false;
-                }
-                
-                if ( jc->callback && ! ( *jc->callback ) ( jc->ctx, US_JSON_T_ARRAY_END, NULL ) )
-                {
-                    return false;
-                }
-                
-                if ( !pop ( jc, MODE_ARRAY ) )
-                {
-                    return false;
-                }
-                
-            /* } */ case -8:
-                parse_buffer_pop_back_char ( jc );
-                
-                if ( !parse_parse_buffer ( jc ) )
-                {
-                    return false;
-                }
-                
-                if ( jc->callback && ! ( *jc->callback ) ( jc->ctx, US_JSON_T_OBJECT_END, NULL ) )
-                {
-                    return false;
-                }
-                
-                if ( !pop ( jc, MODE_OBJECT ) )
-                {
-                    return false;
-                }
-                
-                jc->type = US_JSON_T_NONE;
-                jc->state = OK;
-                break;
-                parse_buffer_pop_back_char ( jc );
-                
-                if ( !parse_parse_buffer ( jc ) )
-                {
-                    return false;
-                }
-                
-                if ( jc->callback && ! ( *jc->callback ) ( jc->ctx, US_JSON_T_ARRAY_END, NULL ) )
-                {
-                    return false;
-                }
-                
-                if ( !pop ( jc, MODE_ARRAY ) )
-                {
-                    return false;
-                }
-                
-            /* ] */ case -7:
+                /* closing square bracket */
+            case -7:
                 parse_buffer_pop_back_char ( jc );
                 
                 if ( !parse_parse_buffer ( jc ) )
@@ -1025,6 +973,8 @@ us_json_parser_char ( us_json_parser_t jc, int next_char )
                 jc->type = US_JSON_T_NONE;
                 jc->state = OK;
                 break;
+                /* open curly brace */
+            case -6:
                 parse_buffer_pop_back_char ( jc );
                 
                 if ( jc->callback && ! ( *jc->callback ) ( jc->ctx, US_JSON_T_OBJECT_BEGIN, NULL ) )
@@ -1040,6 +990,8 @@ us_json_parser_char ( us_json_parser_t jc, int next_char )
                 assert ( jc->type == US_JSON_T_NONE );
                 jc->state = OB;
                 break;
+                /* open square bracket */
+            case -5:
                 parse_buffer_pop_back_char ( jc );
                 
                 if ( jc->callback && ! ( *jc->callback ) ( jc->ctx, US_JSON_T_ARRAY_BEGIN, NULL ) )
@@ -1055,6 +1007,8 @@ us_json_parser_char ( us_json_parser_t jc, int next_char )
                 assert ( jc->type == US_JSON_T_NONE );
                 jc->state = AR;
                 break;
+                /* string end " */
+            case -4:
                 parse_buffer_pop_back_char ( jc );
                 
                 switch ( jc->stack[jc->top] )
@@ -1063,226 +1017,144 @@ us_json_parser_char ( us_json_parser_t jc, int next_char )
                         assert ( jc->type == US_JSON_T_STRING );
                         jc->type = US_JSON_T_NONE;
                         jc->state = CO;
-                        /* { */
-                    case -6:
-                        parse_buffer_pop_back_char ( jc );
                         
-                        if ( jc->callback && ! ( *jc->callback ) ( jc->ctx, US_JSON_T_OBJECT_BEGIN, NULL ) )
+                        if ( jc->callback )
                         {
-                            return false;
-                        }
-                        
-                        if ( !push ( jc, MODE_KEY ) )
-                        {
-                            return false;
-                        }
-                        
-                        assert ( jc->type == US_JSON_T_NONE );
-                        jc->state = OB;
-                        break;
-                        parse_buffer_pop_back_char ( jc );
-                        
-                        if ( jc->callback && ! ( *jc->callback ) ( jc->ctx, US_JSON_T_ARRAY_BEGIN, NULL ) )
-                        {
-                            return false;
-                        }
-                        
-                        if ( !push ( jc, MODE_ARRAY ) )
-                        {
-                            return false;
-                        }
-                        
-                        assert ( jc->type == US_JSON_T_NONE );
-                        jc->state = AR;
-                        break;
-                        parse_buffer_pop_back_char ( jc );
-                        
-                        switch ( jc->stack[jc->top] )
-                        {
-                            case MODE_KEY:
-                                assert ( jc->type == US_JSON_T_STRING );
-                                jc->type = US_JSON_T_NONE;
-                                jc->state = CO;
-                                /* [ */
-                            case -5:
-                                parse_buffer_pop_back_char ( jc );
-                                
-                                if ( jc->callback && ! ( *jc->callback ) ( jc->ctx, US_JSON_T_ARRAY_BEGIN, NULL ) )
-                                {
-                                    return false;
-                                }
-                                
-                                if ( !push ( jc, MODE_ARRAY ) )
-                                {
-                                    return false;
-                                }
-                                
-                                assert ( jc->type == US_JSON_T_NONE );
-                                jc->state = AR;
-                                break;
-                                parse_buffer_pop_back_char ( jc );
-                                
-                                switch ( jc->stack[jc->top] )
-                                {
-                                    case MODE_KEY:
-                                        assert ( jc->type == US_JSON_T_STRING );
-                                        jc->type = US_JSON_T_NONE;
-                                        jc->state = CO;
-                                        /* string end " */
-                                    case -4:
-                                        parse_buffer_pop_back_char ( jc );
-                                        
-                                        switch ( jc->stack[jc->top] )
-                                        {
-                                            case MODE_KEY:
-                                                assert ( jc->type == US_JSON_T_STRING );
-                                                jc->type = US_JSON_T_NONE;
-                                                jc->state = CO;
-                                                
-                                                if ( jc->callback )
-                                                {
-                                                    us_json_value_t value;
-                                                    value.vu.str.value = jc->parse_buffer;
-                                                    value.vu.str.length = jc->parse_buffer_count;
-                                                    
-                                                    if ( ! ( *jc->callback ) ( jc->ctx, US_JSON_T_KEY, &value ) )
-                                                    {
-                                                        return false;
-                                                    }
-                                                }
-                                                
-                                                parse_buffer_clear ( jc );
-                                                break;
-                                            case MODE_ARRAY:
-                                            case MODE_OBJECT:
-                                                assert ( jc->type == US_JSON_T_STRING );
-                                                
-                                                if ( !parse_parse_buffer ( jc ) )
-                                                {
-                                                    return false;
-                                                }
-                                                
-                                                jc->type = US_JSON_T_NONE;
-                                                jc->state = OK;
-                                                break;
-                                            default:
-                                                return false;
-                                        }
-                                        
-                                        break;
-                                        parse_buffer_pop_back_char ( jc );
-                                        
-                                        if ( !parse_parse_buffer ( jc ) )
-                                        {
-                                            return false;
-                                        }
-                                        
-                                        switch ( jc->stack[jc->top] )
-                                        {
-                                            case MODE_OBJECT:
-                                            
-                                                /*
-                                                /* , */
-                                            case -3:
-                                                parse_buffer_pop_back_char ( jc );
-                                                
-                                                if ( !parse_parse_buffer ( jc ) )
-                                                {
-                                                    return false;
-                                                }
-                                                
-                                                switch ( jc->stack[jc->top] )
-                                                {
-                                                    case MODE_OBJECT:
-                                                    
-                                                        /*
-                                                          A comma causes a flip from object mode to key mode.
-                                                        */
-                                                        if ( !pop ( jc, MODE_OBJECT ) || !push ( jc, MODE_KEY ) )
-                                                        {
-                                                            return false;
-                                                        }
-                                                        
-                                                        assert ( jc->type != US_JSON_T_STRING );
-                                                        jc->type = US_JSON_T_NONE;
-                                                        jc->state = KE;
-                                                        break;
-                                                    case MODE_ARRAY:
-                                                        assert ( jc->type != US_JSON_T_STRING );
-                                                        jc->type = US_JSON_T_NONE;
-                                                        jc->state = VA;
-                                                        break;
-                                                    default:
-                                                        return false;
-                                                }
-                                                
-                                                break;
-                                                /*
-                                                /* : */
-                                            case -2:
-                                                /*
-                                                  A colon causes a flip from key mode to object mode.
-                                                */
-                                                parse_buffer_pop_back_char ( jc );
-                                                
-                                                if ( !pop ( jc, MODE_KEY ) || !push ( jc, MODE_OBJECT ) )
-                                                {
-                                                    return false;
-                                                }
-                                                
-                                                assert ( jc->type == US_JSON_T_NONE );
-                                                jc->state = VA;
-                                                break;
-                                                /*
-                                                  Bad action.
-                                                */
-                                            default:
-                                                return false;
-                                        }
-                                }
-                                
-                                return true;
-                        }
-                        
-                        int
-                        us_json_parser_done ( us_json_parser_t jc )
-                        {
-                            const int result = jc->state == OK && pop ( jc, MODE_DONE );
-                            return result;
-                        }
-                        int us_json_parser_is_legal_white_space_string ( const char * s )
-                        {
-                            int c, char_class;
+                            us_json_value_t value;
+                            value.vu.str.value = jc->parse_buffer;
+                            value.vu.str.length = jc->parse_buffer_count;
                             
-                            if ( s == NULL )
+                            if ( ! ( *jc->callback ) ( jc->ctx, US_JSON_T_KEY, &value ) )
                             {
                                 return false;
                             }
-                            
-                            for ( ; *s; ++s )
-                            {
-                                c = *s;
-                                
-                                if ( c < 0 || c >= 128 )
-                                {
-                                    return false;
-                                }
-                                
-                                char_class = ascii_class[c];
-                                
-                                if ( char_class != C_SPACE && char_class != C_WHITE )
-                                {
-                                    return false;
-                                }
-                            }
-                            
-                            return true;
                         }
-                        void us_json_config_init ( us_json_config_t * config )
+                        
+                        parse_buffer_clear ( jc );
+                        break;
+                    case MODE_ARRAY:
+                    case MODE_OBJECT:
+                        assert ( jc->type == US_JSON_T_STRING );
+                        
+                        if ( !parse_parse_buffer ( jc ) )
                         {
-                            if ( config )
-                            {
-                                memset ( config, 0, sizeof ( *config ) );
-                                config->depth = US_JSON_PARSER_STACK_SIZE - 1;
-                            }
+                            return false;
                         }
+                        
+                        jc->type = US_JSON_T_NONE;
+                        jc->state = OK;
+                        break;
+                    default:
+                        return false;
+                }
+                
+                break;
+                /* , */
+            case -3:
+                parse_buffer_pop_back_char ( jc );
+                
+                if ( !parse_parse_buffer ( jc ) )
+                {
+                    return false;
+                }
+                
+                switch ( jc->stack[jc->top] )
+                {
+                    case MODE_OBJECT:
+                    
+                        /*
+                          A comma causes a flip from object mode to key mode.
+                        */
+                        if ( !pop ( jc, MODE_OBJECT ) || !push ( jc, MODE_KEY ) )
+                        {
+                            return false;
+                        }
+                        
+                        assert ( jc->type != US_JSON_T_STRING );
+                        jc->type = US_JSON_T_NONE;
+                        jc->state = KE;
+                        break;
+                    case MODE_ARRAY:
+                        assert ( jc->type != US_JSON_T_STRING );
+                        jc->type = US_JSON_T_NONE;
+                        jc->state = VA;
+                        break;
+                    default:
+                        return false;
+                }
+                
+                break;
+                /* : */
+            case -2:
+                /*
+                  A colon causes a flip from key mode to object mode.
+                */
+                parse_buffer_pop_back_char ( jc );
+                
+                if ( !pop ( jc, MODE_KEY ) || !push ( jc, MODE_OBJECT ) )
+                {
+                    return false;
+                }
+                
+                assert ( jc->type == US_JSON_T_NONE );
+                jc->state = VA;
+                break;
+                /*
+                  Bad action.
+                */
+            default:
+                return false;
+        }
+    }
+    
+    return true;
+}
+
+
+int
+us_json_parser_done ( us_json_parser_t jc )
+{
+    const int result = jc->state == OK && pop ( jc, MODE_DONE );
+    return result;
+}
+
+
+int us_json_parser_is_legal_white_space_string ( const char* s )
+{
+    int c, char_class;
+    
+    if ( s == NULL )
+    {
+        return false;
+    }
+    
+    for ( ; *s; ++s )
+    {
+        c = *s;
+        
+        if ( c < 0 || c >= 128 )
+        {
+            return false;
+        }
+        
+        char_class = ascii_class[c];
+        
+        if ( char_class != C_SPACE && char_class != C_WHITE )
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+
+void us_json_config_init ( us_json_config_t* config )
+{
+    if ( config )
+    {
+        memset ( config, 0, sizeof ( *config ) );
+        config->depth = US_JSON_PARSER_STACK_SIZE - 1;
+    }
+}
+
