@@ -28,15 +28,15 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-bool us_trie_dump (
-    us_trie_t *self,
-    const char *prefix,
-    const char *c_filename,
-    const char *h_filename,
-    us_print_t *c_file_printer,
-    us_print_t *h_file_printer
-)
+bool us_trie_dump(
+                  us_trie_t *self,
+                  const char *prefix,
+                  const char *c_filename,
+                  const char *h_filename,
+                  us_print_t *c_file_printer,
+                  us_print_t *h_file_printer
+                  )
 {
-    return false; /* TODO: */
+  return false; /* TODO: */
 }
 

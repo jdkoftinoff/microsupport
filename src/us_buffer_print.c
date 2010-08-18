@@ -35,77 +35,67 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if US_ENABLE_PRINTING
 
 bool
-us_buffer_print (
-    us_buffer_t *self,
-    us_print_t *printer
-)
+us_buffer_print(
+        us_buffer_t *self,
+        us_print_t *printer
+        )
 {
-    bool r = false;
-    
-    if ( self && printer )
+  bool r = false;
+  if (self && printer)
+  {
+    r = true;
+    r &= printer->printf(
+            printer,
+            "length: 0x%x\nContents:\n",
+            self->m_cur_length
+            );
+
+    if (r)
     {
-        r = true;
-        r &= printer->printf (
-                 printer,
-                 "length: 0x%x\nContents:\n",
-                 self->m_cur_length
-             );
-             
-        if ( r )
-        {
-            int32_t i;
-            
-            for ( i = 0; i < self->m_cur_length; ++i )
-            {
-                r &= printer->printf ( printer, "%02x ", self->m_buffer[ i ] );
-                
-                if ( !r )
-                    break;
-            }
-            
-            r &= printer->printf ( printer, "\n" );
-        }
+      int32_t i;
+      for (i = 0; i < self->m_cur_length; ++i)
+      {
+        r &= printer->printf(printer, "%02x ", self->m_buffer[ i ]);
+        if (!r)
+          break;
+      }
+      r&=printer->printf(printer,"\n");
     }
-    
-    return r;
+  }
+  return r;
 }
 
 
 
 bool
-us_buffer_print_string (
-    us_buffer_t *self,
-    us_print_t *printer
-)
+us_buffer_print_string(
+                       us_buffer_t *self,
+                       us_print_t *printer
+                       )
 {
-    bool r = false;
+  bool r = false;
+  if (self && printer)
+  {
+    r = true;
+    r &= printer->printf(
+                         printer,
+                         "length: 0x%x\nContents:\n",
+                         self->m_cur_length
+                         );
     
-    if ( self && printer )
+    if (r)
     {
-        r = true;
-        r &= printer->printf (
-                 printer,
-                 "length: 0x%x\nContents:\n",
-                 self->m_cur_length
-             );
-             
-        if ( r )
-        {
-            int32_t i;
-            
-            for ( i = 0; i < self->m_cur_length; ++i )
-            {
-                r &= printer->printf ( printer, "%c", self->m_buffer[ i ] );
-                
-                if ( !r )
-                    break;
-            }
-            
-            r &= printer->printf ( printer, "\n" );
-        }
+      int32_t i;
+      for (i = 0; i < self->m_cur_length; ++i)
+      {
+        r &= printer->printf(printer, "%c", self->m_buffer[ i ]);
+        if (!r)
+          break;
+      }
+      r&=printer->printf(printer,"\n");
     }
-    
-    return r;
+  }
+  return r;
 }
 
 #endif

@@ -38,99 +38,100 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if 0
 struct timezone
 {
-    int  tz_minuteswest; /* minutes W of Greenwich */
-    int  tz_dsttime;     /* type of dst correction */
+  int  tz_minuteswest; /* minutes W of Greenwich */
+  int  tz_dsttime;     /* type of dst correction */
 };
 #endif
 
-int gettimeofday ( struct timeval *tv, struct timezone *tz )
+int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    FILETIME ft;
-    unsigned __int64 tmpres = 0;
-    static int tzflag;
-    
-    if ( NULL != tv )
-    {
-        GetSystemTimeAsFileTime ( &ft );
-        tmpres |= ft.dwHighDateTime;
-        tmpres <<= 32;
-        tmpres |= ft.dwLowDateTime;
-        /*converting file time to unix epoch*/
-        tmpres /= 10;  /*convert into microseconds*/
-        tmpres -= US_DELTA_EPOCH_IN_MICROSECS;
-        tv->tv_sec = ( long ) ( tmpres / 1000000UL );
-        tv->tv_usec = ( long ) ( tmpres % 1000000UL );
-    }
-    
-    return 0;
+  FILETIME ft;
+  unsigned __int64 tmpres = 0;
+  static int tzflag;
+
+  if (NULL != tv)
+  {
+    GetSystemTimeAsFileTime(&ft);
+
+    tmpres |= ft.dwHighDateTime;
+    tmpres <<= 32;
+    tmpres |= ft.dwLowDateTime;
+
+    /*converting file time to unix epoch*/
+    tmpres /= 10;  /*convert into microseconds*/
+    tmpres -= US_DELTA_EPOCH_IN_MICROSECS;
+    tv->tv_sec = (long)(tmpres / 1000000UL);
+    tv->tv_usec = (long)(tmpres % 1000000UL);
+  }
+  return 0;
 }
 
-bool us_platform_init_sockets ( void )
+bool us_platform_init_sockets( void )
 {
-    WSADATA wsaData;
-    WORD version;
-    int error;
-    version = MAKEWORD ( 2, 2 );
-    error = WSAStartup ( version, &wsaData );
-    
-    if ( error != 0 )
-    {
-        return false;
-    }
-    
-    if ( version != wsaData.wVersion )
-    {
-        return false;
-    }
-    
-    return true;
+  WSADATA wsaData;
+  WORD version;
+  int error;
+
+  version = MAKEWORD( 2, 2 );
+
+  error = WSAStartup( version, &wsaData );
+
+  if ( error != 0 )
+  {
+    return false;
+  }
+  if ( version != wsaData.wVersion )
+  {
+    return false;
+  }
+  return true;
 }
 
 #elif defined(US_CONFIG_POSIX)
 
-bool us_platform_init_sockets ( void )
+bool us_platform_init_sockets( void )
 {
-    signal ( EPIPE, SIG_IGN );
-    return true;
+  signal(EPIPE,SIG_IGN);
+  return true;
 }
 
-void us_gettimeofday ( struct timeval *tv )
+void us_gettimeofday( struct timeval *tv )
 {
-    int r;
-    r = gettimeofday ( tv, 0 );
+  int r;
 
-    if ( r != 0 )
-    {
-        perror ( "gettimeofday" );
-        abort();
-    }
+  r = gettimeofday( tv, 0 );
+  if( r!=0 )
+  {
+    perror( "gettimeofday" );
+    abort();
+  }
 }
 
 #elif defined(TARGET_PLATFORM_AVR)
-bool us_platform_init_sockets ( void )
+bool us_platform_init_sockets( void )
 {
-    /* TODO */
+  /* TODO */
 }
 
-void us_gettimeofday ( struct timeval *tv )
+void us_gettimeofday( struct timeval *tv )
 {
-    /* TODO */
-    tv->sec = 0;
-    tv->usec = 0;
+  /* TODO */
+  tv->sec=0;
+  tv->usec=0;
 }
 
 #else
-bool us_platform_init_sockets ( void )
+bool us_platform_init_sockets( void )
 {
-    /* TODO */
-    return true;
+  /* TODO */
+  return true;
 }
 
-void us_gettimeofday ( struct timeval *tv )
+void us_gettimeofday( struct timeval *tv )
 {
-    /* TODO */
-    tv->tv_sec = 0;
-    tv->tv_usec = 0;
+  /* TODO */
+  tv->tv_sec=0;
+  tv->tv_usec=0;
 }
 #endif
 

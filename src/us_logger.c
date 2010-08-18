@@ -34,18 +34,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int us_log_level = US_LOG_LEVEL_DEBUG;
 
-void ( *us_log_error_proc ) ( const char *fmt, ... ) = us_log_null;
-void ( *us_log_warn_proc ) ( const char *fmt, ... ) = us_log_null;
-void ( *us_log_info_proc ) ( const char *fmt, ... ) = us_log_null;
-void ( *us_log_debug_proc ) ( const char *fmt, ... ) = us_log_null;
-void ( *us_logger_finish ) ( void ) = us_logger_null_finish;
+void (*us_log_error_proc)( const char *fmt, ... ) = us_log_null;
+void (*us_log_warn_proc)( const char *fmt, ... ) = us_log_null;
+void (*us_log_info_proc)( const char *fmt, ... ) = us_log_null;
+void (*us_log_debug_proc)( const char *fmt, ... ) = us_log_null;
+void (*us_logger_finish)( void ) = us_logger_null_finish;
 
-void us_log_null ( const char *fmt, ... )
+void us_log_null( const char *fmt, ... )
 {
-    ( void ) fmt;
+  (void)fmt;
 }
 
-void us_logger_null_finish ( void )
+void us_logger_null_finish( void )
 {
 }
 

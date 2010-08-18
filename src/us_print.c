@@ -36,206 +36,202 @@ us_print_t *us_stderr = 0;
 
 #if US_ENABLE_STDIO
 
-void us_print_file_destroy (
-    us_print_t *self_
-)
+void us_print_file_destroy(
+                               us_print_t *self_
+                               )
 {
-    us_print_file_t *self = ( us_print_file_t* ) self_;
-    fflush ( self->m_f );
-    fclose ( self->m_f );
+  us_print_file_t *self = (us_print_file_t*)self_;
+  fflush(self->m_f);
+  fclose(self->m_f);
 }
 
-bool us_print_file_printf (
-    us_print_t *self_,
-    const char *fmt,
-    ...
-)
+bool us_print_file_printf(
+                              us_print_t *self_,
+                              const char *fmt,
+                              ...
+                              )
 {
-    bool r = false;
-    va_list ap;
-    us_print_file_t *self = ( us_print_file_t* ) self_;
-    va_start ( ap, fmt );
-    
-    if ( self && self->m_f )
+  bool r=false;
+  va_list ap;
+  us_print_file_t *self = (us_print_file_t*)self_;
+
+  va_start( ap, fmt );
+  if( self && self->m_f )
+  {
+    if( US_DEFAULT_VFPRINTF(self->m_f,fmt,ap)>=0 )
     {
-        if ( US_DEFAULT_VFPRINTF ( self->m_f, fmt, ap ) >= 0 )
-        {
-            r = true;
-        }
+      r=true;
     }
-    
-    va_end ( ap );
-    return r;
+  }
+  va_end( ap );
+  return r;
 }
 
-bool us_print_file_vprintf (
-    us_print_t *self_,
-    const char *fmt,
-    va_list ap
-)
+bool us_print_file_vprintf(
+                              us_print_t *self_,
+                              const char *fmt,
+                              va_list ap
+                              )
 {
-    bool r = false;
-    us_print_file_t *self = ( us_print_file_t* ) self_;
-    
-    if ( self && self->m_f )
+  bool r=false;
+  us_print_file_t *self = (us_print_file_t*)self_;
+
+  if( self && self->m_f )
+  {
+    if( US_DEFAULT_VFPRINTF(self->m_f,fmt,ap)>=0 )
     {
-        if ( US_DEFAULT_VFPRINTF ( self->m_f, fmt, ap ) >= 0 )
-        {
-            r = true;
-        }
+      r=true;
     }
-    
-    return r;
+  }
+
+  return r;
 }
 
 
 us_print_t *
-us_print_file_init (
-    us_print_file_t *self,
-    FILE *f
-)
+us_print_file_init(
+                       us_print_file_t *self,
+                       FILE *f
+                       )
 {
-    us_print_t *r = 0;
-    
-    if ( self && f )
-    {
-        self->m_f = f;
-        self->m_base.destroy = us_print_file_destroy;
-        self->m_base.printf = us_print_file_printf;
-        self->m_base.vprintf = us_print_file_vprintf;
-        r = &self->m_base;
-    }
-    
-    return r;
+  us_print_t *r = 0;
+
+  if( self && f )
+  {
+    self->m_f = f;
+
+    self->m_base.destroy = us_print_file_destroy;
+    self->m_base.printf = us_print_file_printf;
+    self->m_base.vprintf = us_print_file_vprintf;
+
+    r = &self->m_base;
+  }
+  return r;
 }
 
 #endif
 
 us_print_t *
-us_printraw_init (
-    us_printraw_t *self,
-    void *raw_memory,
-    int raw_memory_length
-)
+us_printraw_init(
+                     us_printraw_t *self,
+                     void *raw_memory,
+                     int raw_memory_length
+                     )
 {
-    us_print_t *r = 0;
-    
-    if ( self && raw_memory )
-    {
-        self->m_buffer = ( char * ) raw_memory;
-        self->m_max_length = raw_memory_length;
-        self->m_cur_length = 0;
-        self->m_base.destroy = us_printraw_destroy;
-        self->m_base.printf = us_printraw_printf;
-        self->m_base.vprintf = us_printraw_vprintf;
-        r = &self->m_base;
-    }
-    
-    return r;
+  us_print_t *r = 0;
+
+  if( self && raw_memory )
+  {
+    self->m_buffer = (char *)raw_memory;
+    self->m_max_length = raw_memory_length;
+    self->m_cur_length = 0;
+    self->m_base.destroy = us_printraw_destroy;
+    self->m_base.printf = us_printraw_printf;
+    self->m_base.vprintf = us_printraw_vprintf;
+
+    r = &self->m_base;
+  }
+  return r;
+
 }
 
 void
-us_printraw_destroy (
-    us_print_t *self
-)
+us_printraw_destroy(
+                        us_print_t *self
+                        )
 {
     /* Do Nothing */
-    ( void ) self;
+  (void)self;
 }
 
 
 
 
-bool us_printraw_printf (
-    us_print_t *self_,
-    const char *fmt,
-    ...
-)
+bool us_printraw_printf(
+                            us_print_t *self_,
+                            const char *fmt,
+                            ...
+                            )
 {
-    bool r = false;
-    va_list ap;
-    us_printraw_t *self = ( us_printraw_t* ) self_;
-    va_start ( ap, fmt );
-    
-    if ( self )
+  bool r=false;
+  va_list ap;
+  us_printraw_t *self = (us_printraw_t*)self_;
+
+  va_start( ap, fmt );
+  if( self )
+  {
+    char *cur_ptr = self->m_buffer + self->m_cur_length;
+    int max_len = self->m_max_length - self->m_cur_length;
+
+    if( max_len>0 )
     {
-        char *cur_ptr = self->m_buffer + self->m_cur_length;
-        int max_len = self->m_max_length - self->m_cur_length;
-        
-        if ( max_len > 0 )
-        {
-            int result = US_DEFAULT_VSNPRINTF ( cur_ptr, max_len, fmt, ap );
-            
-            if ( result < max_len )
-            {
-                self->m_cur_length += result;
-                r = true;
-            }
-        }
+      int result = US_DEFAULT_VSNPRINTF(cur_ptr,max_len,fmt,ap);
+      if( result<max_len )
+      {
+        self->m_cur_length+=result;
+        r=true;
+      }
     }
-    
-    va_end ( ap );
-    return r;
+  }
+  va_end( ap );
+  return r;
 }
 
-bool us_printraw_vprintf (
-    us_print_t *self_,
-    const char *fmt,
-    va_list ap
-)
+bool us_printraw_vprintf(
+                            us_print_t *self_,
+                            const char *fmt,
+                            va_list ap
+                            )
 {
-    bool r = false;
-    us_printraw_t *self = ( us_printraw_t* ) self_;
-    
-    if ( self )
+  bool r=false;
+  us_printraw_t *self = (us_printraw_t*)self_;
+
+  if( self )
+  {
+    char *cur_ptr = self->m_buffer + self->m_cur_length;
+    int max_len = self->m_max_length - self->m_cur_length;
+
+    if( max_len>0 )
     {
-        char *cur_ptr = self->m_buffer + self->m_cur_length;
-        int max_len = self->m_max_length - self->m_cur_length;
-        
-        if ( max_len > 0 )
-        {
-            int result = US_DEFAULT_VSNPRINTF ( cur_ptr, max_len, fmt, ap );
-            
-            if ( result < max_len )
-            {
-                self->m_cur_length += result;
-                r = true;
-            }
-        }
+      int result = US_DEFAULT_VSNPRINTF(cur_ptr,max_len,fmt,ap);
+      if( result<max_len )
+      {
+        self->m_cur_length+=result;
+        r=true;
+      }
     }
-    
-    return r;
+  }
+  return r;
 }
 
 
 us_print_t *
-us_printbuf_create (
-    us_allocator_t *allocator,
-    int memory_length
-)
+us_printbuf_create(
+                       us_allocator_t *allocator,
+                       int memory_length
+                       )
 {
-    us_print_t *r = 0;
-    us_printbuf_t *self = us_new ( allocator, us_printbuf_t );
-    
-    if ( self )
+  us_print_t *r = 0;
+
+  us_printbuf_t *self = us_new( allocator, us_printbuf_t );
+
+  if( self )
+  {
+    self->m_base.m_buffer = allocator->alloc( allocator, memory_length, 1 );
+    self->m_base.m_base.destroy = us_printraw_destroy;
+    self->m_base.m_base.printf = us_printraw_printf;
+    self->m_base.m_base.vprintf = us_printraw_vprintf;
+
+    if( self->m_base.m_buffer )
     {
-        self->m_base.m_buffer = allocator->alloc ( allocator, memory_length, 1 );
-        self->m_base.m_base.destroy = us_printraw_destroy;
-        self->m_base.m_base.printf = us_printraw_printf;
-        self->m_base.m_base.vprintf = us_printraw_vprintf;
-        
-        if ( self->m_base.m_buffer )
-        {
-            r = &self->m_base.m_base;
-        }
-        
-        else
-        {
-            us_delete ( allocator, self );
-        }
+      r = &self->m_base.m_base;
     }
-    
-    return r;
+    else
+    {
+      us_delete( allocator, self );
+    }
+  }
+  return r;
 }
 
 

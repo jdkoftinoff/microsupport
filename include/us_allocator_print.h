@@ -45,18 +45,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-    /** us_simple_allocator_print
-    
-        Print the internal details of the allocator to the printbuf
-    
-        @param self allocator to print
-        @param printer us_printbuf_t to print to
-     */
-    bool us_simple_allocator_print (
-        us_simple_allocator_t *self,
-        us_print_t *printer
-    );
-    
+  /** us_simple_allocator_print
+
+      Print the internal details of the allocator to the printbuf
+
+      @param self allocator to print
+      @param printer us_printbuf_t to print to
+   */
+  bool us_simple_allocator_print(
+                                 us_simple_allocator_t *self,
+                                 us_print_t *printer
+                                 );
+
 #ifdef __cplusplus
 }
 #endif

@@ -40,166 +40,163 @@
 /*@{*/
 
 
-bool us_test_http ( void );
+bool us_test_http( void );
 
-bool us_test_http_request ( void );
-bool us_test_http_response ( void );
+bool us_test_http_request( void );
+bool us_test_http_response( void );
 
-bool us_test_http_request ( void )
+bool us_test_http_request( void )
 {
-    bool r = true;
-    us_http_request_header_t *req;
-    req = us_http_request_header_create_get (
-              us_testutil_session_allocator,
-              "www.meyersound.com:80",
-              "/products/d-mitri/"
-          );
-          
-    if ( req )
+  bool r=true;
+  us_http_request_header_t *req;
+
+  req = us_http_request_header_create_get(
+                                          us_testutil_session_allocator,
+                                          "www.meyersound.com:80",
+                                          "/products/d-mitri/"
+                                          );
+
+  if( req )
+  {
+    us_buffer_t *buf;
+
+
+    buf=us_buffer_create(us_testutil_session_allocator, 4096 );
+    if( buf )
     {
-        us_buffer_t *buf;
-        buf = us_buffer_create ( us_testutil_session_allocator, 4096 );
-        
-        if ( buf )
+      r&=us_http_request_header_flatten(req, buf);
+
+      if( r )
+      {
+        us_log_info( "generated request:" );
+        us_buffer_print_string( buf, us_testutil_printer_stdout );
+
         {
-            r &= us_http_request_header_flatten ( req, buf );
-            
-            if ( r )
-            {
-                us_log_info ( "generated request:" );
-                us_buffer_print_string ( buf, us_testutil_printer_stdout );
-                {
-                    us_http_request_header_t *parsed_req;
-                    parsed_req = us_http_request_header_parse ( us_testutil_session_allocator, buf );
-                    
-                    if ( parsed_req )
-                    {
-                        us_log_info ( "parsed request:" );
-                        us_buffer_reset ( buf );
-                        r &= us_http_request_header_flatten ( parsed_req, buf );
-                        us_buffer_print_string ( buf, us_testutil_printer_stdout );
-                        parsed_req->destroy ( parsed_req );
-                    }
-                }
-            }
-            
-            buf->destroy ( buf );
+          us_http_request_header_t *parsed_req;
+          parsed_req = us_http_request_header_parse( us_testutil_session_allocator, buf );
+          if( parsed_req )
+          {
+            us_log_info( "parsed request:" );
+            us_buffer_reset(buf);
+            r&=us_http_request_header_flatten(parsed_req, buf);
+
+            us_buffer_print_string( buf, us_testutil_printer_stdout );
+            parsed_req->destroy( parsed_req );
+          }
         }
-        
-        else
-        {
-            r = false;
-        }
-        
-        req->destroy ( req );
+      }
+
+      buf->destroy( buf );
     }
-    
     else
     {
-        r = 0;
+      r=false;
     }
-    
-    return r;
+    req->destroy( req );
+  }
+  else
+  {
+    r=0;
+  }
+
+  return r;
 }
 
-bool us_test_http_response ( void )
+bool us_test_http_response( void )
 {
-    bool r = true;
-    const char *html = "<html><head><title>Test</title></head><body><p>Hello There</p></body></html>";
-    us_http_response_header_t *resp;
-    resp = us_http_response_header_create_ok (
-               us_testutil_session_allocator,
-               200,
-               "text/html",
-               ( uint32_t ) ( strlen ( html ) )
-           );
-           
-    if ( resp )
+  bool r=true;
+  const char *html = "<html><head><title>Test</title></head><body><p>Hello There</p></body></html>";
+  us_http_response_header_t *resp;
+
+  resp = us_http_response_header_create_ok(
+                                           us_testutil_session_allocator,
+                                           200,
+                                           "text/html",
+                                           (uint32_t)(strlen(html))
+                                           );
+  if( resp )
+  {
+    us_buffer_t *buf;
+
+    buf=us_buffer_create(us_testutil_session_allocator, 4096 );
+    if( buf )
     {
-        us_buffer_t *buf;
-        buf = us_buffer_create ( us_testutil_session_allocator, 4096 );
-        
-        if ( buf )
+      r&=us_http_response_header_flatten(resp, buf);
+
+      if( r )
+      {
+        us_log_info( "generated response:" );
+        us_buffer_print_string( buf, us_testutil_printer_stdout );
+        us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "%s\n", html );
         {
-            r &= us_http_response_header_flatten ( resp, buf );
-            
-            if ( r )
-            {
-                us_log_info ( "generated response:" );
-                us_buffer_print_string ( buf, us_testutil_printer_stdout );
-                us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "%s\n", html );
-                {
-                    us_http_response_header_t *parsed_resp;
-                    parsed_resp = us_http_response_header_parse ( us_testutil_session_allocator, buf );
-                    
-                    if ( parsed_resp )
-                    {
-                        us_log_info ( "parsed response:" );
-                        us_buffer_reset ( buf );
-                        r &= us_http_response_header_flatten ( parsed_resp, buf );
-                        us_buffer_print_string ( buf, us_testutil_printer_stdout );
-                        parsed_resp->destroy ( parsed_resp );
-                    }
-                }
-            }
-            
-            buf->destroy ( buf );
+          us_http_response_header_t *parsed_resp;
+          parsed_resp=us_http_response_header_parse( us_testutil_session_allocator, buf );
+          if( parsed_resp )
+          {
+            us_log_info( "parsed response:" );
+            us_buffer_reset(buf);
+            r&=us_http_response_header_flatten(parsed_resp, buf);
+            us_buffer_print_string( buf, us_testutil_printer_stdout );
+            parsed_resp->destroy( parsed_resp );
+          }
         }
-        
-        else
-        {
-            r = false;
-        }
+      }
+
+      buf->destroy( buf );
     }
-    
     else
     {
-        r = 0;
+      r=false;
     }
-    
-    return r;
+
+  }
+  else
+  {
+    r=0;
+  }
+
+  return r;
+
 }
 
-bool us_test_http ( void )
+bool us_test_http( void )
 {
-    bool r = true;
-    
-    if ( !us_test_http_request() )
-    {
-        r = false;
-        us_log_error ( "http request test failed" );
-    }
-    
-    if ( !us_test_http_response() )
-    {
-        r = false;
-        us_log_error ( "http response test failed" );
-    }
-    
-    return r;
+  bool r=true;
+
+  if( !us_test_http_request() )
+  {
+    r=false;
+    us_log_error( "http request test failed" );
+  }
+  if( !us_test_http_response() )
+  {
+    r=false;
+    us_log_error( "http response test failed" );
+  }
+
+  return r;
 }
 
-int main ( int argc, char **argv )
+int main( int argc, char **argv )
 {
-    int r = 1;
-    
-    if ( us_testutil_start ( 4096, 4096, argc, argv ) )
-    {
+  int r=1;
+  if( us_testutil_start(4096,4096,argc,argv) )
+  {
 #if US_ENABLE_LOGGING
-        us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
+    us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-        us_log_set_level ( US_LOG_LEVEL_DEBUG );
-        us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        
-        if ( us_test_http() )
-            r = 0;
-            
-        us_log_info ( "Finishing %s", argv[0] );
-        us_logger_finish();
-        us_testutil_finish();
-    }
-    
-    return r;
+
+    us_log_set_level( US_LOG_LEVEL_DEBUG );
+    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+
+    if( us_test_http() )
+      r=0;
+
+    us_log_info("Finishing %s", argv[0] );
+    us_logger_finish();
+    us_testutil_finish();
+  }
+  return r;
 }
 
 

@@ -37,62 +37,58 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup us_test_buffer */
 /*@{*/
 
-bool us_test_buffer ( void );
+bool us_test_buffer( void );
 
 
-bool us_test_buffer ( void )
+bool us_test_buffer( void )
 {
-    bool r = false;
-    us_buffer_t *buf = us_buffer_create ( us_testutil_sys_allocator, 1024 );
-    
-    if ( buf )
+  bool r=false;
+  us_buffer_t *buf = us_buffer_create(us_testutil_sys_allocator,1024);
+  if( buf )
+  {
+    if( us_buffer_append_rounded_string( buf, "Rounded String" ) )
     {
-        if ( us_buffer_append_rounded_string ( buf, "Rounded String" ) )
+      if( us_buffer_append_int32( buf, 0x12345678 ) )
+      {
+        if( us_buffer_append_uint64( buf, 0x89abcdef, 0x01234567 ) )
         {
-            if ( us_buffer_append_int32 ( buf, 0x12345678 ) )
-            {
-                if ( us_buffer_append_uint64 ( buf, 0x89abcdef, 0x01234567 ) )
-                {
 #if US_ENABLE_PRINTING
-                    us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of test buffer:\n" );
-                    buf->print ( buf, us_testutil_printer_stdout );
-                    us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
+          us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "contents of test buffer:\n" );
+          buf->print( buf, us_testutil_printer_stdout );
+          us_testutil_printer_stdout->printf( us_testutil_printer_stdout, "\n" );
 #endif
-                    r = true;
-                }
-            }
+          r=true;
         }
+      }
     }
-    
-    else
-    {
-        us_log_error ( "expected to allocate 1024 bytes from allocator for buffer but failed" );
-    }
-    
-    return r;
+  }
+  else
+  {
+    us_log_error( "expected to allocate 1024 bytes from allocator for buffer but failed" );
+  }
+  return r;
 }
 
-int main ( int argc, char **argv )
+int main( int argc, char **argv )
 {
-    int r = 1;
-    
-    if ( us_testutil_start ( 2048, 2048, argc, argv ) )
-    {
+  int r=1;
+  if( us_testutil_start(2048,2048,argc,argv) )
+  {
 #if US_ENABLE_LOGGING
-        us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
+    us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-        us_log_set_level ( US_LOG_LEVEL_DEBUG );
-        us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        
-        if ( us_test_buffer() )
-            r = 0;
-            
-        us_log_info ( "Finishing us_test_buffer" );
-        us_logger_finish();
-        us_testutil_finish();
-    }
-    
-    return r;
+
+    us_log_set_level( US_LOG_LEVEL_DEBUG );
+    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+
+    if( us_test_buffer() )
+      r=0;
+
+    us_log_info("Finishing us_test_buffer" );
+    us_logger_finish();
+    us_testutil_finish();
+  }
+  return r;
 }
 
 /*@}*/
