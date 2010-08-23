@@ -128,7 +128,6 @@ const char * us_midi_msg_to_text ( const us_midi_msg_t *self, char *txt, int max
     else
     {
         int type = ( self->status & 0xf0 ) >> 4;
-        
         /* if it is a note on with vel=0, call it a NOTE OFF */
         
         if ( type == 9 && self->byte2 == 0 )

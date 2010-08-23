@@ -142,7 +142,6 @@ us_trie_find (
     us_trie_node_t *buf = self->m_nodes;
     us_trie_node_id_t i = initial_leaf_pos;
     us_trie_node_id_t list_pos = initial_list_pos;
-    
     /* skip any initial items that are needed to ignore */
     
     while ( list_pos < list_len && self->m_ignorer ( list[list_pos] ) )
