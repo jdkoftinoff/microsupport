@@ -1,6 +1,3 @@
-#include "us_world.h"
-#include "us_queue.h"
-
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -28,10 +25,13 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "us_world.h"
+#include "us_queue.h"
+
 void us_queue_init (
     us_queue_t *self,
     uint8_t *buf,
-    uint16_t buf_size
+    int buf_size
 )
 {
     self->m_buf = buf;
@@ -40,14 +40,14 @@ void us_queue_init (
     self->m_next_out = 0;
 }
 
-void us_queue_read ( us_queue_t *self, uint8_t *dest_data, uint16_t dest_data_cnt )
+void us_queue_read ( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt )
 {
-    uint16_t i;
-    
+    int i;
+
     for ( i = 0; i < dest_data_cnt; ++i )
     {
         dest_data[ i ] = self->m_buf[ self->m_next_out ];
-        
+
         if ( ++self->m_next_out == self->m_buf_size )
         {
             self->m_next_out = 0;
@@ -56,14 +56,14 @@ void us_queue_read ( us_queue_t *self, uint8_t *dest_data, uint16_t dest_data_cn
 }
 
 
-void us_queue_write ( us_queue_t *self, uint8_t *src_data, uint16_t src_data_cnt )
+void us_queue_write ( us_queue_t *self, uint8_t *src_data, int src_data_cnt )
 {
-    uint16_t i;
-    
+    int i;
+
     for ( i = 0; i < src_data_cnt; i++ )
     {
         self->m_buf[ self->m_next_in ] = src_data[i];
-        
+
         if ( ++self->m_next_in == self->m_buf_size )
         {
             self->m_next_in = 0;
