@@ -2,32 +2,21 @@
 #define US_REACTOR_H
 
 /*
-Copyright (c) 2010, Meyer Sound Laboratories, Inc.
+Copyright (c) 2010, Jeff Koftinoff <jeff.koftinoff@ieee.org>
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the Meyer Sound Laboratories, Inc. nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL MEYER SOUND LABORATORIES, INC. BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 
 #include "us_world.h"
 #include "us_queue.h"
@@ -38,93 +27,95 @@ extern "C"
 #endif
 
     /** \defgroup poll_reactor reactor  */
-    
+
     /** \ingroup poll_reactor */
     /*@{*/
-    
+
     struct us_reactor_s;
-    struct us_reactor_item_s;
+    struct us_reactor_handler_s;
     /*@}*/
-    
+
     /** \ingroup poll_reactor */
     /** \defgroup reactor_item reactor_item  */
     /*@{*/
-    typedef struct us_reactor_item_s
+    typedef struct us_reactor_handler_s
     {
-        void ( *destroy ) ( struct us_reactor_item_s *self );
-        bool ( *tick ) ( struct us_reactor_item_s *self );
-        bool ( *readable ) ( struct us_reactor_item_s *self );
-        bool ( *writable ) ( struct us_reactor_item_s *self );
-        
-        struct us_reactor_item_s *next;
+        void ( *destroy ) ( struct us_reactor_handler_s *self );
+        bool ( *tick ) ( struct us_reactor_handler_s *self );
+        bool ( *readable ) ( struct us_reactor_handler_s *self );
+        bool ( *writable ) ( struct us_reactor_handler_s *self );
+
+        struct us_reactor_handler_s *next;
         struct us_reactor_s *reactor;
         void *extra;
         int fd;
         bool wake_on_readable;
         bool wake_on_writable;
-    } us_reactor_item_t;
-    
+    } us_reactor_handler_t;
+
     /**
     */
-    typedef us_reactor_item_t * ( *us_reactor_item_create_proc_t ) ( void );
-    
+    typedef us_reactor_handler_t * ( *us_reactor_handler_create_proc_t ) ( void );
+
     /**
     */
-    us_reactor_item_t * us_reactor_item_create ( void );
-    
+    us_reactor_handler_t * us_reactor_handler_create ( void );
+
     /**
     */
-    typedef bool ( *us_reactor_item_init_proc_t ) (
-        us_reactor_item_t *self
+    typedef bool ( *us_reactor_handler_init_proc_t ) (
+        us_reactor_handler_t *self,
+        int fd,
+        void *extra
     );
-    
+
     /**
     */
-    bool us_reactor_item_init ( us_reactor_item_t *self );
-    
+    bool us_reactor_handler_init ( us_reactor_handler_t *self, int fd, void *extra );
+
     /**
     */
-    void us_reactor_item_destroy ( us_reactor_item_t *self );
-    
+    void us_reactor_handler_destroy ( us_reactor_handler_t *self );
+
     /*@}*/
-    
+
     /** \ingroup poll_reactor */
     /** \defgroup reactor reactor  */
     /*@{*/
     typedef struct us_reactor_s
     {
         void ( *destroy ) ( struct us_reactor_s *self );
-        
-        us_reactor_item_t *items;
+
+        us_reactor_handler_t *handlers;
         int timeout;
-        int max_items;
-        int num_items;
-        struct pollfd *poll_items;
+        int max_handlers;
+        int num_handlers;
+        struct pollfd *poll_handlers;
         bool ( *poll ) ( struct us_reactor_s *self, int timeout );
-        bool ( *add_item ) ( struct us_reactor_s *self, us_reactor_item_t *item );
-        bool ( *remove_item ) ( struct us_reactor_s *self, us_reactor_item_t *item );
+        bool ( *add_item ) ( struct us_reactor_s *self, us_reactor_handler_t *item );
+        bool ( *remove_item ) ( struct us_reactor_s *self, us_reactor_handler_t *item );
     } us_reactor_t;
-    
+
     /**
     */
-    bool us_reactor_init ( us_reactor_t *self, int max_items );
-    
+    bool us_reactor_init ( us_reactor_t *self, int max_handlers );
+
     /**
     */
     void us_reactor_destroy ( us_reactor_t *self );
-    
+
     /**
     */
     bool us_reactor_poll ( us_reactor_t *self, int timeout );
-    
+
     /**
     */
-    bool us_reactor_add_item ( us_reactor_t *self, us_reactor_item_t *item );
-    
+    bool us_reactor_add_item ( us_reactor_t *self, us_reactor_handler_t *item );
+
     /**
     */
-    bool us_reactor_remove_item ( us_reactor_t *self, us_reactor_item_t *item );
-    
+    bool us_reactor_remove_item ( us_reactor_t *self, us_reactor_handler_t *item );
+
     /**
     */
     bool us_reactor_create_server (
@@ -132,95 +123,150 @@ extern "C"
         const char *server_host,
         const char *server_port,
         int ai_socktype, /* SOCK_DGRAM or SOCK_STREAM */
-        us_reactor_item_create_proc_t server_item_create,
-        us_reactor_item_init_proc_t server_item_init
+        void *client_extra,
+        us_reactor_handler_create_proc_t server_handler_create,
+        us_reactor_handler_init_proc_t server_handler_init
     );
     /*@}*/
-    
-    
-    /** \addtogroup reactor_item_tcp_server reactor_item_tcp_server
+
+    /** \addtogroup reactor_handler_tcp_client reactor_handler_tcp_client
     */
     /*@{*/
-    
-    typedef struct us_reactor_item_tcp_server_s
+
+    typedef struct us_reactor_handler_tcp_connector_s
     {
-        us_reactor_item_t base;
-        us_reactor_item_create_proc_t client_item_create;
-        us_reactor_item_init_proc_t client_item_init;
-    } us_reactor_item_tcp_server_t;
-    
+        us_reactor_handler_t base;
+        us_reactor_handler_create_proc_t client_handler_create;
+        us_reactor_handler_init_proc_t client_handler_init;
+        struct addrinfo *addresses_to_try_connect_to;
+        struct addrinfo *cur_address;
+        int ms_per_try;
+        struct timeval last_try_time;
+    } us_reactor_handler_tcp_connector_t;
+
     /**
     */
-    us_reactor_item_t *us_reactor_item_tcp_server_create ( void );
-    
+    us_reactor_handler_t *us_reactor_handler_tcp_connector_create ( void );
+
     /**
     */
-    bool us_reactor_item_tcp_server_init (
-        us_reactor_item_t *self,
-        us_reactor_item_create_proc_t client_item_create,
-        us_reactor_item_init_proc_t client_item_init
+    bool us_reactor_handler_tcp_connector_init (
+        us_reactor_handler_t *self,
+        int fd,
+        void *client_extra,
+        us_reactor_handler_create_proc_t client_handler_create,
+        us_reactor_handler_init_proc_t client_handler_init,
+        struct addrinfo *connect_address,
+        int ms_per_try
     );
-    
+
     /**
     */
-    bool us_reactor_item_tcp_server_readable (
-        us_reactor_item_t *self
+    void us_reactor_handler_tcp_connector_destroy (
+        us_reactor_handler_t *self
     );
-    
+
+    /**
+    */
+    bool us_reactor_handler_tcp_connector_tick (
+        us_reactor_handler_t *self
+    );
+
+    /**
+    */
+    bool us_reactor_handler_tcp_connector_writable (
+        us_reactor_handler_t *self
+    );
+
     /*@}*/
-    
+
+    /** \addtogroup reactor_handler_tcp_server reactor_handler_tcp_server
+    */
+    /*@{*/
+
+    typedef struct us_reactor_handler_tcp_server_s
+    {
+        us_reactor_handler_t base;
+        us_reactor_handler_create_proc_t client_handler_create;
+        us_reactor_handler_init_proc_t client_handler_init;
+    } us_reactor_handler_tcp_server_t;
+
+    /**
+    */
+    us_reactor_handler_t *us_reactor_handler_tcp_server_create ( void );
+
+    /**
+    */
+    bool us_reactor_handler_tcp_server_init (
+        us_reactor_handler_t *self,
+        int fd,
+        void *client_extra,
+        us_reactor_handler_create_proc_t client_handler_create,
+        us_reactor_handler_init_proc_t client_handler_init
+    );
+
+    /**
+    */
+    bool us_reactor_handler_tcp_server_readable (
+        us_reactor_handler_t *self
+    );
+
+    /*@}*/
+
     /** \ingroup poll_reactor */
-    /** \defgroup reactor_item_tcp reactor_item_tcp  */
+    /** \defgroup reactor_handler_tcp reactor_handler_tcp  */
     /*@{*/
-    typedef struct us_reactor_item_tcp_s
+    typedef struct us_reactor_handler_tcp_s
     {
-        us_reactor_item_t base;
+        us_reactor_handler_t base;
         int xfer_buf_size;
         char *xfer_buf;
         us_queue_t outgoing_queue;
         us_queue_t incoming_queue;
-        
+
         bool ( *connected ) (
-            struct us_reactor_item_tcp_s *self,
+            struct us_reactor_handler_tcp_s *self,
             struct sockaddr *addr,
             socklen_t addrlen
         );
         bool ( *tick ) (
-            struct us_reactor_item_tcp_s *self
+            struct us_reactor_handler_tcp_s *self
         );
         bool ( *readable ) (
-            struct us_reactor_item_tcp_s *self
+            struct us_reactor_handler_tcp_s *self
         );
-    } us_reactor_item_tcp_t;
-    
-    
-    us_reactor_item_t * us_reactor_item_tcp_create ( void );
-    
-    bool us_reactor_item_tcp_init (
-        us_reactor_item_t *self,
+    } us_reactor_handler_tcp_t;
+
+
+    us_reactor_handler_t * us_reactor_handler_tcp_create ( void );
+
+    bool us_reactor_handler_tcp_init (
+        us_reactor_handler_t *self,
+        int fd,
+        void *extra,
         int queue_buf_size,
         int xfer_buf_size
     );
-    
-    void us_reactor_item_tcp_destroy (
-        us_reactor_item_t *self
+
+    void us_reactor_handler_tcp_destroy (
+        us_reactor_handler_t *self
     );
-    
-    bool us_reactor_item_tcp_tick (
-        us_reactor_item_t *self
+
+    bool us_reactor_handler_tcp_tick (
+        us_reactor_handler_t *self
     );
-    
-    bool us_reactor_item_tcp_readable (
-        us_reactor_item_t *self
+
+    bool us_reactor_handler_tcp_readable (
+        us_reactor_handler_t *self
     );
-    
-    bool us_reactor_item_tcp_writable (
-        us_reactor_item_t *self
+
+    bool us_reactor_handler_tcp_writable (
+        us_reactor_handler_t *self
     );
-    
+
     /*@}*/
-    
-    
+
+
 #ifdef __cplusplus
 }
 #endif

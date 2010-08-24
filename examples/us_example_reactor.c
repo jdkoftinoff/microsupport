@@ -1,31 +1,39 @@
+#include "us_world.h"
+
 /*
-Copyright (c) 2010, Meyer Sound Laboratories, Inc.
-All rights reserved.
+ Copyright (c) 2010, Meyer Sound Laboratories, Inc.
+ All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the Meyer Sound Laboratories, Inc. nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Neither the name of the <organization> nor the
+ names of its contributors may be used to endorse or promote products
+ derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL MEYER SOUND LABORATORIES, INC. BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "us_world.h"
+#include "us_allocator.h"
+#include "us_buffer.h"
+#include "us_net.h"
+#include "us_logger_printer.h"
+
+#include "us_testutil.h"
+
 #include "us_reactor.h"
 #include <ctype.h>
 
@@ -38,41 +46,47 @@ bool global_quit = false;
 
 bool us_example_reactor ( void );
 
-us_reactor_item_t * us_example_reactor_item_echo_create ( void );
+us_reactor_handler_t * us_example_reactor_handler_echo_create ( void );
 
-bool us_example_reactor_item_echo_init ( us_reactor_item_t *self );
+bool us_example_reactor_handler_echo_init (
+    us_reactor_handler_t *self,
+    int fd,
+    void *extra
+);
 
-bool us_example_reactor_item_echo_connected (
-    us_reactor_item_tcp_t *self,
+bool us_example_reactor_handler_echo_connected (
+    us_reactor_handler_tcp_t *self,
     struct sockaddr *addr,
     socklen_t addrlen
 );
 
-bool us_example_reactor_item_echo_tick (
-    us_reactor_item_tcp_t *self
+bool us_example_reactor_handler_echo_tick (
+    us_reactor_handler_tcp_t *self
 );
 
-bool us_example_reactor_item_echo_readable (
-    us_reactor_item_tcp_t *self
+bool us_example_reactor_handler_echo_readable (
+    us_reactor_handler_tcp_t *self
 );
 
 
-us_reactor_item_t * us_example_reactor_item_quitter_create ( void );
+us_reactor_handler_t * us_example_reactor_handler_quitter_create ( void );
 
-bool us_example_reactor_item_quitter_init (
-    us_reactor_item_t *self
+bool us_example_reactor_handler_quitter_init (
+    us_reactor_handler_t *self,
+    int fd,
+    void *extra
 );
 
-bool us_example_reactor_item_quitter_readable (
-    us_reactor_item_tcp_t *self
+bool us_example_reactor_handler_quitter_readable (
+    us_reactor_handler_tcp_t *self
 );
 
-bool us_example_reactor_item_echo_readable (
-    us_reactor_item_tcp_t *self_
+bool us_example_reactor_handler_echo_readable (
+    us_reactor_handler_tcp_t *self_
 )
 {
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
-    
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
+
     /* echo all incoming data from input queue to output queue while converting to uppercase */
     while ( us_queue_can_write_byte ( &self->outgoing_queue ) &&
             us_queue_can_read_byte ( &self->incoming_queue ) )
@@ -81,101 +95,97 @@ bool us_example_reactor_item_echo_readable (
         c = toupper ( c );
         us_queue_write_byte ( &self->outgoing_queue, c );
     }
-    
+
     return true;
 }
 
-us_reactor_item_t *
-us_example_reactor_item_echo_create ( void )
+us_reactor_handler_t *
+us_example_reactor_handler_echo_create ( void )
 {
-    return us_reactor_item_tcp_create();
+    return us_reactor_handler_tcp_create();
 }
 
-bool us_example_reactor_item_echo_init (
-    us_reactor_item_t *self_
+bool us_example_reactor_handler_echo_init (
+    us_reactor_handler_t *self_,
+    int fd,
+    void *extra
 )
 {
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r;
-    r = us_reactor_item_tcp_server_init (
+    r = us_reactor_handler_tcp_init (
             &self->base,
-            us_example_reactor_item_quitter_create,
-            us_example_reactor_item_quitter_init
+            fd,
+            extra,
+            16384,
+            1500
         );
-        
-    if ( r )
-    {
-        r = us_reactor_item_tcp_init (
-                &self->base,
-                16384,
-                1500
-            );
-        self->readable = us_example_reactor_item_echo_readable;
-        self->tick = 0;
-    }
-    
+    self->readable = us_example_reactor_handler_echo_readable;
+    self->tick = 0;
     return r;
 }
 
 
 bool us_example_reactor_echo_server_init (
-    us_reactor_item_t *self
+    us_reactor_handler_t *self,
+    int fd,
+    void *extra
 )
 {
-    return us_reactor_item_tcp_server_init (
+    return us_reactor_handler_tcp_server_init (
                self,
-               us_example_reactor_item_echo_create,
-               us_example_reactor_item_echo_init
+               fd,
+               extra,
+               us_example_reactor_handler_echo_create,
+               us_example_reactor_handler_echo_init
            );
 }
 
 
 bool us_example_reactor_quitter_server_init (
-    us_reactor_item_t *self
+    us_reactor_handler_t *self,
+    int fd,
+    void *extra
 )
 {
-    return us_reactor_item_tcp_server_init (
+    return us_reactor_handler_tcp_server_init (
                self,
-               us_example_reactor_item_quitter_create,
-               us_example_reactor_item_quitter_init
+               fd,
+               extra,
+               us_example_reactor_handler_quitter_create,
+               us_example_reactor_handler_quitter_init
            );
 }
 
 
-us_reactor_item_t *
-us_example_reactor_item_quitter_create ( void )
+us_reactor_handler_t *
+us_example_reactor_handler_quitter_create ( void )
 {
-    return us_reactor_item_tcp_create();
+    return us_reactor_handler_tcp_create();
 }
 
-bool us_example_reactor_item_quitter_init (
-    us_reactor_item_t *self_
+bool us_example_reactor_handler_quitter_init (
+    us_reactor_handler_t *self_,
+    int fd,
+    void *extra
 )
 {
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r;
-    r = us_reactor_item_tcp_server_init (
+    r = us_reactor_handler_tcp_init (
             &self->base,
-            us_example_reactor_item_quitter_create,
-            us_example_reactor_item_quitter_init
+            fd,
+            extra,
+            2048,
+            1500
         );
-        
-    if ( r )
-    {
-        r = us_reactor_item_tcp_init (
-                &self->base,
-                2048,
-                1500
-            );
-        self->readable = us_example_reactor_item_quitter_readable;
-        self->tick = 0;
-    }
-    
+    self->readable = us_example_reactor_handler_quitter_readable;
+    self->tick = 0;
     return r;
 }
 
-bool us_example_reactor_item_echo_connected (
-    us_reactor_item_tcp_t *self,
+bool us_example_reactor_handler_echo_connected (
+    us_reactor_handler_tcp_t *self,
     struct sockaddr *addr,
     socklen_t addrlen
 )
@@ -183,7 +193,7 @@ bool us_example_reactor_item_echo_connected (
     bool r = false;
     char host[NI_MAXHOST];
     char serv[NI_MAXSERV];
-    
+
     if ( getnameinfo (
                 addr,
                 addrlen,
@@ -197,35 +207,35 @@ bool us_example_reactor_item_echo_connected (
         fprintf ( stdout, "Accepting connection from '%s' port '%s'\n", host, serv );
         r = true;
     }
-    
+
     return r;
 }
 
 
-bool us_example_reactor_item_echo_tick (
-    us_reactor_item_tcp_t *self
+bool us_example_reactor_handler_echo_tick (
+    us_reactor_handler_tcp_t *self
 )
 {
     return true;
 }
 
-bool us_example_reactor_item_quitter_readable (
-    us_reactor_item_tcp_t *self_
+bool us_example_reactor_handler_quitter_readable (
+    us_reactor_handler_tcp_t *self_
 )
 {
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
-    
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
+
     /* wait for the letter Q, then signal a quit flag */
     while ( us_queue_can_read_byte ( &self->incoming_queue ) )
     {
         char c = ( char ) us_queue_read_byte ( &self->incoming_queue );
-        
+
         if ( c == 'Q' )
         {
             global_quit = true;
         }
     }
-    
+
     return true;
 }
 
@@ -238,52 +248,54 @@ bool us_example_reactor ( void )
             &reactor,
             16 /* max simultaneous sockets, including server sockets and connections */
         );
-        
+
     if ( r )
     {
         r = us_reactor_create_server (
                 &reactor,
                 0, "8989",
                 SOCK_STREAM,
-                us_reactor_item_tcp_server_create,
+                0,
+                us_reactor_handler_tcp_server_create,
                 us_example_reactor_echo_server_init
             );
     }
-    
+
     if ( r )
     {
         r = us_reactor_create_server (
                 &reactor,
                 0, "8988",
                 SOCK_STREAM,
-                us_reactor_item_tcp_server_create,
+                0,
+                us_reactor_handler_tcp_server_create,
                 us_example_reactor_quitter_server_init
             );
     }
-    
+
     if ( r )
     {
         while ( !global_quit && reactor.poll ( &reactor, 2000 ) )
         {
             fprintf ( stdout, "tick\n" );
         }
-        
+
         reactor.destroy ( &reactor );
         r = true;
     }
-    
+
     return r;
 }
 
 int main ( int argc, char **argv )
 {
     bool r = us_example_reactor();
-    
+
     if ( r )
     {
         return 0;
     }
-    
+
     else
     {
         return 1;

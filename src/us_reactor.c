@@ -1,3 +1,4 @@
+#include "us_world.h"
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -26,18 +27,20 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "us_world.h"
+
 #include "us_reactor.h"
 
-bool us_reactor_item_init (
-    us_reactor_item_t *self
+bool us_reactor_handler_init (
+    us_reactor_handler_t *self,
+    int fd,
+    void *extra
 )
 {
     self->next = 0;
     self->reactor = 0;
-    self->destroy = us_reactor_item_destroy;
-    self->extra = 0;
-    self->fd = -1;
+    self->destroy = us_reactor_handler_destroy;
+    self->extra = extra;
+    self->fd = fd;
     self->wake_on_readable = false;
     self->wake_on_writable = false;
     self->tick = 0;
@@ -46,204 +49,204 @@ bool us_reactor_item_init (
     return true;
 }
 
-us_reactor_item_t * us_reactor_item_create ( void )
+us_reactor_handler_t * us_reactor_handler_create ( void )
 {
-    us_reactor_item_t *item = 0;
-    item = calloc ( sizeof ( us_reactor_item_t ), 1 );
-    
+    us_reactor_handler_t *item = 0;
+    item = calloc ( sizeof ( us_reactor_handler_t ), 1 );
+
     if ( item != NULL )
     {
-        if ( !us_reactor_item_init ( item ) )
+        if ( !us_reactor_handler_init ( item, -1, 0 ) )
         {
             free ( item );
             item = 0;
         }
     }
-    
+
     return item;
 }
 
-void us_reactor_item_destroy ( us_reactor_item_t *self )
+void us_reactor_handler_destroy ( us_reactor_handler_t *self )
 {
     /* nothing to do here */
 }
 
 
-bool us_reactor_init ( us_reactor_t *self, int max_items )
+bool us_reactor_init ( us_reactor_t *self, int max_handlers )
 {
     self->destroy = us_reactor_destroy;
-    self->items = 0;
-    self->max_items = max_items;
-    self->poll_items = calloc ( sizeof ( struct pollfd ), max_items );
+    self->handlers = 0;
+    self->max_handlers = max_handlers;
+    self->poll_handlers = calloc ( sizeof ( struct pollfd ), max_handlers );
     self->timeout = 0;
     self->add_item = us_reactor_add_item;
     self->remove_item = us_reactor_remove_item;
     self->poll = us_reactor_poll;
-    self->num_items = 0;
-    
-    if ( !self->poll_items )
+    self->num_handlers = 0;
+
+    if ( !self->poll_handlers )
     {
         return false;
     }
-    
+
     return true;
 }
 
 void us_reactor_destroy ( us_reactor_t *self )
 {
-    while ( self->items )
+    while ( self->handlers )
     {
-        self->remove_item ( self, self->items );
+        self->remove_item ( self, self->handlers );
     }
-    
-    free ( self->poll_items );
-    self->poll_items = 0;
+
+    free ( self->poll_handlers );
+    self->poll_handlers = 0;
 }
 
 bool us_reactor_poll ( us_reactor_t *self, int timeout )
 {
     bool r = false;
-    
-    if ( self->num_items > 0 )
+
+    if ( self->num_handlers > 0 )
     {
-        us_reactor_item_t **item;
-        /* garbage collect items that are closed */
-        item = &self->items;
-        
+        us_reactor_handler_t **item;
+        /* garbage collect handlers that are closed */
+        item = &self->handlers;
+
         while ( *item )
         {
             if ( ( *item )->tick )
             {
                 ( *item )->tick ( *item );
             }
-            
+
             if ( ( *item )->fd == -1 )
             {
-                us_reactor_item_t *next = ( *item )->next;
+                us_reactor_handler_t *next = ( *item )->next;
                 ( *item )->destroy ( *item );
                 free ( *item );
-                self->num_items--;
+                self->num_handlers--;
                 *item = next;
             }
-            
+
             else
             {
                 item = & ( *item )->next;
             }
         }
     }
-    
-    if ( self->num_items > 0 )
+
+    if ( self->num_handlers > 0 )
     {
-        us_reactor_item_t *item;
+        us_reactor_handler_t *item;
         int n = 0;
-        item = self->items;
-        
+        item = self->handlers;
+
         while ( item )
         {
             struct pollfd *p;
-            p = &self->poll_items[n++];
+            p = &self->poll_handlers[n++];
             p->events = 0;
             p->revents = 0;
             p->fd = item->fd;
-            
+
             if ( item->wake_on_readable && item->readable != 0 )
                 p->events |= POLLIN;
-                
+
             if ( item->wake_on_writable && item->writable != 0 )
                 p->events |= POLLOUT;
-                
+
             item = item->next;
         }
-        
-        n = poll ( self->poll_items, self->num_items, timeout );
-        
+
+        n = poll ( self->poll_handlers, self->num_handlers, timeout );
+
         if ( n < 0 )
         {
             /* error doing poll, stop loop */
             r = false;
         }
-        
+
         if ( n > 0 )
         {
-            /* some items to be handled */
-            us_reactor_item_t *item = self->items;
+            /* some handlers to be handled */
+            us_reactor_handler_t *item = self->handlers;
             int n = 0;
-            
+
             while ( item )
             {
-                struct pollfd *p = &self->poll_items[n++];
-                
+                struct pollfd *p = &self->poll_handlers[n++];
+
                 if ( item->wake_on_readable && ( p->revents & POLLIN ) && item->readable != 0 )
                     item->readable ( item );
-                    
+
                 if ( item->wake_on_writable && ( p->revents & POLLOUT ) && item->writable != 0 )
                     item->writable ( item );
-                    
+
                 item = item->next;
             }
-            
+
             r = true;
         }
-        
+
         if ( n == 0 )
         {
-            /* there are items, nothing to do, timeout occurred */
+            /* there are handlers, nothing to do, timeout occurred */
             r = true;
         }
     }
-    
+
     return r;
 }
 
 bool us_reactor_add_item (
     us_reactor_t *self,
-    us_reactor_item_t *item
+    us_reactor_handler_t *item
 )
 {
     bool r = false;
-    us_reactor_item_t **node = &self->items;
-    
-    if ( self->num_items < self->max_items )
+    us_reactor_handler_t **node = &self->handlers;
+
+    if ( self->num_handlers < self->max_handlers )
     {
         while ( *node )
         {
             node = & ( *node )->next;
         }
-        
-        self->num_items++;
+
+        self->num_handlers++;
         *node = item;
         item->reactor = self;
         r = true;
     }
-    
+
     return r;
 }
 
 bool us_reactor_remove_item (
     us_reactor_t *self,
-    us_reactor_item_t *item
+    us_reactor_handler_t *item
 )
 {
     bool r = false;
-    us_reactor_item_t **node = &self->items;
-    
+    us_reactor_handler_t **node = &self->handlers;
+
     while ( *node )
     {
         if ( *node == item )
         {
-            us_reactor_item_t *next = ( *node )->next;
-            self->num_items--;
+            us_reactor_handler_t *next = ( *node )->next;
+            self->num_handlers--;
             *node = next;
             r = true;
         }
-        
+
         else
         {
             node = & ( *node )->next;
         }
     }
-    
+
     item->destroy ( item );
     free ( item );
     return r;
@@ -255,8 +258,9 @@ bool us_reactor_create_server (
     const char *server_host,
     const char *server_port,
     int ai_socktype,
-    us_reactor_item_create_proc_t server_item_create,
-    us_reactor_item_init_proc_t server_item_init
+    void *client_extra,
+    us_reactor_handler_create_proc_t server_handler_create,
+    us_reactor_handler_init_proc_t server_handler_init
 )
 {
     int added_count = 0;
@@ -272,65 +276,63 @@ bool us_reactor_create_server (
 #endif
     hints.ai_socktype = ai_socktype;
     e = getaddrinfo ( server_host, server_port, &hints, &ai );
-    
+
     if ( e == 0 )
     {
         struct addrinfo *cur_addr = ai;
-        
+
         while ( cur_addr != NULL )
         {
             const char opt = 1;
             int fd = socket ( cur_addr->ai_family, cur_addr->ai_socktype, cur_addr->ai_protocol );
-            
+
             if ( fd == -1 )
             {
                 fprintf ( stderr, "socket: %s\n", strerror ( errno ) );
                 return false;
             }
-            
+
             setsockopt ( fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof ( opt ) );
-            
+
             if ( bind ( fd, cur_addr->ai_addr, cur_addr->ai_addrlen ) == 0 )
             {
-                us_reactor_item_t *item;
-                item = server_item_create();
-                
+                us_reactor_handler_t *item;
+                item = server_handler_create();
+
                 if ( !item )
                 {
                     fprintf ( stderr, "item create failed\n" );
                     return false;
                 }
-                
+
                 if ( listen ( fd, SOMAXCONN ) != 0 )
                 {
                     fprintf ( stderr, "listen: %s\n", strerror ( errno ) );
                     return false;
                 }
-                
-                if ( server_item_init ( item ) )
+
+                if ( server_handler_init ( item, fd, client_extra ) )
                 {
-                    item->fd = fd;
-                    
                     if ( self->add_item ( self, item ) )
                     {
                         /* success, keep track of it */
                         added_count++;
                     }
-                    
+
                     else
                     {
                         fprintf ( stderr, "unable to add item to reactor\n" );
                         return false;
                     }
                 }
-                
+
                 else
                 {
                     fprintf ( stderr, "unable to init server item\n" );
                     return false;
                 }
             }
-            
+
             else
             {
                 if ( errno != EADDRINUSE )
@@ -338,83 +340,84 @@ bool us_reactor_create_server (
                     fprintf ( stderr, "bind: %s", strerror ( errno ) );
                     return false;
                 }
-                
+
                 /* Note: if address is in use this is only an error if added_count is 0 at the end */
                 closesocket ( fd );
             }
-            
+
             cur_addr = cur_addr->ai_next;
         }
+        freeaddrinfo(ai);
     }
-    
     else
     {
         fprintf ( stderr, "getaddrinfo: %s", strerror ( e ) );
         return false;
     }
-    
+
     if ( added_count > 0 )
     {
         r = true;
     }
-    
+
     return r;
 }
 
 
-us_reactor_item_t *us_reactor_item_tcp_server_create ( void )
+us_reactor_handler_t *us_reactor_handler_tcp_server_create ( void )
 {
-    return calloc ( sizeof ( us_reactor_item_tcp_server_t ), 1 );
+    return calloc ( sizeof ( us_reactor_handler_tcp_server_t ), 1 );
 }
 
-bool us_reactor_item_tcp_server_init (
-    us_reactor_item_t *self_,
-    us_reactor_item_create_proc_t client_item_create,
-    us_reactor_item_init_proc_t client_item_init
+bool us_reactor_handler_tcp_server_init (
+    us_reactor_handler_t *self_,
+    int fd,
+    void *client_extra,
+    us_reactor_handler_create_proc_t client_handler_create,
+    us_reactor_handler_init_proc_t client_handler_init
 )
 {
-    us_reactor_item_tcp_server_t *self = ( us_reactor_item_tcp_server_t * ) self_;
-    
-    if ( us_reactor_item_init ( &self->base ) )
+    us_reactor_handler_tcp_server_t *self = ( us_reactor_handler_tcp_server_t * ) self_;
+
+    if ( us_reactor_handler_init ( &self->base, fd, client_extra ) )
     {
-        self->client_item_init = client_item_init;
-        self->client_item_create = client_item_create;
-        self->base.readable = us_reactor_item_tcp_server_readable;
+        self->client_handler_init = client_handler_init;
+        self->client_handler_create = client_handler_create;
+        self->base.readable = us_reactor_handler_tcp_server_readable;
         self->base.writable = 0;
         self->base.wake_on_readable = true;
         return true;
     }
-    
+
     else
     {
         return false;
     }
 }
 
-bool us_reactor_item_tcp_server_readable (
-    us_reactor_item_t *self_
+bool us_reactor_handler_tcp_server_readable (
+    us_reactor_handler_t *self_
 )
 {
-    us_reactor_item_tcp_server_t *self = ( us_reactor_item_tcp_server_t * ) self_;
+    us_reactor_handler_tcp_server_t *self = ( us_reactor_handler_tcp_server_t * ) self_;
     bool r = false;
     struct sockaddr_storage rem;
     socklen_t remlen = sizeof ( rem );
     int accepted_fd = accept ( self->base.fd, ( struct sockaddr * ) &rem, &remlen );
-    
+
     if ( accepted_fd != -1 )
     {
-        us_reactor_item_t *client_item = self->client_item_create();
-        
+        us_reactor_handler_t *client_item = self->client_handler_create();
+
         if ( client_item != NULL )
         {
-            r = self->client_item_init ( client_item );
-            client_item->fd = accepted_fd;
-            
+            r = self->client_handler_init ( client_item, accepted_fd, self->base.extra );
+
             if ( r )
             {
-                us_reactor_item_tcp_t * tcp_item = ( us_reactor_item_tcp_t * ) client_item;
+                us_reactor_handler_tcp_t * tcp_item = ( us_reactor_handler_tcp_t * ) client_item;
                 r = self->base.reactor->add_item ( self->base.reactor, client_item );
-                
+
                 if ( r )
                 {
                     if ( tcp_item->connected )
@@ -423,7 +426,7 @@ bool us_reactor_item_tcp_server_readable (
                     }
                 }
             }
-            
+
             if ( !r )
             {
                 fprintf ( stderr, "unabled to create tcp client handler\n" );
@@ -433,33 +436,35 @@ bool us_reactor_item_tcp_server_readable (
             }
         }
     }
-    
+
     return r;
 }
 
 
-us_reactor_item_t * us_reactor_item_tcp_create ( void )
+us_reactor_handler_t * us_reactor_handler_tcp_create ( void )
 {
-    return calloc ( sizeof ( us_reactor_item_tcp_t ), 1 );
+    return calloc ( sizeof ( us_reactor_handler_tcp_t ), 1 );
 }
 
-bool us_reactor_item_tcp_init (
-    us_reactor_item_t *self_,
+bool us_reactor_handler_tcp_init (
+    us_reactor_handler_t *self_,
+    int fd,
+    void *extra,
     int queue_buf_size,
     int xfer_buf_size
 )
 {
     bool r = false;
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     uint8_t *in_buf;
     uint8_t *out_buf;
-    
-    if ( us_reactor_item_init ( self_ ) )
+
+    if ( us_reactor_handler_init ( self_, fd, extra ) )
     {
-        self->base.destroy = us_reactor_item_tcp_destroy;
-        self->base.tick = us_reactor_item_tcp_tick;
-        self->base.readable = us_reactor_item_tcp_readable;
-        self->base.writable = us_reactor_item_tcp_writable;
+        self->base.destroy = us_reactor_handler_tcp_destroy;
+        self->base.tick = us_reactor_handler_tcp_tick;
+        self->base.readable = us_reactor_handler_tcp_readable;
+        self->base.writable = us_reactor_handler_tcp_writable;
         self->base.wake_on_readable = true;
         self->xfer_buf_size = xfer_buf_size;
         in_buf = ( uint8_t * ) calloc ( queue_buf_size, 1 );
@@ -469,122 +474,123 @@ bool us_reactor_item_tcp_init (
         self->readable = 0;
         self->tick = 0;
     }
-    
+
     if ( in_buf != NULL && out_buf != NULL && self->xfer_buf != NULL )
     {
         us_queue_init ( &self->incoming_queue, in_buf, queue_buf_size );
         us_queue_init ( &self->outgoing_queue, out_buf, queue_buf_size );
         r = true;
     }
-    
+
     else
     {
         self->base.destroy ( &self->base );
         r = false;
     }
-    
+
     return r;
 }
 
-void us_reactor_item_tcp_destroy (
-    us_reactor_item_t *self_
+void us_reactor_handler_tcp_destroy (
+    us_reactor_handler_t *self_
 )
 {
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     free ( self->incoming_queue.m_buf );
     free ( self->outgoing_queue.m_buf );
     free ( self->xfer_buf );
-    us_reactor_item_destroy ( &self->base );
+    us_reactor_handler_destroy ( &self->base );
 }
 
-bool us_reactor_item_tcp_tick (
-    us_reactor_item_t *self_
+bool us_reactor_handler_tcp_tick (
+    us_reactor_handler_t *self_
 )
 {
     bool r = true;
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
-    
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
+
     if ( us_queue_writable_count ( &self->incoming_queue ) >= self->xfer_buf_size )
     {
         self->base.wake_on_readable = true;
     }
-    
+
     else
     {
         self->base.wake_on_readable = false;
     }
-    
+
     if ( us_queue_can_read_byte ( &self->outgoing_queue ) )
     {
         self->base.wake_on_writable = true;
     }
-    
+
     else
     {
         self->base.wake_on_writable = false;
     }
-    
+
     if ( self->tick )
         r = self->tick ( self );
-        
+
     return r;
 }
 
-bool us_reactor_item_tcp_readable (
-    us_reactor_item_t *self_
+bool us_reactor_handler_tcp_readable (
+    us_reactor_handler_t *self_
 )
 {
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     int len;
     len = recv ( self->base.fd, self->xfer_buf, self->xfer_buf_size, 0 );
-    
+
     if ( len > 0 )
     {
         us_queue_write ( &self->incoming_queue, ( uint8_t* ) self->xfer_buf, len );
-        
+
         if ( self->readable )
         {
             self->readable ( self );
         }
     }
-    
+
     else
     {
         closesocket ( self->base.fd );
         self->base.fd = -1;
     }
-    
+
     return true;
 }
 
-bool us_reactor_item_tcp_writable (
-    us_reactor_item_t *self_
+bool us_reactor_handler_tcp_writable (
+    us_reactor_handler_t *self_
 )
 {
-    us_reactor_item_tcp_t *self = ( us_reactor_item_tcp_t * ) self_;
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r = false;
     int len;
     len = us_queue_readable_count ( &self->outgoing_queue );
-    
+
     if ( len > 0 )
     {
         uint8_t *outgoing = us_queue_contig_read_ptr ( &self->outgoing_queue );
         int outgoing_len = us_queue_contig_readable_count ( &self->outgoing_queue );
         len = send ( self->base.fd, outgoing, outgoing_len, 0 );
-        
+
         if ( len > 0 )
         {
             us_queue_skip ( &self->outgoing_queue, len );
             r = true;
         }
     }
-    
+
     if ( r == false )
     {
         closesocket ( self->base.fd );
         self->base.fd = -1;
     }
-    
+
     return r;
 }
+
 

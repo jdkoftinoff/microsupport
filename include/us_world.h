@@ -137,6 +137,7 @@ typedef unsigned char uint8_t;
 # include <sys/poll.h>
 # include <errno.h>
 # include <strings.h>
+# include <net/if.h>
 #endif
 
 #include <assert.h>
