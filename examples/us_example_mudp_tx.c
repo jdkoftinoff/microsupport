@@ -37,101 +37,106 @@
 /** \addtogroup us_test_net */
 /*@{*/
 
-bool us_example_mudp_tx( int argc, char **argv )
+bool us_example_mudp_tx (
+    const char *multicast_address,
+    const char *multicast_service,
+    const char *interface
+);
+
+bool us_example_mudp_tx (
+    const char *multicast_address,
+    const char *multicast_service,
+    const char *interface
+)
 {
     int fd;
-    bool r=false;
+    bool r = false;
     struct addrinfo *multicastgroup;
-    const char *multicastgroup_host = argv[1];
-    const char *multicastgroup_serv = argv[2];
-    struct addrinfo *listenaddr;
-    const char *listenaddr_host = argv[3];
-    const char *listenaddr_serv = argv[4];
-    const char *interface_name = argv[5];
-
-    multicastgroup = us_net_get_addrinfo( multicastgroup_host, multicastgroup_serv, SOCK_DGRAM );
-    listenaddr = us_net_get_addrinfo( listenaddr_host, listenaddr_serv, SOCK_DGRAM );
-
+    multicastgroup = us_net_get_addrinfo ( multicast_address, multicast_service, SOCK_DGRAM );
     {
         char multicastgroup_name[1024];
         char multicastgroup_serv[256];
-        char listenaddr_name[1024];
-        char listenaddr_serv[1024];
-
-        if( getnameinfo(
-                    listenaddr->ai_addr, listenaddr->ai_addrlen, listenaddr_name,
-                    sizeof(listenaddr_name)-1, listenaddr_serv,
-                    sizeof(listenaddr_serv)-1, NI_NUMERICHOST | NI_NUMERICSERV
-                        )==0 )
+        
+        if ( us_net_get_nameinfo ( multicastgroup, multicastgroup_name, sizeof ( multicastgroup_name ) - 1, multicastgroup_serv, sizeof ( multicastgroup_serv ) - 1 ) )
         {
-            us_log_info( "listenaddr: %s port %s", listenaddr_name, listenaddr_serv );
+            us_log_info ( "multicastgroup: %s port %s", multicastgroup_name, multicastgroup_serv );
         }
+        
         else
         {
-            perror( "getnameinfo:" );
+            perror ( "getnameinfo:" );
         }
-
-        if( getnameinfo(
-                    multicastgroup->ai_addr, multicastgroup->ai_addrlen, multicastgroup_name,
-                    sizeof(multicastgroup_name)-1, multicastgroup_serv,
-                    sizeof(multicastgroup_serv)-1, NI_NUMERICHOST | NI_NUMERICSERV )==0 )
-        {
-            us_log_info( "listenaddr: %s port %s", multicastgroup_name, multicastgroup_serv );
-        }
-        else
-        {
-            perror( "getnameinfo:" );
-        }
-
     }
-
-
-    fd = us_net_create_multicast_udp_socket( listenaddr, multicastgroup, interface_name );
-    if( fd>0 )
+    fd = us_net_create_multicast_tx_udp_socket ( 0, multicastgroup, interface );
+    
+    if ( fd > 0 )
     {
-        while(1)
+        int cnt = 0;
+        
+        while ( 1 )
         {
-            struct sockaddr_storage remote_addr;
-            socklen_t remote_addr_len = sizeof(remote_addr);
-            char buf[2048];
-            int len;
-            len = recvfrom( fd, buf, sizeof(buf), 0, (struct sockaddr *)&remote_addr, &remote_addr_len );
-            if( len>0 )
+            char buf[1024];
+            int buf_len;
+            int sent_len;
+            sprintf ( buf, "packet contents: %08d", cnt );
+            buf_len = strlen ( buf );
+            sent_len = sendto ( fd, buf, buf_len, 0, multicastgroup->ai_addr, multicastgroup->ai_addrlen );
+            
+            if ( sent_len > 0 )
             {
-                us_log_info( "got packet %d bytes", len );
+                us_log_info ( "sent packet %d, %d bytes", cnt, sent_len );
             }
+            
             else
             {
-                perror("recvfrom:" );
+                perror ( "sendto:" );
                 break;
             }
+            
+            sleep ( 1 );
+            cnt++;
         }
     }
-
+    
     return r;
 }
 
 
-int main( int argc, char **argv )
+int main ( int argc, char **argv )
 {
-  int r=1;
-  if( us_testutil_start(4096,4096,argc,argv) )
-  {
+    int r = 1;
+    
+    if ( argc < 3 )
+    {
+        fprintf ( stderr, "usage:\n\t%s multicast_address multicast_service (interface)\n", argv[0] );
+        fprintf ( stderr, "example:\n\t%s ff31::8000:1234 30001\n", argv[0] );
+        exit ( 1 );
+    }
+    
+    if ( us_testutil_start ( 4096, 4096, argc, argv ) )
+    {
+        const char *multicast_address = argv[1];
+        const char *multicast_service = argv[2];
+        const char *interface = "";
+        
+        if ( argc > 3 )
+            interface = argv[3];
+            
 #if US_ENABLE_LOGGING
-    us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
+        us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-
-    us_log_set_level( US_LOG_LEVEL_DEBUG );
-    us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-
-    if( us_example_mudp_tx(argc,argv) )
-      r=0;
-
-    us_log_info("Finishing %s", argv[0] );
-    us_logger_finish();
-    us_testutil_finish();
-  }
-  return r;
+        us_log_set_level ( US_LOG_LEVEL_DEBUG );
+        us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+        
+        if ( us_example_mudp_tx ( multicast_address, multicast_service, interface ) )
+            r = 0;
+            
+        us_log_info ( "Finishing %s", argv[0] );
+        us_logger_finish();
+        us_testutil_finish();
+    }
+    
+    return r;
 }
 
 /*@}*/
