@@ -38,22 +38,18 @@ us_trie_dyn_create (
 {
     us_trie_dyn_t *r = 0;
     us_trie_dyn_t *self = us_new ( allocator, us_trie_dyn_t );
-    
     if ( self )
     {
         self->destroy = us_trie_dyn_destroy;
         self->m_allocator = allocator;
         self->m_nodes = us_new_array ( allocator, us_trie_node_t, max_nodes );
-        
         if ( self->m_nodes )
         {
             uint16_t i;
-            
             for ( i = 0; i < max_nodes; ++i )
             {
                 us_trie_node_clear ( &self->m_nodes[i] );
             }
-            
             us_trie_init (
                 &self->m_base,
                 max_nodes,
@@ -65,12 +61,10 @@ us_trie_dyn_create (
             r = self;
         }
     }
-    
     if ( r == 0 && self != 0 )
     {
         self->destroy ( self );
     }
-    
     return r;
 }
 
@@ -83,7 +77,6 @@ us_trie_dyn_destroy (
     {
         us_delete ( self->m_allocator, self->m_nodes );
     }
-    
     us_delete ( self->m_allocator, self );
 }
 
@@ -94,7 +87,6 @@ us_trie_clear (
 )
 {
     us_trie_node_id_t i;
-    
     for ( i = 0; i < self->m_max_nodes; ++i )
     {
         us_trie_node_clear ( &self->m_nodes[i] );
@@ -122,23 +114,19 @@ us_trie_add_child (
     buf[item].m_value = value;
     buf[item].m_flags = flags;
     buf[item].m_parent = parent_item;
-    
     /* find last child */
     if ( parent_item != item && parent_item != -1 ) // but only if there are any parents at all!
     {
         int last_child = buf[parent_item].m_child;
-        
         if ( last_child )
         {
             while ( buf[last_child].m_sibling )
             {
                 last_child = buf[last_child].m_sibling;
             }
-            
             // found the last child of the parent. Tell him he has a brother
             buf[last_child].m_sibling = item;
         }
-        
         else
         {
             // parent has no children yet. add our new child as a child of parent
@@ -146,10 +134,8 @@ us_trie_add_child (
                 buf[parent_item].m_child = item;
         }
     }
-    
     if ( item >= self->m_num_nodes )
         self->m_num_nodes = item + 1;
-        
     return item;
 }
 
@@ -172,10 +158,8 @@ us_trie_add_sibling (
     buf[item].m_flags = flags;
     buf[item].m_parent = buf[last_sibling_item].m_parent; /* same parent as my older brother */
     buf[last_sibling_item].m_sibling = item;
-    
     if ( item > self->m_num_nodes )
         self->m_num_nodes = item;
-        
     return item;
 }
 
@@ -188,7 +172,6 @@ us_trie_remove (
 )
 {
     us_trie_node_release ( &self->m_nodes[item] );
-    
     if ( item < self->m_first_free )
         self->m_first_free = item;
 }
@@ -202,7 +185,6 @@ us_trie_find_next_free (
 )
 {
     us_trie_node_id_t num = self->m_max_nodes;
-    
     for ( ; self->m_first_free < num; ++self->m_first_free )
     {
         if ( us_trie_node_is_free ( &self->m_nodes[ self->m_first_free ] ) )
@@ -210,12 +192,10 @@ us_trie_find_next_free (
             break;
         }
     }
-    
     if ( self->m_first_free == num )
     {
         self->m_first_free = -1;
     }
-    
     return self->m_first_free;
 }
 
@@ -230,16 +210,13 @@ us_trie_add (
 {
     /* is there a top family? */
     us_trie_node_id_t list_pos = 0;
-    
     /* skip any initial items that are needed to ignore */
     while ( list_pos < list_len && self->m_ignorer ( list[list_pos] ) )
         ++list_pos;
-        
     if ( us_trie_node_is_free ( &self->m_nodes[0] ) )
     {
         /* nope, this is our first ever add */
         us_trie_node_id_t i = -1;
-        
         while ( list_pos < list_len )
         {
             /* add only the items that are not to be ignored */
@@ -247,38 +224,31 @@ us_trie_add (
             {
                 i = us_trie_add_child ( self, i, list[list_pos], flags );
             }
-            
             list_pos++;
         }
-        
         i = us_trie_add_child ( self, i, 0, flags );
         us_trie_node_set_end ( &self->m_nodes[i] );
         /* and we are done! */
         return;
     }
-    
     else
     {
         /* find a matching char */
         us_trie_node_id_t i = 0;
-        
         while ( 1 )
         {
             /*  skip any items that are needed to ignore */
             while ( list_pos < list_len && self->m_ignorer ( list[list_pos] ) )
                 ++list_pos;
-                
             if ( list_pos == list_len )
             {
                 i = us_trie_add_child ( self, self->m_nodes[i].m_parent, 0, flags );
                 us_trie_node_set_end ( &self->m_nodes[i] );
                 return; /* we are done! */
             }
-            
             if ( us_trie_find_sibling ( self, i, list[list_pos], &i ) )
             {
                 ++list_pos;
-                
                 /* We already have it */
                 /* so traverse to the child of this sibling. */
                 if ( self->m_nodes[i].m_child == 0 )
@@ -288,36 +258,29 @@ us_trie_add (
                     {
                         if ( !self->m_ignorer ( list[list_pos] ) )
                             i = us_trie_add_child ( self, i, list[list_pos], flags );
-                            
                         list_pos++;
                     }
-                    
                     i = us_trie_add_child ( self, i, 0, flags );
                     us_trie_node_set_end ( &self->m_nodes[i] );
                     /* and we are done! */
                     return;
                 }
-                
                 else
                 {
                     i = self->m_nodes[i].m_child;
                 }
             }
-            
             else
             {
                 /* no sibling available */
                 /* i points to last sibling of the family. */
                 i = us_trie_add_sibling ( self, i, list[list_pos++], flags );
-                
                 while ( list_pos < list_len )
                 {
                     if ( !self->m_ignorer ( list[list_pos] ) )
                         i = us_trie_add_child ( self, i, list[list_pos], flags );
-                        
                     list_pos++;
                 }
-                
                 i = us_trie_add_child ( self, i, 0, flags );
                 us_trie_node_set_end ( &self->m_nodes[i] );
                 /* and we are done! */

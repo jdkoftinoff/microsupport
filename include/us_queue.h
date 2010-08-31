@@ -41,7 +41,7 @@ extern "C"
     /** \addtogroup queue
      */
     /*@{*/
-    
+
     typedef struct us_queue_s
     {
         int m_next_in;
@@ -49,10 +49,10 @@ extern "C"
         int m_buf_size;
         uint8_t *m_buf;
     } us_queue_t;
-    
-    
+
+
     /** us_queue_init Initialize Queue. Does no memory allocation.
-    
+
      @param self us_queue_t to initialize
      @param buf pointer to raw data
      @param buf_size size of buffer, Buffer must be power of two bytes long
@@ -62,7 +62,7 @@ extern "C"
         uint8_t *buf,
         int buf_size
     );
-    
+
     /** us_queue_readable_count
      @param self us_queue_t
      @returns int length of data that can be read from queue
@@ -71,7 +71,7 @@ extern "C"
     {
         return ( self->m_next_in - self->m_next_out ) & ( self->m_buf_size - 1 );
     }
-    
+
     /** us_queue_contig_readable_count
      @param self us_queue_t
      @returns int length of data that can be read from queue contiguously.
@@ -80,16 +80,15 @@ extern "C"
     {
         if ( self->m_next_in < self->m_next_out )
             return ( self->m_buf_size - self->m_next_in ) & ( self->m_buf_size - 1 );
-            
         else
             return ( self->m_next_in - self->m_next_out ) & ( self->m_buf_size - 1 );
     }
-    
+
     static inline uint8_t *us_queue_contig_read_ptr ( us_queue_t *self )
     {
         return &self->m_buf[ self->m_next_out ];
     }
-    
+
     /** us_queue_read Read Data from queue
      @param self us_queue_t to read from
      @param dest_data data pointer to write to
@@ -97,8 +96,8 @@ extern "C"
      @returns void
      */
     void us_queue_read ( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt );
-    
-    
+
+
     /** us_queue_can_read_byte
      @param self us_queue_t to use
      @returns bool true if there is one or more data bytes available
@@ -107,7 +106,7 @@ extern "C"
     {
         return ( self->m_next_out != self->m_next_in );
     }
-    
+
     /** us_queue_read_byte
      @param self us_queue_t to use
      @returns uint8_t next byte read from queue
@@ -118,7 +117,7 @@ extern "C"
         self->m_next_out = ( self->m_next_out + 1 ) & ( self->m_buf_size - 1 );
         return r;
     }
-    
+
     /** us_queue_peek Peek at data in buffer
      @param self us_queue_t to peek at
      @param offset uint1_t offset to peek at
@@ -128,7 +127,7 @@ extern "C"
     {
         return self->m_buf[ ( self->m_next_out + offset ) & ( self->m_buf_size-1 ) ];
     }
-    
+
     /** us_queue_skip Skip data in buffer
      @param self us_queue_t to modify
      @param count int number of bytes to skip
@@ -137,7 +136,7 @@ extern "C"
     {
         self->m_next_out = ( self->m_next_out + count ) & ( self->m_buf_size - 1 );
     }
-    
+
     /** us_queue_writable_count
      @param self us_queue_t to use
      @returns int length of data that can be written to queue
@@ -147,12 +146,12 @@ extern "C"
         int mask = self->m_buf_size - 1;
         return ( ( self->m_next_out - self->m_next_in - 1 ) & mask );
     }
-    
+
     static inline uint8_t *us_queue_contig_write_ptr ( us_queue_t *self )
     {
         return &self->m_buf[ self->m_next_in ];
     }
-    
+
     /** us_queue_contig_writable_count
      @param self us_queue_t
      @returns int length of data that can be written to queue contiguously.
@@ -161,12 +160,11 @@ extern "C"
     {
         if ( self->m_next_out >= self->m_next_in )
             return ( ( self->m_buf_size - self->m_next_out ) - 1 ) & ( self->m_buf_size - 1 );
-            
         else
             return ( ( self->m_next_out - self->m_next_in ) - 1 ) & ( self->m_buf_size - 1 );
     }
-    
-    
+
+
     /** us_queue_write Write Data to queue
      @param self us_queue_t to write to
      @param src_data data pointer to read from
@@ -174,7 +172,7 @@ extern "C"
      @returns void
      */
     void us_queue_write ( us_queue_t *self, uint8_t *src_data, int src_data_cnt );
-    
+
     /** us_queue_can_write_byte
      @param self us_queue_t to use
      @returns bool true if there is space to write one byte into queue
@@ -183,7 +181,7 @@ extern "C"
     {
         return ( ( self->m_next_out - self->m_next_in ) & ( self->m_buf_size - 1 ) ) - 1 != 0;
     }
-    
+
     /** us_queue_write_byte
      @param self us_queue_t to us
      @param value uint8_t to write
@@ -194,9 +192,9 @@ extern "C"
         self->m_buf[ self->m_next_in ] = value;
         self->m_next_in = ( self->m_next_in + 1 ) & ( self->m_buf_size - 1 );
     }
-    
+
     /*@}*/
-    
+
 #ifdef __cplusplus
 }
 #endif

@@ -61,14 +61,12 @@ void us_log_error_printer ( const char *fmt, ... )
 {
     va_list ap;
     va_start ( ap, fmt );
-    
     if ( us_logger_printer_err )
     {
         us_logger_printer_err->printf ( us_logger_printer_err, "ERROR:\t" );
         us_logger_printer_err->vprintf ( us_logger_printer_err, fmt, ap );
         us_logger_printer_err->printf ( us_logger_printer_err, "\n" );
     }
-    
     va_end ( ap );
 }
 
@@ -76,14 +74,12 @@ void us_log_warn_printer ( const char *fmt, ... )
 {
     va_list ap;
     va_start ( ap, fmt );
-    
     if ( us_logger_printer_err )
     {
         us_logger_printer_err->printf ( us_logger_printer_err, "WARNING:\t" );
         us_logger_printer_err->vprintf ( us_logger_printer_err, fmt, ap );
         us_logger_printer_err->printf ( us_logger_printer_err, "\n" );
     }
-    
     va_end ( ap );
 }
 
@@ -91,14 +87,12 @@ void us_log_info_printer ( const char *fmt, ... )
 {
     va_list ap;
     va_start ( ap, fmt );
-    
     if ( us_logger_printer_out )
     {
         us_logger_printer_out->printf ( us_logger_printer_out, "INFO:\t" );
         us_logger_printer_out->vprintf ( us_logger_printer_out, fmt, ap );
         us_logger_printer_out->printf ( us_logger_printer_out, "\n" );
     }
-    
     va_end ( ap );
 }
 
@@ -106,14 +100,12 @@ void us_log_debug_printer ( const char *fmt, ... )
 {
     va_list ap;
     va_start ( ap, fmt );
-    
     if ( us_logger_printer_out )
     {
         us_logger_printer_out->printf ( us_logger_printer_out, "DEBUG:\t" );
         us_logger_printer_out->vprintf ( us_logger_printer_out, fmt, ap );
         us_logger_printer_out->printf ( us_logger_printer_out, "\n" );
     }
-    
     va_end ( ap );
 }
 

@@ -37,7 +37,8 @@
 #include "us_queue.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     /** \addtogroup us_net

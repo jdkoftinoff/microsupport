@@ -36,7 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*@{*/
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 # define US_LOG_LEVEL_NONE  (0)
@@ -66,52 +67,52 @@ extern "C" {
     extern void ( *us_log_info_proc ) ( const char *fmt, ... );
     extern void ( *us_log_debug_proc ) ( const char *fmt, ... );
     extern void ( *us_logger_finish ) ( void );
-    
+
     void us_log_null ( const char *fmt, ... );
     void us_logger_null_finish ( void );
-    
-    
-    
+
+
+
 # if US_ENABLE_LOGGING
-    
+
 #  define us_log_set_level(L) do { us_log_level=(L); } while(0)
-    
+
 #  if US_ENABLE_LOG_ERROR
 #   define us_log_error(...) do { if( us_log_level>=US_LOG_LEVEL_ERROR ) us_log_error_proc( __VA_ARGS__ ); } while(0)
 #  else
 #   define us_log_error(...) do { } while(0)
 #  endif
-    
+
 #  if US_ENABLE_LOG_WARN
 #   define us_log_warn(...) do { if( us_log_level>=US_LOG_LEVEL_WARN ) us_log_warn_proc( __VA_ARGS__ ); } while(0)
 #  else
 #   define us_log_warn(...) do { } while(0)
 #  endif
-    
+
 #  if US_ENABLE_LOG_INFO
 #   define us_log_info(...) do { if( us_log_level>=US_LOG_LEVEL_INFO ) us_log_info_proc( __VA_ARGS__ ); } while(0)
 #  else
 #   define us_log_info(...) do { } while(0)
 #  endif
-    
+
 #if US_ENABLE_LOG_DEBUG
 #  define us_log_debug(...) do { if( us_log_level>=US_LOG_LEVEL_DEBUG ) us_log_debug_proc( __VA_ARGS__ ); } while(0)
 # else
 #  define us_log_debug(...) do { } while(0)
 # endif
-    
+
 # else
-    
+
 #  define us_log_set_level(L) do { } while(0)
 #  define us_log_error(...) do { } while(0)
 #  define us_log_warn(...) do { } while(0)
 #  define us_log_info(...) do { } while(0)
 #  define us_log_debug(...) do { } while(0)
-    
+
 #endif
-    
+
 # define us_log_probe() us_log_debug( "At '%s':%d function '%s'", __FILE__, __LINE__, __FUNCTION__ )
-    
+
 #ifdef __cplusplus
 }
 #endif

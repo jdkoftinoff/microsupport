@@ -72,13 +72,11 @@ us_trie_count (
     us_trie_node_id_t last = 0;
     us_trie_node_t *buf = self->m_nodes;
     us_trie_node_id_t i;
-    
     for ( i = 0; i < cnt; ++i )
     {
         if ( !us_trie_node_is_free ( &buf[i] ) )
             last = i;
     }
-    
     return last + 1;
 }
 
@@ -92,7 +90,6 @@ us_trie_find_sibling (
 )
 {
     const us_trie_node_t *buf = self->m_nodes;
-    
     while ( ! us_trie_node_is_free ( &buf[ first_item ] ) )
     {
         /* does it match? */
@@ -103,7 +100,6 @@ us_trie_find_sibling (
             *item = first_item;
             return true;
         }
-        
         else
         {
             /* nope! check his brother */
@@ -113,14 +109,12 @@ us_trie_find_sibling (
                 *item = first_item;
                 return false;
             }
-            
             else
             {
                 first_item = buf[ first_item ].m_sibling;
             }
         }
     }
-    
     /* the caller must see if the item does match. If it doesn't,
        it is the index of the last sibling.
      */
@@ -143,10 +137,8 @@ us_trie_find (
     us_trie_node_id_t i = initial_leaf_pos;
     us_trie_node_id_t list_pos = initial_list_pos;
     /* skip any initial items that are needed to ignore */
-    
     while ( list_pos < list_len && self->m_ignorer ( list[list_pos] ) )
         ++list_pos;
-        
     while ( list_pos < list_len && !us_trie_node_is_free ( &buf[i] ) )
     {
         if ( !us_trie_find_sibling ( self, i, list[list_pos], &i ) )
@@ -154,15 +146,12 @@ us_trie_find (
             /* no match, return false */
             return false;
         }
-        
         /* is there a child? */
-        
         if ( buf[i].m_child )
         {
             us_trie_node_id_t j;
             /* follow the child. */
             i = buf[i].m_child;
-            
             /* if any of the children are an end point, then we have a match */
             for ( j = i; j != 0; j = buf[j].m_sibling )
             {
@@ -173,7 +162,6 @@ us_trie_find (
                      * go through all children again and see if we can find a longer match
                      */
                     us_trie_node_id_t k;
-                    
                     for ( k = i; k != 0; k = buf[k].m_sibling )
                     {
                         if ( us_trie_find (
@@ -191,42 +179,32 @@ us_trie_find (
                             return true;
                         }
                     }
-                    
                     /* our match is the longest */
                     if ( flags )
                         *flags = us_trie_node_get_flags ( &buf[j] );
-                        
                     if ( match_len )
                         *match_len = list_pos + 1;
-                        
                     if ( match_item )
                         *match_item = j;
-                        
                     return true;
                 }
             }
         }
-        
         else
         {
             /* no, so we have a match. */
             if ( flags )
                 *flags = us_trie_node_get_flags ( &buf[i] );
-                
             if ( match_len )
                 *match_len = list_pos + 1;
-                
             if ( match_item )
                 *match_item = i;
-                
             return true;
         }
-        
         /* move to the next non ignored item in the list */
         while ( list_pos < list_len && self->m_ignorer ( list[++list_pos] ) )
             ;
     }
-    
     /* no match */
     return false;
 }
@@ -245,27 +223,22 @@ us_trie_extract (
     int16_t len = 0;
     us_trie_node_id_t cur_item = end_leaf_index;
     us_trie_node_value_t *p = list;
-    
     if ( end_leaf_index < 0 )
     {
         return 0;
     }
-    
     if ( us_trie_node_is_end ( &buf[cur_item] ) )
     {
         cur_item = buf[cur_item].m_parent;
     }
-    
     if ( cur_item < 0 )
     {
         return 0;
     }
-    
     while ( len < max_len )
     {
         *p++ = buf[ cur_item ].m_value;
         len++;
-        
         if ( buf[cur_item].m_parent == US_TRIE_NODE_EMPTY )
         {
             // found top of tree
@@ -273,7 +246,6 @@ us_trie_extract (
             if ( len > 1 )
             {
                 uint16_t i;
-                
                 for ( i = 0; i < len / 2; ++i )
                 {
                     us_trie_node_value_t tmp = list[i];
@@ -281,13 +253,10 @@ us_trie_extract (
                     list[len - i - 1] = tmp;
                 }
             }
-            
             return len;
         }
-        
         cur_item = buf[ cur_item ].m_parent;
     }
-    
     return 0;
 }
 

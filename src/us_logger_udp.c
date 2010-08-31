@@ -71,7 +71,6 @@ bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port )
                                 us_logger_udp_buffer,
                                 sizeof ( us_logger_udp_buffer )
                             );
-                            
     if ( us_logger_udp_printer )
     {
         /*
@@ -82,7 +81,6 @@ bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port )
         us_logger_udp_dest_sockaddr.sin_port = htons ( dest_port );
 #ifdef _WIN32
         us_logger_udp_dest_sockaddr.sin_addr.S_un.S_addr = inet_addr ( dest_addr );
-        
         if ( us_logger_udp_dest_sockaddr.sin_addr.S_un.S_addr != INADDR_NONE )
 #else
         if ( inet_aton ( dest_addr, &us_logger_udp_dest_sockaddr.sin_addr ) )
@@ -92,16 +90,15 @@ bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port )
               Create socket for this address
              */
             us_logger_udp_socket = socket (
-                                       AF_INET, SOCK_DGRAM, IPPROTO_UDP
-                                   );
-                                   
+                AF_INET, SOCK_DGRAM, IPPROTO_UDP
+            );
+
             if ( us_logger_udp_socket >= 0 )
             {
                 r = true;
             }
         }
     }
-    
     if ( r )
     {
         us_log_error_proc = us_log_error_udp;
@@ -110,17 +107,14 @@ bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port )
         us_log_debug_proc = us_log_debug_udp;
         us_logger_finish = us_logger_udp_finish;
     }
-    
     else
     {
         if ( us_logger_udp_socket != -1 )
         {
             closesocket ( us_logger_udp_socket );
         }
-        
         us_logger_udp_socket = -1;
     }
-    
     return r;
 }
 
@@ -131,7 +125,6 @@ void us_logger_udp_finish()
         closesocket ( us_logger_udp_socket );
         us_logger_udp_socket = -1;
     }
-    
     us_log_error_proc = us_log_null;
     us_log_warn_proc = us_log_null;
     us_log_info_proc = us_log_null;

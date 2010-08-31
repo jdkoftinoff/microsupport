@@ -35,7 +35,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_print.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     bool us_trie_dump (
@@ -46,7 +47,7 @@ extern "C" {
         us_print_t *c_file_printer,
         us_print_t *h_file_printer
     );
-    
+
 #ifdef __cplusplus
 }
 #endif

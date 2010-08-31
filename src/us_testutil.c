@@ -71,12 +71,10 @@ bool us_testutil_start (
     ( void ) argv;
 #if US_ENABLE_NETWORK
     r = us_platform_init_sockets();
-    
     if ( !r )
     {
         return r;
     }
-    
 #endif
     /*
       Initialize the system and the session allocators
@@ -114,7 +112,6 @@ bool us_testutil_start (
             ( int32_t ) ( US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof ( int32_t ) )
         );
 #endif
-        
     /*
       check for allocation failure
     */
@@ -122,7 +119,6 @@ bool us_testutil_start (
     {
         r = false;
     }
-    
     /*
       Initialize any printing mechanism if enabled
     */
@@ -158,7 +154,6 @@ bool us_testutil_start (
             US_TESTUTIL_PRINTBUFFER_SIZE
         );
 #endif
-        
     /*
       report any failure of the printer
     */
@@ -166,7 +161,6 @@ bool us_testutil_start (
     {
         r = false;
     }
-    
     us_stdout = us_testutil_printer_stdout;
     us_stderr = us_testutil_printer_stderr;
 #endif
@@ -176,7 +170,6 @@ bool us_testutil_start (
 void us_testutil_finish ( void )
 {
 #if US_ENABLE_PRINTING
-
     /*
       destroy/delete/deallocate/close any printer if printing is enabled
     */
@@ -184,14 +177,11 @@ void us_testutil_finish ( void )
     {
         us_testutil_printer_stdout->destroy ( us_testutil_printer_stdout );
     }
-    
     if ( us_testutil_printer_stderr )
     {
         us_testutil_printer_stderr->destroy ( us_testutil_printer_stderr );
     }
-    
 #endif
-    
     /*
       deallocate any system of session allocators
     */
@@ -199,7 +189,6 @@ void us_testutil_finish ( void )
     {
         us_testutil_sys_allocator->destroy ( us_testutil_sys_allocator );
     }
-    
     if ( us_testutil_session_allocator )
     {
         us_testutil_session_allocator->destroy ( us_testutil_session_allocator );

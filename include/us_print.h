@@ -39,31 +39,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     /** us_print_t
-    
+
      interface for printing functions; can be used by implementations
      to direct printf's to files, streams or memory buffers.
      */
     typedef struct us_print_s
     {
         /** destroy
-        
+
            Function pointer to destroy the print object.
-        
+
            @param self ptr to object
            @returns void
          */
         void ( *destroy ) (
             struct us_print_s *self
         );
-        
+
         /** printf
-        
+
            printf implementation for the selected print object.
-        
+
            @param self pointer to print object
            @param fmt standard sprintf formatting string
            @returns bool true on success, false on memory of file error
@@ -73,11 +74,11 @@ extern "C" {
             const char *fmt,
             ...
         );
-        
+
         /** vprintf
-        
+
          vprintf implementation for the selected print object.
-        
+
          @param self pointer to print object
          @param fmt standard sprintf formatting string
          @param ap reference to va_list of parameters
@@ -88,60 +89,60 @@ extern "C" {
             const char *fmt,
             va_list ap
         );
-        
+
     } us_print_t;
-    
+
 #if US_ENABLE_PRINTING
     extern us_print_t *us_stdout;
     extern us_print_t *us_stderr;
-    
+
 #if US_ENABLE_STDIO
-    
+
     /** us_print_file_t
-    
+
      printer which prints to a stdio FILE
      */
-    
+
     typedef struct us_print_file_s
     {
         us_print_t m_base;
         FILE *m_f;
     } us_print_file_t;
-    
+
     /**
      initialize a us_print_file_t structure, attach it
      to a stdio FILE *.
-    
+
      @param self us_print_file_t structure to initialize
      @param f FILE to attach to
      @return self
      */
-    
+
     us_print_t *
     us_print_file_init (
         us_print_file_t *self,
         FILE *f
     );
-    
+
     void us_print_file_destroy (
         us_print_t *self_
     );
-    
+
     bool us_print_file_printf (
         us_print_t *self_,
         const char *fmt,
         ...
     );
-    
+
     bool us_print_file_vprintf (
         us_print_t *self_,
         const char *fmt,
         va_list ap
     );
-    
+
 #endif
-    
-    
+
+
     /**
      */
     typedef struct us_printraw_s
@@ -151,33 +152,33 @@ extern "C" {
         int m_max_length;
         int m_cur_length;
     } us_printraw_t;
-    
+
     us_print_t *
     us_printraw_init (
         us_printraw_t *self,
         void *raw_memory,
         int raw_memory_length
     );
-    
+
     void
     us_printraw_destroy (
         us_print_t *self
     );
-    
+
     bool
     us_printraw_printf (
         us_print_t *self,
         const char *fmt,
         ...
     );
-    
+
     bool
     us_printraw_vprintf (
         us_print_t *self,
         const char *fmt,
         va_list ap
     );
-    
+
     static inline const char *
     us_printraw_get (
         us_print_t *self_
@@ -186,7 +187,7 @@ extern "C" {
         us_printraw_t *self = ( us_printraw_t * ) self_;
         return ( const char * ) self->m_buffer;
     }
-    
+
     static inline size_t
     us_printraw_length (
         us_print_t *self_
@@ -195,19 +196,19 @@ extern "C" {
         us_printraw_t *self = ( us_printraw_t * ) self_;
         return self->m_cur_length;
     }
-    
-    
+
+
     typedef struct us_printbuf_s
     {
         us_printraw_t m_base;
     } us_printbuf_t;
-    
+
     us_print_t *
     us_printbuf_create (
         us_allocator_t *allocator,
         int memory_length
     );
-    
+
     static inline const char *
     us_printbuf_get (
         us_print_t *self_
@@ -216,7 +217,7 @@ extern "C" {
         us_printbuf_t *self = ( us_printbuf_t * ) self_;
         return self->m_base.m_buffer;
     }
-    
+
     static inline size_t
     us_printbuf_length (
         us_print_t *self_
@@ -225,9 +226,9 @@ extern "C" {
         us_printbuf_t *self = ( us_printbuf_t * ) self_;
         return self->m_base.m_cur_length;
     }
-    
+
 #endif
-    
+
 #ifdef __cplusplus
 }
 #endif

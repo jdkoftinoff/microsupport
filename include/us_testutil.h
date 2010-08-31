@@ -62,17 +62,17 @@ extern "C"
         int argc,
         char **argv
     );
-    
+
     void us_testutil_finish ( void );
-    
-    
+
+
     extern us_allocator_t *us_testutil_sys_allocator;
     extern us_allocator_t *us_testutil_session_allocator;
-    
+
 #if US_ENABLE_PRINTING
     extern us_print_t *us_testutil_printer_stdout;
     extern us_print_t *us_testutil_printer_stderr;
-    
+
 #if US_ENABLE_STDIO
     extern us_print_file_t us_testutil_printer_stdout_impl;
     extern us_print_file_t us_testutil_printer_stderr_impl;
@@ -83,7 +83,7 @@ extern "C"
     extern char us_testutil_printbuffer_stderr[ US_TESTUTIL_PRINTBUFFER_SIZE ];
 #endif
 #endif
-    
+
 #if US_ENABLE_MALLOC
     extern us_malloc_allocator_t us_testutil_sys_allocator_impl;
     extern us_malloc_allocator_t us_testutil_session_allocator_impl;
@@ -93,7 +93,7 @@ extern "C"
     extern int32_t us_testutil_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
     extern int32_t us_testutil_session_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 #endif
-    
+
 #ifdef __cplusplus
 }
 #endif

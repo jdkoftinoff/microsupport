@@ -86,7 +86,6 @@ bool us_example_reactor_handler_echo_readable (
 )
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-
     /* echo all incoming data from input queue to output queue while converting to uppercase */
     while ( us_queue_can_write_byte ( &self->outgoing_queue ) &&
             us_queue_can_read_byte ( &self->incoming_queue ) )
@@ -95,7 +94,6 @@ bool us_example_reactor_handler_echo_readable (
         c = toupper ( c );
         us_queue_write_byte ( &self->outgoing_queue, c );
     }
-
     return true;
 }
 
@@ -193,7 +191,6 @@ bool us_example_reactor_handler_echo_connected (
     bool r = false;
     char host[NI_MAXHOST];
     char serv[NI_MAXSERV];
-
     if ( getnameinfo (
                 addr,
                 addrlen,
@@ -207,7 +204,6 @@ bool us_example_reactor_handler_echo_connected (
         fprintf ( stdout, "Accepting connection from '%s' port '%s'\n", host, serv );
         r = true;
     }
-
     return r;
 }
 
@@ -224,18 +220,15 @@ bool us_example_reactor_handler_quitter_readable (
 )
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-
     /* wait for the letter Q, then signal a quit flag */
     while ( us_queue_can_read_byte ( &self->incoming_queue ) )
     {
         char c = ( char ) us_queue_read_byte ( &self->incoming_queue );
-
         if ( c == 'Q' )
         {
             global_quit = true;
         }
     }
-
     return true;
 }
 
@@ -248,7 +241,6 @@ bool us_example_reactor ( void )
             &reactor,
             16 /* max simultaneous sockets, including server sockets and connections */
         );
-
     if ( r )
     {
         r = us_reactor_create_server (
@@ -260,7 +252,6 @@ bool us_example_reactor ( void )
                 us_example_reactor_echo_server_init
             );
     }
-
     if ( r )
     {
         r = us_reactor_create_server (
@@ -272,30 +263,25 @@ bool us_example_reactor ( void )
                 us_example_reactor_quitter_server_init
             );
     }
-
     if ( r )
     {
         while ( !global_quit && reactor.poll ( &reactor, 2000 ) )
         {
             fprintf ( stdout, "tick\n" );
         }
-
         reactor.destroy ( &reactor );
         r = true;
     }
-
     return r;
 }
 
 int main ( int argc, char **argv )
 {
     bool r = us_example_reactor();
-
     if ( r )
     {
         return 0;
     }
-
     else
     {
         return 1;

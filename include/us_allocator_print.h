@@ -42,13 +42,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_print.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     /** us_simple_allocator_print
-    
+
         Print the internal details of the allocator to the printbuf
-    
+
         @param self allocator to print
         @param printer us_printbuf_t to print to
      */
@@ -56,7 +57,7 @@ extern "C" {
         us_simple_allocator_t *self,
         us_print_t *printer
     );
-    
+
 #ifdef __cplusplus
 }
 #endif

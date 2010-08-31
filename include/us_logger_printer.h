@@ -38,17 +38,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*@{*/
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     bool us_logger_printer_start ( us_print_t *out_printer, us_print_t *err_printer );
     void us_logger_printer_finish ( void );
-    
+
     void us_log_error_printer ( const char *fmt, ... );
     void us_log_warn_printer ( const char *fmt, ... );
     void us_log_info_printer ( const char *fmt, ... );
     void us_log_debug_printer ( const char *fmt, ... );
-    
+
 #ifdef __cplusplus
 }
 #endif

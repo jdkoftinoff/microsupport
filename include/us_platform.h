@@ -36,7 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*@{*/
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define US_GET_BYTE_3(v) (uint8_t)((( (v) & 0xff000000) >> 24)&0xff)
@@ -53,7 +54,7 @@ extern "C" {
 # define false (0)
 # endif
 #endif
-    
+
 #if US_ENABLE_BSD_SOCKETS
 # ifndef WIN32
     static inline void closesocket ( int fd )
@@ -61,34 +62,34 @@ extern "C" {
         close ( fd );
     }
 # endif
-    
+
 # ifdef WIN32
     bool us_platform_init_winsock ( void );
 # endif
-    
+
 # ifndef WIN32
 #  include <netdb.h>
 #  include <unistd.h>
 #  include <netinet/in.h>
 # endif
 #endif
-    
+
 #ifdef WIN32
 # if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
 #  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
 # else
 #  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 # endif
-    
+
     struct timezone
     {
         int tz_minuteswest; /* minutes W of Greenwich */
         int tz_dsttime; /* type of dst correction */
     };
-    
+
     int gettimeofday ( struct timeval *tv, struct timezone *tz );
 #endif
-    
+
 #ifdef __AVR__
     struct timeval
     {
@@ -103,7 +104,7 @@ extern "C" {
 # include "lwip/arch.h"
 # include "lwip/api.h"
 #endif
-    
+
 #ifdef __cplusplus
 }
 #endif

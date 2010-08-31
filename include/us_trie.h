@@ -33,7 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_allocator.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define US_TRIE_NODE_EMPTY (int16_t)(-2)
@@ -45,16 +46,16 @@ extern "C" {
     typedef int16_t us_trie_node_id_t;
     typedef bool ( *us_trie_ignorer_proc ) ( us_trie_node_value_t );
     typedef int ( *us_trie_comparator_proc ) ( us_trie_node_value_t, us_trie_node_value_t );
-    
+
     bool us_trie_basic_ignorer (
         us_trie_node_value_t v
     );
-    
+
     int us_trie_basic_comparator (
         us_trie_node_value_t a,
         us_trie_node_value_t b
     );
-    
+
     typedef struct us_trie_node_s
     {
         us_trie_node_id_t m_parent;
@@ -63,7 +64,7 @@ extern "C" {
         us_trie_node_value_t m_value;
         us_trie_node_flags_t m_flags;
     } us_trie_node_t;
-    
+
     static inline void us_trie_node_clear ( us_trie_node_t *self )
     {
         self->m_sibling = 0;
@@ -71,50 +72,50 @@ extern "C" {
         self->m_parent = US_TRIE_NODE_EMPTY;
         self->m_flags = 0;
     }
-    
-    
+
+
     static inline bool us_trie_node_is_free ( const us_trie_node_t *self )
     {
         return ( self->m_parent == US_TRIE_NODE_EMPTY );
     }
-    
-    
+
+
     static inline void us_trie_node_release ( us_trie_node_t *self )
     {
         self->m_parent = US_TRIE_NODE_EMPTY;
     }
-    
-    
+
+
     static inline bool us_trie_node_is_end ( const us_trie_node_t *self )
     {
         return ( self->m_flags & US_TRIE_NODE_END_BIT );
     }
-    
-    
+
+
     static inline void us_trie_node_set_end ( us_trie_node_t *self )
     {
         self->m_flags |= US_TRIE_NODE_END_BIT;
     }
-    
-    
+
+
     static inline void us_trie_node_unset_end ( us_trie_node_t *self )
     {
         self->m_flags &= ~US_TRIE_NODE_END_BIT;
     }
-    
-    
+
+
     static inline us_trie_node_flags_t us_trie_node_get_flags ( const us_trie_node_t *self )
     {
         return self->m_flags & ( ~US_TRIE_NODE_END_BIT );
     }
-    
-    
+
+
     static inline void us_trie_node_set_flags ( us_trie_node_t *self, us_trie_node_flags_t f )
     {
         self->m_flags = ( self->m_flags & US_TRIE_NODE_END_BIT ) | ( f & ~US_TRIE_NODE_END_BIT );
     }
-    
-    
+
+
     typedef struct us_trie_s
     {
         us_trie_node_id_t m_max_nodes;
@@ -124,17 +125,17 @@ extern "C" {
         us_trie_ignorer_proc m_ignorer;
         us_trie_comparator_proc m_comparator;
     } us_trie_t;
-    
-    
+
+
     typedef struct us_trie_dyn_s
     {
         void ( *destroy ) ( struct us_trie_dyn_s * );
-        
+
         us_trie_t m_base;
         us_allocator_t *m_allocator;
         us_trie_node_t *m_nodes;
     } us_trie_dyn_t;
-    
+
     us_trie_dyn_t *
     us_trie_dyn_create (
         us_allocator_t *allocator,
@@ -142,24 +143,24 @@ extern "C" {
         us_trie_ignorer_proc m_ignorer,
         us_trie_comparator_proc m_comparator
     );
-    
+
     void
     us_trie_dyn_destroy (
         us_trie_dyn_t *self
     );
-    
+
     /** Initialize a trie with pre-allocated nodes and us_trie_t structure.
-    
+
     @param self trie to initialize
     @param max_nodes maximum nodes in nodes list
     @param num_nodes current number of active nodes in nodes list
     @param nodes nodes list
     @param ignorer Function to call to test for ignored characters
     @param comparator Function to call to compare characters
-    
+
     @return self
     */
-    
+
     us_trie_t *
     us_trie_init (
         us_trie_t *self,
@@ -169,19 +170,19 @@ extern "C" {
         us_trie_ignorer_proc ignorer,
         us_trie_comparator_proc comparator
     );
-    
+
     void
     us_trie_clear (
         us_trie_t *self
     );
-    
-    
+
+
     int
     us_trie_count (
         const us_trie_t *self
     );
-    
-    
+
+
     static inline
     const us_trie_node_t *
     us_trie_get_node (
@@ -191,7 +192,7 @@ extern "C" {
     {
         return &self->m_nodes[num];
     }
-    
+
     us_trie_node_id_t
     us_trie_add_child (
         us_trie_t *self,
@@ -199,7 +200,7 @@ extern "C" {
         us_trie_node_value_t value,
         us_trie_node_flags_t flags
     );
-    
+
     us_trie_node_id_t
     us_trie_add_sibling (
         us_trie_t *self,
@@ -207,20 +208,20 @@ extern "C" {
         us_trie_node_value_t value,
         us_trie_node_flags_t flags
     );
-    
+
     void
     us_trie_remove (
         us_trie_t *self,
         us_trie_node_id_t item
     );
-    
-    
+
+
     us_trie_node_id_t
     us_trie_find_next_free (
         us_trie_t *self
     );
-    
-    
+
+
     bool
     us_trie_find_sibling (
         const us_trie_t *self,
@@ -235,7 +236,7 @@ extern "C" {
         int16_t list_len,
         us_trie_node_flags_t flags
     );
-    
+
     bool
     us_trie_find (
         const us_trie_t *self,
@@ -247,7 +248,7 @@ extern "C" {
         us_trie_node_id_t initial_leaf_pos,
         us_trie_node_id_t initial_list_pos
     );
-    
+
     int16_t
     us_trie_extract (
         const us_trie_t *self,
@@ -255,8 +256,8 @@ extern "C" {
         int16_t max_len,
         us_trie_node_id_t end_leaf_index
     );
-    
-    
+
+
 #ifdef __cplusplus
 }
 #endif

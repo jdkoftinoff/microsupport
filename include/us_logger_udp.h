@@ -37,7 +37,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*@{*/
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 
@@ -53,26 +54,26 @@ extern "C" {
 #if US_ENABLE_NETWORK && US_ENABLE_BSD_SOCKETS && US_ENABLE_PRINTING
 
     extern int us_logger_udp_socket;
-    
+
     extern char us_logger_udp_buffer[1500];
     extern us_print_t *us_logger_udp_printer;
     extern us_printraw_t us_logger_udp_printer_impl;
-    
+
     extern struct sockaddr_in us_logger_udp_dest_sockaddr;
-    
+
     void us_log_udp_send();
-    
+
     bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port );
     void us_logger_udp_finish ( void );
-    
+
     void us_log_error_udp ( const char *fmt, ... );
     void us_log_warn_udp ( const char *fmt, ... );
     void us_log_info_udp ( const char *fmt, ... );
     void us_log_debug_udp ( const char *fmt, ... );
-    
-    
+
+
 # endif
-    
+
 #ifdef __cplusplus
 }
 #endif

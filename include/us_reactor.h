@@ -27,14 +27,14 @@ extern "C"
 #endif
 
     /** \defgroup poll_reactor reactor  */
-    
+
     /** \ingroup poll_reactor */
     /*@{*/
-    
+
     struct us_reactor_s;
     struct us_reactor_handler_s;
     /*@}*/
-    
+
     /** \ingroup poll_reactor */
     /** \defgroup reactor_item reactor_item  */
     /*@{*/
@@ -44,7 +44,7 @@ extern "C"
         bool ( *tick ) ( struct us_reactor_handler_s *self );
         bool ( *readable ) ( struct us_reactor_handler_s *self );
         bool ( *writable ) ( struct us_reactor_handler_s *self );
-        
+
         struct us_reactor_handler_s *next;
         struct us_reactor_s *reactor;
         void *extra;
@@ -52,15 +52,15 @@ extern "C"
         bool wake_on_readable;
         bool wake_on_writable;
     } us_reactor_handler_t;
-    
+
     /**
     */
     typedef us_reactor_handler_t * ( *us_reactor_handler_create_proc_t ) ( void );
-    
+
     /**
     */
     us_reactor_handler_t * us_reactor_handler_create ( void );
-    
+
     /**
     */
     typedef bool ( *us_reactor_handler_init_proc_t ) (
@@ -68,24 +68,24 @@ extern "C"
         int fd,
         void *extra
     );
-    
+
     /**
     */
     bool us_reactor_handler_init ( us_reactor_handler_t *self, int fd, void *extra );
-    
+
     /**
     */
     void us_reactor_handler_destroy ( us_reactor_handler_t *self );
-    
+
     /*@}*/
-    
+
     /** \ingroup poll_reactor */
     /** \defgroup reactor reactor  */
     /*@{*/
     typedef struct us_reactor_s
     {
         void ( *destroy ) ( struct us_reactor_s *self );
-        
+
         us_reactor_handler_t *handlers;
         int timeout;
         int max_handlers;
@@ -95,27 +95,27 @@ extern "C"
         bool ( *add_item ) ( struct us_reactor_s *self, us_reactor_handler_t *item );
         bool ( *remove_item ) ( struct us_reactor_s *self, us_reactor_handler_t *item );
     } us_reactor_t;
-    
+
     /**
     */
     bool us_reactor_init ( us_reactor_t *self, int max_handlers );
-    
+
     /**
     */
     void us_reactor_destroy ( us_reactor_t *self );
-    
+
     /**
     */
     bool us_reactor_poll ( us_reactor_t *self, int timeout );
-    
+
     /**
     */
     bool us_reactor_add_item ( us_reactor_t *self, us_reactor_handler_t *item );
-    
+
     /**
     */
     bool us_reactor_remove_item ( us_reactor_t *self, us_reactor_handler_t *item );
-    
+
     /**
     */
     bool us_reactor_create_server (
@@ -128,11 +128,11 @@ extern "C"
         us_reactor_handler_init_proc_t server_handler_init
     );
     /*@}*/
-    
+
     /** \addtogroup reactor_handler_tcp_client reactor_handler_tcp_client
     */
     /*@{*/
-    
+
     typedef struct us_reactor_handler_tcp_connector_s
     {
         us_reactor_handler_t base;
@@ -143,11 +143,11 @@ extern "C"
         int ms_per_try;
         struct timeval last_try_time;
     } us_reactor_handler_tcp_connector_t;
-    
+
     /**
     */
     us_reactor_handler_t *us_reactor_handler_tcp_connector_create ( void );
-    
+
     /**
     */
     bool us_reactor_handler_tcp_connector_init (
@@ -159,42 +159,42 @@ extern "C"
         struct addrinfo *connect_address,
         int ms_per_try
     );
-    
+
     /**
     */
     void us_reactor_handler_tcp_connector_destroy (
         us_reactor_handler_t *self
     );
-    
+
     /**
     */
     bool us_reactor_handler_tcp_connector_tick (
         us_reactor_handler_t *self
     );
-    
+
     /**
     */
     bool us_reactor_handler_tcp_connector_writable (
         us_reactor_handler_t *self
     );
-    
+
     /*@}*/
-    
+
     /** \addtogroup reactor_handler_tcp_server reactor_handler_tcp_server
     */
     /*@{*/
-    
+
     typedef struct us_reactor_handler_tcp_server_s
     {
         us_reactor_handler_t base;
         us_reactor_handler_create_proc_t client_handler_create;
         us_reactor_handler_init_proc_t client_handler_init;
     } us_reactor_handler_tcp_server_t;
-    
+
     /**
     */
     us_reactor_handler_t *us_reactor_handler_tcp_server_create ( void );
-    
+
     /**
     */
     bool us_reactor_handler_tcp_server_init (
@@ -204,15 +204,15 @@ extern "C"
         us_reactor_handler_create_proc_t client_handler_create,
         us_reactor_handler_init_proc_t client_handler_init
     );
-    
+
     /**
     */
     bool us_reactor_handler_tcp_server_readable (
         us_reactor_handler_t *self
     );
-    
+
     /*@}*/
-    
+
     /** \ingroup poll_reactor */
     /** \defgroup reactor_handler_tcp reactor_handler_tcp  */
     /*@{*/
@@ -223,7 +223,7 @@ extern "C"
         char *xfer_buf;
         us_queue_t outgoing_queue;
         us_queue_t incoming_queue;
-        
+
         bool ( *connected ) (
             struct us_reactor_handler_tcp_s *self,
             struct sockaddr *addr,
@@ -236,10 +236,10 @@ extern "C"
             struct us_reactor_handler_tcp_s *self
         );
     } us_reactor_handler_tcp_t;
-    
-    
+
+
     us_reactor_handler_t * us_reactor_handler_tcp_create ( void );
-    
+
     bool us_reactor_handler_tcp_init (
         us_reactor_handler_t *self,
         int fd,
@@ -247,26 +247,26 @@ extern "C"
         int queue_buf_size,
         int xfer_buf_size
     );
-    
+
     void us_reactor_handler_tcp_destroy (
         us_reactor_handler_t *self
     );
-    
+
     bool us_reactor_handler_tcp_tick (
         us_reactor_handler_t *self
     );
-    
+
     bool us_reactor_handler_tcp_readable (
         us_reactor_handler_t *self
     );
-    
+
     bool us_reactor_handler_tcp_writable (
         us_reactor_handler_t *self
     );
-    
+
     /*@}*/
-    
-    
+
+
 #ifdef __cplusplus
 }
 #endif

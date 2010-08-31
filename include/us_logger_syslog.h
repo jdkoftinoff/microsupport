@@ -37,17 +37,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*@{*/
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     bool us_logger_syslog_start ( const char *ident );
     void us_logger_syslog_finish();
-    
+
     void us_log_error_syslog ( const char *fmt, ... );
     void us_log_warn_syslog ( const char *fmt, ... );
     void us_log_info_syslog ( const char *fmt, ... );
     void us_log_debug_syslog ( const char *fmt, ... );
-    
+
 #ifdef __cplusplus
 }
 #endif

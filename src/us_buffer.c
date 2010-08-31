@@ -49,13 +49,11 @@ bool us_buffer_read_byte (
 {
     bool r = false;
     uint8_t *value_ptr = ( uint8_t * ) value_ptr_;
-    
     if ( self->m_cur_read_pos < self->m_cur_length )
     {
         *value_ptr = self->m_buffer[ self->m_cur_read_pos++ ];
         r = true;
     }
-    
     return r;
 }
 
@@ -77,12 +75,10 @@ bool us_buffer_read_string (
 )
 {
     bool r = false;
-    
     if ( self->m_cur_read_pos < self->m_cur_length )
     {
         /* copy up to the maximum length of string */
         strncpy ( value_ptr, us_buffer_read_ptr ( self ), result_max_len );
-        
         /* if the string fit then the last possible char in the result buffer is zero */
         if ( value_ptr[ result_max_len-1 ] == '\0' )
         {
@@ -92,7 +88,6 @@ bool us_buffer_read_string (
             r = true;
         }
     }
-    
     return r;
 }
 
@@ -105,7 +100,6 @@ us_buffer_find_string_len (
 {
     int32_t r = -1;
     int32_t pos;
-    
     for ( pos = self->m_cur_read_pos; pos < self->m_cur_length; ++pos )
     {
         if ( ( char ) ( self->m_buffer[ pos ] ) == search_char )
@@ -113,13 +107,11 @@ us_buffer_find_string_len (
             r = pos - self->m_cur_read_pos;
             break;
         }
-        
         if ( ( char ) ( self->m_buffer[ pos ] ) == eol_char )
         {
             break;
         }
     }
-    
     return r;
 }
 
@@ -132,19 +124,15 @@ us_buffer_read_line (
 {
     bool r = false;
     int i = 0;
-    
     while ( i < result_max_len - 1 && self->m_cur_read_pos < self->m_cur_length )
     {
         char c = *us_buffer_read_ptr ( self );
         self->m_cur_read_pos ++;
-        
         /* skip carriage returns */
         if ( c == '\r' )
             continue;
-            
         /* all other characters get placed into value */
         value[i++] = c;
-        
         /* eol means we are done */
         if ( c == '\n' )
         {
@@ -153,7 +141,6 @@ us_buffer_read_line (
             break;
         }
     }
-    
     return r;
 }
 
@@ -167,11 +154,9 @@ us_buffer_skip_to_delim (
     bool r = false;
     const char *p;
     int delim_chars_len = ( int ) ( strlen ( delim_chars ) );
-    
     while ( ( p = us_buffer_read_ptr ( self ) ) != 0 )
     {
         int i;
-        
         for ( i = 0; i < delim_chars_len; ++i )
         {
             if ( *p == delim_chars[i] )
@@ -180,15 +165,12 @@ us_buffer_skip_to_delim (
                 break;
             }
         }
-        
         if ( r == true )
         {
             break;
         }
-        
         us_buffer_advance ( self, 1 );
     }
-    
     return r;
 }
 
@@ -201,12 +183,10 @@ us_buffer_skip_delim (
     bool r = false;
     const char *p;
     int delim_chars_len = ( int ) ( strlen ( delim_chars ) );
-    
     while ( ( p = us_buffer_read_ptr ( self ) ) != 0 )
     {
         bool skip = false;
         int i;
-        
         for ( i = 0; i < delim_chars_len; ++i )
         {
             if ( *p == delim_chars[i] )
@@ -215,16 +195,13 @@ us_buffer_skip_delim (
                 break;
             }
         }
-        
         if ( !skip )
         {
             r = true;
             break;
         }
-        
         us_buffer_advance ( self, 1 );
     }
-    
     return r;
 }
 
@@ -247,12 +224,10 @@ bool us_buffer_append_rounded_string (
     // 8 -> 4
     */
     nul_count = 4 - ( len & 3 );
-    
     for ( i = 0; i < nul_count && r == true; ++i )
     {
         r &= us_buffer_append_byte ( self, 0 );
     }
-    
     return r;
 }
 
@@ -268,7 +243,6 @@ bool us_buffer_read_rounded_string (
             value,
             result_max_len
         );
-        
     if ( r )
     {
         /* account for extra padding */
@@ -277,7 +251,6 @@ bool us_buffer_read_rounded_string (
             self->m_cur_read_pos++;
         }
     }
-    
     return r;
 }
 
@@ -303,7 +276,6 @@ bool us_buffer_read_int32 (
 {
     bool r = false;
     int32_t value = 0;
-    
     if ( self->m_cur_read_pos + 3 < self->m_cur_length )
     {
         value = ( ( int32_t ) self->m_buffer[ self->m_cur_read_pos++ ] ) << 24;
@@ -313,7 +285,6 @@ bool us_buffer_read_int32 (
         *value_ptr = value;
         r = true;
     }
-    
     return r;
 }
 
@@ -344,12 +315,10 @@ bool us_buffer_read_uint64 (
 {
     bool r = true;
     r &= us_buffer_read_int32 ( self, ( int32_t * ) value_high_ptr );
-    
     if ( r )
     {
         r &= us_buffer_read_int32 ( self, ( int32_t * ) value_low_ptr );
     }
-    
     return r;
 }
 
@@ -376,11 +345,9 @@ bool us_buffer_read_float32 (
 {
     bool r = true;
     r &= us_buffer_read_int32 ( self, ( int32_t * ) value_ptr );
-    
     /* check for NaN and refuse to accept it */
     if ( *value_ptr != *value_ptr )
         r = false;
-        
     return r;
 }
 
@@ -438,16 +405,13 @@ bool us_buffer_read_float64 (
     high_int_value_ptr = &splitter.ints[0];
 #endif
     r &= us_buffer_read_uint64 ( self, high_int_value_ptr, low_int_value_ptr );
-    
     if ( r )
     {
         *value_ptr = splitter.value;
-        
         /* check for NaN and refuse to accept it */
         if ( *value_ptr != *value_ptr )
             r = false;
     }
-    
     return r;
 }
 
@@ -473,18 +437,15 @@ bool us_buffer_read_data (
 {
     bool r = false;
     int32_t avail = self->m_cur_length - self->m_cur_read_pos;
-    
     if ( avail > 0 )
     {
         if ( max_data_length > avail )
             max_data_length = avail;
-            
         memcpy ( data, &self->m_buffer[ self->m_cur_read_pos ], max_data_length );
         self->m_cur_read_pos += max_data_length;
         *data_length = max_data_length;
         r = true;
     }
-    
     return r;
 }
 
@@ -506,12 +467,10 @@ bool us_buffer_append_rounded_data (
     // 7 -> 1
     // 8 -> 0
     nul_count = ( 4 - ( data_length & 3 ) ) & 3;
-    
     for ( i = 0; i < nul_count && r == true; ++i )
     {
         r &= us_buffer_append_byte ( self, 0 );
     }
-    
     return r;
 }
 
@@ -524,19 +483,16 @@ bool us_buffer_read_rounded_data (
 {
     bool r = false;
     int32_t avail = self->m_cur_length - self->m_cur_read_pos;
-    
     if ( avail > 0 )
     {
         if ( max_data_length > avail )
             max_data_length = avail;
-            
         max_data_length = us_round_size ( max_data_length );
         memcpy ( data, &self->m_buffer[ self->m_cur_read_pos ], max_data_length );
         self->m_cur_read_pos += max_data_length;
         *data_length = max_data_length;
         r = true;
     }
-    
     return r;
 }
 
@@ -550,7 +506,6 @@ us_buffer_init (
 )
 {
     us_buffer_t *r = 0;
-    
     if ( raw_memory )
     {
         self->destroy = us_buffer_destroy;
@@ -566,7 +521,6 @@ us_buffer_init (
         self->m_cur_length = 0;
         r = self;
     }
-    
     return r;
 }
 
@@ -592,7 +546,6 @@ us_buffer_create (
     us_buffer_t *r = 0;
     us_buffer_t *self;
     self = us_new ( allocator, us_buffer_t );
-    
     if ( self )
     {
         r = us_buffer_init (
@@ -602,7 +555,6 @@ us_buffer_create (
                 max_length
             );
     }
-    
     return r;
 }
 
@@ -627,7 +579,6 @@ us_buffer_append (
 {
     bool r = false;
     int32_t new_length = self->m_cur_length + data_length;
-    
     if ( new_length <= self->m_max_length )
     {
         memcpy ( self->m_cur_write_ptr, data, data_length );
@@ -635,7 +586,6 @@ us_buffer_append (
         self->m_cur_length += data_length;
         r = true;
     }
-    
     return r;
 }
 

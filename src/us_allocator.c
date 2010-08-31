@@ -36,12 +36,10 @@ char * us_strdup ( struct us_allocator_s *allocator, const char *src )
 {
     int len = ( int ) ( strlen ( src ) );
     char *p = us_new_array ( allocator, char, len + 1 );
-    
     if ( p )
     {
         strcpy ( p, src );
     }
-    
     return p;
 }
 
@@ -49,13 +47,11 @@ char * us_strndup ( struct us_allocator_s *allocator, const char *src, int chars
 {
     int len = chars_to_copy;
     char *p = us_new_array ( allocator, char, len + 1 );
-    
     if ( p )
     {
         memcpy ( p, src, len );
         p[len] = '\0';
     }
-    
     return p;
 }
 
@@ -95,14 +91,12 @@ void *us_simple_allocator_alloc (
     void *result = 0;
     /* round up total size to 32 bit alignment */
     int32_t total_size_to_allocate = us_round_size ( length * count );
-    
     if ( ( self->m_current_position + total_size_to_allocate )
             <= ( self->m_raw_memory_length ) )
     {
         result = ( ( char * ) self->m_raw_memory ) + self->m_current_position;
         self->m_current_position += total_size_to_allocate;
     }
-    
     return result;
 }
 
@@ -114,13 +108,11 @@ void *us_simple_allocator_realloc (
 )
 {
     void *new_ptr = self_->alloc ( self_, length, count );
-    
     if ( new_ptr )
     {
         memcpy ( new_ptr, orig_ptr, us_round_size ( length * count ) );
         self_->free ( self_, orig_ptr );
     }
-    
     return new_ptr;
 }
 

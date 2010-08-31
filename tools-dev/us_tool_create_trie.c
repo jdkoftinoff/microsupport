@@ -87,22 +87,18 @@ us_trie_dyn_t *us_tool_read_trie (
                us_trie_basic_ignorer,
                us_trie_basic_comparator
            );
-           
     if ( trie )
     {
         while ( !feof ( input_file ) )
         {
             char line[1024];
             char *l = fgets ( line, sizeof ( line ), input_file );
-            
             if ( l )
             {
                 char *first_space = strchr ( l, ' ' );
                 char *func_name = first_space + 1;
-                
                 if ( first_space )
                     *first_space = '\0';
-                    
                 *cur_func = calloc ( sizeof ( func_name_list_t ), 1 );
                 strcpy ( ( char * ) ( *cur_func )->func_name, func_name );
                 us_trie_add (
@@ -116,7 +112,6 @@ us_trie_dyn_t *us_tool_read_trie (
             }
         }
     }
-    
     return trie;
 }
 
@@ -133,13 +128,11 @@ bool us_tool_create_trie_f (
     bool r = false;
     func_name_list_t *func_names = 0;
     us_trie_dyn_t *trie =  us_tool_read_trie ( input_file, &func_names, 2048 );
-    
     if ( trie && func_names )
     {
         int item;
         fprintf ( output_c_file, "#include \"%s\"\n\n",  output_h_filename );
         fprintf ( output_c_file, "us_trie_node_t %s_nodes[] = {\n", prefix );
-        
         for ( item = 0; item < trie->m_base.m_num_nodes; ++item )
         {
             us_trie_node_t *n = &trie->m_base.m_nodes[item];
@@ -149,28 +142,23 @@ bool us_tool_create_trie_f (
                 n->m_parent, n->m_sibling, n->m_child, n->m_value, n->m_flags
             );
         }
-        
         fprintf ( output_c_file, "};\n\n" );
         {
             func_name_list_t *cur = func_names;
             fprintf ( output_c_file, "us_trie_func_t %s_funcs[] = {\n", prefix );
-            
             while ( cur )
             {
                 fprintf ( output_c_file, "  %s,\n", cur->func_name );
                 cur = cur->m_next;
             }
-            
             fprintf ( output_c_file, "};\n\n" );
         }
         r = true;
     }
-    
     if ( trie )
     {
         trie->destroy ( trie );
     }
-    
     return r;
 }
 
@@ -189,7 +177,6 @@ bool us_tool_create_trie (
     input_file = fopen ( input_filename, "rt" );
     output_c_file = fopen ( output_c_filename, "wt" );
     output_h_file = fopen ( output_h_filename, "wt" );
-    
     if ( !input_file )
     {
         r = false;
@@ -199,7 +186,6 @@ bool us_tool_create_trie (
             input_filename
         );
     }
-    
     if ( !output_c_file )
     {
         r = false;
@@ -209,7 +195,6 @@ bool us_tool_create_trie (
             output_c_filename
         );
     }
-    
     if ( !output_h_file )
     {
         r = false;
@@ -219,7 +204,6 @@ bool us_tool_create_trie (
             output_h_filename
         );
     }
-    
     if ( r )
         r = us_tool_create_trie_f (
                 prefix,
@@ -230,16 +214,12 @@ bool us_tool_create_trie (
                 output_c_file,
                 output_h_file
             );
-            
     if ( input_file )
         fclose ( input_file );
-        
     if ( output_c_file )
         fclose ( output_c_file );
-        
     if ( output_h_file )
         fclose ( output_h_file );
-        
     return r;
 }
 
@@ -251,19 +231,14 @@ int main ( int argc, char **argv )
     const char *input_filename = "input_schema.txt";
     const char *output_c_filename = "output.c";
     const char *output_h_filename = "output.h";
-    
     if ( argc > 1 )
         prefix = argv[1];
-        
     if ( argc > 2 )
         input_filename = argv[2];
-        
     if ( argc > 3 )
         output_c_filename = argv[3];
-        
     if ( argc > 4 )
         output_h_filename = argv[4];
-        
     if ( us_testutil_start ( 8192, 8192, argc, argv ) )
     {
 #if US_ENABLE_LOGGING
@@ -271,23 +246,19 @@ int main ( int argc, char **argv )
 #endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
 #if 0
-        
         if ( argc != 5 )
         {
             usage();
         }
-        
         else
 #endif
         {
             if ( us_tool_create_trie ( prefix, input_filename, output_c_filename, output_h_filename ) )
                 r = 0;
         }
-        
         us_logger_finish();
         us_testutil_finish();
     }
-    
     return r;
 }
 

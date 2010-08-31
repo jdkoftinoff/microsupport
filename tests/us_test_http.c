@@ -54,16 +54,13 @@ bool us_test_http_request ( void )
               "www.meyersound.com:80",
               "/products/d-mitri/"
           );
-          
     if ( req )
     {
         us_buffer_t *buf;
         buf = us_buffer_create ( us_testutil_session_allocator, 4096 );
-        
         if ( buf )
         {
             r &= us_http_request_header_flatten ( req, buf );
-            
             if ( r )
             {
                 us_log_info ( "generated request:" );
@@ -71,7 +68,6 @@ bool us_test_http_request ( void )
                 {
                     us_http_request_header_t *parsed_req;
                     parsed_req = us_http_request_header_parse ( us_testutil_session_allocator, buf );
-                    
                     if ( parsed_req )
                     {
                         us_log_info ( "parsed request:" );
@@ -82,23 +78,18 @@ bool us_test_http_request ( void )
                     }
                 }
             }
-            
             buf->destroy ( buf );
         }
-        
         else
         {
             r = false;
         }
-        
         req->destroy ( req );
     }
-    
     else
     {
         r = 0;
     }
-    
     return r;
 }
 
@@ -113,16 +104,13 @@ bool us_test_http_response ( void )
                "text/html",
                ( uint32_t ) ( strlen ( html ) )
            );
-           
     if ( resp )
     {
         us_buffer_t *buf;
         buf = us_buffer_create ( us_testutil_session_allocator, 4096 );
-        
         if ( buf )
         {
             r &= us_http_response_header_flatten ( resp, buf );
-            
             if ( r )
             {
                 us_log_info ( "generated response:" );
@@ -131,7 +119,6 @@ bool us_test_http_response ( void )
                 {
                     us_http_response_header_t *parsed_resp;
                     parsed_resp = us_http_response_header_parse ( us_testutil_session_allocator, buf );
-                    
                     if ( parsed_resp )
                     {
                         us_log_info ( "parsed response:" );
@@ -142,47 +129,39 @@ bool us_test_http_response ( void )
                     }
                 }
             }
-            
             buf->destroy ( buf );
         }
-        
         else
         {
             r = false;
         }
     }
-    
     else
     {
         r = 0;
     }
-    
     return r;
 }
 
 bool us_test_http ( void )
 {
     bool r = true;
-    
     if ( !us_test_http_request() )
     {
         r = false;
         us_log_error ( "http request test failed" );
     }
-    
     if ( !us_test_http_response() )
     {
         r = false;
         us_log_error ( "http response test failed" );
     }
-    
     return r;
 }
 
 int main ( int argc, char **argv )
 {
     int r = 1;
-    
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )
     {
 #if US_ENABLE_LOGGING
@@ -190,15 +169,12 @@ int main ( int argc, char **argv )
 #endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        
         if ( us_test_http() )
             r = 0;
-            
         us_log_info ( "Finishing %s", argv[0] );
         us_logger_finish();
         us_testutil_finish();
     }
-    
     return r;
 }
 

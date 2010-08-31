@@ -41,7 +41,6 @@ us_buffer_print (
 )
 {
     bool r = false;
-    
     if ( self && printer )
     {
         r = true;
@@ -50,23 +49,18 @@ us_buffer_print (
                  "length: 0x%x\nContents:\n",
                  self->m_cur_length
              );
-             
         if ( r )
         {
             int32_t i;
-            
             for ( i = 0; i < self->m_cur_length; ++i )
             {
                 r &= printer->printf ( printer, "%02x ", self->m_buffer[ i ] );
-                
                 if ( !r )
                     break;
             }
-            
             r &= printer->printf ( printer, "\n" );
         }
     }
-    
     return r;
 }
 
@@ -79,7 +73,6 @@ us_buffer_print_string (
 )
 {
     bool r = false;
-    
     if ( self && printer )
     {
         r = true;
@@ -88,23 +81,18 @@ us_buffer_print_string (
                  "length: 0x%x\nContents:\n",
                  self->m_cur_length
              );
-             
         if ( r )
         {
             int32_t i;
-            
             for ( i = 0; i < self->m_cur_length; ++i )
             {
                 r &= printer->printf ( printer, "%c", self->m_buffer[ i ] );
-                
                 if ( !r )
                     break;
             }
-            
             r &= printer->printf ( printer, "\n" );
         }
     }
-    
     return r;
 }
 

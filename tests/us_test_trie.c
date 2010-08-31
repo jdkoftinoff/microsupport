@@ -50,7 +50,6 @@ bool us_test_trie_1 ( void )
                us_trie_basic_ignorer,
                us_trie_basic_comparator
            );
-           
     if ( trie )
     {
         const char *s;
@@ -73,7 +72,6 @@ bool us_test_trie_1 ( void )
             int16_t match_len;
             us_trie_node_id_t match_item;
             s = "/output/level/";
-            
             if ( us_trie_find (
                         &trie->m_base,
                         ( us_trie_node_value_t * ) s,
@@ -87,15 +85,12 @@ bool us_test_trie_1 ( void )
             {
                 us_log_info ( "found '%s' len %d flags %d", s, match_len, flags );
             }
-            
             else
             {
                 us_log_info ( "did not find '%s'", s );
                 r = false;
             }
-            
             s = "/input/level/";
-            
             if ( us_trie_find (
                         &trie->m_base,
                         ( us_trie_node_value_t * ) s,
@@ -109,7 +104,6 @@ bool us_test_trie_1 ( void )
             {
                 us_log_info ( "found '%s' len %d flags %d", s, match_len, flags );
             }
-            
             else
             {
                 us_log_info ( "did not find '%s'", s );
@@ -118,7 +112,6 @@ bool us_test_trie_1 ( void )
         }
         trie->destroy ( trie );
     }
-    
     return r;
 }
 
@@ -211,7 +204,6 @@ bool us_test_trie_schema_dispatch ( us_trie_t *trie, const char *address, const 
     us_trie_node_flags_t flags;
     int16_t match_len;
     us_trie_node_id_t match_item;
-    
     if ( us_trie_find (
                 trie,
                 ( us_trie_node_value_t * ) address,
@@ -224,32 +216,26 @@ bool us_test_trie_schema_dispatch ( us_trie_t *trie, const char *address, const 
             ) )
     {
         us_test_trie_schema_entry_t *entry = &us_test_trie_schema[ flags ];
-        
         if ( types[0] == '\0' )
         {
             us_test_trie_schema_value_t *param = entry->m_params[0];
-            
             if ( entry->read_proc )
             {
                 r = entry->read_proc ( entry );
             }
-            
             if ( param && param->m_type == 's' && param->m_data != 0 )
             {
                 us_log_info ( "Read type s, value: %s", param->m_data );
             }
         }
-        
         if ( types[0] == 's' )
         {
             us_test_trie_schema_value_t *param = entry->m_params[0];
-            
             if ( param && param->m_rw == US_RW && param->m_type == 's' && param->m_data != 0 )
             {
                 if ( ( int ) strlen ( ( const char * ) value1 ) < ( int ) ( param->m_data_len - 1 ) )
                 {
                     strcpy ( param->m_data, ( const char * ) value1 );
-                    
                     if ( entry->write_proc )
                     {
                         r = entry->write_proc ( entry );
@@ -258,7 +244,6 @@ bool us_test_trie_schema_dispatch ( us_trie_t *trie, const char *address, const 
             }
         }
     }
-    
     return r;
 }
 
@@ -273,12 +258,10 @@ bool us_test_trie_2 ( void )
                us_trie_basic_ignorer,
                us_trie_basic_comparator
            );
-           
     if ( trie )
     {
         int item = 0;
         us_test_trie_schema_entry_t *cur = &us_test_trie_schema[0];
-        
         while ( cur && cur->m_address != 0 )
         {
             us_trie_add (
@@ -290,7 +273,6 @@ bool us_test_trie_2 ( void )
             item++;
             cur++;
         }
-        
         r = true;
         r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/name", "", 0, 0 );
         r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/system", "s", "new system name", 0 );
@@ -298,7 +280,6 @@ bool us_test_trie_2 ( void )
         r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/system", "", 0, 0 );
         trie->destroy ( trie );
     }
-    
     return r;
 }
 
@@ -306,7 +287,6 @@ bool us_test_trie_2 ( void )
 int main ( int argc, char **argv )
 {
     int r = 1;
-    
     if ( us_testutil_start ( 8192, 8192, argc, argv ) )
     {
 #if US_ENABLE_LOGGING
@@ -314,18 +294,14 @@ int main ( int argc, char **argv )
 #endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        
         if ( us_test_trie_1() && us_test_trie_2() )
             r = 0;
-            
         if ( r != 0 )
             us_log_error ( "Failed" );
-            
         us_log_info ( "Finishing %s", argv[0] );
         us_logger_finish();
         us_testutil_finish();
     }
-    
     return r;
 }
 

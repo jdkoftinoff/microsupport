@@ -48,7 +48,6 @@ int gettimeofday ( struct timeval *tv, struct timezone *tz )
     FILETIME ft;
     unsigned __int64 tmpres = 0;
     static int tzflag;
-    
     if ( NULL != tv )
     {
         GetSystemTimeAsFileTime ( &ft );
@@ -61,7 +60,6 @@ int gettimeofday ( struct timeval *tv, struct timezone *tz )
         tv->tv_sec = ( long ) ( tmpres / 1000000UL );
         tv->tv_usec = ( long ) ( tmpres % 1000000UL );
     }
-    
     return 0;
 }
 
@@ -72,17 +70,14 @@ bool us_platform_init_sockets ( void )
     int error;
     version = MAKEWORD ( 2, 2 );
     error = WSAStartup ( version, &wsaData );
-    
     if ( error != 0 )
     {
         return false;
     }
-    
     if ( version != wsaData.wVersion )
     {
         return false;
     }
-    
     return true;
 }
 
@@ -98,7 +93,6 @@ void us_gettimeofday ( struct timeval *tv )
 {
     int r;
     r = gettimeofday ( tv, 0 );
-
     if ( r != 0 )
     {
         perror ( "gettimeofday" );

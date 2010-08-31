@@ -32,31 +32,27 @@
 
 
 char us_cgi_tohexdigit[16] =
-{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+    { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 char *us_cgi_rfc3986_reserved_chars =
-"!*'();:@&=+$,/?%#[]";
+    "!*'();:@&=+$,/?%#[]";
 
 bool us_cgi_is_escapable ( char c )
 {
     const char *p;
-    
     if ( ( c & 0x80 ) == 0x80 )
     {
         return true;
     }
-    
     if ( isalnum ( c ) )
     {
         return false;
     }
-    
     for ( p = us_cgi_rfc3986_reserved_chars; *p != 0; ++p )
     {
         if ( *p == c )
             return true;
     }
-    
     return true;
 }
 
@@ -66,75 +62,61 @@ bool us_cgi_unescape ( const char *src, int src_len, us_buffer_t *dest_buf )
     int i;
     int in_percent = 0;
     int partial = 0;
-    
     for ( i = 0; i < src_len; ++i )
     {
         char c = src[i];
-        
         if ( in_percent )
         {
             int v;
             c = toupper ( c );
             v = c - '0';
-            
             if ( c > 9 )
                 v = c - 'A' + 10;
-                
             partial = partial << 4;
             partial += v;
             in_percent--;
-            
             if ( in_percent == 0 )
             {
                 c = ( char ) partial;
-                
                 if ( !dest_buf->append ( dest_buf, &c, 1 ) )
                 {
                     return false;
                 }
             }
         }
-        
+        else if ( c == '%' )
+        {
+            in_percent = 2;
+            partial = 0;
+        }
         else
-            if ( c == '%' )
+        {
+            if ( !dest_buf->append ( dest_buf, &c, 1 ) )
             {
-                in_percent = 2;
-                partial = 0;
+                return false;
             }
-            
-            else
-            {
-                if ( !dest_buf->append ( dest_buf, &c, 1 ) )
-                {
-                    return false;
-                }
-            }
+        }
     }
-    
     return true;
 }
 
 bool us_cgi_escape ( const char *src, int src_len, us_buffer_t *dest_buf )
 {
     int i;
-    
     for ( i = 0; i < src_len; ++i )
     {
         char c = src[i];
-        
         if ( us_cgi_is_escapable ( c ) )
         {
             char escaped[4];
             escaped[0] = '%';
             escaped[1] = us_cgi_tohexdigit[ ( c>>4 ) &0xf ];
             escaped[2] = us_cgi_tohexdigit[ c&0xf ];
-            
             if ( ! dest_buf->append ( dest_buf, escaped, 3 ) )
             {
                 return false;
             }
         }
-        
         else
         {
             if ( ! dest_buf->append ( dest_buf, &c, 1 ) )
@@ -143,7 +125,6 @@ bool us_cgi_escape ( const char *src, int src_len, us_buffer_t *dest_buf )
             }
         }
     }
-    
     return true;
 }
 

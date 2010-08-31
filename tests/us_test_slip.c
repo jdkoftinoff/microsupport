@@ -48,7 +48,6 @@ us_buffer_t * us_test_slip_fill_buffer ( void )
 {
     bool r = false;
     us_buffer_t *buf = us_buffer_create ( us_testutil_sys_allocator, 1024 );
-    
     if ( buf )
     {
         if ( us_buffer_append_rounded_string ( buf, "Rounded String" ) )
@@ -67,15 +66,12 @@ us_buffer_t * us_test_slip_fill_buffer ( void )
             }
         }
     }
-    
     else
     {
         us_log_error ( "expected to allocate 1024 bytes from allocator for buffer but failed" );
     }
-    
     if ( !r )
         buf = 0;
-        
     return buf;
 }
 
@@ -100,11 +96,9 @@ bool us_test_slip ( void )
                                           1024,
                                           us_test_slip_callback
                                       );
-                                      
     if ( src_buf && slipped_buf && slip_decoder )
     {
         us_log_info ( "encoding buffer" );
-        
         if ( us_slip_encode ( slipped_buf, src_buf ) )
         {
 #if US_ENABLE_PRINTING
@@ -113,26 +107,22 @@ bool us_test_slip ( void )
             us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
 #endif
             us_log_info ( "decoding buffer" );
-            
             if ( us_slip_decoder_parse_buffer ( slip_decoder, slipped_buf ) == 1 )
             {
                 r = true;
             }
         }
     }
-    
     else
     {
         us_log_error ( "Error allocating buffers or slip decoder" );
     }
-    
     return r;
 }
 
 int main ( int argc, char **argv )
 {
     int r = 1;
-    
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )
     {
 #if US_ENABLE_LOGGING
@@ -140,15 +130,12 @@ int main ( int argc, char **argv )
 #endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        
         if ( us_test_slip() )
             r = 0;
-            
         us_log_info ( "Finishing us_test_slip" );
         us_logger_finish();
         us_testutil_finish();
     }
-    
     return r;
 }
 

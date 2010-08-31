@@ -55,11 +55,9 @@ bool us_logger_init_stdio_files ( const char *outfilename, const char *errfilena
 {
     bool r = false;
     us_logger_stdio_out = fopen ( outfilename, "at" );
-    
     if ( us_logger_stdio_out )
     {
         us_logger_stdio_err = fopen ( errfilename, "at" );
-        
         if ( us_logger_stdio_err )
         {
             us_logger_stdio_files = true;
@@ -69,13 +67,11 @@ bool us_logger_init_stdio_files ( const char *outfilename, const char *errfilena
             us_log_debug_proc = us_log_debug_stdio;
             us_logger_finish = us_logger_stdio_finish;
         }
-        
         else
         {
             fclose ( us_logger_stdio_out );
         }
     }
-    
     return r;
 }
 
@@ -89,7 +85,6 @@ void us_logger_stdio_finish ( void )
             fclose ( us_logger_stdio_out );
             us_logger_stdio_out = 0;
         }
-        
         if ( us_logger_stdio_err )
         {
             fflush ( us_logger_stdio_err );
@@ -97,7 +92,6 @@ void us_logger_stdio_finish ( void )
             us_logger_stdio_err = 0;
         }
     }
-    
     us_log_error_proc = us_log_null;
     us_log_warn_proc = us_log_null;
     us_log_info_proc = us_log_null;

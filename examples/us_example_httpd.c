@@ -52,7 +52,6 @@ bool us_example_httpd ( int argc, char **argv )
 int main ( int argc, char **argv )
 {
     int r = 1;
-    
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )
     {
 #if US_ENABLE_LOGGING
@@ -60,15 +59,12 @@ int main ( int argc, char **argv )
 #endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        
         if ( us_example_httpd ( argc, argv ) )
             r = 0;
-            
         us_log_info ( "Finishing %s", argv[0] );
         us_logger_finish();
         us_testutil_finish();
     }
-    
     return r;
 }
 

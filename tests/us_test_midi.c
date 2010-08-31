@@ -66,7 +66,6 @@ void print_sysex ( us_midi_sysex_t *ex )
     int i;
     int l = us_midi_sysex_get_length ( ex );
     us_log_info ( "Sysex Len=%d", l );
-    
     for ( i = 0; i < l; ++i )
     {
         us_log_info ( "%02x ", ( int ) us_midi_sysex_get_data ( ex, i ) );
@@ -78,24 +77,18 @@ void print_msg ( us_midi_msg_t *m )
 {
     int l = us_midi_msg_get_length ( m );
     us_log_info ( "Msg : " );
-    
     if ( l == 1 )
     {
         us_log_info ( " %02x \t=", us_midi_msg_get_status ( m ) );
     }
-    
-    else
-        if ( l == 2 )
-        {
-            us_log_info ( " %02x %02x \t=", us_midi_msg_get_status ( m ), us_midi_msg_get_byte1 ( m ) );
-        }
-        
-        else
-            if ( l == 3 )
-            {
-                us_log_info ( " %02x %02x %02x \t=", us_midi_msg_get_status ( m ), us_midi_msg_get_byte1 ( m ), us_midi_msg_get_byte2 ( m ) );
-            }
-            
+    else if ( l == 2 )
+    {
+        us_log_info ( " %02x %02x \t=", us_midi_msg_get_status ( m ), us_midi_msg_get_byte1 ( m ) );
+    }
+    else if ( l == 3 )
+    {
+        us_log_info ( " %02x %02x %02x \t=", us_midi_msg_get_status ( m ), us_midi_msg_get_byte1 ( m ), us_midi_msg_get_byte2 ( m ) );
+    }
     char buf[129];
     us_midi_msg_to_text ( m, buf, sizeof ( buf ) );
     us_log_info ( "%s", buf );
@@ -113,11 +106,9 @@ bool us_test_midi_parser ( const uint8_t *input_data, int32_t input_data_len )
     int32_t input_todo = input_data_len;
     us_midi_parser_t *p;
     p = us_midi_parser_create ( us_testutil_session_allocator, 256 );
-    
     if ( p )
     {
         us_midi_msg_t m;
-        
         while ( input_todo > 0 )
         {
             if ( us_midi_parser_parse ( p, *input_ptr, &m ) )
@@ -126,28 +117,23 @@ bool us_test_midi_parser ( const uint8_t *input_data, int32_t input_data_len )
                 {
                     print_sysex ( us_midi_parser_get_sysex ( p ) );
                 }
-                
                 else
                 {
                     print_msg ( &m );
                 }
             }
-            
             input_ptr++;
             input_todo--;
         }
-        
         r = true;
         p->destroy ( p );
     }
-    
     return r;
 }
 
 int main ( int argc, char **argv )
 {
     int r = 1;
-    
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )
     {
 #if US_ENABLE_LOGGING
@@ -155,15 +141,12 @@ int main ( int argc, char **argv )
 #endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        
         if ( us_test_midi_parser ( test_data_1, sizeof ( test_data_1 ) ) )
             r = 0;
-            
         us_log_info ( "Finishing %s", argv[0] );
         us_logger_finish();
         us_testutil_finish();
     }
-    
     return r;
 }
 

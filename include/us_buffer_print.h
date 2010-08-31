@@ -41,7 +41,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_print.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     bool
@@ -49,14 +50,14 @@ extern "C" {
         us_buffer_t *self,
         us_print_t *printer
     );
-    
+
     bool
     us_buffer_print_string (
         us_buffer_t *self,
         us_print_t *printer
     );
-    
-    
+
+
 #ifdef __cplusplus
 }
 #endif

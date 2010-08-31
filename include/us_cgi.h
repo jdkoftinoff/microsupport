@@ -35,14 +35,15 @@
 #include "us_buffer.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     bool us_cgi_is_escapable ( char c );
-    
+
     bool us_cgi_unescape ( const char *src, int src_len, us_buffer_t *dest_buf );
     bool us_cgi_escape ( const char *src, int src_len, us_buffer_t *dest_buf );
-    
+
     extern char us_cgi_tohexdigit[16];
     extern char *us_cgi_rfc3986_reserved_chars;
 #ifdef __cplusplus
