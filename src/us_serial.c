@@ -41,20 +41,20 @@ bool us_serial_setup ( int fd, const char *serial_options )
     const char *serial_fmt = 0;
     struct termios term;
     int e;
-    
+
     do
     {
         e = tcgetattr ( fd, &term );
     }
     while ( e < 0 && errno == EINTR );
-    
+
     if ( e < 0 )
     {
         perror ( "ioctl TCGETS failed" );
         close ( fd );
         return false;
     }
-    
+
     term.c_cc[VMIN] = 1;
     term.c_cc[VTIME] = 0;
     term.c_iflag &= ~ ( BRKINT | ICRNL | INPCK | ISTRIP | IXON );
@@ -63,7 +63,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
     term.c_lflag &= ~ ( ECHO | ICANON | IEXTEN | ISIG );
     term.c_cflag &= ~ ( CSIZE );
     term.c_cflag |= ( CREAD | CLOCAL );
-    
+
     /* extract serial option in form "BaudRate,FMT,FLOW"
      * where BaudRate is 1200,2400,4800,9600,19200,38400,57600,115200,230400, or 0
      * and FMT is one of {7,8}{N,I,O}{0,1,2}
@@ -72,21 +72,21 @@ bool us_serial_setup ( int fd, const char *serial_options )
     if ( serial_options && *serial_options )
     {
         requested_baud = ( uint32_t ) ( strtoul ( serial_options, 0, 10 ) );
-        
+
         if ( requested_baud == 0 )
         {
             fprintf ( stderr, "invalid baud rate" );
             close ( fd );
             return false;
         }
-        
+
         serial_fmt = strchr ( serial_options, ',' );
-        
+
         if ( serial_fmt )
         {
             serial_fmt++;
         }
-        
+
         if ( strlen ( serial_fmt ) != 5 )
         {
             fprintf ( stderr, "invalid serial format: for example use 8N1,H or 8N1,N " );
@@ -94,12 +94,12 @@ bool us_serial_setup ( int fd, const char *serial_options )
             return false;
         }
     }
-    
+
     if ( serial_fmt == 0 )
     {
         serial_fmt = "8N1,N";
     }
-    
+
     switch ( requested_baud )
     {
         case 31250:
@@ -144,7 +144,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
             return false;
             break;
     }
-    
+
     if ( baud_code != 0 )
     {
         do
@@ -152,7 +152,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
             e = cfsetspeed ( &term, baud_code );
         }
         while ( e < 0 && errno == EINTR );
-        
+
         if ( e < 0 )
         {
             perror ( "cfsetspeed:" );
@@ -160,114 +160,114 @@ bool us_serial_setup ( int fd, const char *serial_options )
             return false;
         }
     }
-    
+
     if ( serial_fmt[0] == '7' )
     {
         term.c_cflag |= CS7;
         term.c_cflag &= ~CS8;
     }
-    
+
     else
         if ( serial_fmt[0] == '8' )
         {
             term.c_cflag &= ~CS7;
             term.c_cflag |= CS8;
         }
-        
+
         else
         {
             fprintf ( stderr, "invalid bits: %c\n", serial_fmt[0] );
             close ( fd );
             return false;
         }
-        
+
     if ( serial_fmt[1] == 'N' )
     {
         term.c_cflag &= ~PARENB;
     }
-    
+
     else
         if ( serial_fmt[1] == 'E' )
         {
             term.c_cflag |= PARENB;
             term.c_cflag &= ~PARODD;
         }
-        
+
         else
             if ( serial_fmt[1] == 'O' )
             {
                 term.c_cflag |= PARENB;
                 term.c_cflag |= PARODD;
             }
-            
+
             else
             {
                 fprintf ( stderr, "invalid parity: %c\n", serial_fmt[1] );
                 close ( fd );
                 return false;
             }
-            
+
     if ( serial_fmt[2] == '1' )
     {
         term.c_cflag &= ~CSTOPB;
     }
-    
+
     else
         if ( serial_fmt[2] == '2' )
         {
             term.c_cflag |= CSTOPB;
         }
-        
+
         else
         {
             fprintf ( stderr, "invalid stop bits: %c\n", serial_fmt[2] );
             close ( fd );
             return false;
         }
-        
+
     if ( serial_fmt[4] == 'H' )
     {
         term.c_cflag |= CRTSCTS;
     }
-    
+
     else
         if ( serial_fmt[4] == 'N' )
         {
             term.c_cflag &= ~CRTSCTS;
         }
-        
+
         else
             if ( serial_fmt[4] == 'S' )
             {
                 term.c_iflag |= ( IXON | IXOFF | IXANY );
             }
-            
+
     do
     {
         e = tcsetattr ( fd, TCSANOW, &term );
     }
     while ( e < 0 && errno == EINTR );
-    
+
     if ( e < 0 )
     {
         perror ( "ioctl TCSETS failed" );
         close ( fd );
         return false;
     }
-    
+
     do
     {
         e = fcntl ( fd, F_SETFL, O_NONBLOCK );
     }
     while ( e < 0 && errno == EINTR );
-    
+
     if ( e < 0 )
     {
         perror ( "fcntl F_SETFL O_NONBLOCK failed" );
         close ( fd );
         return false;
     }
-    
+
     return true;
 }
 
@@ -281,14 +281,14 @@ int us_serial_net_open ( const char *serial_device, const char *serial_options )
     char dest_ip[256] = "127.0.0.1";
     char dest_port[64] = "7777";
     ( void ) serial_options; /* ignored for now */
-    
+
     if ( strlen ( connect_addr ) > 0 )
     {
         char *end_ip;
         strncpy ( dest_ip, connect_addr, sizeof ( dest_ip ) );
         dest_ip[ sizeof ( dest_ip )-1 ] = '\0';
         end_ip = strchr ( dest_ip, ',' );
-        
+
         if ( end_ip )
         {
             *end_ip = '\0';
@@ -296,61 +296,62 @@ int us_serial_net_open ( const char *serial_device, const char *serial_options )
             dest_port[sizeof ( dest_port )-1 ] = '\0';
         }
     }
-    
-    src_ai = us_net_get_addrinfo ( "0.0.0.0", "0", SOCK_STREAM );
-    
+
+    src_ai = us_net_get_addrinfo ( "0.0.0.0", "0", SOCK_STREAM, false );
+
     if ( src_ai == 0 )
     {
         perror ( "src getaddrinfo:" );
         abort();
     }
-    
+
     dest_ai = us_net_get_addrinfo (
                   dest_ip,
                   dest_port,
-                  SOCK_STREAM
+                  SOCK_STREAM,
+                  false
               );
-              
+
     if ( dest_ai == 0 )
     {
         perror ( "dest getaddrinfo:" );
         abort();
     }
-    
+
     fd = us_net_create_tcp_socket ( src_ai, false );
-    
+
     if ( fd < 0 )
     {
         perror ( "socket:" );
         abort();
     }
-    
+
     do
     {
         e = connect ( fd, dest_ai->ai_addr, dest_ai->ai_addrlen );
     }
     while ( e < 0 && errno == EINTR );
-    
+
     if ( e < 0 )
     {
         perror ( "connect to serial net" );
         close ( fd );
         abort();
     }
-    
+
     do
     {
         e = fcntl ( fd, F_SETFL, O_NONBLOCK );
     }
     while ( e < 0 && errno == EINTR );
-    
+
     if ( e < 0 )
     {
         perror ( "fcntl F_SETFL O_NONBLOCK failed" );
         close ( fd );
         abort();
     }
-    
+
     freeaddrinfo ( src_ai );
     freeaddrinfo ( dest_ai );
     return fd;
@@ -359,11 +360,11 @@ int us_serial_net_open ( const char *serial_device, const char *serial_options )
 int us_serial_open ( const char *serial_device, const char *serial_options )
 {
     int fd = -1;
-    
+
     if ( strncmp ( serial_device, "/dev/", 5 ) == 0 )
     {
         fd = open ( serial_device, O_RDWR );
-        
+
         if ( fd >= 0 )
         {
             if ( !us_serial_setup ( fd, serial_options ) )
@@ -372,13 +373,13 @@ int us_serial_open ( const char *serial_device, const char *serial_options )
             }
         }
     }
-    
+
     else
         if ( strncmp ( serial_device, "tcp:", 4 ) == 0 )
         {
             fd = us_serial_net_open ( serial_device, serial_options );
         }
-        
+
     return fd;
 }
 

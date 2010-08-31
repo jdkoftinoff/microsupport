@@ -52,23 +52,23 @@ bool us_example_mudp_rx (
     int fd;
     bool r = false;
     struct addrinfo *multicastgroup;
-    multicastgroup = us_net_get_addrinfo ( multicast_address, multicast_service, SOCK_DGRAM );
+    multicastgroup = us_net_get_addrinfo ( multicast_address, multicast_service, SOCK_DGRAM, true );
     {
         char multicastgroup_name[1024];
         char multicastgroup_serv[256];
-        
+
         if ( us_net_get_nameinfo ( multicastgroup, multicastgroup_name, sizeof ( multicastgroup_name ) - 1, multicastgroup_serv, sizeof ( multicastgroup_serv ) - 1 ) )
         {
             us_log_info ( "multicastgroup: %s port %s", multicastgroup_name, multicastgroup_serv );
         }
-        
+
         else
         {
             perror ( "getnameinfo:" );
         }
     }
     fd = us_net_create_multicast_rx_udp_socket ( 0, multicastgroup, interface );
-    
+
     if ( fd > 0 )
     {
         while ( 1 )
@@ -78,12 +78,12 @@ bool us_example_mudp_rx (
             char buf[2048];
             int len;
             len = recvfrom ( fd, buf, sizeof ( buf ), 0, ( struct sockaddr * ) &remote_addr, &remote_addr_len );
-            
+
             if ( len > 0 )
             {
                 us_log_info ( "got packet %d bytes", len );
             }
-            
+
             else
             {
                 perror ( "recvfrom:" );
@@ -91,7 +91,7 @@ bool us_example_mudp_rx (
             }
         }
     }
-    
+
     return r;
 }
 
@@ -99,37 +99,37 @@ bool us_example_mudp_rx (
 int main ( int argc, char **argv )
 {
     int r = 1;
-    
+
     if ( argc < 3 )
     {
         fprintf ( stderr, "usage:\n\t%s multicast_address multicast_service (interface)\n", argv[0] );
         fprintf ( stderr, "example:\n\t%s ff31::8000:1234 30001\n", argv[0] );
         exit ( 1 );
     }
-    
+
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )
     {
         const char *multicast_address = argv[1];
         const char *multicast_service = argv[2];
         const char *interface = "";
-        
+
         if ( argc > 3 )
             interface = argv[3];
-            
+
 #if US_ENABLE_LOGGING
         us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        
+
         if ( us_example_mudp_rx ( multicast_address, multicast_service, interface ) )
             r = 0;
-            
+
         us_log_info ( "Finishing %s", argv[0] );
         us_logger_finish();
         us_testutil_finish();
     }
-    
+
     return r;
 }
 
