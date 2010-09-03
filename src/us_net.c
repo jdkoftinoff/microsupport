@@ -41,7 +41,7 @@ struct addrinfo *us_net_get_addrinfo (
     struct addrinfo *ai;
     struct addrinfo hints;
     memset ( &hints, '\0', sizeof ( hints ) );
-    
+
 #if defined(AI_NUMERICHOST)
     hints.ai_flags |= AI_NUMERICHOST;
 #endif
