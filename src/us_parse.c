@@ -33,12 +33,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 bool us_parse_hexdig ( uint8_t *val, const char *buf, int buf_len, int *buf_pos )
 {
     bool r = false;
-
     if ( *buf_pos < buf_len )
     {
         char c = buf[*buf_pos];
         ++ ( *buf_pos );
-
         if ( c >= '0' && c <= '9' )
         {
             *val = c - '0';
@@ -47,7 +45,6 @@ bool us_parse_hexdig ( uint8_t *val, const char *buf, int buf_len, int *buf_pos 
         else
         {
             c = c & 0xdf;
-
             if ( c >= 'A' && c <= 'F' )
             {
                 *val = c - 'A' + 10;
@@ -55,7 +52,6 @@ bool us_parse_hexdig ( uint8_t *val, const char *buf, int buf_len, int *buf_pos 
             }
         }
     }
-
     return r;
 }
 
@@ -66,12 +62,10 @@ bool us_parse_hexoctet ( uint8_t *val, const char *buf, int buf_len, int *buf_po
     uint8_t low = 0;
     r &= us_parse_hexdig ( &high, buf, buf_len, buf_pos );
     r &= us_parse_hexdig ( &low, buf, buf_len, buf_pos );
-
     if ( r )
     {
         *val = ( high << 4 ) + low;
     }
-
     return r;
 }
 

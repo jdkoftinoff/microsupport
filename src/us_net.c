@@ -111,7 +111,7 @@ int us_net_create_udp_socket (
         {
             int on = 1;
             r = s;
-            if( broadcast )
+            if ( broadcast )
             {
                 if ( setsockopt ( s, SOL_SOCKET, SO_BROADCAST, ( const char * ) &on, sizeof ( on ) ) == -1 )
                 {
