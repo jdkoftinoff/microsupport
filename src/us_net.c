@@ -103,6 +103,7 @@ int us_net_create_udp_socket (
 {
     int r = -1;
     int s = -1;
+    bool broadcast=false;
     if ( ai )
     {
         s = socket ( ai->ai_family, ai->ai_socktype, ai->ai_protocol );
@@ -110,10 +111,13 @@ int us_net_create_udp_socket (
         {
             int on = 1;
             r = s;
-            if ( setsockopt ( s, SOL_SOCKET, SO_BROADCAST, ( const char * ) &on, sizeof ( on ) ) == -1 )
+            if( broadcast )
             {
-                perror ( "setsockopt SO_BROADCAST:" );
-                abort();
+                if ( setsockopt ( s, SOL_SOCKET, SO_BROADCAST, ( const char * ) &on, sizeof ( on ) ) == -1 )
+                {
+                    perror ( "setsockopt SO_BROADCAST:" );
+                    abort();
+                }
             }
             if ( do_bind )
             {
