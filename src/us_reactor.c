@@ -144,7 +144,11 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                 p->events |= POLLOUT;
             item = item->next;
         }
+#ifdef WIN32
+        n = WSAPoll ( self->poll_handlers, self->num_handlers, timeout );
+#else
         n = poll ( self->poll_handlers, self->num_handlers, timeout );
+#endif
         if ( n < 0 )
         {
             /* error doing poll, stop loop */
