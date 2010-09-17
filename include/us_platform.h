@@ -48,9 +48,14 @@ extern "C"
 #define US_COUNTOF(x) (sizeof(x)/sizeof(x[0]))
 
 #ifndef __cplusplus
+# ifndef bool
+    typedef int bool_;
+# define bool bool_
+# endif
 # ifndef true
-    typedef int bool;
 # define true (1)
+# endif
+# ifndef false
 # define false (0)
 # endif
 #endif
