@@ -1,3 +1,6 @@
+#ifndef US_TEST_LINE_PARSE_H
+#define US_TEST_LINE_PARSE_H
+
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -26,10 +29,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-#include "us_test_midi.h"
 
-int main( int argc, char **argv )
+/**
+ \addtogroup us_tests Tests
+ */
+/*@{*/
+
+#ifdef __cplusplus
+extern "C"
 {
-    return us_test_midi_main( argc, argv );
-}
+#endif
 
+
+    int us_test_line_parse_main( int argc, char **argv );
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
+/*@}*/
+
+#endif

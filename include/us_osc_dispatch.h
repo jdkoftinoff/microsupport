@@ -38,9 +38,24 @@ extern "C"
 {
 #endif
 
-    /** \addtogroup us_osc_dispatch AVBC Message Dispatcher
-     */
+    /** \addtogroup us_osc_dispatch OSC Message Dispatcher
+        */
     /*@{*/
+
+    struct us_osc_msg_dispatch_s;
+
+    typedef bool (*us_osc_msg_dispatch_proc_t)(
+        struct us_osc_msg_dispatch_s *self,
+            const us_osc_msg_t *msg,
+            void *extra
+            );
+
+    typedef struct us_osc_msg_dispatch_s
+    {
+        void (*destroy)( struct us_osc_msg_dispatch_s *self );
+        void (*receive_msg)( struct us_osc_msg_dispatch_s *self, const us_osc_msg_t *msg );
+    } us_osc_msg_dispatch_t;
+    
     /*@}*/
 
 #ifdef __cplusplus
