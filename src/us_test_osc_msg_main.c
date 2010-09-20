@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_buffer_print.h"
 #endif
 
-/** \addtogroup avbc_test_msg */
+/** \addtogroup us_osc_msg_test_msg */
 /*@{*/
 
 static bool
@@ -72,7 +72,7 @@ test_unflatten(
     bool r=false;
     us_log_probe();
     us_log_info( "unflattening message" );
-    if ( avbc_is_msg_bundle(buffer) )
+    if ( us_osc_msg_is_msg_bundle(buffer) )
     {
         us_osc_msg_bundle_t *bundle;
         us_log_info( "unflattening bundle" );
@@ -102,7 +102,7 @@ test_unflatten(
             }
         }
     }
-    else if ( avbc_is_msg(buffer) )
+    else if ( us_osc_msg_is_msg(buffer) )
     {
         us_osc_msg_t *msg;
         us_log_info( "unflattening message" );

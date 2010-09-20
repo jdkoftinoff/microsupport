@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 bool
-avbc_is_msg_bundle(
+us_osc_msg_is_msg_bundle(
     us_buffer_t *buffer
 )
 {
@@ -50,7 +50,7 @@ avbc_is_msg_bundle(
 }
 
 bool
-avbc_is_msg(
+us_osc_msg_is_msg(
     us_buffer_t *buffer
 )
 {
@@ -320,7 +320,7 @@ us_osc_msg_bundle_unflatten(
 {
     us_osc_msg_bundle_t *result = 0;
     us_osc_msg_bundle_t *bundle = 0;
-    if ( avbc_is_msg_bundle(buf) )
+    if ( us_osc_msg_is_msg_bundle(buf) )
     {
         uint32_t timetag_high;
         uint32_t timetag_low;
@@ -432,8 +432,8 @@ us_osc_msg_unflatten(
 {
     us_osc_msg_t *result = 0;
     us_osc_msg_t *msg = 0;
-    char addr[AVBC_MAX_ADDRESS_LENGTH];
-    char types[AVBC_MAX_TYPETAGS];
+    char addr[US_OSC_MSG_MAX_ADDRESS_LENGTH];
+    char types[US_OSC_MSG_MAX_TYPETAGS];
     if ( us_buffer_read_rounded_string(buf, addr, sizeof(addr)) )
     {
         if ( us_buffer_read_rounded_string( buf, types, sizeof(types) ) )

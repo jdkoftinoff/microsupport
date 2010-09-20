@@ -39,8 +39,8 @@ extern "C"
 {
 #endif
 
-#define AVBC_MAX_ADDRESS_LENGTH (256)
-#define AVBC_MAX_TYPETAGS (32)
+#define US_OSC_MSG_MAX_ADDRESS_LENGTH (256)
+#define US_OSC_MSG_MAX_TYPETAGS (32)
 
     /**
      \addtogroup us_osc_msg OSC Message and Bundle Objects
@@ -761,7 +761,7 @@ extern "C"
      @return bool true if it is a valid OSC Bundle (multiple messages)
      */
     bool
-    avbc_is_msg_bundle(
+    us_osc_msg_is_msg_bundle(
         us_buffer_t *buffer
     );
 
@@ -772,7 +772,7 @@ extern "C"
      @return bool true if it is a valid OSC Message
      */
     bool
-    avbc_is_msg(
+    us_osc_msg_is_msg(
         us_buffer_t *buffer
     );
 
