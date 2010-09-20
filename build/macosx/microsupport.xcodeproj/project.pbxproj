@@ -239,7 +239,14 @@
 			isa = PBXProject;
 			buildConfigurationList = BFF4CB5711612B68002C7012 /* Build configuration list for PBXProject "microsupport" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = BFF4CB5211612B68002C7012;
 			projectDirPath = "";
 			projectReferences = (
