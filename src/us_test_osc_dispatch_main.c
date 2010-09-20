@@ -1,6 +1,3 @@
-#ifndef US_OSC_DISPATCH_H
-#define US_OSC_DISPATCH_H
-
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -27,49 +24,49 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #include "us_world.h"
+#include "us_testutil.h"
+#include "us_logger_printer.h"
 
-#include "us_allocator.h"
+#include "us_buffer.h"
 #include "us_osc_msg.h"
+#include "us_osc_dispatch.h"
 
-#ifdef __cplusplus
-extern "C"
+#if US_ENABLE_PRINTING
+#include "us_osc_msg_print.h"
+#include "us_buffer_print.h"
+#endif
+
+/** \addtogroup us_osc_msg_test_msg_dispatch */
+/*@{*/
+
+
+static bool us_test_osc_dispatch_test1( void )
 {
-#endif
+    bool r=false;
 
-    /** \addtogroup us_osc_dispatch OSC Message Dispatcher
-        */
-    /*@{*/
-
-    struct us_osc_dispatch_s;
-
-    typedef bool (*us_osc_dispatch_proc_t)(
-        struct us_osc_dispatch_s *self,
-        const us_osc_msg_t *msg,
-        void *extra_ptr,
-        int extra_val
-    );
-
-    typedef struct us_osc_dispatch_entry_s
-    {
-        const char *address_prefix;
-        us_osc_dispatch_proc_t receive_msg_proc;
-        void *extra_ptr;
-        int extra_val; 
-    } us_osc_dispatch_entry_t;
-
-    typedef struct us_osc_dispatch_s
-    {
-        void (*destroy)( struct us_osc_dispatch_s *self );
-        void (*receive_msg)( struct us_osc_dispatch_s *self, const us_osc_msg_t *msg );
-    } us_osc_dispatch_t;
-
-    /*@}*/
-
-#ifdef __cplusplus
+    return r;
 }
-#endif
 
 
+int us_test_osc_dispatch_main( int argc, char **argv )
+{
+    bool r=true;
+    r=us_testutil_start(8192,8192,argc,argv);
+    if ( r )
+    {
+#if US_ENABLE_LOGGING
+        us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
+        us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+
+        r&=us_test_osc_dispatch_test1();
+
+        us_logger_finish();
+        us_testutil_finish();
+    }
+    return r ? 0:1;
+}
+
+/*@}*/
+

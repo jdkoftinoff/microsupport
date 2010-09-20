@@ -78,10 +78,32 @@
 /* Begin PBXFileReference section */
 		BF7524CD11653F8800913313 /* us_cgi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_cgi.c; path = ../../../src/us_cgi.c; sourceTree = SOURCE_ROOT; };
 		BF7524CF11653F9E00913313 /* us_cgi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_cgi.h; path = ../../../include/us_cgi.h; sourceTree = SOURCE_ROOT; };
+		BF79D9181247F254007595DB /* us_example_hex_udp_rx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_hex_udp_rx.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_hex_udp_rx.c; sourceTree = "<absolute>"; };
+		BF79D9191247F254007595DB /* us_example_hex_udp_tx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_hex_udp_tx.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_hex_udp_tx.c; sourceTree = "<absolute>"; };
+		BF79D91A1247F254007595DB /* us_example_httpd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_httpd.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_httpd.c; sourceTree = "<absolute>"; };
+		BF79D91B1247F254007595DB /* us_example_json.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_json.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_json.c; sourceTree = "<absolute>"; };
+		BF79D91C1247F254007595DB /* us_example_mudp_rx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_mudp_rx.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_mudp_rx.c; sourceTree = "<absolute>"; };
+		BF79D91D1247F254007595DB /* us_example_mudp_tx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_mudp_tx.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_mudp_tx.c; sourceTree = "<absolute>"; };
+		BF79D91E1247F254007595DB /* us_example_reactor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_reactor.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_reactor.c; sourceTree = "<absolute>"; };
+		BF79D9201247F275007595DB /* us_tool_create_trie.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_tool_create_trie.c; path = "/Users/jeffk/src/github/microsupport/tools-dev/us_tool_create_trie.c"; sourceTree = "<absolute>"; };
+		BF79D9211247F575007595DB /* us_osc_dispatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_osc_dispatch.h; path = /Users/jeffk/src/github/microsupport/include/us_osc_dispatch.h; sourceTree = "<absolute>"; };
+		BF79D9221247F575007595DB /* us_test_osc_dispatch_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_test_osc_dispatch_main.h; path = /Users/jeffk/src/github/microsupport/include/us_test_osc_dispatch_main.h; sourceTree = "<absolute>"; };
+		BF79D9231247F598007595DB /* us_test_osc_dispatch_main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_osc_dispatch_main.c; path = /Users/jeffk/src/github/microsupport/src/us_test_osc_dispatch_main.c; sourceTree = "<absolute>"; };
+		BF79D9251247F5C8007595DB /* us_test_allocator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_allocator.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_allocator.c; sourceTree = "<absolute>"; };
+		BF79D9261247F5C8007595DB /* us_test_buffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_buffer.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_buffer.c; sourceTree = "<absolute>"; };
+		BF79D9271247F5C8007595DB /* us_test_http.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_http.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_http.c; sourceTree = "<absolute>"; };
+		BF79D9281247F5C8007595DB /* us_test_json.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_json.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_json.c; sourceTree = "<absolute>"; };
+		BF79D9291247F5C8007595DB /* us_test_line_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_line_parse.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_line_parse.c; sourceTree = "<absolute>"; };
+		BF79D92A1247F5C8007595DB /* us_test_midi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_midi.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_midi.c; sourceTree = "<absolute>"; };
+		BF79D92B1247F5C8007595DB /* us_test_net.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_net.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_net.c; sourceTree = "<absolute>"; };
+		BF79D92C1247F5C8007595DB /* us_test_osc_dispatch.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_osc_dispatch.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_osc_dispatch.c; sourceTree = "<absolute>"; };
+		BF79D92D1247F5C8007595DB /* us_test_osc_msg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_osc_msg.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_osc_msg.c; sourceTree = "<absolute>"; };
+		BF79D92E1247F5C8007595DB /* us_test_queue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_queue.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_queue.c; sourceTree = "<absolute>"; };
+		BF79D92F1247F5C8007595DB /* us_test_slip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_slip.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_slip.c; sourceTree = "<absolute>"; };
+		BF79D9301247F5C8007595DB /* us_test_trie.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_trie.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_trie.c; sourceTree = "<absolute>"; };
 		BFAA50C31247C91300FF1616 /* us_line_parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_line_parse.h; path = ../../../include/us_line_parse.h; sourceTree = SOURCE_ROOT; };
 		BFAA50C41247C91300FF1616 /* us_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_midi.h; path = ../../../include/us_midi.h; sourceTree = SOURCE_ROOT; };
 		BFAA50C51247C91300FF1616 /* us_osc_dispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_osc_dispatch.h; path = ../../../include/us_osc_dispatch.h; sourceTree = SOURCE_ROOT; };
-		BFAA50C61247C91300FF1616 /* us_osc_dispatch.h.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = us_osc_dispatch.h.orig; path = ../../../include/us_osc_dispatch.h.orig; sourceTree = SOURCE_ROOT; };
 		BFAA50C71247C91300FF1616 /* us_osc_msg_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_osc_msg_print.h; path = ../../../include/us_osc_msg_print.h; sourceTree = SOURCE_ROOT; };
 		BFAA50C81247C91300FF1616 /* us_osc_msg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_osc_msg.h; path = ../../../include/us_osc_msg.h; sourceTree = SOURCE_ROOT; };
 		BFAA50C91247C91300FF1616 /* us_parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_parse.h; path = ../../../include/us_parse.h; sourceTree = SOURCE_ROOT; };
@@ -181,6 +203,9 @@
 		08FB7794FE84155DC02AAC07 /* us */ = {
 			isa = PBXGroup;
 			children = (
+				BF79D9241247F5B1007595DB /* Tests */,
+				BF79D91F1247F25B007595DB /* tools-dev */,
+				BF79D9171247F22F007595DB /* Examples */,
 				BFAA50BE1247C8E600FF1616 /* Headers */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6A0FF2B0290797F04C91782 /* Documentation */,
@@ -192,6 +217,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				BF79D9231247F598007595DB /* us_test_osc_dispatch_main.c */,
 				BFAA50D81247C92F00FF1616 /* us_line_parse.c */,
 				BFAA50D91247C92F00FF1616 /* us_midi.c */,
 				BFAA50DA1247C92F00FF1616 /* us_osc_dispatch.c */,
@@ -247,13 +273,55 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BF79D9171247F22F007595DB /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				BF79D9181247F254007595DB /* us_example_hex_udp_rx.c */,
+				BF79D9191247F254007595DB /* us_example_hex_udp_tx.c */,
+				BF79D91A1247F254007595DB /* us_example_httpd.c */,
+				BF79D91B1247F254007595DB /* us_example_json.c */,
+				BF79D91C1247F254007595DB /* us_example_mudp_rx.c */,
+				BF79D91D1247F254007595DB /* us_example_mudp_tx.c */,
+				BF79D91E1247F254007595DB /* us_example_reactor.c */,
+			);
+			name = Examples;
+			sourceTree = "<group>";
+		};
+		BF79D91F1247F25B007595DB /* tools-dev */ = {
+			isa = PBXGroup;
+			children = (
+				BF79D9201247F275007595DB /* us_tool_create_trie.c */,
+			);
+			name = "tools-dev";
+			sourceTree = "<group>";
+		};
+		BF79D9241247F5B1007595DB /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				BF79D9251247F5C8007595DB /* us_test_allocator.c */,
+				BF79D9261247F5C8007595DB /* us_test_buffer.c */,
+				BF79D9271247F5C8007595DB /* us_test_http.c */,
+				BF79D9281247F5C8007595DB /* us_test_json.c */,
+				BF79D9291247F5C8007595DB /* us_test_line_parse.c */,
+				BF79D92A1247F5C8007595DB /* us_test_midi.c */,
+				BF79D92B1247F5C8007595DB /* us_test_net.c */,
+				BF79D92C1247F5C8007595DB /* us_test_osc_dispatch.c */,
+				BF79D92D1247F5C8007595DB /* us_test_osc_msg.c */,
+				BF79D92E1247F5C8007595DB /* us_test_queue.c */,
+				BF79D92F1247F5C8007595DB /* us_test_slip.c */,
+				BF79D9301247F5C8007595DB /* us_test_trie.c */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
 		BFAA50BE1247C8E600FF1616 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				BF79D9211247F575007595DB /* us_osc_dispatch.h */,
+				BF79D9221247F575007595DB /* us_test_osc_dispatch_main.h */,
 				BFAA50C31247C91300FF1616 /* us_line_parse.h */,
 				BFAA50C41247C91300FF1616 /* us_midi.h */,
 				BFAA50C51247C91300FF1616 /* us_osc_dispatch.h */,
-				BFAA50C61247C91300FF1616 /* us_osc_dispatch.h.orig */,
 				BFAA50C71247C91300FF1616 /* us_osc_msg_print.h */,
 				BFAA50C81247C91300FF1616 /* us_osc_msg.h */,
 				BFAA50C91247C91300FF1616 /* us_parse.h */,
