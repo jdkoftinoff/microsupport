@@ -26,7 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-#include "us_test_line_parse.h"
+#include "us_test_line_parse_main.h"
 
 int main( int argc, char **argv )
 {

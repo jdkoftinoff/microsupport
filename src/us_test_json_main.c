@@ -48,7 +48,7 @@ bool us_test_json ( void )
     return r;
 }
 
-int main ( int argc, char **argv )
+int us_test_json_main ( int argc, char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

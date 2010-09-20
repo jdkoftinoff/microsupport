@@ -42,17 +42,17 @@
       <itemPath>../../../include/us_reactor.h</itemPath>
       <itemPath>../../../include/us_serial.h</itemPath>
       <itemPath>../../../include/us_slip.h</itemPath>
-      <itemPath>../../..clude/us_test_allocator_main.h</itemPath>
-      <itemPath>../../..clude/us_test_buffer_main.h</itemPath>
-      <itemPath>../../..clude/us_test_http_main.h</itemPath>
-      <itemPath>../../..clude/us_test_json_main.h</itemPath>
-      <itemPath>../../..clude/us_test_line_parse_main.h</itemPath>
-      <itemPath>../../..clude/us_test_midi_main.h</itemPath>
-      <itemPath>../../..clude/us_test_net_main.h</itemPath>
-      <itemPath>../../..clude/us_test_osc_msg_main.h</itemPath>
-      <itemPath>../../..clude/us_test_queue_main.h</itemPath>
-      <itemPath>../../..clude/us_test_slip_main.h</itemPath>
-      <itemPath>../../..clude/us_test_trie_main.h</itemPath>
+      <itemPath>../../../include/us_test_allocator_main.h</itemPath>
+      <itemPath>../../../include/us_test_buffer_main.h</itemPath>
+      <itemPath>../../../include/us_test_http_main.h</itemPath>
+      <itemPath>../../../include/us_test_json_main.h</itemPath>
+      <itemPath>../../../include/us_test_line_parse_main.h</itemPath>
+      <itemPath>../../../include/us_test_midi_main.h</itemPath>
+      <itemPath>../../../include/us_test_net_main.h</itemPath>
+      <itemPath>../../../include/us_test_osc_msg_main.h</itemPath>
+      <itemPath>../../../include/us_test_queue_main.h</itemPath>
+      <itemPath>../../../include/us_test_slip_main.h</itemPath>
+      <itemPath>../../../include/us_test_trie_main.h</itemPath>
       <itemPath>../../../include/us_testutil.h</itemPath>
       <itemPath>../../../include/us_time.h</itemPath>
       <itemPath>../../../include/us_trie.h</itemPath>
@@ -94,17 +94,17 @@
       <itemPath>../../../src/us_reactor.c</itemPath>
       <itemPath>../../../src/us_serial.c</itemPath>
       <itemPath>../../../src/us_slip.c</itemPath>
-      <itemPath>../../..c/us_test_allocator_main.c</itemPath>
-      <itemPath>../../..c/us_test_buffer_main.c</itemPath>
-      <itemPath>../../..c/us_test_http_main.c</itemPath>
-      <itemPath>../../..c/us_test_json_main.c</itemPath>
-      <itemPath>../../..c/us_test_line_parse_main.c</itemPath>
-      <itemPath>../../..c/us_test_midi_main.c</itemPath>
-      <itemPath>../../..c/us_test_net_main.c</itemPath>
-      <itemPath>../../..c/us_test_osc_msg_main.c</itemPath>
-      <itemPath>../../..c/us_test_queue_main.c</itemPath>
-      <itemPath>../../..c/us_test_slip_main.c</itemPath>
-      <itemPath>../../..c/us_test_trie_main.c</itemPath>
+      <itemPath>../../../src/us_test_allocator_main.c</itemPath>
+      <itemPath>../../../src/us_test_buffer_main.c</itemPath>
+      <itemPath>../../../src/us_test_http_main.c</itemPath>
+      <itemPath>../../../src/us_test_json_main.c</itemPath>
+      <itemPath>../../../src/us_test_line_parse_main.c</itemPath>
+      <itemPath>../../../src/us_test_midi_main.c</itemPath>
+      <itemPath>../../../src/us_test_net_main.c</itemPath>
+      <itemPath>../../../src/us_test_osc_msg_main.c</itemPath>
+      <itemPath>../../../src/us_test_queue_main.c</itemPath>
+      <itemPath>../../../src/us_test_slip_main.c</itemPath>
+      <itemPath>../../../src/us_test_trie_main.c</itemPath>
       <itemPath>../../../src/us_testutil.c</itemPath>
       <itemPath>../../../src/us_time.c</itemPath>
       <itemPath>../../../src/us_trie_dump.c</itemPath>
@@ -126,12 +126,11 @@
   </logicalFolder>
   <sourceFolderFilter>^(nbproject|build|test)$</sourceFolderFilter>
   <sourceRootList>
-    <Elem>../../..clude</Elem>
-    <Elem>../../..c</Elem>
-    <Elem>../../..sts</Elem>
-    <Elem>../../..ols-dev</Elem>
-    <Elem>../../..amples</Elem>
-    <Elem>../../..cs-dev</Elem>
+    <Elem>../../../include</Elem>
+    <Elem>../../../src</Elem>
+    <Elem>../../../examples</Elem>
+    <Elem>../../../tools-dev</Elem>
+    <Elem>../../../tests</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -144,15 +143,7 @@
       <compileType>
         <cTool>
           <incDir>
-            <pElem>../../..clude</pElem>
-          </incDir>
-        </cTool>
-        <archiverTool>
-        </archiverTool>
-      </compileType>
-      <folder path="TestFiles/f1">
-        <cTool>
-          <incDir>
+            <pElem>../../../include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -161,10 +152,9 @@
             <pElem>.</pElem>
           </incDir>
         </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f1</output>
-        </linkerTool>
-      </folder>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
     </conf>
     <conf name="Release" type="3">
       <toolsSet>
@@ -175,9 +165,15 @@
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -188,21 +184,6 @@
         <archiverTool>
         </archiverTool>
       </compileType>
-      <folder path="TestFiles/f1">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f1</output>
-        </linkerTool>
-      </folder>
     </conf>
   </confs>
 </configurationDescriptor>

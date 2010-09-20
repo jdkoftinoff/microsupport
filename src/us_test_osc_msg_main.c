@@ -258,7 +258,7 @@ bool do_test_osc_msg_bundle(
 }
 
 
-int main( int argc, char **argv )
+int us_test_osc_msg_main( int argc, char **argv )
 {
     bool r=true;
     r=us_testutil_start(8192,8192,argc,argv);

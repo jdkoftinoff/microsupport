@@ -66,7 +66,7 @@ copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}lib/${OUTPUT_BA
 cd "${TOP}"
 rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/microsupport.tar
 cd ${NBTMPDIR}
-tar -vcf ../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/microsupport.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/microsupport.tar *
 checkReturnCode
 
 # Cleanup

@@ -11,12 +11,11 @@
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>../../..clude</sourceRootElem>
-                <sourceRootElem>../../..c</sourceRootElem>
-                <sourceRootElem>../../..sts</sourceRootElem>
-                <sourceRootElem>../../..ols-dev</sourceRootElem>
-                <sourceRootElem>../../..amples</sourceRootElem>
-                <sourceRootElem>../../..cs-dev</sourceRootElem>
+                <sourceRootElem>../../../include</sourceRootElem>
+                <sourceRootElem>../../../src</sourceRootElem>
+                <sourceRootElem>../../../examples</sourceRootElem>
+                <sourceRootElem>../../../tools-dev</sourceRootElem>
+                <sourceRootElem>../../../tests</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>Debug</confElem>

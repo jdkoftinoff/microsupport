@@ -159,7 +159,7 @@ bool us_test_http ( void )
     return r;
 }
 
-int main ( int argc, char **argv )
+int us_test_http_main ( int argc, char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

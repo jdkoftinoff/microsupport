@@ -5,6 +5,8 @@
 
 #include "us_testutil.h"
 
+#include "us_test_trie_main.h"
+
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
  All rights reserved.
@@ -284,7 +286,7 @@ bool us_test_trie_2 ( void )
 }
 
 
-int main ( int argc, char **argv )
+int us_test_trie_main ( int argc, char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 8192, 8192, argc, argv ) )

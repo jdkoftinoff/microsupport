@@ -120,7 +120,7 @@ bool us_test_slip ( void )
     return r;
 }
 
-int main ( int argc, char **argv )
+int us_test_slip_main ( int argc, char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

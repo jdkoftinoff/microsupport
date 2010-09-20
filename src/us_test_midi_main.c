@@ -131,7 +131,7 @@ bool us_test_midi_parser ( const uint8_t *input_data, int32_t input_data_len )
     return r;
 }
 
-int main ( int argc, char **argv )
+int us_test_midi_main ( int argc, char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

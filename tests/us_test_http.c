@@ -26,7 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-#include "us_test_http.h"
+#include "us_test_http_main.h"
 
 int main( int argc, char **argv )
 {

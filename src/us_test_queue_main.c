@@ -162,7 +162,7 @@ bool us_test_queue ( void )
 }
 
 
-int main ( int argc, char **argv )
+int us_test_queue_main ( int argc, char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 2048, 2048, argc, argv ) )
