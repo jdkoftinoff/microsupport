@@ -10,7 +10,7 @@
 #include "us_test_osc_msg_main.h"
 #include "us_test_queue_main.h"
 #include "us_test_trie_main.h"
-
+#include "us_test_osc_dispatch_main.h"
 
 int main(int argc, char * argv[])
 {
@@ -24,6 +24,7 @@ int main(int argc, char * argv[])
     r += us_test_net_main(argc, argv );
     r += us_test_osc_msg_main(argc, argv );
     r += us_test_queue_main(argc, argv );
+    r += us_test_osc_dispatch_main(argc,argv );
     r += us_test_trie_main(argc,argv);
     return r;
 }
