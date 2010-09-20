@@ -39,9 +39,9 @@
 /*@{*/
 
 
-bool us_test_net ( void );
+static bool us_test_net ( void );
 
-bool us_test_net ( void )
+static bool us_test_net ( void )
 {
     bool r = false;
     us_log_error ( "Unimplemented" );

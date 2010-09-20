@@ -40,12 +40,12 @@
 /*@{*/
 
 
-bool us_test_http ( void );
+static bool us_test_http ( void );
 
-bool us_test_http_request ( void );
-bool us_test_http_response ( void );
+static bool us_test_http_request ( void );
+static bool us_test_http_response ( void );
 
-bool us_test_http_request ( void )
+static bool us_test_http_request ( void )
 {
     bool r = true;
     us_http_request_header_t *req;
@@ -93,7 +93,7 @@ bool us_test_http_request ( void )
     return r;
 }
 
-bool us_test_http_response ( void )
+static bool us_test_http_response ( void )
 {
     bool r = true;
     const char *html = "<html><head><title>Test</title></head><body><p>Hello There</p></body></html>";
@@ -143,7 +143,7 @@ bool us_test_http_response ( void )
     return r;
 }
 
-bool us_test_http ( void )
+static bool us_test_http ( void )
 {
     bool r = true;
     if ( !us_test_http_request() )

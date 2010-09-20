@@ -29,6 +29,9 @@
     <ClInclude Include="..\..\..\..\include\us_midi.h" />
     <ClInclude Include="..\..\..\..\include\us_net.h" />
     <ClInclude Include="..\..\..\..\include\us_options.h" />
+    <ClInclude Include="..\..\..\..\include\us_osc_dispatch.h" />
+    <ClInclude Include="..\..\..\..\include\us_osc_msg.h" />
+    <ClInclude Include="..\..\..\..\include\us_osc_msg_print.h" />
     <ClInclude Include="..\..\..\..\include\us_parse.h" />
     <ClInclude Include="..\..\..\..\include\us_platform.h" />
     <ClInclude Include="..\..\..\..\include\us_print.h" />
@@ -37,41 +40,281 @@
     <ClInclude Include="..\..\..\..\include\us_serial.h" />
     <ClInclude Include="..\..\..\..\include\us_slip.h" />
     <ClInclude Include="..\..\..\..\include\us_testutil.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_allocator_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_buffer_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_http_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_json_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_line_parse_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_midi_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_net_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_osc_msg_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_queue_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_slip_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_trie_main.h" />
     <ClInclude Include="..\..\..\..\include\us_time.h" />
     <ClInclude Include="..\..\..\..\include\us_trie.h" />
     <ClInclude Include="..\..\..\..\include\us_trie_dump.h" />
     <ClInclude Include="..\..\..\..\include\us_world.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\src\us_allocator.c" />
-    <ClCompile Include="..\..\..\..\src\us_allocator_print.c" />
-    <ClCompile Include="..\..\..\..\src\us_buffer.c" />
-    <ClCompile Include="..\..\..\..\src\us_buffer_print.c" />
-    <ClCompile Include="..\..\..\..\src\us_cgi.c" />
-    <ClCompile Include="..\..\..\..\src\us_http.c" />
-    <ClCompile Include="..\..\..\..\src\us_json.c" />
-    <ClCompile Include="..\..\..\..\src\us_json_parser.c" />
-    <ClCompile Include="..\..\..\..\src\us_line_parse.c" />
-    <ClCompile Include="..\..\..\..\src\us_logger.c" />
-    <ClCompile Include="..\..\..\..\src\us_logger_printer.c" />
-    <ClCompile Include="..\..\..\..\src\us_logger_stdio.c" />
-    <ClCompile Include="..\..\..\..\src\us_logger_syslog.c" />
-    <ClCompile Include="..\..\..\..\src\us_logger_udp.c" />
-    <ClCompile Include="..\..\..\..\src\us_midi.c" />
-    <ClCompile Include="..\..\..\..\src\us_net.c" />
-    <ClCompile Include="..\..\..\..\src\us_parse.c" />
-    <ClCompile Include="..\..\..\..\src\us_platform.c" />
-    <ClCompile Include="..\..\..\..\src\us_print.c" />
-    <ClCompile Include="..\..\..\..\src\us_queue.c" />
-    <ClCompile Include="..\..\..\..\src\us_reactor.c" />
-    <ClCompile Include="..\..\..\..\src\us_serial.c" />
-    <ClCompile Include="..\..\..\..\src\us_slip.c" />
-    <ClCompile Include="..\..\..\..\src\us_testutil.c" />
-    <ClCompile Include="..\..\..\..\src\us_time.c" />
-    <ClCompile Include="..\..\..\..\src\us_trie_dump.c" />
-    <ClCompile Include="..\..\..\..\src\us_trie_ro.c" />
-    <ClCompile Include="..\..\..\..\src\us_trie_rw.c" />
-    <ClCompile Include="..\..\..\..\src\us_world.c" />
+    <ClCompile Include="..\..\..\..\src\us_allocator.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_allocator_print.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_buffer.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_buffer_print.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_cgi.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_http.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_json.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_json_parser.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_line_parse.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_logger.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_logger_printer.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_logger_stdio.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_logger_syslog.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_logger_udp.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_midi.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_net.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_osc_dispatch.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_osc_msg.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_osc_msg_print.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_parse.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_platform.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_print.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_queue.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_reactor.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_serial.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_slip.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_testutil.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_allocator_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_buffer_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_http_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_json_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_line_parse_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_midi_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_net_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_osc_msg_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_queue_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_slip_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_trie_main.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_time.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_trie_dump.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_trie_ro.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_trie_rw.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_world.c">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EB820E96-2956-4B3B-83B1-24FCD8F14275}</ProjectGuid>

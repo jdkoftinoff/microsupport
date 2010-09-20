@@ -39,12 +39,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*@{*/
 
 
-bool us_test_slip ( void );
-us_buffer_t * us_test_slip_fill_buffer ( void );
-void us_test_slip_callback ( us_slip_decoder_t *self, us_buffer_t *buf );
+static bool us_test_slip ( void );
+static us_buffer_t * us_test_slip_fill_buffer ( void );
+static void us_test_slip_callback ( us_slip_decoder_t *self, us_buffer_t *buf );
 
 
-us_buffer_t * us_test_slip_fill_buffer ( void )
+static us_buffer_t * us_test_slip_fill_buffer ( void )
 {
     bool r = false;
     us_buffer_t *buf = us_buffer_create ( us_testutil_sys_allocator, 1024 );
@@ -75,7 +75,7 @@ us_buffer_t * us_test_slip_fill_buffer ( void )
     return buf;
 }
 
-void us_test_slip_callback ( us_slip_decoder_t *self, us_buffer_t *buf )
+static void us_test_slip_callback ( us_slip_decoder_t *self, us_buffer_t *buf )
 {
     ( void ) self;
     us_log_info ( "Successfully parsed slip encoded buffer" );
@@ -86,7 +86,7 @@ void us_test_slip_callback ( us_slip_decoder_t *self, us_buffer_t *buf )
 #endif
 }
 
-bool us_test_slip ( void )
+static bool us_test_slip ( void )
 {
     bool r = false;
     us_buffer_t *src_buf = us_test_slip_fill_buffer();

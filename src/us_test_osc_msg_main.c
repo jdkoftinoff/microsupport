@@ -39,21 +39,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup avbc_test_msg */
 /*@{*/
 
-bool
+static bool
 do_test_osc_msg(
     us_allocator_t *allocator,
     us_buffer_t *buffer,
     us_print_t *printer
 );
 
-bool
+static bool
 do_test_osc_msg_bundle(
     us_allocator_t *allocator,
     us_buffer_t *buffer,
     us_print_t *printer
 );
 
-bool
+static bool
 test_unflatten(
     us_allocator_t *allocator,
     us_buffer_t  *buffer,
@@ -62,7 +62,7 @@ test_unflatten(
 
 
 
-bool
+static bool
 test_unflatten(
     us_allocator_t *allocator,
     us_buffer_t  *buffer,
@@ -136,7 +136,7 @@ test_unflatten(
 }
 
 
-bool do_test_osc_msg(
+static bool do_test_osc_msg(
     us_allocator_t *allocator,
     us_buffer_t *buffer,
     us_print_t *printer
@@ -197,7 +197,7 @@ bool do_test_osc_msg(
 }
 
 
-bool do_test_osc_msg_bundle(
+static bool do_test_osc_msg_bundle(
     us_allocator_t *allocator,
     us_buffer_t *buffer,
     us_print_t *printer

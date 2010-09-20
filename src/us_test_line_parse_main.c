@@ -36,9 +36,9 @@
 /** \addtogroup us_test_line_parse */
 /*@{*/
 
-bool us_test_line_parse ( void );
+static bool us_test_line_parse ( void );
 
-bool us_test_line_parse ( void )
+static bool us_test_line_parse ( void )
 {
     bool r = true;
     return r;

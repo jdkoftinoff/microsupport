@@ -38,11 +38,11 @@
 /** \addtogroup us_test_midi */
 /*@{*/
 
-void print_msg ( us_midi_msg_t *m );
-void print_sysex ( us_midi_sysex_t *ex );
-bool us_test_midi_parser ( const uint8_t *input_data, int32_t input_data_len );
+static void print_msg ( us_midi_msg_t *m );
+static void print_sysex ( us_midi_sysex_t *ex );
+static bool us_test_midi_parser ( const uint8_t *input_data, int32_t input_data_len );
 
-uint8_t test_data_1[] =
+static uint8_t test_data_1[] =
 {
     0xf8,
     0x91,
@@ -61,7 +61,7 @@ uint8_t test_data_1[] =
     0xfe
 };
 
-void print_sysex ( us_midi_sysex_t *ex )
+static void print_sysex ( us_midi_sysex_t *ex )
 {
     int i;
     int l = us_midi_sysex_get_length ( ex );
@@ -73,8 +73,9 @@ void print_sysex ( us_midi_sysex_t *ex )
 }
 
 
-void print_msg ( us_midi_msg_t *m )
+static void print_msg ( us_midi_msg_t *m )
 {
+    char buf[129];
     int l = us_midi_msg_get_length ( m );
     us_log_info ( "Msg : " );
     if ( l == 1 )
@@ -89,17 +90,12 @@ void print_msg ( us_midi_msg_t *m )
     {
         us_log_info ( " %02x %02x %02x \t=", us_midi_msg_get_status ( m ), us_midi_msg_get_byte1 ( m ), us_midi_msg_get_byte2 ( m ) );
     }
-    char buf[129];
     us_midi_msg_to_text ( m, buf, sizeof ( buf ) );
     us_log_info ( "%s", buf );
 }
 
 
-
-
-
-
-bool us_test_midi_parser ( const uint8_t *input_data, int32_t input_data_len )
+static bool us_test_midi_parser ( const uint8_t *input_data, int32_t input_data_len )
 {
     bool r = false;
     const uint8_t *input_ptr = input_data;

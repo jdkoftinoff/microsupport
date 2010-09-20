@@ -39,9 +39,9 @@
 /*@{*/
 
 
-bool us_test_json ( void );
+static bool us_test_json ( void );
 
-bool us_test_json ( void )
+static bool us_test_json ( void )
 {
     bool r = false;
     us_log_error ( "Unimplemented" );

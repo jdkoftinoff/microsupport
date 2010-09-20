@@ -36,17 +36,17 @@
 /** \addtogroup us_test_queue */
 /*@{*/
 
-us_queue_t queue;
-uint8_t mem[ 8 ];
+static us_queue_t queue;
+static uint8_t mem[ 8 ];
 
-bool us_validate_queue (
+static bool us_validate_queue (
     us_queue_t *self,
     uint16_t expected_writable_count,
     uint16_t expected_readable_count
 );
-bool us_test_queue ( void );
+static bool us_test_queue ( void );
 
-bool us_validate_queue (
+static bool us_validate_queue (
     us_queue_t *self,
     uint16_t expected_writable_count,
     uint16_t expected_readable_count
@@ -81,7 +81,7 @@ bool us_validate_queue (
     return r;
 }
 
-bool us_test_queue ( void )
+static bool us_test_queue ( void )
 {
     bool r = true;
     uint16_t i;

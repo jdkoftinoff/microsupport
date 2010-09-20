@@ -37,10 +37,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup us_test_buffer */
 /*@{*/
 
-bool us_test_buffer ( void );
+static bool us_test_buffer ( void );
 
 
-bool us_test_buffer ( void )
+static bool us_test_buffer ( void )
 {
     bool r = false;
     us_buffer_t *buf = us_buffer_create ( us_testutil_sys_allocator, 1024 );
