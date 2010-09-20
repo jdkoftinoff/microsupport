@@ -49,6 +49,7 @@
       <itemPath>../../../include/us_test_line_parse_main.h</itemPath>
       <itemPath>../../../include/us_test_midi_main.h</itemPath>
       <itemPath>../../../include/us_test_net_main.h</itemPath>
+      <itemPath>../../../include/us_test_osc_dispatch_main.h</itemPath>
       <itemPath>../../../include/us_test_osc_msg_main.h</itemPath>
       <itemPath>../../../include/us_test_queue_main.h</itemPath>
       <itemPath>../../../include/us_test_slip_main.h</itemPath>
@@ -101,6 +102,7 @@
       <itemPath>../../../src/us_test_line_parse_main.c</itemPath>
       <itemPath>../../../src/us_test_midi_main.c</itemPath>
       <itemPath>../../../src/us_test_net_main.c</itemPath>
+      <itemPath>../../../src/us_test_osc_dispatch_main.c</itemPath>
       <itemPath>../../../src/us_test_osc_msg_main.c</itemPath>
       <itemPath>../../../src/us_test_queue_main.c</itemPath>
       <itemPath>../../../src/us_test_slip_main.c</itemPath>
@@ -145,10 +147,12 @@
           <incDir>
             <pElem>../../../include</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
@@ -161,21 +165,6 @@
             <pElem>../../../include</pElem>
           </incDir>
         </ccTool>
-      </folder>
-      <folder path="TestFiles/f1">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f1</output>
-        </linkerTool>
       </folder>
     </conf>
     <conf name="Release" type="3">
@@ -190,11 +179,13 @@
           <incDir>
             <pElem>../../../include</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
@@ -213,21 +204,6 @@
             <pElem>../../../include</pElem>
           </incDir>
         </ccTool>
-      </folder>
-      <folder path="TestFiles/f1">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f1</output>
-        </linkerTool>
       </folder>
     </conf>
   </confs>
