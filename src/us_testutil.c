@@ -169,7 +169,7 @@ bool us_testutil_start (
 
 void us_testutil_finish ( void )
 {
-#if US_ENABLE_PRINTING
+#if US_ENABLE_PRINTING && !defined(US_ENABLE_STDIO)
     /*
       destroy/delete/deallocate/close any printer if printing is enabled
     */

@@ -511,7 +511,7 @@ bool us_reactor_handler_tcp_writable (
     {
         uint8_t *outgoing = us_queue_contig_read_ptr ( &self->outgoing_queue );
         int outgoing_len = us_queue_contig_readable_count ( &self->outgoing_queue );
-        len = send ( self->base.fd, outgoing, outgoing_len, 0 );
+        len = send ( self->base.fd, (const char *)outgoing, outgoing_len, 0 );
         if ( len > 0 )
         {
             us_queue_skip ( &self->outgoing_queue, len );

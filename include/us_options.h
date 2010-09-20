@@ -142,7 +142,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef US_DEFAULT_SNPRINTF
-# ifdef WIN32
+# ifdef _MSC_VER
 #  define US_DEFAULT_SNPRINTF sprintf_s
 # else
 #  define US_DEFAULT_SNPRINTF snprintf
