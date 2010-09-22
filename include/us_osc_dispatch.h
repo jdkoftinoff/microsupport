@@ -7,12 +7,12 @@ All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
+ * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
+ * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of Meyer Sound Laboratories, Inc. nor the
+ * Neither the name of Meyer Sound Laboratories, Inc. nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
@@ -32,38 +32,119 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_allocator.h"
 #include "us_osc_msg.h"
-
+#include "us_trie.h"
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
     /** \addtogroup us_osc_dispatch OSC Message Dispatcher
-        */
+     */
     /*@{*/
 
     struct us_osc_dispatch_s;
+    struct us_osc_dispatch_index_s;
+    struct us_osc_dispatch_table_s;
+
+#define US_OSC_DISPATCH_INDEX_DIMS (4)
 
     typedef bool (*us_osc_dispatch_proc_t)(
         struct us_osc_dispatch_s *self,
         const us_osc_msg_t *msg,
-        void *extra_ptr,
-        int extra_val
+        const struct us_osc_dispatch_index_s *index,
+        void *extra
     );
 
-    typedef struct us_osc_dispatch_entry_s
+    typedef struct us_osc_dispatch_index_s
     {
-        const char *address_prefix;
+        int axis[US_OSC_DISPATCH_INDEX_DIMS];
+    } us_osc_dispatch_index_t;
+
+    static inline void us_osc_dispatch_index_init(us_osc_dispatch_index_t *self)
+    {
+        int i;
+        for ( i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
+            self->axis[i] = 0;
+    }
+
+    static inline void us_osc_dispatch_index_copy(
+        us_osc_dispatch_index_t *self,
+        const us_osc_dispatch_index_t *src
+    )
+    {
+        int i;
+        for ( i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
+            self->axis[i] = src->axis[i];
+    }
+
+    static inline void us_osc_dispatch_index_add(
+        us_osc_dispatch_index_t *self,
+        const us_osc_dispatch_index_t *src1,
+        const us_osc_dispatch_index_t *src2
+    )
+    {
+        int i;
+        for ( i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
+            self->axis[i] = src1->axis[i] + src2->axis[i];
+    }
+
+    typedef struct us_osc_dispatch_table_s
+    {
+        const char *address;
         us_osc_dispatch_proc_t receive_msg_proc;
-        void *extra_ptr;
-        int extra_val; 
-    } us_osc_dispatch_entry_t;
+        us_osc_dispatch_index_t index;
+    } us_osc_dispatch_table_t;
+
+    typedef struct us_osc_dispatch_map_entry_s
+    {
+        const us_osc_dispatch_table_t *table_entry;
+        us_osc_dispatch_index_t final_index;
+    } us_osc_dispatch_map_entry_t;
+
+    typedef struct us_osc_dispatch_map_s
+    {
+        us_osc_dispatch_map_entry_t *entries;
+        int max_entries;
+        int num_entries;
+    } us_osc_dispatch_map_t;
 
     typedef struct us_osc_dispatch_s
     {
-        void (*destroy)( struct us_osc_dispatch_s *self );
-        void (*receive_msg)( struct us_osc_dispatch_s *self, const us_osc_msg_t *msg );
+        void (*destroy)(struct us_osc_dispatch_s * self);
+        bool (*receive_msg)(struct us_osc_dispatch_s *self, const us_osc_msg_t * msg, void *extra );
+        us_allocator_t *allocator;
+        us_trie_t *trie;
+        us_osc_dispatch_map_t map;
     } us_osc_dispatch_t;
+
+    bool us_osc_dispatch_init(
+        us_osc_dispatch_t *self,
+        us_allocator_t *allocator,
+        us_trie_t *trie,
+        int max_table_entries
+    );
+
+    void us_osc_dispatch_destroy(us_osc_dispatch_t *destroy);
+
+    bool us_osc_dispatch_add_entry(
+        us_osc_dispatch_t *self,
+        const char *address_prefix,
+        const us_osc_dispatch_table_t *dispatch_table,
+        const us_osc_dispatch_index_t *index_offset
+    );
+
+    bool us_osc_dispatch_add_table(
+        us_osc_dispatch_t *self,
+        const char *address_prefix,
+        const us_osc_dispatch_table_t dispatch_table[],
+        const us_osc_dispatch_index_t *index_offset
+    );
+
+    bool us_osc_dispatch_receive_msg(
+        us_osc_dispatch_t *self,
+        const us_osc_msg_t *msg,
+        void *extra
+    );
 
     /*@}*/
 
