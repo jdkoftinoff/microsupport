@@ -129,9 +129,8 @@ extern "C"
 
     typedef struct us_trie_dyn_s
     {
-        void ( *destroy ) ( struct us_trie_dyn_s * );
-
         us_trie_t m_base;
+        void ( *destroy ) ( struct us_trie_dyn_s * );
         us_allocator_t *m_allocator;
         us_trie_node_t *m_nodes;
     } us_trie_dyn_t;
