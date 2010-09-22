@@ -149,6 +149,11 @@
             <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>bool=int</Elem>
+            <Elem>true=1</Elem>
+            <Elem>false=0</Elem>
+          </preprocessorList>
         </cTool>
         <ccTool>
           <incDir>
@@ -181,6 +186,11 @@
             <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>bool=int</Elem>
+            <Elem>true=1</Elem>
+            <Elem>false=0</Elem>
+          </preprocessorList>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
