@@ -54,7 +54,7 @@ extern "C"
      */
     bool
     us_osc_msg_bundle_print(
-        us_osc_msg_bundle_t *self,
+        const us_osc_msg_bundle_t *self,
         us_print_t *printer
     );
 
@@ -67,7 +67,7 @@ extern "C"
      */
     bool
     us_osc_msg_print(
-        us_osc_msg_t *self,
+        const us_osc_msg_t *self,
         us_print_t *printer
     );
 
@@ -81,86 +81,86 @@ extern "C"
      */
     bool
     us_osc_msg_element_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
 
     bool
     us_osc_msg_element_a_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_B_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
 
     bool
     us_osc_msg_element_b_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_d_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_f_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_h_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_i_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
     bool
     us_osc_msg_element_s_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_t_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_T_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_F_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_M_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 
     bool
     us_osc_msg_element_N_print(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_print_t *printer
     );
 

@@ -65,13 +65,13 @@ extern "C"
 
         bool
         (*print)(
-            struct us_osc_msg_s *self,
+            const struct us_osc_msg_s *self,
             us_print_t *printer
         );
 
         bool
         (*flatten)(
-            struct us_osc_msg_s *self,
+            const struct us_osc_msg_s *self,
             us_buffer_t *buf,
             int32_t *length
         );
@@ -109,7 +109,7 @@ extern "C"
 
     bool
     us_osc_msg_flatten(
-        us_osc_msg_t *self,
+        const us_osc_msg_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -139,13 +139,13 @@ extern "C"
 
         bool
         (*print)(
-            struct us_osc_msg_bundle_s *self,
+            const struct us_osc_msg_bundle_s *self,
             us_print_t *printer
         );
 
         bool
         (*flatten)(
-            struct us_osc_msg_bundle_s *self,
+            const struct us_osc_msg_bundle_s *self,
             us_buffer_t *buf,
             int32_t *length
         );
@@ -172,7 +172,7 @@ extern "C"
 
     bool
     us_osc_msg_bundle_flatten(
-        us_osc_msg_bundle_t *self,
+        const us_osc_msg_bundle_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -194,13 +194,13 @@ extern "C"
     {
         bool
         (*print)(
-            struct us_osc_msg_element_s *self,
+            const struct us_osc_msg_element_s *self,
             us_print_t *printer
         );
 
         bool
         (*flatten)(
-            struct us_osc_msg_element_s *self,
+            const struct us_osc_msg_element_s *self,
             us_buffer_t *buf,
             int32_t *length
         );
@@ -232,7 +232,7 @@ extern "C"
      */
     bool
     us_osc_msg_element_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -287,7 +287,7 @@ extern "C"
 
     bool
     us_osc_msg_element_a_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -320,7 +320,7 @@ extern "C"
 
     bool
     us_osc_msg_element_B_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -356,7 +356,7 @@ extern "C"
 
     bool
     us_osc_msg_element_b_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -390,7 +390,7 @@ extern "C"
 
     bool
     us_osc_msg_element_d_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -422,7 +422,7 @@ extern "C"
 
     bool
     us_osc_msg_element_F_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -456,7 +456,7 @@ extern "C"
 
     bool
     us_osc_msg_element_f_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -493,7 +493,7 @@ extern "C"
 
     bool
     us_osc_msg_element_h_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -524,7 +524,7 @@ extern "C"
 
     bool
     us_osc_msg_element_I_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -559,7 +559,7 @@ extern "C"
 
     bool
     us_osc_msg_element_i_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -592,7 +592,7 @@ extern "C"
 
     bool
     us_osc_msg_element_M_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -626,7 +626,7 @@ extern "C"
 
     bool
     us_osc_msg_element_N_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -663,7 +663,7 @@ extern "C"
 
     bool
     us_osc_msg_element_s_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -696,7 +696,7 @@ extern "C"
 
     bool
     us_osc_msg_element_T_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );
@@ -733,7 +733,7 @@ extern "C"
 
     bool
     us_osc_msg_element_t_flatten(
-        us_osc_msg_element_t *self,
+        const us_osc_msg_element_t *self,
         us_buffer_t *buf,
         int32_t *length
     );

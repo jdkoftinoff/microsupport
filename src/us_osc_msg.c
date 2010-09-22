@@ -249,7 +249,7 @@ us_osc_msg_bundle_append(
 
 bool
 us_osc_msg_bundle_flatten(
-    us_osc_msg_bundle_t *self,
+    const us_osc_msg_bundle_t *self,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -498,7 +498,7 @@ us_osc_msg_append(
 
 bool
 us_osc_msg_flatten(
-    us_osc_msg_t *self,
+    const us_osc_msg_t *self,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -551,7 +551,7 @@ us_osc_msg_element_init(
 
 bool
 us_osc_msg_element_flatten(
-    us_osc_msg_element_t *self,
+    const us_osc_msg_element_t *self,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -692,7 +692,7 @@ us_osc_msg_element_s_create(
 
 bool
 us_osc_msg_element_s_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -750,7 +750,7 @@ us_osc_msg_element_f_create(
 
 bool
 us_osc_msg_element_f_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -809,7 +809,7 @@ us_osc_msg_element_d_create(
 
 bool
 us_osc_msg_element_d_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -867,7 +867,7 @@ us_osc_msg_element_i_create(
 
 bool
 us_osc_msg_element_i_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -940,7 +940,7 @@ us_osc_msg_element_b_create(
 
 bool
 us_osc_msg_element_b_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -999,7 +999,7 @@ us_osc_msg_element_t_create(
 
 bool
 us_osc_msg_element_t_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -1058,7 +1058,7 @@ us_osc_msg_element_a_create(
 
 bool
 us_osc_msg_element_a_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -1117,7 +1117,7 @@ us_osc_msg_element_h_create(
 
 bool
 us_osc_msg_element_h_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -1174,7 +1174,7 @@ us_osc_msg_element_T_create(
 
 bool
 us_osc_msg_element_T_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -1222,7 +1222,7 @@ us_osc_msg_element_F_create(
 
 bool
 us_osc_msg_element_F_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -1271,7 +1271,7 @@ us_osc_msg_element_N_create(
 
 bool
 us_osc_msg_element_N_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
@@ -1322,7 +1322,7 @@ us_osc_msg_element_I_create(
 
 bool
 us_osc_msg_element_I_flatten(
-    us_osc_msg_element_t *self_,
+    const us_osc_msg_element_t *self_,
     us_buffer_t *buf,
     int32_t *total_length
 )
