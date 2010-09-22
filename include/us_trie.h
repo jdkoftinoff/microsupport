@@ -45,9 +45,14 @@ extern "C"
     typedef uint16_t us_trie_node_flags_t;
     typedef int16_t us_trie_node_id_t;
     typedef bool ( *us_trie_ignorer_proc ) ( us_trie_node_value_t );
+    typedef int ( *us_trie_db_skip_proc ) ( us_trie_node_value_t );
     typedef int ( *us_trie_comparator_proc ) ( us_trie_node_value_t, us_trie_node_value_t );
 
     bool us_trie_basic_ignorer (
+        us_trie_node_value_t v
+    );
+
+    int us_trie_basic_db_skip (
         us_trie_node_value_t v
     );
 
@@ -122,7 +127,9 @@ extern "C"
         us_trie_node_id_t m_num_nodes;
         us_trie_node_t *m_nodes;
         us_trie_node_id_t m_first_free;
-        us_trie_ignorer_proc m_ignorer;
+        us_trie_ignorer_proc m_query_ignorer;
+        us_trie_ignorer_proc m_db_ignorer;
+        us_trie_db_skip_proc m_db_skip;
         us_trie_comparator_proc m_comparator;
     } us_trie_t;
 
@@ -139,8 +146,10 @@ extern "C"
     us_trie_dyn_create (
         us_allocator_t *allocator,
         uint16_t max_nodes,
-        us_trie_ignorer_proc m_ignorer,
-        us_trie_comparator_proc m_comparator
+        us_trie_ignorer_proc query_ignorer,
+        us_trie_ignorer_proc db_ignorer,
+        us_trie_db_skip_proc db_skip,
+        us_trie_comparator_proc comparator
     );
 
     void
@@ -166,7 +175,9 @@ extern "C"
         uint16_t max_nodes,
         uint16_t num_nodes,
         us_trie_node_t *nodes,
-        us_trie_ignorer_proc ignorer,
+        us_trie_ignorer_proc query_ignorer,
+        us_trie_ignorer_proc db_ignorer,
+        us_trie_db_skip_proc db_skip,
         us_trie_comparator_proc comparator
     );
 

@@ -29,16 +29,60 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+int us_osc_dispatch_trie_star_comparator (
+    us_trie_node_value_t a,
+    us_trie_node_value_t b
+)
+{
+    if ( a==(us_trie_node_value_t)('*')
+            || b==(us_trie_node_value_t)('*') )
+    {
+        return 0;
+    }
+    else if ( a==(us_trie_node_value_t)('?') )
+    {
+        return 0;
+    }
+    else
+    {
+        return ( int ) ( a - b );
+    }
+}
+
+int us_osc_dispatch_trie_star_skip (
+    us_trie_node_value_t a
+)
+{
+    int r;
+    if ( a==(us_trie_node_value_t)('*') )
+    {
+        r=-1;
+    }
+    else
+    {
+        r=0;
+    }
+    return r;
+}
+
 bool us_osc_dispatch_init(
     us_osc_dispatch_t *self,
     us_allocator_t *allocator,
-    us_trie_t *trie,
-    int max_table_entries
+    int max_table_entries,
+    int max_trie_elements
 )
 {
-    bool r;
+    bool r = false;
     self->allocator = allocator;
-    self->trie = trie;
+    self->trie = us_trie_dyn_create(
+                     allocator,
+                     max_trie_elements,
+                     us_trie_basic_ignorer,
+                     us_trie_basic_ignorer,
+                     us_osc_dispatch_trie_star_skip,
+                     us_osc_dispatch_trie_star_comparator
+                 );
     self->destroy = us_osc_dispatch_destroy;
     self->receive_msg = us_osc_dispatch_receive_msg;
     self->map.entries = us_new_array(allocator, us_osc_dispatch_map_entry_t, max_table_entries);
@@ -51,9 +95,15 @@ bool us_osc_dispatch_init(
     return r;
 }
 
-void us_osc_dispatch_destroy(us_osc_dispatch_t *destroy)
+void us_osc_dispatch_destroy(us_osc_dispatch_t *self)
 {
-    /* default do nothing */
+    if ( self->allocator )
+    {
+        if ( self->trie )
+        {
+            self->trie->destroy( self->trie );
+        }
+    }
 }
 
 bool us_osc_dispatch_add_entry(
@@ -69,18 +119,18 @@ bool us_osc_dispatch_add_entry(
         char resultant_address[256];
         int item = self->map.num_entries++;
         us_osc_dispatch_map_entry_t *entry = &self->map.entries[ item ];
-        r=true;
+        r = true;
         entry->table_entry = dispatch_table;
         us_osc_dispatch_index_add(&entry->final_index, index_offset, &dispatch_table->index);
         strcpy(resultant_address, address_prefix);
         strcat(resultant_address, dispatch_table->address);
         us_trie_add(
-            self->trie,
+            &self->trie->m_base,
             (us_trie_node_value_t *) resultant_address,
             strlen(resultant_address),
             (us_trie_node_flags_t) item
         );
-        if (self->trie->m_num_nodes >= self->trie->m_max_nodes)
+        if (self->trie->m_base.m_num_nodes >= self->trie->m_base.m_max_nodes)
         {
             r = false;
         }
@@ -118,7 +168,7 @@ bool us_osc_dispatch_receive_msg(
     int16_t match_len;
     us_trie_node_id_t match_item;
     if (us_trie_find(
-                self->trie,
+                &self->trie->m_base,
                 (us_trie_node_value_t *) msg->m_address,
                 strlen(msg->m_address),
                 &flags,

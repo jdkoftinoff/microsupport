@@ -32,7 +32,9 @@ us_trie_dyn_t *
 us_trie_dyn_create (
     us_allocator_t *allocator,
     uint16_t max_nodes,
-    us_trie_ignorer_proc ignorer,
+    us_trie_ignorer_proc query_ignorer,
+    us_trie_ignorer_proc db_ignorer,
+    us_trie_db_skip_proc db_skip,
     us_trie_comparator_proc comparator
 )
 {
@@ -55,7 +57,9 @@ us_trie_dyn_create (
                 max_nodes,
                 0,
                 self->m_nodes,
-                ignorer,
+                query_ignorer,
+                db_ignorer,
+                db_skip,
                 comparator
             );
             r = self;
@@ -211,7 +215,7 @@ us_trie_add (
     /* is there a top family? */
     us_trie_node_id_t list_pos = 0;
     /* skip any initial items that are needed to ignore */
-    while ( list_pos < list_len && self->m_ignorer ( list[list_pos] ) )
+    while ( list_pos < list_len && self->m_query_ignorer ( list[list_pos] ) )
         ++list_pos;
     if ( us_trie_node_is_free ( &self->m_nodes[0] ) )
     {
@@ -220,7 +224,7 @@ us_trie_add (
         while ( list_pos < list_len )
         {
             /* add only the items that are not to be ignored */
-            if ( !self->m_ignorer ( list[list_pos] ) )
+            if ( !self->m_db_ignorer ( list[list_pos] ) )
             {
                 i = us_trie_add_child ( self, i, list[list_pos], flags );
             }
@@ -238,7 +242,7 @@ us_trie_add (
         while ( 1 )
         {
             /*  skip any items that are needed to ignore */
-            while ( list_pos < list_len && self->m_ignorer ( list[list_pos] ) )
+            while ( list_pos < list_len && self->m_query_ignorer ( list[list_pos] ) )
                 ++list_pos;
             if ( list_pos == list_len )
             {
@@ -256,7 +260,7 @@ us_trie_add (
                     /* no child, so add the rest of the children here */
                     while ( list_pos < list_len )
                     {
-                        if ( !self->m_ignorer ( list[list_pos] ) )
+                        if ( !self->m_query_ignorer ( list[list_pos] ) )
                             i = us_trie_add_child ( self, i, list[list_pos], flags );
                         list_pos++;
                     }
@@ -277,7 +281,7 @@ us_trie_add (
                 i = us_trie_add_sibling ( self, i, list[list_pos++], flags );
                 while ( list_pos < list_len )
                 {
-                    if ( !self->m_ignorer ( list[list_pos] ) )
+                    if ( !self->m_query_ignorer ( list[list_pos] ) )
                         i = us_trie_add_child ( self, i, list[list_pos], flags );
                     list_pos++;
                 }

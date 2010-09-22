@@ -48,6 +48,16 @@ extern "C"
 
 #define US_OSC_DISPATCH_INDEX_DIMS (4)
 
+
+    int us_osc_dispatch_trie_star_comparator(
+        us_trie_node_value_t a,
+        us_trie_node_value_t b
+    );
+
+    int us_osc_dispatch_trie_star_skip (
+        us_trie_node_value_t a
+    );
+
     typedef bool (*us_osc_dispatch_proc_t)(
         struct us_osc_dispatch_s *self,
         const us_osc_msg_t *msg,
@@ -63,7 +73,7 @@ extern "C"
     static inline void us_osc_dispatch_index_init(us_osc_dispatch_index_t *self)
     {
         int i;
-        for ( i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
+        for (i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
             self->axis[i] = 0;
     }
 
@@ -73,7 +83,7 @@ extern "C"
     )
     {
         int i;
-        for ( i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
+        for (i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
             self->axis[i] = src->axis[i];
     }
 
@@ -84,7 +94,7 @@ extern "C"
     )
     {
         int i;
-        for ( i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
+        for (i = 0; i < US_OSC_DISPATCH_INDEX_DIMS; ++i)
             self->axis[i] = src1->axis[i] + src2->axis[i];
     }
 
@@ -111,17 +121,21 @@ extern "C"
     typedef struct us_osc_dispatch_s
     {
         void (*destroy)(struct us_osc_dispatch_s * self);
-        bool (*receive_msg)(struct us_osc_dispatch_s *self, const us_osc_msg_t * msg, void *extra );
+        bool (*receive_msg)(
+            struct us_osc_dispatch_s *self,
+            const us_osc_msg_t * msg,
+            void *extra
+        );
         us_allocator_t *allocator;
-        us_trie_t *trie;
+        us_trie_dyn_t *trie;
         us_osc_dispatch_map_t map;
     } us_osc_dispatch_t;
 
     bool us_osc_dispatch_init(
         us_osc_dispatch_t *self,
         us_allocator_t *allocator,
-        us_trie_t *trie,
-        int max_table_entries
+        int max_table_entries,
+        int max_trie_elements
     );
 
     void us_osc_dispatch_destroy(us_osc_dispatch_t *destroy);

@@ -85,6 +85,8 @@ us_trie_dyn_t *us_tool_read_trie (
                us_testutil_sys_allocator,
                max_nodes,
                us_trie_basic_ignorer,
+               us_trie_basic_ignorer,
+               us_trie_basic_db_skip,
                us_trie_basic_comparator
            );
     if ( trie )

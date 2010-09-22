@@ -50,6 +50,8 @@ static bool us_test_trie_1 ( void )
                us_testutil_sys_allocator,
                128,
                us_trie_basic_ignorer,
+               us_trie_basic_ignorer,
+               us_trie_basic_ignorer,
                us_trie_basic_comparator
            );
     if ( trie )
@@ -257,6 +259,8 @@ static bool us_test_trie_2 ( void )
     trie = us_trie_dyn_create (
                us_testutil_sys_allocator,
                128,
+               us_trie_basic_ignorer,
+               us_trie_basic_ignorer,
                us_trie_basic_ignorer,
                us_trie_basic_comparator
            );

@@ -34,14 +34,18 @@ us_trie_init (
     uint16_t max_nodes,
     uint16_t num_nodes,
     us_trie_node_t *nodes,
-    us_trie_ignorer_proc ignorer,
+    us_trie_ignorer_proc query_ignorer,
+    us_trie_ignorer_proc db_ignorer,
+    us_trie_db_skip_proc db_skip,
     us_trie_comparator_proc comparator
 )
 {
     self->m_max_nodes = max_nodes;
     self->m_num_nodes = num_nodes;
     self->m_nodes = nodes;
-    self->m_ignorer = ignorer;
+    self->m_query_ignorer = query_ignorer;
+    self->m_db_ignorer = db_ignorer;
+    self->m_db_skip = db_skip;
     self->m_comparator = comparator;
     self->m_first_free = 0;
     return self;
@@ -52,6 +56,13 @@ bool us_trie_basic_ignorer (
 )
 {
     return false;
+}
+
+int us_trie_basic_db_skip (
+    us_trie_node_value_t v
+)
+{
+    return 1;
 }
 
 int us_trie_basic_comparator (
@@ -137,7 +148,7 @@ us_trie_find (
     us_trie_node_id_t i = initial_leaf_pos;
     us_trie_node_id_t list_pos = initial_list_pos;
     /* skip any initial items that are needed to ignore */
-    while ( list_pos < list_len && self->m_ignorer ( list[list_pos] ) )
+    while ( list_pos < list_len && self->m_query_ignorer ( list[list_pos] ) )
         ++list_pos;
     while ( list_pos < list_len && !us_trie_node_is_free ( &buf[i] ) )
     {
@@ -150,6 +161,9 @@ us_trie_find (
         if ( buf[i].m_child )
         {
             us_trie_node_id_t j;
+            /* if the child triggers our skip proc to return -1, then we have a match */
+            if ( self->m_db_skip( buf[i].m_value )==-1 )
+                return true;
             /* follow the child. */
             i = buf[i].m_child;
             /* if any of the children are an end point, then we have a match */
@@ -202,7 +216,7 @@ us_trie_find (
             return true;
         }
         /* move to the next non ignored item in the list */
-        while ( list_pos < list_len && self->m_ignorer ( list[++list_pos] ) )
+        while ( list_pos < list_len && self->m_query_ignorer ( list[++list_pos] ) )
             ;
     }
     /* no match */
