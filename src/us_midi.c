@@ -197,7 +197,7 @@ const char * us_midi_msg_to_text ( const us_midi_msg_t *self, char *txt, int max
             *p++ = ' ';
             ++l;
         }
-        *p++ = '\0';
+        *p = '\0';
     }
     return txt;
 }

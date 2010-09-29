@@ -168,6 +168,10 @@ int us_net_create_multicast_rx_udp_socket (
             {
                 ( ( struct sockaddr_in6 * ) listenaddr->ai_addr )->sin6_port = ( ( struct sockaddr_in6 * ) multicastgroup->ai_addr )->sin6_port;
             }
+            else
+            {
+                return -1;
+            }
         }
         else
         {
@@ -175,6 +179,10 @@ int us_net_create_multicast_rx_udp_socket (
             if ( listenaddr )
             {
                 ( ( struct sockaddr_in * ) listenaddr->ai_addr )->sin_port = ( ( struct sockaddr_in * ) multicastgroup->ai_addr )->sin_port;
+            }
+            else
+            {
+                return -1;
             }
         }
     }
@@ -196,7 +204,6 @@ int us_net_create_multicast_rx_udp_socket (
     else
     {
         closesocket ( s );
-        s = -1;
         perror ( "bind: " );
         abort();
     }
@@ -215,7 +222,6 @@ int us_net_create_multicast_rx_udp_socket (
         {
             perror ( "setsockopt IPV6_JOIN_GROUP:" );
             closesocket ( s );
-            s = -1;
             abort();
         }
     }
@@ -239,7 +245,6 @@ int us_net_create_multicast_rx_udp_socket (
             {
                 perror ( "setsockopt IP_ADD_MEMBERSHIP:" );
                 closesocket ( s );
-                s = -1;
                 abort();
             }
         }
@@ -258,6 +263,7 @@ int us_net_create_multicast_tx_udp_socket (
     int if_index = 0;
     if ( interface_name && *interface_name != '\0' )
         if_index = if_nametoindex ( interface_name );
+    /* TODO: use if_index to bind socket to transmit only on interface */
     if ( !localaddr )
     {
         if ( multicastgroup->ai_family == PF_INET6 )
@@ -285,7 +291,6 @@ int us_net_create_multicast_tx_udp_socket (
         {
             perror ( "setsockopt IP_MULTICAST_IF" );
             closesocket ( s );
-            s = -1;
             abort();
         }
     }

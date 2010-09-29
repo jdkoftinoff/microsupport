@@ -294,7 +294,7 @@ us_osc_msg_bundle_flatten(
             *last_msg_size_ptr++ = US_GET_BYTE_3(msg_size);
             *last_msg_size_ptr++ = US_GET_BYTE_2(msg_size);
             *last_msg_size_ptr++ = US_GET_BYTE_1(msg_size);
-            *last_msg_size_ptr++ = US_GET_BYTE_0(msg_size);
+            *last_msg_size_ptr = US_GET_BYTE_0(msg_size);
             /* go to the next msg in list */
             cur = cur->m_next;
         }

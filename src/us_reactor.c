@@ -407,8 +407,8 @@ bool us_reactor_handler_tcp_init (
 {
     bool r = false;
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-    uint8_t *in_buf;
-    uint8_t *out_buf;
+    uint8_t *in_buf = NULL;
+    uint8_t *out_buf = NULL;
     if ( us_reactor_handler_init ( self_, fd, extra ) )
     {
         self->base.destroy = us_reactor_handler_tcp_destroy;

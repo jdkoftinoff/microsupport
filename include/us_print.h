@@ -140,6 +140,9 @@ extern "C"
         va_list ap
     );
 
+    extern us_print_t *us_stdout;
+    extern us_print_t *us_stderr;
+
 #endif
 
 

@@ -137,7 +137,10 @@ us_http_header_item_list_remove (
     {
         if ( i == item )
         {
-            prev->m_next = i->m_next;
+            if( prev )
+            {
+                prev->m_next = i->m_next;
+            }
             us_delete ( self->m_allocator, i->m_key );
             us_delete ( self->m_allocator, i->m_value );
             us_delete ( self->m_allocator, i );
@@ -740,7 +743,7 @@ us_http_header_item_list_parse (
             p = us_buffer_read_ptr ( buf );
             if ( *p == '\n' )
             {
-                p = us_buffer_read_ptr ( buf );
+                us_buffer_read_ptr ( buf );
                 us_buffer_advance ( buf, 1 );
             }
             done = true;
