@@ -75,16 +75,24 @@ bool us_reactor_init ( us_reactor_t *self, int max_handlers )
     self->destroy = us_reactor_destroy;
     self->handlers = 0;
     self->max_handlers = max_handlers;
+#if defined(US_REACTOR_USE_POLL)            
     self->poll_handlers = calloc ( sizeof ( struct pollfd ), max_handlers );
+#elif defined(US_REACTOR_USE_SELECT)
+    FD_ZERO( &self->read_fds );
+    FD_ZERO( &self->write_fds );
+#endif
+
     self->timeout = 0;
     self->add_item = us_reactor_add_item;
     self->remove_item = us_reactor_remove_item;
     self->poll = us_reactor_poll;
     self->num_handlers = 0;
+#if defined(US_REACTOR_USE_POLL)                
     if ( !self->poll_handlers )
     {
         return false;
     }
+#endif
     return true;
 }
 
@@ -94,10 +102,14 @@ void us_reactor_destroy ( us_reactor_t *self )
     {
         self->remove_item ( self, self->handlers );
     }
+#if defined(US_REACTOR_USE_POLL)                
     free ( self->poll_handlers );
     self->poll_handlers = 0;
+#endif
 }
 
+
+#if defined(US_REACTOR_USE_POLL )
 bool us_reactor_poll ( us_reactor_t *self, int timeout )
 {
     bool r = false;
@@ -178,6 +190,96 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
     }
     return r;
 }
+#elif defined(US_REACTOR_USE_SELECT)
+bool us_reactor_poll ( us_reactor_t *self, int timeout )
+{
+    bool r = false;
+    if ( self->num_handlers > 0 )
+    {
+        us_reactor_handler_t **item;
+        /* garbage collect handlers that are closed */
+        item = &self->handlers;
+        while ( *item )
+        {
+            if ( ( *item )->tick )
+            {
+                ( *item )->tick ( *item );
+            }
+            if ( ( *item )->fd == -1 )
+            {
+                us_reactor_handler_t *next = ( *item )->next;
+                ( *item )->destroy ( *item );
+                free ( *item );
+                self->num_handlers--;
+                *item = next;
+            }
+            else
+            {
+                item = & ( *item )->next;
+            }
+        }
+    }
+    if ( self->num_handlers > 0 )
+    {
+        us_reactor_handler_t *item;
+        int max_fd=0;
+        item = self->handlers;
+        int n=0;
+        struct timeval tv_timeout;
+        
+        tv_timeout.tv_usec = (timeout*1000)%1000;
+        tv_timeout.tv_sec = (timeout/1000);        
+        
+        FD_ZERO( &self->read_fds );
+        FD_ZERO( &self->write_fds );
+        while ( item )
+        {
+            if ( item->wake_on_readable && item->readable != 0 )
+            {
+                FD_SET( item->fd, &self->read_fds );
+                if( item->fd > max_fd )
+                    max_fd = item->fd;
+            }
+            if ( item->wake_on_writable && item->writable != 0 )
+            {
+                FD_SET( item->fd, &self->write_fds );
+                if( item->fd > max_fd )
+                    max_fd = item->fd;
+            }
+            item = item->next;
+        }
+        
+        n = select(max_fd+1, &self->read_fds, &self->write_fds, 0, &tv_timeout );
+
+        if ( n < 0 )
+        {
+            /* error doing select, stop loop */
+            r = false;
+        }
+        if ( n > 0 )
+        {
+            /* some handlers to be handled */
+            us_reactor_handler_t *item = self->handlers;
+            while ( item )
+            {
+                if ( item->wake_on_readable && FD_ISSET( item->fd, &self->read_fds ) && item->readable )
+                    item->readable ( item );
+                if ( item->wake_on_writable && FD_ISSET( item->fd, &self->write_fds ) && item->writable )
+                    item->writable ( item );
+                item = item->next;
+            }
+            r = true;
+        }
+        if ( n == 0 )
+        {
+            /* there are handlers, nothing to do, timeout occurred */
+            r = true;
+        }
+    }
+    return r;
+}
+#endif
+
 
 bool us_reactor_add_item (
     us_reactor_t *self,

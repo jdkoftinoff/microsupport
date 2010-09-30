@@ -21,6 +21,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "us_world.h"
 #include "us_queue.h"
 
+#if !defined(US_REACTOR_USE_POLL) && !defined(US_REACTOR_USE_SELECT)
+# define US_REACTOR_USE_SELECT
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -90,7 +94,15 @@ extern "C"
         int timeout;
         int max_handlers;
         int num_handlers;
+#if defined(US_REACTOR_USE_POLL)        
         struct pollfd *poll_handlers;
+#elif defined(US_REACTOR_USE_SELECT)
+        struct fd_set read_fds;
+        struct fd_set write_fds;
+#else
+# error us_reactor needs implementation
+#endif
+
         bool ( *poll ) ( struct us_reactor_s *self, int timeout );
         bool ( *add_item ) ( struct us_reactor_s *self, us_reactor_handler_t *item );
         bool ( *remove_item ) ( struct us_reactor_s *self, us_reactor_handler_t *item );
