@@ -127,6 +127,7 @@ typedef unsigned char uint8_t;
 # include <fcntl.h>
 # include <sys/types.h>
 # include <sys/socket.h>
+# include <sys/select.h>
 # include <unistd.h>
 # include <pthread.h>
 # include <signal.h>
