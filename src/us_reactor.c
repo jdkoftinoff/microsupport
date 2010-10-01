@@ -30,6 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_reactor.h"
 
+/* #define US_REACTOR_TCP_TRACE */
+
 bool us_reactor_handler_init (
     us_reactor_handler_t *self,
     int fd,
@@ -75,7 +77,7 @@ bool us_reactor_init ( us_reactor_t *self, int max_handlers )
     self->destroy = us_reactor_destroy;
     self->handlers = 0;
     self->max_handlers = max_handlers;
-#if defined(US_REACTOR_USE_POLL)            
+#if defined(US_REACTOR_USE_POLL)
     self->poll_handlers = calloc ( sizeof ( struct pollfd ), max_handlers );
 #elif defined(US_REACTOR_USE_SELECT)
     FD_ZERO( &self->read_fds );
@@ -87,7 +89,7 @@ bool us_reactor_init ( us_reactor_t *self, int max_handlers )
     self->remove_item = us_reactor_remove_item;
     self->poll = us_reactor_poll;
     self->num_handlers = 0;
-#if defined(US_REACTOR_USE_POLL)                
+#if defined(US_REACTOR_USE_POLL)
     if ( !self->poll_handlers )
     {
         return false;
@@ -102,7 +104,7 @@ void us_reactor_destroy ( us_reactor_t *self )
     {
         self->remove_item ( self, self->handlers );
     }
-#if defined(US_REACTOR_USE_POLL)                
+#if defined(US_REACTOR_USE_POLL)
     free ( self->poll_handlers );
     self->poll_handlers = 0;
 #endif
@@ -226,10 +228,10 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         item = self->handlers;
         int n=0;
         struct timeval tv_timeout;
-        
+
         tv_timeout.tv_usec = (timeout*1000)%1000;
-        tv_timeout.tv_sec = (timeout/1000);        
-        
+        tv_timeout.tv_sec = (timeout/1000);
+
         FD_ZERO( &self->read_fds );
         FD_ZERO( &self->write_fds );
         while ( item )
@@ -248,7 +250,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             }
             item = item->next;
         }
-        
+
         n = select(max_fd+1, &self->read_fds, &self->write_fds, 0, &tv_timeout );
 
         if ( n < 0 )
@@ -327,6 +329,42 @@ bool us_reactor_remove_item (
     free ( item );
     return r;
 }
+
+bool us_reactor_create_tcp_client (
+    us_reactor_t *self,
+    const char *server_host,
+    const char *server_port,
+    void *extra,
+    us_reactor_handler_create_proc_t client_handler_create,
+    us_reactor_handler_init_proc_t client_handler_init
+)
+{
+    bool r=false;
+    us_reactor_handler_t *handler = client_handler_create();
+
+    if( handler )
+    {
+        int fd = us_reactor_tcp_blocking_connect(server_host, server_port);
+        if( fd!=-1 )
+        {
+            r=client_handler_init( handler, fd, extra );
+
+            if( r )
+            {
+                r=self->add_item( self, handler );
+            }
+
+            if( !r )
+            {
+                closesocket(fd);
+                fd=-1;
+                handler->destroy( handler );
+            }
+        }
+    }
+    return r;
+}
+
 
 
 bool us_reactor_create_server (
@@ -522,6 +560,7 @@ bool us_reactor_handler_tcp_init (
         in_buf = ( uint8_t * ) calloc ( queue_buf_size, 1 );
         out_buf = ( uint8_t * ) calloc ( queue_buf_size, 1 );
         self->xfer_buf = ( char * ) calloc ( xfer_buf_size, 1 );
+        self->close = us_reactor_handler_tcp_close;
         self->connected = 0;
         self->readable = 0;
         self->tick = 0;
@@ -545,6 +584,7 @@ void us_reactor_handler_tcp_destroy (
 )
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
+    self->close( self );
     free ( self->incoming_queue.m_buf );
     free ( self->outgoing_queue.m_buf );
     free ( self->xfer_buf );
@@ -587,7 +627,19 @@ bool us_reactor_handler_tcp_readable (
     len = recv ( self->base.fd, self->xfer_buf, self->xfer_buf_size, 0 );
     if ( len > 0 )
     {
+#ifdef US_REACTOR_TCP_TRACE
+        {
+            int i;
+            fprintf( stderr, "READ TCP DATA (len %d): ", len );
+            for( i=0; i<len; i++ )
+            {
+                fprintf( stderr, "%02x ", self->xfer_buf[i] );
+            }
+            fprintf( stderr, "\n\n" );
+        }
+#endif
         us_queue_write ( &self->incoming_queue, ( uint8_t* ) self->xfer_buf, len );
+        self->base.wake_on_readable = true;
         if ( self->readable )
         {
             self->readable ( self );
@@ -595,10 +647,25 @@ bool us_reactor_handler_tcp_readable (
     }
     else
     {
-        closesocket ( self->base.fd );
-        self->base.fd = -1;
+        self->close( self );
     }
     return true;
+}
+
+void us_reactor_handler_tcp_close(
+    us_reactor_handler_tcp_t *self_
+    )
+{
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
+    if( self->base.fd != -1 )
+    {
+        closesocket ( self->base.fd );
+        self->base.fd = -1;
+        if( self->closed )
+        {
+            self->closed( self );
+        }
+    }
 }
 
 bool us_reactor_handler_tcp_writable (
@@ -613,19 +680,80 @@ bool us_reactor_handler_tcp_writable (
     {
         uint8_t *outgoing = us_queue_contig_read_ptr ( &self->outgoing_queue );
         int outgoing_len = us_queue_contig_readable_count ( &self->outgoing_queue );
+#ifdef US_REACTOR_TCP_TRACE
+        {
+            int i;
+            fprintf( stderr, "WRITE TCP DATA (len=%d): ", outgoing_len );
+            for( i=0; i<len; i++ )
+            {
+                fprintf( stderr, "%02x ", outgoing[i] );
+            }
+            fprintf( stderr, "\n\n" );
+        }
+#endif
+
         len = send ( self->base.fd, (const char *)outgoing, outgoing_len, 0 );
         if ( len > 0 )
         {
+#ifdef US_REACTOR_TCP_TRACE
+            fprintf( stderr, "WROTE (len=%d): ", len );
+#endif
             us_queue_skip ( &self->outgoing_queue, len );
             r = true;
         }
     }
     if ( r == false )
     {
-        closesocket ( self->base.fd );
-        self->base.fd = -1;
+        self->close( self );
     }
     return r;
+}
+
+int us_reactor_tcp_blocking_connect (
+    const char *server_host,
+    const char *server_port
+)
+{
+    int fd=-1;
+    int e;
+    struct addrinfo *ai;
+    struct addrinfo hints;
+    memset ( &hints, '\0', sizeof ( hints ) );
+#if defined(AI_ADDRCONFIG)
+    hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;
+#else
+    hints.ai_flags = AI_PASSIVE;
+#endif
+    hints.ai_socktype = SOCK_STREAM;
+    e = getaddrinfo ( server_host, server_port, &hints, &ai );
+    if ( e == 0 )
+    {
+        struct addrinfo *cur_addr = ai;
+        while ( cur_addr != NULL )
+        {
+            fd = socket ( cur_addr->ai_family, cur_addr->ai_socktype, cur_addr->ai_protocol );
+            if ( fd == -1 )
+            {
+                fprintf ( stderr, "socket: %s\n", strerror ( errno ) );
+                break;
+            }
+
+            e = connect( fd, cur_addr->ai_addr, cur_addr->ai_addrlen );
+
+            if( e==0 )
+            {
+                break;
+            }
+
+            cur_addr = cur_addr->ai_next;
+        }
+        freeaddrinfo ( ai );
+    }
+    else
+    {
+        fprintf ( stderr, "getaddrinfo: %s", strerror ( e ) );
+    }
+    return fd;
 }
 
 

@@ -139,58 +139,27 @@ extern "C"
         us_reactor_handler_create_proc_t server_handler_create,
         us_reactor_handler_init_proc_t server_handler_init
     );
-    /*@}*/
-
-    /** \addtogroup reactor_handler_tcp_client reactor_handler_tcp_client
-    */
-    /*@{*/
-
-    typedef struct us_reactor_handler_tcp_connector_s
-    {
-        us_reactor_handler_t base;
-        us_reactor_handler_create_proc_t client_handler_create;
-        us_reactor_handler_init_proc_t client_handler_init;
-        struct addrinfo *addresses_to_try_connect_to;
-        struct addrinfo *cur_address;
-        int ms_per_try;
-        struct timeval last_try_time;
-    } us_reactor_handler_tcp_connector_t;
-
+    
     /**
     */
-    us_reactor_handler_t *us_reactor_handler_tcp_connector_create ( void );
+    int us_reactor_tcp_blocking_connect (
+        const char *connect_host,
+        const char *connect_port
+    );
 
-    /**
-    */
-    bool us_reactor_handler_tcp_connector_init (
-        us_reactor_handler_t *self,
-        int fd,
-        void *client_extra,
+
+    bool us_reactor_create_tcp_client (
+        us_reactor_t *self,
+        const char *server_host,
+        const char *server_port,
+        void *extra,
         us_reactor_handler_create_proc_t client_handler_create,
-        us_reactor_handler_init_proc_t client_handler_init,
-        struct addrinfo *connect_address,
-        int ms_per_try
+        us_reactor_handler_init_proc_t client_handler_init
     );
-
-    /**
-    */
-    void us_reactor_handler_tcp_connector_destroy (
-        us_reactor_handler_t *self
-    );
-
-    /**
-    */
-    bool us_reactor_handler_tcp_connector_tick (
-        us_reactor_handler_t *self
-    );
-
-    /**
-    */
-    bool us_reactor_handler_tcp_connector_writable (
-        us_reactor_handler_t *self
-    );
-
+    
     /*@}*/
+
+
 
     /** \addtogroup reactor_handler_tcp_server reactor_handler_tcp_server
     */
@@ -236,6 +205,10 @@ extern "C"
         us_queue_t outgoing_queue;
         us_queue_t incoming_queue;
 
+        void ( *close ) (
+            struct us_reactor_handler_tcp_s *self
+        );
+        
         bool ( *connected ) (
             struct us_reactor_handler_tcp_s *self,
             struct sockaddr *addr,
@@ -245,6 +218,9 @@ extern "C"
             struct us_reactor_handler_tcp_s *self
         );
         bool ( *readable ) (
+            struct us_reactor_handler_tcp_s *self
+        );
+        void ( *closed ) (
             struct us_reactor_handler_tcp_s *self
         );
     } us_reactor_handler_tcp_t;
@@ -263,7 +239,7 @@ extern "C"
     void us_reactor_handler_tcp_destroy (
         us_reactor_handler_t *self
     );
-
+    
     bool us_reactor_handler_tcp_tick (
         us_reactor_handler_t *self
     );
@@ -275,6 +251,11 @@ extern "C"
     bool us_reactor_handler_tcp_writable (
         us_reactor_handler_t *self
     );
+
+    void us_reactor_handler_tcp_close (
+        us_reactor_handler_tcp_t *self
+    );
+
 
     /*@}*/
 
