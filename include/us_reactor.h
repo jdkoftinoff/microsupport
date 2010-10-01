@@ -94,11 +94,11 @@ extern "C"
         int timeout;
         int max_handlers;
         int num_handlers;
-#if defined(US_REACTOR_USE_POLL)        
+#if defined(US_REACTOR_USE_POLL)
         struct pollfd *poll_handlers;
 #elif defined(US_REACTOR_USE_SELECT)
-        struct fd_set read_fds;
-        struct fd_set write_fds;
+        fd_set read_fds;
+        fd_set write_fds;
 #else
 # error us_reactor needs implementation
 #endif
@@ -139,7 +139,7 @@ extern "C"
         us_reactor_handler_create_proc_t server_handler_create,
         us_reactor_handler_init_proc_t server_handler_init
     );
-    
+
     /**
     */
     int us_reactor_tcp_blocking_connect (
@@ -156,7 +156,7 @@ extern "C"
         us_reactor_handler_create_proc_t client_handler_create,
         us_reactor_handler_init_proc_t client_handler_init
     );
-    
+
     /*@}*/
 
 
@@ -208,7 +208,7 @@ extern "C"
         void ( *close ) (
             struct us_reactor_handler_tcp_s *self
         );
-        
+
         bool ( *connected ) (
             struct us_reactor_handler_tcp_s *self,
             struct sockaddr *addr,
@@ -239,7 +239,7 @@ extern "C"
     void us_reactor_handler_tcp_destroy (
         us_reactor_handler_t *self
     );
-    
+
     bool us_reactor_handler_tcp_tick (
         us_reactor_handler_t *self
     );
