@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_reactor.h"
 
-/* #define US_REACTOR_TCP_TRACE */
+/*#define US_REACTOR_TCP_TRACE*/
 
 bool us_reactor_handler_init (
     us_reactor_handler_t *self,
@@ -226,7 +226,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         us_reactor_handler_t *item;
         int max_fd=0;
         item = self->handlers;
-        int n=0;
+        int n=-1;
         struct timeval tv_timeout;
 
         tv_timeout.tv_usec = (timeout*1000)%1000;
@@ -236,17 +236,20 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         FD_ZERO( &self->write_fds );
         while ( item )
         {
-            if ( item->wake_on_readable && item->readable != 0 )
+            if( item->fd!=-1 )
             {
-                FD_SET( item->fd, &self->read_fds );
-                if( item->fd > max_fd )
-                    max_fd = item->fd;
-            }
-            if ( item->wake_on_writable && item->writable != 0 )
-            {
-                FD_SET( item->fd, &self->write_fds );
-                if( item->fd > max_fd )
-                    max_fd = item->fd;
+                if ( item->wake_on_readable && item->readable != 0 )
+                {
+                    FD_SET( item->fd, &self->read_fds );                
+                    if( item->fd > max_fd )
+                        max_fd = item->fd;
+                }
+                if ( item->wake_on_writable && item->writable != 0 )
+                {
+                    FD_SET( item->fd, &self->write_fds );
+                    if( item->fd > max_fd )
+                        max_fd = item->fd;
+                }
             }
             item = item->next;
         }
@@ -264,10 +267,18 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             us_reactor_handler_t *item = self->handlers;
             while ( item )
             {
-                if ( item->wake_on_readable && FD_ISSET( item->fd, &self->read_fds ) && item->readable )
-                    item->readable ( item );
-                if ( item->wake_on_writable && FD_ISSET( item->fd, &self->write_fds ) && item->writable )
-                    item->writable ( item );
+                if( item->fd!=-1 )
+                {
+                    if ( item->wake_on_readable && FD_ISSET( item->fd, &self->read_fds ) && item->readable )
+                        item->readable ( item );
+                }
+                
+                if( item->fd!=-1 )
+                {                
+                    if ( item->wake_on_writable && FD_ISSET( item->fd, &self->write_fds ) && item->writable )
+                        item->writable ( item );
+                }
+                
                 item = item->next;
             }
             r = true;
