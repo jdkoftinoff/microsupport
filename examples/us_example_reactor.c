@@ -37,6 +37,9 @@
 #include "us_reactor.h"
 #include <ctype.h>
 
+#ifndef US_EXAMPLE_HTTP_HOST
+#define US_EXAMPLE_HTTP_HOST "github.com"
+#endif
 
 /** \ingroup examples */
 /** \defgroup example_reactor */
@@ -45,6 +48,27 @@
 bool global_quit = false;
 
 bool us_example_reactor ( void );
+
+us_reactor_handler_t * us_example_reactor_handler_http_create ( void );
+
+bool us_example_reactor_handler_http_init (
+    us_reactor_handler_t *self,
+    int fd,
+    void *extra
+);
+
+bool us_example_reactor_handler_http_tick (
+    us_reactor_handler_tcp_t *self
+);
+
+bool us_example_reactor_handler_http_readable (
+    us_reactor_handler_tcp_t *self
+);
+
+void us_example_reactor_handler_http_closed (
+    us_reactor_handler_tcp_t *self
+);
+
 
 us_reactor_handler_t * us_example_reactor_handler_echo_create ( void );
 
@@ -80,6 +104,73 @@ bool us_example_reactor_handler_quitter_init (
 bool us_example_reactor_handler_quitter_readable (
     us_reactor_handler_tcp_t *self
 );
+
+
+us_reactor_handler_t * us_example_reactor_handler_http_create ( void )
+{
+    return us_reactor_handler_tcp_create();
+}
+
+bool us_example_reactor_handler_http_init (
+    us_reactor_handler_t *self_,
+    int fd,
+    void *extra
+)
+{
+    us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
+    bool r = us_reactor_handler_tcp_init(self_, fd, extra, 8192, 2048);
+
+    if( r )
+    {
+        static const char *req = "GET / HTTP/1.0\r\nHost: "US_EXAMPLE_HTTP_HOST"\r\n\r\n";
+        self->readable = us_example_reactor_handler_http_readable;
+        self->tick = us_example_reactor_handler_http_tick;
+        self->closed = us_example_reactor_handler_http_closed;
+
+        us_queue_write(&self->outgoing_queue, (const uint8_t*)req, strlen(req) );
+    }
+
+    return r;
+}
+
+void us_example_reactor_handler_http_closed (
+    us_reactor_handler_tcp_t *self
+)
+{
+    FILE *f = (FILE *)self->base.extra;
+    fprintf( f, "%s\n", __FUNCTION__ );
+}
+
+
+bool us_example_reactor_handler_http_tick (
+    us_reactor_handler_tcp_t *self
+)
+{
+    FILE *f = (FILE *)self->base.extra;
+    fprintf( f, "%s\n", __FUNCTION__ );
+    return true;
+}
+
+bool us_example_reactor_handler_http_readable (
+    us_reactor_handler_tcp_t *self
+)
+{
+    FILE *f = (FILE *) self->base.extra;
+    fprintf( f, "HTTP Response data (len=%d):\n", us_queue_readable_count(&self->incoming_queue) );
+
+    while ( us_queue_can_read_byte ( &self->incoming_queue ) )
+    {
+        char c = ( char ) us_queue_read_byte ( &self->incoming_queue );
+        fprintf( f, "%c", c );
+    }
+
+    return true;
+}
+
+
+
+
+
 
 bool us_example_reactor_handler_echo_readable (
     us_reactor_handler_tcp_t *self_
@@ -241,6 +332,16 @@ bool us_example_reactor ( void )
             &reactor,
             16 /* max simultaneous sockets, including server sockets and connections */
         );
+    if ( r )
+    {
+        r = us_reactor_create_tcp_client(
+            &reactor,
+            US_EXAMPLE_HTTP_HOST, "80",
+            (void *)stdout,
+            us_example_reactor_handler_http_create,
+            us_example_reactor_handler_http_init
+            );
+    }
     if ( r )
     {
         r = us_reactor_create_server (
