@@ -225,9 +225,9 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
     {
         us_reactor_handler_t *item;
         int max_fd=0;
-        item = self->handlers;
         int n=-1;
         struct timeval tv_timeout;
+        item = self->handlers;
 
         tv_timeout.tv_usec = (timeout*1000)%1000;
         tv_timeout.tv_sec = (timeout/1000);
