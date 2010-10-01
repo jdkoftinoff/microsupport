@@ -171,7 +171,7 @@ extern "C"
      @param src_data_cnt count of data to transfer
      @returns void
      */
-    void us_queue_write ( us_queue_t *self, uint8_t *src_data, int src_data_cnt );
+    void us_queue_write ( us_queue_t *self, const uint8_t *src_data, int src_data_cnt );
 
     /** us_queue_can_write_byte
      @param self us_queue_t to use

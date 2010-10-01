@@ -54,7 +54,7 @@ void us_queue_read ( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt )
 }
 
 
-void us_queue_write ( us_queue_t *self, uint8_t *src_data, int src_data_cnt )
+void us_queue_write ( us_queue_t *self, const uint8_t *src_data, int src_data_cnt )
 {
     int i;
     for ( i = 0; i < src_data_cnt; i++ )
