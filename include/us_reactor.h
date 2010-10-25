@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "us_world.h"
 #include "us_queue.h"
+#include "us_allocator.h"
 
 #if !defined(US_REACTOR_USE_POLL) && !defined(US_REACTOR_USE_SELECT)
 # define US_REACTOR_USE_SELECT
@@ -48,34 +49,35 @@ extern "C"
         bool ( *tick ) ( struct us_reactor_handler_s *self );
         bool ( *readable ) ( struct us_reactor_handler_s *self );
         bool ( *writable ) ( struct us_reactor_handler_s *self );
-
-        struct us_reactor_handler_s *next;
-        struct us_reactor_s *reactor;
-        void *extra;
-        int fd;
-        bool wake_on_readable;
-        bool wake_on_writable;
+        us_allocator_t *m_allocator;
+        struct us_reactor_handler_s *m_next;
+        struct us_reactor_s *m_reactor;
+        void *m_extra;
+        int m_fd;
+        bool m_wake_on_readable;
+        bool m_wake_on_writable;
     } us_reactor_handler_t;
 
     /**
     */
-    typedef us_reactor_handler_t * ( *us_reactor_handler_create_proc_t ) ( void );
+    typedef us_reactor_handler_t * ( *us_reactor_handler_create_proc_t ) ( us_allocator_t *allocator  );
 
     /**
     */
-    us_reactor_handler_t * us_reactor_handler_create ( void );
+    us_reactor_handler_t * us_reactor_handler_create ( us_allocator_t *allocator  );
 
     /**
     */
     typedef bool ( *us_reactor_handler_init_proc_t ) (
         us_reactor_handler_t *self,
+        us_allocator_t *allocator,
         int fd,
         void *extra
     );
 
     /**
     */
-    bool us_reactor_handler_init ( us_reactor_handler_t *self, int fd, void *extra );
+    bool us_reactor_handler_init ( us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra );
 
     /**
     */
@@ -89,16 +91,16 @@ extern "C"
     typedef struct us_reactor_s
     {
         void ( *destroy ) ( struct us_reactor_s *self );
-
-        us_reactor_handler_t *handlers;
-        int timeout;
-        int max_handlers;
-        int num_handlers;
+        us_allocator_t *m_allocator;
+        us_reactor_handler_t *m_handlers;
+        int m_timeout;
+        int m_max_handlers;
+        int m_num_handlers;
 #if defined(US_REACTOR_USE_POLL)
-        struct pollfd *poll_handlers;
+        struct pollfd *m_poll_handlers;
 #elif defined(US_REACTOR_USE_SELECT)
-        fd_set read_fds;
-        fd_set write_fds;
+        fd_set m_read_fds;
+        fd_set m_write_fds;
 #else
 # error us_reactor needs implementation
 #endif
@@ -110,7 +112,7 @@ extern "C"
 
     /**
     */
-    bool us_reactor_init ( us_reactor_t *self, int max_handlers );
+    bool us_reactor_init ( us_reactor_t *self, us_allocator_t *allocator, int max_handlers );
 
     /**
     */
@@ -132,6 +134,7 @@ extern "C"
     */
     bool us_reactor_create_server (
         us_reactor_t *self,
+        us_allocator_t *allocator,
         const char *server_host,
         const char *server_port,
         int ai_socktype, /* SOCK_DGRAM or SOCK_STREAM */
@@ -150,6 +153,7 @@ extern "C"
 
     bool us_reactor_create_tcp_client (
         us_reactor_t *self,
+        us_allocator_t *allocator,
         const char *server_host,
         const char *server_port,
         void *extra,
@@ -167,19 +171,20 @@ extern "C"
 
     typedef struct us_reactor_handler_tcp_server_s
     {
-        us_reactor_handler_t base;
+        us_reactor_handler_t m_base;
         us_reactor_handler_create_proc_t client_handler_create;
         us_reactor_handler_init_proc_t client_handler_init;
     } us_reactor_handler_tcp_server_t;
 
     /**
     */
-    us_reactor_handler_t *us_reactor_handler_tcp_server_create ( void );
+    us_reactor_handler_t *us_reactor_handler_tcp_server_create ( us_allocator_t *allocator  );
 
     /**
     */
     bool us_reactor_handler_tcp_server_init (
         us_reactor_handler_t *self,
+        us_allocator_t *allocator,                                              
         int fd,
         void *client_extra,
         us_reactor_handler_create_proc_t client_handler_create,
@@ -199,11 +204,11 @@ extern "C"
     /*@{*/
     typedef struct us_reactor_handler_tcp_s
     {
-        us_reactor_handler_t base;
-        int xfer_buf_size;
-        char *xfer_buf;
-        us_queue_t outgoing_queue;
-        us_queue_t incoming_queue;
+        us_reactor_handler_t m_base;
+        int m_xfer_buf_size;
+        char *m_xfer_buf;
+        us_queue_t m_outgoing_queue;
+        us_queue_t m_incoming_queue;
 
         void ( *close ) (
             struct us_reactor_handler_tcp_s *self
@@ -226,10 +231,11 @@ extern "C"
     } us_reactor_handler_tcp_t;
 
 
-    us_reactor_handler_t * us_reactor_handler_tcp_create ( void );
+    us_reactor_handler_t * us_reactor_handler_tcp_create ( us_allocator_t *allocator );
 
     bool us_reactor_handler_tcp_init (
         us_reactor_handler_t *self,
+        us_allocator_t *allocator,
         int fd,
         void *extra,
         int queue_buf_size,

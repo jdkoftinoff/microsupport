@@ -47,12 +47,13 @@
 
 bool global_quit = false;
 
-bool us_example_reactor ( void );
+bool us_example_reactor ( us_allocator_t *allocator );
 
-us_reactor_handler_t * us_example_reactor_handler_http_create ( void );
+us_reactor_handler_t * us_example_reactor_handler_http_create ( us_allocator_t *allocator );
 
 bool us_example_reactor_handler_http_init (
     us_reactor_handler_t *self,
+    us_allocator_t *allocator,
     int fd,
     void *extra
 );
@@ -70,10 +71,11 @@ void us_example_reactor_handler_http_closed (
 );
 
 
-us_reactor_handler_t * us_example_reactor_handler_echo_create ( void );
+us_reactor_handler_t * us_example_reactor_handler_echo_create ( us_allocator_t *allocator );
 
 bool us_example_reactor_handler_echo_init (
     us_reactor_handler_t *self,
+    us_allocator_t *allocator,
     int fd,
     void *extra
 );
@@ -93,10 +95,11 @@ bool us_example_reactor_handler_echo_readable (
 );
 
 
-us_reactor_handler_t * us_example_reactor_handler_quitter_create ( void );
+us_reactor_handler_t * us_example_reactor_handler_quitter_create ( us_allocator_t *allocator );
 
 bool us_example_reactor_handler_quitter_init (
     us_reactor_handler_t *self,
+    us_allocator_t *allocator,
     int fd,
     void *extra
 );
@@ -106,19 +109,20 @@ bool us_example_reactor_handler_quitter_readable (
 );
 
 
-us_reactor_handler_t * us_example_reactor_handler_http_create ( void )
+us_reactor_handler_t * us_example_reactor_handler_http_create ( us_allocator_t *allocator )
 {
-    return us_reactor_handler_tcp_create();
+    return us_reactor_handler_tcp_create(allocator);
 }
 
 bool us_example_reactor_handler_http_init (
     us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
     int fd,
     void *extra
 )
 {
     us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
-    bool r = us_reactor_handler_tcp_init(self_, fd, extra, 8192, 2048);
+    bool r = us_reactor_handler_tcp_init(self_, allocator, fd, extra, 8192, 2048);
 
     if( r )
     {
@@ -127,7 +131,7 @@ bool us_example_reactor_handler_http_init (
         self->tick = us_example_reactor_handler_http_tick;
         self->closed = us_example_reactor_handler_http_closed;
 
-        us_queue_write(&self->outgoing_queue, (const uint8_t*)req, strlen(req) );
+        us_queue_write(&self->m_outgoing_queue, (const uint8_t*)req, strlen(req) );
     }
 
     return r;
@@ -137,7 +141,7 @@ void us_example_reactor_handler_http_closed (
     us_reactor_handler_tcp_t *self
 )
 {
-    FILE *f = (FILE *)self->base.extra;
+    FILE *f = (FILE *)self->m_base.m_extra;
     fprintf( f, "%s\n", __FUNCTION__ );
 }
 
@@ -146,7 +150,7 @@ bool us_example_reactor_handler_http_tick (
     us_reactor_handler_tcp_t *self
 )
 {
-    FILE *f = (FILE *)self->base.extra;
+    FILE *f = (FILE *)self->m_base.m_extra;
     fprintf( f, "%s\n", __FUNCTION__ );
     return true;
 }
@@ -155,12 +159,12 @@ bool us_example_reactor_handler_http_readable (
     us_reactor_handler_tcp_t *self
 )
 {
-    FILE *f = (FILE *) self->base.extra;
-    fprintf( f, "HTTP Response data (len=%d):\n", us_queue_readable_count(&self->incoming_queue) );
+    FILE *f = (FILE *) self->m_base.m_extra;
+    fprintf( f, "HTTP Response data (len=%d):\n", us_queue_readable_count(&self->m_incoming_queue) );
 
-    while ( us_queue_can_read_byte ( &self->incoming_queue ) )
+    while ( us_queue_can_read_byte ( &self->m_incoming_queue ) )
     {
-        char c = ( char ) us_queue_read_byte ( &self->incoming_queue );
+        char c = ( char ) us_queue_read_byte ( &self->m_incoming_queue );
         fprintf( f, "%c", c );
     }
 
@@ -178,24 +182,25 @@ bool us_example_reactor_handler_echo_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     /* echo all incoming data from input queue to output queue while converting to uppercase */
-    while ( us_queue_can_write_byte ( &self->outgoing_queue ) &&
-            us_queue_can_read_byte ( &self->incoming_queue ) )
+    while ( us_queue_can_write_byte ( &self->m_outgoing_queue ) &&
+            us_queue_can_read_byte ( &self->m_incoming_queue ) )
     {
-        uint8_t c = us_queue_read_byte ( &self->incoming_queue );
+        uint8_t c = us_queue_read_byte ( &self->m_incoming_queue );
         c = toupper ( c );
-        us_queue_write_byte ( &self->outgoing_queue, c );
+        us_queue_write_byte ( &self->m_outgoing_queue, c );
     }
     return true;
 }
 
 us_reactor_handler_t *
-us_example_reactor_handler_echo_create ( void )
+us_example_reactor_handler_echo_create ( us_allocator_t *allocator )
 {
-    return us_reactor_handler_tcp_create();
+    return us_reactor_handler_tcp_create( allocator );
 }
 
 bool us_example_reactor_handler_echo_init (
     us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
     int fd,
     void *extra
 )
@@ -203,7 +208,8 @@ bool us_example_reactor_handler_echo_init (
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r;
     r = us_reactor_handler_tcp_init (
-            &self->base,
+            &self->m_base,
+            allocator,
             fd,
             extra,
             16384,
@@ -217,12 +223,14 @@ bool us_example_reactor_handler_echo_init (
 
 bool us_example_reactor_echo_server_init (
     us_reactor_handler_t *self,
+    us_allocator_t *allocator,
     int fd,
     void *extra
 )
 {
     return us_reactor_handler_tcp_server_init (
                self,
+               allocator,
                fd,
                extra,
                us_example_reactor_handler_echo_create,
@@ -233,12 +241,14 @@ bool us_example_reactor_echo_server_init (
 
 bool us_example_reactor_quitter_server_init (
     us_reactor_handler_t *self,
+    us_allocator_t *allocator,
     int fd,
     void *extra
 )
 {
     return us_reactor_handler_tcp_server_init (
                self,
+               allocator,
                fd,
                extra,
                us_example_reactor_handler_quitter_create,
@@ -248,13 +258,14 @@ bool us_example_reactor_quitter_server_init (
 
 
 us_reactor_handler_t *
-us_example_reactor_handler_quitter_create ( void )
+us_example_reactor_handler_quitter_create ( us_allocator_t *allocator )
 {
-    return us_reactor_handler_tcp_create();
+    return us_reactor_handler_tcp_create( allocator );
 }
 
 bool us_example_reactor_handler_quitter_init (
     us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
     int fd,
     void *extra
 )
@@ -262,7 +273,8 @@ bool us_example_reactor_handler_quitter_init (
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r;
     r = us_reactor_handler_tcp_init (
-            &self->base,
+            &self->m_base,
+            allocator,
             fd,
             extra,
             2048,
@@ -312,9 +324,9 @@ bool us_example_reactor_handler_quitter_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     /* wait for the letter Q, then signal a quit flag */
-    while ( us_queue_can_read_byte ( &self->incoming_queue ) )
+    while ( us_queue_can_read_byte ( &self->m_incoming_queue ) )
     {
-        char c = ( char ) us_queue_read_byte ( &self->incoming_queue );
+        char c = ( char ) us_queue_read_byte ( &self->m_incoming_queue );
         if ( c == 'Q' )
         {
             global_quit = true;
@@ -324,18 +336,20 @@ bool us_example_reactor_handler_quitter_readable (
 }
 
 
-bool us_example_reactor ( void )
+bool us_example_reactor ( us_allocator_t *allocator )
 {
     bool r = false;
     us_reactor_t reactor;
     r = us_reactor_init (
             &reactor,
+            allocator,
             16 /* max simultaneous sockets, including server sockets and connections */
         );
     if ( r )
     {
         r = us_reactor_create_tcp_client(
             &reactor,
+            allocator,
             US_EXAMPLE_HTTP_HOST, "80",
             (void *)stdout,
             us_example_reactor_handler_http_create,
@@ -346,6 +360,7 @@ bool us_example_reactor ( void )
     {
         r = us_reactor_create_server (
                 &reactor,
+                allocator,
                 0, "8989",
                 SOCK_STREAM,
                 0,
@@ -357,6 +372,7 @@ bool us_example_reactor ( void )
     {
         r = us_reactor_create_server (
                 &reactor,
+                allocator,
                 0, "8988",
                 SOCK_STREAM,
                 0,
@@ -378,7 +394,11 @@ bool us_example_reactor ( void )
 
 int main ( int argc, char **argv )
 {
-    bool r = us_example_reactor();
+    us_malloc_allocator_t allocator;
+    us_malloc_allocator_init( &allocator );
+    bool r = us_example_reactor( &allocator.base );
+
+    us_malloc_allocator_destroy( &allocator.base );
     if ( r )
     {
         return 0;
