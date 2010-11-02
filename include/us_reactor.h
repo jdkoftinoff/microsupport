@@ -184,7 +184,7 @@ extern "C"
     */
     bool us_reactor_handler_tcp_server_init (
         us_reactor_handler_t *self,
-        us_allocator_t *allocator,                                              
+        us_allocator_t *allocator,
         int fd,
         void *client_extra,
         us_reactor_handler_create_proc_t client_handler_create,

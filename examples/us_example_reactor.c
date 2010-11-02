@@ -123,17 +123,14 @@ bool us_example_reactor_handler_http_init (
 {
     us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
     bool r = us_reactor_handler_tcp_init(self_, allocator, fd, extra, 8192, 2048);
-
     if( r )
     {
         static const char *req = "GET / HTTP/1.0\r\nHost: "US_EXAMPLE_HTTP_HOST"\r\n\r\n";
         self->readable = us_example_reactor_handler_http_readable;
         self->tick = us_example_reactor_handler_http_tick;
         self->closed = us_example_reactor_handler_http_closed;
-
         us_queue_write(&self->m_outgoing_queue, (const uint8_t*)req, strlen(req) );
     }
-
     return r;
 }
 
@@ -161,13 +158,11 @@ bool us_example_reactor_handler_http_readable (
 {
     FILE *f = (FILE *) self->m_base.m_extra;
     fprintf( f, "HTTP Response data (len=%d):\n", us_queue_readable_count(&self->m_incoming_queue) );
-
     while ( us_queue_can_read_byte ( &self->m_incoming_queue ) )
     {
         char c = ( char ) us_queue_read_byte ( &self->m_incoming_queue );
         fprintf( f, "%c", c );
     }
-
     return true;
 }
 
@@ -348,12 +343,12 @@ bool us_example_reactor ( us_allocator_t *allocator )
     if ( r )
     {
         r = us_reactor_create_tcp_client(
-            &reactor,
-            allocator,
-            US_EXAMPLE_HTTP_HOST, "80",
-            (void *)stdout,
-            us_example_reactor_handler_http_create,
-            us_example_reactor_handler_http_init
+                &reactor,
+                allocator,
+                US_EXAMPLE_HTTP_HOST, "80",
+                (void *)stdout,
+                us_example_reactor_handler_http_create,
+                us_example_reactor_handler_http_init
             );
     }
     if ( r )
@@ -397,7 +392,6 @@ int main ( int argc, char **argv )
     us_malloc_allocator_t allocator;
     us_malloc_allocator_init( &allocator );
     bool r = us_example_reactor( &allocator.base );
-
     us_malloc_allocator_destroy( &allocator.base );
     if ( r )
     {

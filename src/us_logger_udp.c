@@ -90,9 +90,8 @@ bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port )
               Create socket for this address
              */
             us_logger_udp_socket = socket (
-                AF_INET, SOCK_DGRAM, IPPROTO_UDP
-            );
-
+                                       AF_INET, SOCK_DGRAM, IPPROTO_UDP
+                                   );
             if ( us_logger_udp_socket >= 0 )
             {
                 r = true;

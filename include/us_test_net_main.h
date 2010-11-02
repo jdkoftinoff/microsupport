@@ -1,5 +1,5 @@
-#ifndef US_TEST_NET_H
-#define US_TEST_NET_H
+#ifndef US_TEST_NET_MAIN_H
+#define US_TEST_NET_MAIN_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.

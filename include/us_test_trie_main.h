@@ -1,5 +1,5 @@
-#ifndef US_TEST_TRIE_H
-#define US_TEST_TRIE_H
+#ifndef US_TEST_TRIE_MAIN_H
+#define US_TEST_TRIE_MAIN_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.

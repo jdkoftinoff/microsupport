@@ -1,5 +1,5 @@
-#ifndef US_TEST_QUEUE_H
-#define US_TEST_QUEUE_H
+#ifndef US_TEST_QUEUE_MAIN_H
+#define US_TEST_QUEUE_MAIN_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.

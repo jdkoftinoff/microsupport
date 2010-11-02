@@ -1,5 +1,5 @@
-#ifndef US_TEST_LINE_PARSE_H
-#define US_TEST_LINE_PARSE_H
+#ifndef US_TEST_LINE_PARSE_MAIN_H
+#define US_TEST_LINE_PARSE_MAIN_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.

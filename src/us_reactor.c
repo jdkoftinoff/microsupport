@@ -87,7 +87,6 @@ bool us_reactor_init ( us_reactor_t *self, us_allocator_t *allocator, int max_ha
     FD_ZERO( &self->m_read_fds );
     FD_ZERO( &self->m_write_fds );
 #endif
-
     self->m_timeout = 0;
     self->add_item = us_reactor_add_item;
     self->remove_item = us_reactor_remove_item;
@@ -232,10 +231,8 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         int n=-1;
         struct timeval tv_timeout;
         item = self->m_handlers;
-
         tv_timeout.tv_usec = (timeout*1000)%1000;
         tv_timeout.tv_sec = (timeout/1000);
-
         FD_ZERO( &self->m_read_fds );
         FD_ZERO( &self->m_write_fds );
         while ( item )
@@ -244,7 +241,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             {
                 if ( item->m_wake_on_readable && item->readable != 0 )
                 {
-                    FD_SET( item->m_fd, &self->m_read_fds );                
+                    FD_SET( item->m_fd, &self->m_read_fds );
                     if( item->m_fd > max_fd )
                         max_fd = item->m_fd;
                 }
@@ -257,12 +254,11 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             }
             item = item->m_next;
         }
-
-        do 
-        {            
+        do
+        {
             n = select(max_fd+1, &self->m_read_fds, &self->m_write_fds, 0, &tv_timeout );
-        } while (n<0 && (errno==EINTR || errno==EAGAIN ) );
-
+        }
+        while (n<0 && (errno==EINTR || errno==EAGAIN ) );
         if ( n < 0 )
         {
             /* error doing select, stop loop */
@@ -279,13 +275,11 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                     if ( item->m_wake_on_readable && FD_ISSET( item->m_fd, &self->m_read_fds ) && item->readable )
                         item->readable ( item );
                 }
-                
                 if( item->m_fd!=-1 )
-                {                
+                {
                     if ( item->m_wake_on_writable && FD_ISSET( item->m_fd, &self->m_write_fds ) && item->writable )
                         item->writable ( item );
                 }
-                
                 item = item->m_next;
             }
             r = true;
@@ -349,7 +343,7 @@ bool us_reactor_remove_item (
 }
 
 bool us_reactor_create_tcp_client (
-    us_reactor_t *self, 
+    us_reactor_t *self,
     us_allocator_t *allocator,
     const char *server_host,
     const char *server_port,
@@ -360,19 +354,16 @@ bool us_reactor_create_tcp_client (
 {
     bool r=false;
     us_reactor_handler_t *handler = client_handler_create(allocator);
-
     if( handler )
     {
         int fd = us_reactor_tcp_blocking_connect(server_host, server_port);
         if( fd!=-1 )
         {
             r=client_handler_init( handler, allocator, fd, extra );
-
             if( r )
             {
                 r=self->add_item( self, handler );
             }
-
             if( !r )
             {
                 closesocket(fd);
@@ -386,7 +377,7 @@ bool us_reactor_create_tcp_client (
 
 
 bool us_reactor_create_server (
-    us_reactor_t *self, 
+    us_reactor_t *self,
     us_allocator_t *allocator,
     const char *server_host,
     const char *server_port,
@@ -416,34 +407,31 @@ bool us_reactor_create_server (
         {
             const char opt = 1;
             int fd;
-            
             do
             {
                 fd = socket ( cur_addr->ai_family, cur_addr->ai_socktype, cur_addr->ai_protocol );
-            } while ( fd==-1 && errno==EINTR );
-            
+            }
+            while ( fd==-1 && errno==EINTR );
             if ( fd == -1 )
             {
                 us_stderr->printf( us_stderr, "socket: %s\n", strerror ( errno ) );
                 freeaddrinfo ( ai );
                 return false;
             }
-            
             setsockopt ( fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof ( opt ) );
-            
             if ( bind ( fd, cur_addr->ai_addr, cur_addr->ai_addrlen ) == 0 )
             {
                 us_reactor_handler_t *item;
                 item = server_handler_create(allocator);
                 if ( !item )
                 {
-                    fprintf ( stderr, "item create failed\n" );
+                    us_stderr->printf ( us_stderr, "item create failed\n" );
                     freeaddrinfo ( ai );
                     return false;
                 }
                 if ( listen ( fd, SOMAXCONN ) != 0 )
                 {
-                    fprintf ( stderr, "listen: %s\n", strerror ( errno ) );
+                    us_stderr->printf ( us_stderr, "listen: %s\n", strerror ( errno ) );
                     freeaddrinfo ( ai );
                     return false;
                 }
@@ -502,7 +490,7 @@ us_reactor_handler_t *us_reactor_handler_tcp_server_create ( us_allocator_t *all
 }
 
 bool us_reactor_handler_tcp_server_init (
-    us_reactor_handler_t *self_, 
+    us_reactor_handler_t *self_,
     us_allocator_t *allocator,
     int fd,
     void *client_extra,
@@ -535,12 +523,11 @@ bool us_reactor_handler_tcp_server_readable (
     struct sockaddr_storage rem;
     socklen_t remlen = sizeof ( rem );
     int accepted_fd;
-
     do
     {
         accepted_fd = accept ( self->m_base.m_fd, ( struct sockaddr * ) &rem, &remlen );
-    } while( accepted_fd==-1 && errno == EINTR );
-    
+    }
+    while( accepted_fd==-1 && errno == EINTR );
     if ( accepted_fd != -1 )
     {
         us_reactor_handler_t *client_item = self->client_handler_create(self->m_base.m_allocator);
@@ -561,7 +548,7 @@ bool us_reactor_handler_tcp_server_readable (
             }
             if ( !r )
             {
-                fprintf ( stderr, "unabled to create tcp client handler\n" );
+                us_stderr->printf ( us_stderr, "unabled to create tcp client handler\n" );
                 closesocket ( client_item->m_fd );
                 client_item->destroy ( client_item );
                 free ( client_item );
@@ -602,7 +589,6 @@ bool us_reactor_handler_tcp_init (
         self->connected = 0;
         self->readable = 0;
         self->tick = 0;
-        
         in_buf = us_new_array( allocator, uint8_t, queue_buf_size );
         out_buf = us_new_array( allocator, uint8_t, queue_buf_size );
         self->m_xfer_buf = us_new_array( allocator, char, xfer_buf_size );
@@ -666,12 +652,11 @@ bool us_reactor_handler_tcp_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     int len;
-    
     do
     {
         len = recv ( self->m_base.m_fd, self->m_xfer_buf, self->m_xfer_buf_size, 0 );
-    } while( len<0 && errno==EINTR );
-    
+    }
+    while( len<0 && errno==EINTR );
     if ( len > 0 )
     {
 #ifdef US_REACTOR_TCP_TRACE
@@ -693,7 +678,7 @@ bool us_reactor_handler_tcp_readable (
         }
     }
     else
-    {    
+    {
         self->close( self );
     }
     return true;
@@ -701,7 +686,7 @@ bool us_reactor_handler_tcp_readable (
 
 void us_reactor_handler_tcp_close(
     us_reactor_handler_tcp_t *self_
-    )
+)
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     if( self->m_base.m_fd != -1 )
@@ -730,7 +715,7 @@ bool us_reactor_handler_tcp_writable (
 #ifdef US_REACTOR_TCP_TRACE
         {
             int i;
-            us_stderr->fprintf( us_stderr, "WRITE TCP DATA (len=%d): ", outgoing_len );
+            us_stderr->printf( us_stderr, "WRITE TCP DATA (len=%d): ", outgoing_len );
             for( i=0; i<len; i++ )
             {
                 us_stderr->printf( us_stderr, "%02x ", outgoing[i] );
@@ -738,12 +723,11 @@ bool us_reactor_handler_tcp_writable (
             us_stderr->printf( us_stderr, "\n\n" );
         }
 #endif
-
         do
         {
             len = send ( self->m_base.m_fd, (const char *)outgoing, outgoing_len, 0 );
-        } while( len<0 && errno==EINTR );
-        
+        }
+        while( len<0 && errno==EINTR );
         if ( len > 0 )
         {
 #ifdef US_REACTOR_TCP_TRACE
@@ -776,9 +760,7 @@ int us_reactor_tcp_blocking_connect (
     hints.ai_flags = AI_PASSIVE;
 #endif
     hints.ai_socktype = SOCK_STREAM;
-    
     e = getaddrinfo ( server_host, server_port, &hints, &ai );
-    
     if ( e == 0 )
     {
         struct addrinfo *cur_addr = ai;
@@ -790,21 +772,18 @@ int us_reactor_tcp_blocking_connect (
                 us_stderr->printf ( us_stderr, "socket: %s\n", strerror ( errno ) );
                 break;
             }
-
             e = connect( fd, cur_addr->ai_addr, cur_addr->ai_addrlen );
-
             if( e==0 )
             {
                 break;
             }
-
             cur_addr = cur_addr->ai_next;
         }
         freeaddrinfo ( ai );
     }
     else
     {
-        fprintf ( stderr, "getaddrinfo: %s", strerror ( e ) );
+        us_stderr->printf ( us_stderr, "getaddrinfo: %s", strerror ( e ) );
     }
     return fd;
 }

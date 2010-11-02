@@ -1,6 +1,3 @@
-#ifndef US_TEST_ALLOCATOR_MAIN_H
-#define US_TEST_ALLOCATOR_MAIN_H
-
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -29,26 +26,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
+#include "us_test_osc_io_main.h"
 
-/**
- \addtogroup us_tests Tests
- */
-/*@{*/
-
-#ifdef __cplusplus
-extern "C"
+int main( int argc, char **argv )
 {
-#endif
-
-
-    int us_test_allocator_main( int argc, char **argv );
-
-
-#ifdef __cplusplus
+    return us_test_osc_io_main( argc, argv );
 }
-#endif
 
-
-/*@}*/
-
-#endif

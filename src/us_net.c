@@ -384,5 +384,31 @@ bool us_net_timeout_hit ( struct timeval *cur_time, struct timeval *next_time )
     return r;
 }
 
+bool
+us_net_blocking_send(
+    int sock,
+    const void *data_,
+    int32_t len
+)
+{
+    int32_t todo=len;
+    const uint8_t *data = (const uint8_t *)data_;
+    int cnt;
+    while (todo>0)
+    {
+        do
+        {
+            cnt=send(sock, data, todo, 0);
+        }
+        while(cnt<0 && errno==EINTR);
+        if( cnt<=0)
+            break;
+        todo-=cnt;
+        data+=cnt;
+    }
+    return (todo==0);
+}
+
+
 #endif
 

@@ -1,5 +1,5 @@
-#ifndef US_TEST_OSC_DISPATCH_H
-#define US_TEST_OSC_DISPATCH_H
+#ifndef US_TEST_OSC_DISPATCH_MAIN_H
+#define US_TEST_OSC_DISPATCH_MAIN_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.

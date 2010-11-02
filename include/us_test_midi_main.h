@@ -1,5 +1,5 @@
-#ifndef US_TEST_MIDI_H
-#define US_TEST_MIDI_H
+#ifndef US_TEST_MIDI_MAIN_H
+#define US_TEST_MIDI_MAIN_H
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
