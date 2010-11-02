@@ -788,4 +788,62 @@ int us_reactor_tcp_blocking_connect (
     return fd;
 }
 
+us_reactor_handler_t * us_reactor_handler_udp_create ( us_allocator_t *allocator  )
+{
+    return (us_reactor_handler_t *)us_new( allocator, us_reactor_handler_udp_t );
+}
+
+bool us_reactor_handler_udp_init ( us_reactor_handler_t *self_, us_allocator_t *allocator, int fd, void *extra, int32_t max_udp_packet_size )
+{
+    bool r=false;
+    us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
+    r = us_reactor_handler_init(self_, allocator, fd, extra);
+    if( r )
+    {
+        self_->destroy = us_reactor_handler_udp_destroy;
+        self_->readable = us_reactor_handler_udp_readable;
+        self->m_incoming_packet = us_buffer_create( allocator, max_udp_packet_size );
+        if( !self->m_incoming_packet )
+        {
+            r=false;
+            self_->destroy( self_ );
+        }
+    }
+    return r;
+}
+
+void us_reactor_handler_udp_destroy ( us_reactor_handler_t *self_ )
+{
+    us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
+    if( self->m_incoming_packet )
+        self->m_incoming_packet->destroy( self->m_incoming_packet );
+    us_reactor_handler_destroy(self_);
+}
+
+bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
+{
+    bool r=false;
+    us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
+    struct sockaddr_storage remote_addr;
+    socklen_t remote_addrlen = sizeof( remote_addr );
+    self->m_incoming_packet->m_cur_read_pos = 0;
+    self->m_incoming_packet->m_cur_length = recvfrom(
+            self->m_base.m_fd,
+            &self->m_incoming_packet->m_buffer,
+            self->m_incoming_packet->m_max_length, 0,
+            (struct sockaddr *)&remote_addr,
+            &remote_addrlen
+                                            );
+    if( self->m_incoming_packet->m_cur_length>0 )
+    {
+        r=true;
+        if( self->packet_received )
+        {
+            self->packet_received( self, self->m_incoming_packet, (struct sockaddr *)&remote_addr, remote_addrlen );
+        }
+    }
+    return r;
+}
+
+
 

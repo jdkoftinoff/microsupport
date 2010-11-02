@@ -8,7 +8,6 @@
 #include "us_osc_msg.h"
 #include "us_osc_msg_print.h"
 
-
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
  All rights reserved.

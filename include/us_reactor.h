@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "us_world.h"
 #include "us_queue.h"
+#include "us_buffer.h"
 #include "us_allocator.h"
 
 #if !defined(US_REACTOR_USE_POLL) && !defined(US_REACTOR_USE_SELECT)
@@ -130,6 +131,8 @@ extern "C"
     */
     bool us_reactor_remove_item ( us_reactor_t *self, us_reactor_handler_t *item );
 
+
+
     /**
     */
     bool us_reactor_create_server (
@@ -164,6 +167,38 @@ extern "C"
     /*@}*/
 
 
+    /** \addtogroup reactor_handler_udp reactor_handler_udp
+    */
+    /*@{*/
+    typedef struct us_reactor_handler_udp_s
+    {
+        us_reactor_handler_t m_base;
+        us_buffer_t *m_incoming_packet;
+        void (*packet_received)(
+            struct us_reactor_handler_udp_s *self,
+            us_buffer_t *buf,
+            struct sockaddr *remote_addr,
+            socklen_t remote_addrlen
+        );
+    } us_reactor_handler_udp_t;
+
+    /**
+    */
+    us_reactor_handler_t * us_reactor_handler_udp_create ( us_allocator_t *allocator  );
+
+    /**
+    */
+    bool us_reactor_handler_udp_init ( us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra, int32_t max_udp_packet_size );
+
+    /**
+    */
+    void us_reactor_handler_udp_destroy ( us_reactor_handler_t *self );
+
+    /**
+    */
+    bool us_reactor_handler_udp_readable( us_reactor_handler_t *self );
+
+    /*@}*/
 
     /** \addtogroup reactor_handler_tcp_server reactor_handler_tcp_server
     */

@@ -7,16 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF0FA29711615B33004D450A /* libus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0FA27A11615ACF004D450A /* libus.a */; };
-		BF0FA29A11615B47004D450A /* us_example_httpd.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0FA29911615B47004D450A /* us_example_httpd.c */; };
+		BF07BC1F127A518000AFCB44 /* us_tool_rx_osc.c in Sources */ = {isa = PBXBuildFile; fileRef = BF07BC1E127A518000AFCB44 /* us_tool_rx_osc.c */; };
+		BF0FA28D11615AEF004D450A /* libus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0FA28C11615AE3004D450A /* libus.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		BF0FA27911615ACF004D450A /* PBXContainerItemProxy */ = {
+		BF0FA28B11615AE3004D450A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA27511615ACF004D450A /* us.xcodeproj */;
+			containerPortal = BF0FA28711615AE3004D450A /* us.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = D2AAC046055464E500DB518D;
+			remoteInfo = us;
+		};
+		BFB1B4951162801D00F0ADB9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA28711615AE3004D450A /* us.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC045055464E500DB518D;
 			remoteInfo = us;
 		};
 /* End PBXContainerItemProxy section */
@@ -34,9 +41,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8DD76FB20486AB0100D96B5E /* us_example_httpd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = us_example_httpd; sourceTree = BUILT_PRODUCTS_DIR; };
-		BF0FA27511615ACF004D450A /* us.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us.xcodeproj; path = ../us/us.xcodeproj; sourceTree = SOURCE_ROOT; };
-		BF0FA29911615B47004D450A /* us_example_httpd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_example_httpd.c; path = ../../../examples/us_example_httpd.c; sourceTree = SOURCE_ROOT; };
+		8DD76FB20486AB0100D96B5E /* us_tool_rx_osc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = us_tool_rx_osc; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF07BC1E127A518000AFCB44 /* us_tool_rx_osc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_tool_rx_osc.c; path = "../../../tools-dev/us_tool_rx_osc.c"; sourceTree = SOURCE_ROOT; };
+		BF0FA28711615AE3004D450A /* us.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us.xcodeproj; path = ../us/us.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,28 +51,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF0FA29711615B33004D450A /* libus.a in Frameworks */,
+				BF0FA28D11615AEF004D450A /* libus.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		08FB7794FE84155DC02AAC07 /* us_example_httpd */ = {
+		08FB7794FE84155DC02AAC07 /* us_tool_rx_osc */ = {
 			isa = PBXGroup;
 			children = (
-				BF0FA27511615ACF004D450A /* us.xcodeproj */,
+				BF0FA28711615AE3004D450A /* us.xcodeproj */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6A0FF2B0290797F04C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 			);
-			name = us_example_httpd;
+			name = us_tool_rx_osc;
 			sourceTree = "<group>";
 		};
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				BF0FA29911615B47004D450A /* us_example_httpd.c */,
+				BF07BC1E127A518000AFCB44 /* us_tool_rx_osc.c */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -73,15 +80,15 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DD76FB20486AB0100D96B5E /* us_example_httpd */,
+				8DD76FB20486AB0100D96B5E /* us_tool_rx_osc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BF0FA27611615ACF004D450A /* Products */ = {
+		BF0FA28811615AE3004D450A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BF0FA27A11615ACF004D450A /* libus.a */,
+				BF0FA28C11615AE3004D450A /* libus.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,9 +103,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8DD76FA90486AB0100D96B5E /* us_example_httpd */ = {
+		8DD76FA90486AB0100D96B5E /* us_tool_rx_osc */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "us_example_httpd" */;
+			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "us_tool_rx_osc" */;
 			buildPhases = (
 				8DD76FAB0486AB0100D96B5E /* Sources */,
 				8DD76FAD0486AB0100D96B5E /* Frameworks */,
@@ -107,11 +114,12 @@
 			buildRules = (
 			);
 			dependencies = (
+				BFB1B4961162801D00F0ADB9 /* PBXTargetDependency */,
 			);
-			name = us_example_httpd;
+			name = us_tool_rx_osc;
 			productInstallPath = "$(HOME)/bin";
-			productName = us_example_httpd;
-			productReference = 8DD76FB20486AB0100D96B5E /* us_example_httpd */;
+			productName = us_tool_rx_osc;
+			productReference = 8DD76FB20486AB0100D96B5E /* us_tool_rx_osc */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -119,7 +127,7 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "us_example_httpd" */;
+			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "us_tool_rx_osc" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
@@ -129,27 +137,27 @@
 				French,
 				German,
 			);
-			mainGroup = 08FB7794FE84155DC02AAC07 /* us_example_httpd */;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* us_tool_rx_osc */;
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = BF0FA27611615ACF004D450A /* Products */;
-					ProjectRef = BF0FA27511615ACF004D450A /* us.xcodeproj */;
+					ProductGroup = BF0FA28811615AE3004D450A /* Products */;
+					ProjectRef = BF0FA28711615AE3004D450A /* us.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				8DD76FA90486AB0100D96B5E /* us_example_httpd */,
+				8DD76FA90486AB0100D96B5E /* us_tool_rx_osc */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		BF0FA27A11615ACF004D450A /* libus.a */ = {
+		BF0FA28C11615AE3004D450A /* libus.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libus.a;
-			remoteRef = BF0FA27911615ACF004D450A /* PBXContainerItemProxy */;
+			remoteRef = BF0FA28B11615AE3004D450A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -159,11 +167,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF0FA29A11615B47004D450A /* us_example_httpd.c in Sources */,
+				BF07BC1F127A518000AFCB44 /* us_tool_rx_osc.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BFB1B4961162801D00F0ADB9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us;
+			targetProxy = BFB1B4951162801D00F0ADB9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB928608733DD80010E9CD /* Debug */ = {
@@ -176,7 +192,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = us_example_httpd;
+				PRODUCT_NAME = us_tool_rx_osc;
 			};
 			name = Debug;
 		};
@@ -187,7 +203,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = us_example_httpd;
+				PRODUCT_NAME = us_tool_rx_osc;
 			};
 			name = Release;
 		};
@@ -224,7 +240,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "us_example_httpd" */ = {
+		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "us_tool_rx_osc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB928608733DD80010E9CD /* Debug */,
@@ -233,7 +249,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "us_example_httpd" */ = {
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "us_tool_rx_osc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB928A08733DD80010E9CD /* Debug */,

@@ -240,6 +240,13 @@
 			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
 			remoteInfo = us_example_hex_udp_tx;
 		};
+		BFEB6249128092AB00D2A7B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFEB6241128092AB00D2A7B9 /* us_tool_rx_osc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DD76FB20486AB0100D96B5E;
+			remoteInfo = us_tool_rx_osc;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -324,6 +331,7 @@
 		BFAA50EA1247C92F00FF1616 /* us_trie_dump.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_trie_dump.c; path = ../../../src/us_trie_dump.c; sourceTree = SOURCE_ROOT; };
 		BFAA50EB1247C92F00FF1616 /* us_trie_ro.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_trie_ro.c; path = ../../../src/us_trie_ro.c; sourceTree = SOURCE_ROOT; };
 		BFAA50EC1247C92F00FF1616 /* us_trie_rw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_trie_rw.c; path = ../../../src/us_trie_rw.c; sourceTree = SOURCE_ROOT; };
+		BFEB6241128092AB00D2A7B9 /* us_tool_rx_osc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us_tool_rx_osc.xcodeproj; path = ../us_tool_rx_osc/us_tool_rx_osc.xcodeproj; sourceTree = "<group>"; };
 		BFF4CB7A11613BB5002C7012 /* us_allocator_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_allocator_print.h; path = ../../../include/us_allocator_print.h; sourceTree = SOURCE_ROOT; };
 		BFF4CB7B11613BB5002C7012 /* us_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_allocator.h; path = ../../../include/us_allocator.h; sourceTree = SOURCE_ROOT; };
 		BFF4CB7C11613BB5002C7012 /* us_buffer_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_buffer_print.h; path = ../../../include/us_buffer_print.h; sourceTree = SOURCE_ROOT; };
@@ -385,6 +393,7 @@
 		08FB7794FE84155DC02AAC07 /* us */ = {
 			isa = PBXGroup;
 			children = (
+				BFEB6241128092AB00D2A7B9 /* us_tool_rx_osc.xcodeproj */,
 				BF07BC39127B62CC00AFCB44 /* us_example_hex_udp_tx.xcodeproj */,
 				BF07BC2C127B62C000AFCB44 /* us_example_hex_udp_rx.xcodeproj */,
 				BF07BC09127A516600AFCB44 /* us_tool_send_osc.xcodeproj */,
@@ -644,6 +653,14 @@
 			name = Headers;
 			sourceTree = "<group>";
 		};
+		BFEB6242128092AB00D2A7B9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFEB624A128092AB00D2A7B9 /* us_tool_rx_osc */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		C6A0FF2B0290797F04C91782 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
@@ -759,6 +776,10 @@
 					ProjectRef = BF07BBFC127A508B00AFCB44 /* us_test_slip.xcodeproj */;
 				},
 				{
+					ProductGroup = BFEB6242128092AB00D2A7B9 /* Products */;
+					ProjectRef = BFEB6241128092AB00D2A7B9 /* us_tool_rx_osc.xcodeproj */;
+				},
+				{
 					ProductGroup = BF07BC11127A516600AFCB44 /* Products */;
 					ProjectRef = BF07BC09127A516600AFCB44 /* us_tool_send_osc.xcodeproj */;
 				},
@@ -840,6 +861,13 @@
 			fileType = "compiled.mach-o.executable";
 			path = us_example_hex_udp_tx;
 			remoteRef = BF07BC44127B62CC00AFCB44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BFEB624A128092AB00D2A7B9 /* us_tool_rx_osc */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = us_tool_rx_osc;
+			remoteRef = BFEB6249128092AB00D2A7B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
