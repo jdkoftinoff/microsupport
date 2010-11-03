@@ -37,6 +37,8 @@
 
 static bool us_tool_send_osc(
     const char *protocol,
+    const char *src_host,
+    const char *src_port,
     const char *dest_host,
     const char *dest_port,
     const char *osc_address,
@@ -61,6 +63,7 @@ static bool us_tool_gen_flattened_osc(
 );
 
 static bool us_tool_send_osc_udp(
+    struct addrinfo *src_addr,
     struct addrinfo *dest_addr,
     us_buffer_t *buf
 );
@@ -229,21 +232,22 @@ static bool us_tool_gen_flattened_osc(
 }
 
 static bool us_tool_send_osc_udp(
+    struct addrinfo *src_addr,
     struct addrinfo *dest_addr,
     us_buffer_t *buf
 )
 {
     bool r=false;
-    int s = us_net_create_udp_socket( dest_addr, false);
+    int s = socket( src_addr->ai_family, src_addr->ai_socktype, 0 );
     if( s>=0 )
     {
-        if( sendto(s, buf->m_buffer, buf->m_cur_length, 0, dest_addr->ai_addr, dest_addr->ai_addrlen)==0 )
+        if( sendto(s, buf->m_buffer, buf->m_cur_length, 0, dest_addr->ai_addr, dest_addr->ai_addrlen)==buf->m_cur_length )
         {
             r=true;
         }
         else
         {
-            us_stderr->printf( us_stderr, "Error sending UDP packet: %s\n", strerror(errno) );
+            us_stderr->printf( us_stderr, "sendto: %s\n", strerror(errno));
         }
         closesocket(s);
     }
@@ -323,6 +327,8 @@ static bool us_tool_send_osc_tcpslip(
 
 static bool us_tool_send_osc(
     const char *protocol,
+    const char *src_host,
+    const char *src_port,
     const char *dest_host,
     const char *dest_port,
     const char *osc_address,
@@ -333,9 +339,9 @@ static bool us_tool_send_osc(
     bool r=false;
     char **v;
     const char *t=osc_typetags;
-    us_osc_msg_t *msg;
     us_allocator_t *allocator = us_testutil_sys_allocator;
-    int sock_type;
+    int sock_type=SOCK_DGRAM;
+    struct addrinfo *src_addr;
     struct addrinfo *dest_addr;
     if( strcmp( protocol, "udp" )==0 )
     {
@@ -350,10 +356,17 @@ static bool us_tool_send_osc(
         us_stderr->printf( us_stderr, "unknown protocol '%s', use 'tcp', 'tcpslip' or 'udp'\n", protocol );
         return false;
     }
+    src_addr = us_net_get_addrinfo(src_host, src_port, sock_type, true);
+    if( !src_addr )
+    {
+        us_stderr->printf( us_stderr, "unable to get src address for '[%s]:%s'\n", dest_host, dest_port );
+        return false;
+    }
     dest_addr = us_net_get_addrinfo(dest_host, dest_port, sock_type, false);
     if( !dest_addr )
     {
-        us_stderr->printf( us_stderr, "unable to get address for '[%s];%s'\n", dest_host, dest_port );
+        us_stderr->printf( us_stderr, "unable to get dest address for '[%s]:%s'\n", dest_host, dest_port );
+        freeaddrinfo(src_addr);
         return false;
     }
     us_buffer_t *buf = us_buffer_create(allocator, 4096);
@@ -373,7 +386,7 @@ static bool us_tool_send_osc(
             buf->print( buf, us_stdout );
             if( sock_type==SOCK_DGRAM )
             {
-                r=us_tool_send_osc_udp( dest_addr, buf );
+                r=us_tool_send_osc_udp( src_addr, dest_addr, buf );
             }
             else if( sock_type == SOCK_STREAM )
             {
@@ -386,7 +399,6 @@ static bool us_tool_send_osc(
                     r=us_tool_send_osc_tcp(dest_addr, buf);
                 }
             }
-            msg->destroy( msg );
         }
         buf->destroy( buf );
     }
@@ -399,23 +411,29 @@ int main ( int argc, char **argv )
 {
     int r = 1;
     const char *protocol = "udp";
-    const char *dest_host = "localhost";
-    const char *dest_port = "30000";
+    const char *src_host = "";
+    const char *src_port = "30000";
+    const char *dest_host = "127.0.0.1";
+    const char *dest_port = "10000";
     const char *osc_address = "/osc/version";
     const char *osc_typetags = "";
     char **osc_values = 0;
     if( argc > 1 )
         protocol = argv[1];
     if ( argc > 2 )
-        dest_host = argv[2];
+        src_host = argv[2];
     if ( argc > 3 )
-        dest_port = argv[3];
+        src_port = argv[3];
     if ( argc > 4 )
-        osc_address = argv[4];
+        dest_host = argv[4];
     if ( argc > 5 )
-        osc_typetags = argv[5];
+        dest_port = argv[5];
     if ( argc > 6 )
-        osc_values = &argv[6];
+        osc_address = argv[6];
+    if ( argc > 7 )
+        osc_typetags = argv[7];
+    if ( argc > 8 )
+        osc_values = &argv[8];
     if ( us_testutil_start ( 8192, 8192, argc, argv ) )
     {
 #if US_ENABLE_LOGGING
@@ -425,13 +443,13 @@ int main ( int argc, char **argv )
         us_platform_init_winsock ();
 # endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
-        if ( argc < 5 )
+        if ( argc < 7 )
         {
-            us_stderr->printf( us_stderr, "%s usage:\n\t%s [udp/tcp/tcpslip] [dest host] [dest port] [osc address] [osc typetags] {values...}\n", argv[0], argv[0] );
+            us_stderr->printf( us_stderr, "%s usage:\n\t%s [udp/tcp/tcpslip] [src host] [src port] [dest host] [dest port] [osc address] [osc typetags] {values...}\n", argv[0], argv[0] );
         }
         else
         {
-            if(  us_tool_send_osc( protocol, dest_host, dest_port, osc_address, osc_typetags, osc_values ) )
+            if(  us_tool_send_osc( protocol, src_host, src_port, dest_host, dest_port, osc_address, osc_typetags, osc_values ) )
                 r=0;
         }
         us_logger_finish();

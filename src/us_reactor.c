@@ -429,11 +429,14 @@ bool us_reactor_create_server (
                     freeaddrinfo ( ai );
                     return false;
                 }
-                if ( listen ( fd, SOMAXCONN ) != 0 )
+                if( ai_socktype==SOCK_STREAM )
                 {
-                    us_stderr->printf ( us_stderr, "listen: %s\n", strerror ( errno ) );
-                    freeaddrinfo ( ai );
-                    return false;
+                    if ( listen ( fd, SOMAXCONN ) != 0 )
+                    {
+                        us_stderr->printf ( us_stderr, "listen: %s\n", strerror ( errno ) );
+                        freeaddrinfo ( ai );
+                        return false;
+                    }
                 }
                 if ( server_handler_init ( item, allocator, fd, client_extra ) )
                 {
@@ -829,7 +832,7 @@ bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
     self->m_incoming_packet->m_cur_read_pos = 0;
     self->m_incoming_packet->m_cur_length = recvfrom(
             self->m_base.m_fd,
-            &self->m_incoming_packet->m_buffer,
+            self->m_incoming_packet->m_buffer,
             self->m_incoming_packet->m_max_length, 0,
             (struct sockaddr *)&remote_addr,
             &remote_addrlen

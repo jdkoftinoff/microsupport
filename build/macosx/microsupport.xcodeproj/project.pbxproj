@@ -14,13 +14,6 @@
 			);
 			dependencies = (
 				BFF4CB7811613B91002C7012 /* PBXTargetDependency */,
-				BF0FA2D411615C59004D450A /* PBXTargetDependency */,
-				BF0FA2D611615C59004D450A /* PBXTargetDependency */,
-				BF0FA2D811615C59004D450A /* PBXTargetDependency */,
-				BF0FA2DA11615C59004D450A /* PBXTargetDependency */,
-				BF0FA2DC11615C59004D450A /* PBXTargetDependency */,
-				BF0FA2DE11615C59004D450A /* PBXTargetDependency */,
-				BF0FA2E011615C59004D450A /* PBXTargetDependency */,
 			);
 			name = all;
 			productName = all;
@@ -77,54 +70,33 @@
 			remoteGlobalIDString = 8DD76FB20486AB0100D96B5E;
 			remoteInfo = us_test_slip;
 		};
-		BF0FA2D311615C59004D450A /* PBXContainerItemProxy */ = {
+		BFC0E8E21280D1A800645B8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA2B911615BF8004D450A /* us_test_json.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
-			remoteInfo = us_test_json;
+			containerPortal = BFC0E8C01280D1A800645B8D /* us_tool_rx_osc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DD76FB20486AB0100D96B5E;
+			remoteInfo = us_tool_rx_osc;
 		};
-		BF0FA2D511615C59004D450A /* PBXContainerItemProxy */ = {
+		BFC0E8E51280D1A800645B8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA2A911615BC1004D450A /* us_example_httpd.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
-			remoteInfo = us_example_httpd;
+			containerPortal = BFC0E8C31280D1A800645B8D /* us_example_hex_udp_tx.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DD76FB20486AB0100D96B5E;
+			remoteInfo = us_example_hex_udp_tx;
 		};
-		BF0FA2D711615C59004D450A /* PBXContainerItemProxy */ = {
+		BFC0E8E81280D1A800645B8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA1E811615850004D450A /* us_test_allocator.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
-			remoteInfo = us_test_allocator;
+			containerPortal = BFC0E8C61280D1A800645B8D /* us_example_hex_udp_rx.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DD76FB20486AB0100D96B5E;
+			remoteInfo = us_example_hex_udp_rx;
 		};
-		BF0FA2D911615C59004D450A /* PBXContainerItemProxy */ = {
+		BFC0E8EB1280D1A800645B8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA2B111615BDD004D450A /* us_test_http.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
-			remoteInfo = us_test_http;
-		};
-		BF0FA2DB11615C59004D450A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA2C911615C2A004D450A /* us_test_slip.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
-			remoteInfo = us_test_slip;
-		};
-		BF0FA2DD11615C59004D450A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA2C111615C13004D450A /* us_test_net.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
-			remoteInfo = us_test_net;
-		};
-		BF0FA2DF11615C59004D450A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA22011615949004D450A /* us_test_buffer.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
-			remoteInfo = us_test_buffer;
+			containerPortal = BFC0E8C91280D1A800645B8D /* us_tool_send_osc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DD76FB20486AB0100D96B5E;
+			remoteInfo = us_tool_send_osc;
 		};
 		BFF4CB6D11612BF6002C7012 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -150,6 +122,10 @@
 		BF0FA2B911615BF8004D450A /* us_test_json.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us_test_json.xcodeproj; path = us_test_json/us_test_json.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF0FA2C111615C13004D450A /* us_test_net.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us_test_net.xcodeproj; path = us_test_net/us_test_net.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF0FA2C911615C2A004D450A /* us_test_slip.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us_test_slip.xcodeproj; path = us_test_slip/us_test_slip.xcodeproj; sourceTree = SOURCE_ROOT; };
+		BFC0E8C01280D1A800645B8D /* us_tool_rx_osc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us_tool_rx_osc.xcodeproj; path = us_tool_rx_osc/us_tool_rx_osc.xcodeproj; sourceTree = "<group>"; };
+		BFC0E8C31280D1A800645B8D /* us_example_hex_udp_tx.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us_example_hex_udp_tx.xcodeproj; path = us_example_hex_udp_tx/us_example_hex_udp_tx.xcodeproj; sourceTree = "<group>"; };
+		BFC0E8C61280D1A800645B8D /* us_example_hex_udp_rx.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us_example_hex_udp_rx.xcodeproj; path = us_example_hex_udp_rx/us_example_hex_udp_rx.xcodeproj; sourceTree = "<group>"; };
+		BFC0E8C91280D1A800645B8D /* us_tool_send_osc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us_tool_send_osc.xcodeproj; path = us_tool_send_osc/us_tool_send_osc.xcodeproj; sourceTree = "<group>"; };
 		BFF4CB6911612BF6002C7012 /* us.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us.xcodeproj; path = us/us.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -210,9 +186,45 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BFC0E8C11280D1A800645B8D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFC0E8E31280D1A800645B8D /* us_tool_rx_osc */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BFC0E8C41280D1A800645B8D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFC0E8E61280D1A800645B8D /* us_example_hex_udp_tx */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BFC0E8C71280D1A800645B8D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFC0E8E91280D1A800645B8D /* us_example_hex_udp_rx */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BFC0E8CA1280D1A800645B8D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFC0E8EC1280D1A800645B8D /* us_tool_send_osc */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		BFF4CB5211612B68002C7012 = {
 			isa = PBXGroup;
 			children = (
+				BFC0E8C01280D1A800645B8D /* us_tool_rx_osc.xcodeproj */,
+				BFC0E8C31280D1A800645B8D /* us_example_hex_udp_tx.xcodeproj */,
+				BFC0E8C61280D1A800645B8D /* us_example_hex_udp_rx.xcodeproj */,
+				BFC0E8C91280D1A800645B8D /* us_tool_send_osc.xcodeproj */,
 				BF0FA2C911615C2A004D450A /* us_test_slip.xcodeproj */,
 				BF0FA2C111615C13004D450A /* us_test_net.xcodeproj */,
 				BF0FA2B911615BF8004D450A /* us_test_json.xcodeproj */,
@@ -255,6 +267,14 @@
 					ProjectRef = BFF4CB6911612BF6002C7012 /* us.xcodeproj */;
 				},
 				{
+					ProductGroup = BFC0E8C71280D1A800645B8D /* Products */;
+					ProjectRef = BFC0E8C61280D1A800645B8D /* us_example_hex_udp_rx.xcodeproj */;
+				},
+				{
+					ProductGroup = BFC0E8C41280D1A800645B8D /* Products */;
+					ProjectRef = BFC0E8C31280D1A800645B8D /* us_example_hex_udp_tx.xcodeproj */;
+				},
+				{
 					ProductGroup = BF0FA2AC11615BC1004D450A /* Products */;
 					ProjectRef = BF0FA2A911615BC1004D450A /* us_example_httpd.xcodeproj */;
 				},
@@ -281,6 +301,14 @@
 				{
 					ProductGroup = BF0FA2CC11615C2A004D450A /* Products */;
 					ProjectRef = BF0FA2C911615C2A004D450A /* us_test_slip.xcodeproj */;
+				},
+				{
+					ProductGroup = BFC0E8C11280D1A800645B8D /* Products */;
+					ProjectRef = BFC0E8C01280D1A800645B8D /* us_tool_rx_osc.xcodeproj */;
+				},
+				{
+					ProductGroup = BFC0E8CA1280D1A800645B8D /* Products */;
+					ProjectRef = BFC0E8C91280D1A800645B8D /* us_tool_send_osc.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -340,6 +368,34 @@
 			remoteRef = BF0FA2CF11615C2A004D450A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		BFC0E8E31280D1A800645B8D /* us_tool_rx_osc */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = us_tool_rx_osc;
+			remoteRef = BFC0E8E21280D1A800645B8D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BFC0E8E61280D1A800645B8D /* us_example_hex_udp_tx */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = us_example_hex_udp_tx;
+			remoteRef = BFC0E8E51280D1A800645B8D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BFC0E8E91280D1A800645B8D /* us_example_hex_udp_rx */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = us_example_hex_udp_rx;
+			remoteRef = BFC0E8E81280D1A800645B8D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BFC0E8EC1280D1A800645B8D /* us_tool_send_osc */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = us_tool_send_osc;
+			remoteRef = BFC0E8EB1280D1A800645B8D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		BFF4CB6E11612BF6002C7012 /* libus.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -350,41 +406,6 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXTargetDependency section */
-		BF0FA2D411615C59004D450A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = us_test_json;
-			targetProxy = BF0FA2D311615C59004D450A /* PBXContainerItemProxy */;
-		};
-		BF0FA2D611615C59004D450A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = us_example_httpd;
-			targetProxy = BF0FA2D511615C59004D450A /* PBXContainerItemProxy */;
-		};
-		BF0FA2D811615C59004D450A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = us_test_allocator;
-			targetProxy = BF0FA2D711615C59004D450A /* PBXContainerItemProxy */;
-		};
-		BF0FA2DA11615C59004D450A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = us_test_http;
-			targetProxy = BF0FA2D911615C59004D450A /* PBXContainerItemProxy */;
-		};
-		BF0FA2DC11615C59004D450A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = us_test_slip;
-			targetProxy = BF0FA2DB11615C59004D450A /* PBXContainerItemProxy */;
-		};
-		BF0FA2DE11615C59004D450A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = us_test_net;
-			targetProxy = BF0FA2DD11615C59004D450A /* PBXContainerItemProxy */;
-		};
-		BF0FA2E011615C59004D450A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = us_test_buffer;
-			targetProxy = BF0FA2DF11615C59004D450A /* PBXContainerItemProxy */;
-		};
 		BFF4CB7811613B91002C7012 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = us;

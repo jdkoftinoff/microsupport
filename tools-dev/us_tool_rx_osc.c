@@ -40,6 +40,7 @@ bool us_tool_rx_osc_udp_init( us_reactor_handler_t *self_, us_allocator_t *alloc
     {
         us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
         self->packet_received = us_tool_rx_osc_udp_packet_received;
+        self_->m_wake_on_readable = true;
     }
     return r;
 }
@@ -59,7 +60,7 @@ bool us_tool_rx_osc_tcp_handler_readable (
     bool done=false;
     us_tool_rx_osc_tcp_handler_t *self = ( us_tool_rx_osc_tcp_handler_t * ) self_;
     us_queue_t *incoming = &self->m_base.m_incoming_queue;
-    while (!done )
+    while (!done && us_queue_readable_count(incoming)>0 )
     {
         if( self->m_in_header  )
         {
@@ -72,6 +73,10 @@ bool us_tool_rx_osc_tcp_handler_readable (
                     (((int32_t)us_queue_read_byte( incoming )) << 0);
                 self->m_in_header = false;
                 us_log_debug( "got osc length field: %d", self->m_todo_count );
+            }
+            if( self->m_in_header == true )
+            {
+                done=true;
             }
         }
         if( !self->m_in_header )
@@ -91,6 +96,8 @@ bool us_tool_rx_osc_tcp_handler_readable (
                         us_buffer_t buf;
                         us_osc_msg_t *msg;
                         us_buffer_init(&buf, 0, flattened, p);
+                        buf.m_cur_length = p;
+                        buf.m_cur_read_pos = 0;
                         us_log_debug( "pulled in raw osc msg of length %d", p );
                         msg = us_osc_msg_unflatten(self->m_base.m_base.m_allocator, &buf );
                         if( !msg )
@@ -101,6 +108,7 @@ bool us_tool_rx_osc_tcp_handler_readable (
                         else
                         {
                             us_log_debug( "parsed osc msg" );
+                            self->m_in_header = true;
                             msg->print( msg, us_stdout );
                             us_stdout->printf( us_stdout, "\n" );
                             if( self->received_osc )
@@ -110,6 +118,10 @@ bool us_tool_rx_osc_tcp_handler_readable (
                             msg->destroy( msg );
                         }
                     }
+                }
+                if( self->m_in_header == false )
+                {
+                    done=true;
                 }
             }
         }
@@ -142,7 +154,7 @@ bool us_tool_rx_osc_tcp_handler_init (
         );
     self->m_base.readable = us_tool_rx_osc_tcp_handler_readable;
     self->m_base.tick = 0;
-    self->m_in_header = false;
+    self->m_in_header = true;
     self->m_todo_count = 0;
     self->received_osc = 0;
     return r;
@@ -214,6 +226,8 @@ static bool us_tool_rx_osc( us_allocator_t *allocator, const char *listen_host, 
 int main ( int argc, char **argv )
 {
     int r = 1;
+    us_print_file_t us_stdout_printer;
+    us_print_file_t us_stderr_printer;
     const char * listen_host = "127.0.0.1";
     const char * listen_port = "10000";
     us_malloc_allocator_t allocator;
@@ -235,6 +249,16 @@ int main ( int argc, char **argv )
     {
         listen_port = argv[2];
     }
+    us_stdout =
+        us_print_file_init (
+            &us_stdout_printer,
+            stdout
+        );
+    us_stderr =
+        us_print_file_init (
+            &us_stderr_printer,
+            stderr
+        );
     us_logger_printer_start ( us_stdout, us_stderr );
 # ifdef WIN32
     us_platform_init_winsock ();
