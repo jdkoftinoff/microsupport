@@ -20,6 +20,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		BF2050A2128122B400D65536 /* us_osc_io.c in Sources */ = {isa = PBXBuildFile; fileRef = BF2050A1128122B400D65536 /* us_osc_io.c */; };
 		BF52063B127606BD00332429 /* us_osc_test_osc_io.c in Sources */ = {isa = PBXBuildFile; fileRef = BF520639127606BD00332429 /* us_osc_test_osc_io.c */; };
 		BF7524CE11653F8800913313 /* us_cgi.c in Sources */ = {isa = PBXBuildFile; fileRef = BF7524CD11653F8800913313 /* us_cgi.c */; };
 		BFAA50ED1247C92F00FF1616 /* us_line_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = BFAA50D81247C92F00FF1616 /* us_line_parse.c */; };
@@ -91,6 +92,9 @@
 
 /* Begin PBXFileReference section */
 		BF07BBAD127A3A3A00AFCB44 /* us_tool_send_osc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_tool_send_osc.c; path = "../../../tools-dev/us_tool_send_osc.c"; sourceTree = SOURCE_ROOT; };
+		BF2050A1128122B400D65536 /* us_osc_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_osc_io.c; path = ../../../src/us_osc_io.c; sourceTree = SOURCE_ROOT; };
+		BF2050AD128122C700D65536 /* us_osc_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_osc_io.h; path = ../../../include/us_osc_io.h; sourceTree = SOURCE_ROOT; };
+		BF2050AE1281232C00D65536 /* us_tool_rx_osc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_tool_rx_osc.c; path = "../../../tools-dev/us_tool_rx_osc.c"; sourceTree = SOURCE_ROOT; };
 		BF520637127606A300332429 /* us_test_osc_io_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_test_osc_io_main.h; path = ../../../include/us_test_osc_io_main.h; sourceTree = SOURCE_ROOT; };
 		BF520639127606BD00332429 /* us_osc_test_osc_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_osc_test_osc_io.c; path = ../../../src/us_osc_test_osc_io.c; sourceTree = SOURCE_ROOT; };
 		BF52063E1276095800332429 /* us_test_all.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_all.c; path = ../../../tests/us_test_all.c; sourceTree = SOURCE_ROOT; };
@@ -236,6 +240,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				BF2050A1128122B400D65536 /* us_osc_io.c */,
 				BF520639127606BD00332429 /* us_osc_test_osc_io.c */,
 				BF79D9231247F598007595DB /* us_test_osc_dispatch_main.c */,
 				BFAA50D81247C92F00FF1616 /* us_line_parse.c */,
@@ -310,6 +315,7 @@
 		BF79D91F1247F25B007595DB /* tools-dev */ = {
 			isa = PBXGroup;
 			children = (
+				BF2050AE1281232C00D65536 /* us_tool_rx_osc.c */,
 				BF07BBAD127A3A3A00AFCB44 /* us_tool_send_osc.c */,
 				BF79D9201247F275007595DB /* us_tool_create_trie.c */,
 			);
@@ -340,6 +346,7 @@
 		BFAA50BE1247C8E600FF1616 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				BF2050AD128122C700D65536 /* us_osc_io.h */,
 				BF520637127606A300332429 /* us_test_osc_io_main.h */,
 				BF79D9211247F575007595DB /* us_osc_dispatch.h */,
 				BF79D9221247F575007595DB /* us_test_osc_dispatch_main.h */,
@@ -525,6 +532,7 @@
 				BFAA51001247C92F00FF1616 /* us_trie_ro.c in Sources */,
 				BFAA51011247C92F00FF1616 /* us_trie_rw.c in Sources */,
 				BF52063B127606BD00332429 /* us_osc_test_osc_io.c in Sources */,
+				BF2050A2128122B400D65536 /* us_osc_io.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
