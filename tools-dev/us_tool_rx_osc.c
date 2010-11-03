@@ -264,12 +264,12 @@ int main ( int argc, char **argv )
     us_platform_init_winsock ();
 # endif
     us_log_set_level ( US_LOG_LEVEL_DEBUG );
-    if( us_tool_rx_osc(&allocator.base, listen_host, listen_port) )
+    if( us_tool_rx_osc(&allocator.m_base, listen_host, listen_port) )
     {
         r=0;
     }
     us_logger_finish();
-    us_malloc_allocator_destroy( &allocator.base );
+    us_malloc_allocator_destroy( &allocator.m_base );
     return r;
 }
 

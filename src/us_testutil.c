@@ -49,15 +49,13 @@ char us_testutil_printbuffer_stderr[ US_TESTUTIL_PRINTBUFFER_SIZE ];
 
 #if US_ENABLE_MALLOC
 us_malloc_allocator_t us_testutil_sys_allocator_impl;
-us_malloc_allocator_t us_testutil_session_allocator_impl;
 #else
 us_simple_allocator_t us_testutil_sys_allocator_impl;
-us_simple_allocator_t us_testutil_session_allocator_impl;
 int32_t us_testutil_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
-int32_t us_testutil_session_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 #endif
 
-
+us_simple_allocator_t us_testutil_session_allocator_impl;
+int32_t us_testutil_session_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 
 bool us_testutil_start (
     int32_t sys_allocator_size,
@@ -89,13 +87,8 @@ bool us_testutil_start (
         us_malloc_allocator_init (
             &us_testutil_sys_allocator_impl
         );
-    us_testutil_session_allocator =
-        us_malloc_allocator_init (
-            &us_testutil_session_allocator_impl
-        );
 #else
     ( void ) sys_allocator_size;
-    ( void ) session_allocator_size;
     /*
       or with statically allocated bss segment data if we don't have malloc
     */
@@ -105,13 +98,16 @@ bool us_testutil_start (
             &us_testutil_session_sys_buffer,
             ( int32_t ) ( US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof ( int32_t ) )
         );
+#endif
+    ( void ) session_allocator_size;
     us_testutil_session_allocator =
         us_simple_allocator_init (
             &us_testutil_session_allocator_impl,
             &us_testutil_session_sys_buffer,
             ( int32_t ) ( US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof ( int32_t ) )
         );
-#endif
+
+
     /*
       check for allocation failure
     */

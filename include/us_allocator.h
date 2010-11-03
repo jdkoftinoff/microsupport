@@ -115,7 +115,7 @@ extern "C"
 
     typedef struct us_simple_allocator_s
     {
-        us_allocator_t base;
+        us_allocator_t m_base;
         /** pointer to the raw memory pool to allocate from */
         void *m_raw_memory;
 
@@ -145,8 +145,8 @@ extern "C"
     );
 
     void
-    us_allocator_reset (
-        us_allocator_t *self
+    us_simple_allocator_reset (
+        us_simple_allocator_t *self
     );
 
     /** us_simple_allocator_destroy
@@ -189,7 +189,7 @@ extern "C"
 
     typedef struct us_malloc_allocator_s
     {
-        us_allocator_t base;
+        us_allocator_t m_base;
     } us_malloc_allocator_t;
 
     /**

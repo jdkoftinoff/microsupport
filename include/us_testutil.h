@@ -86,14 +86,13 @@ extern "C"
 
 #if US_ENABLE_MALLOC
     extern us_malloc_allocator_t us_testutil_sys_allocator_impl;
-    extern us_malloc_allocator_t us_testutil_session_allocator_impl;
 #else
     extern us_simple_allocator_t us_testutil_sys_allocator_impl;
-    extern us_simple_allocator_t us_testutil_session_allocator_impl;
-    extern int32_t us_testutil_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
-    extern int32_t us_testutil_session_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
-#endif
 
+    extern int32_t us_testutil_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
+#endif
+    extern us_simple_allocator_t us_testutil_session_allocator_impl;
+    extern int32_t us_testutil_session_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 #ifdef __cplusplus
 }
 #endif

@@ -66,11 +66,11 @@ us_simple_allocator_init (
     self->m_raw_memory = raw_memory;
     self->m_raw_memory_length = raw_memory_length;
     self->m_current_position = 0;
-    self->base.destroy = us_simple_allocator_destroy;
-    self->base.alloc = us_simple_allocator_alloc;
-    self->base.realloc = us_simple_allocator_realloc;
-    self->base.free = us_simple_allocator_free;
-    return &self->base;
+    self->m_base.destroy = us_simple_allocator_destroy;
+    self->m_base.alloc = us_simple_allocator_alloc;
+    self->m_base.realloc = us_simple_allocator_realloc;
+    self->m_base.free = us_simple_allocator_free;
+    return &self->m_base;
 }
 
 void us_simple_allocator_destroy (
@@ -126,11 +126,10 @@ void us_simple_allocator_free (
 
 
 void
-us_allocator_reset (
-    us_allocator_t *self_
+us_simple_allocator_reset (
+    us_simple_allocator_t *self
 )
 {
-    us_simple_allocator_t *self = ( us_simple_allocator_t * ) self_;
     self->m_current_position = 0;
 }
 
@@ -142,11 +141,11 @@ us_malloc_allocator_init (
     us_malloc_allocator_t *self
 )
 {
-    self->base.destroy = us_malloc_allocator_destroy;
-    self->base.alloc = us_malloc_allocator_alloc;
-    self->base.realloc = us_malloc_allocator_realloc;
-    self->base.free = us_malloc_allocator_free;
-    return &self->base;
+    self->m_base.destroy = us_malloc_allocator_destroy;
+    self->m_base.alloc = us_malloc_allocator_alloc;
+    self->m_base.realloc = us_malloc_allocator_realloc;
+    self->m_base.free = us_malloc_allocator_free;
+    return &self->m_base;
 }
 
 void us_malloc_allocator_destroy (

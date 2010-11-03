@@ -2,6 +2,8 @@
 
 #include "us_osc_io.h"
 
+#if 0
+/* TODO: */
 us_osc_io_packet_t *us_osc_io_packet_create(
     us_allocator_t *allocator,
     int max_buf_size
@@ -167,6 +169,8 @@ bool us_osc_io_packet_stream_put_bundle(
 )
 {
 }
+
+#endif
 
 
 

@@ -391,8 +391,8 @@ int main ( int argc, char **argv )
 {
     us_malloc_allocator_t allocator;
     us_malloc_allocator_init( &allocator );
-    bool r = us_example_reactor( &allocator.base );
-    us_malloc_allocator_destroy( &allocator.base );
+    bool r = us_example_reactor( &allocator.m_base );
+    us_malloc_allocator_destroy( &allocator.m_base );
     if ( r )
     {
         return 0;
