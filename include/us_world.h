@@ -93,6 +93,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # include <winsock2.h>
 # include <ws2tcpip.h>
 # include <mswsock.h>
+
+#include <errno.h>
 # ifndef EADDRINUSE
 #  define EADDRINUSE 112  /* Address already in use */
 # endif

@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\..\..\include\us_net.h" />
     <ClInclude Include="..\..\..\..\include\us_options.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_dispatch.h" />
+    <ClInclude Include="..\..\..\..\include\us_osc_io.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_msg.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_msg_print.h" />
     <ClInclude Include="..\..\..\..\include\us_parse.h" />
@@ -160,6 +161,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_osc_io.c" />
     <ClCompile Include="..\..\..\..\src\us_osc_msg.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
