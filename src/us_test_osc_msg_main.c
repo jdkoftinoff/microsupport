@@ -271,7 +271,6 @@ int us_test_osc_msg_main( int argc, char **argv )
         {
             us_buffer_t *buffer = 0;
             us_log_debug( "resetting session allocator" );
-
             us_log_debug( "allocating 4k buffer from session" );
             buffer = us_buffer_create(us_testutil_session_allocator, 4096);
             if ( buffer )

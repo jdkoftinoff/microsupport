@@ -106,8 +106,6 @@ bool us_testutil_start (
             &us_testutil_session_sys_buffer,
             ( int32_t ) ( US_TESTUTIL_BUFFER_SIZE_IN_WORDS * sizeof ( int32_t ) )
         );
-
-
     /*
       check for allocation failure
     */

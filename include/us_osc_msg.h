@@ -131,6 +131,10 @@ extern "C"
 
     typedef struct us_osc_msg_bundle_s
     {
+        void (*destroy)(
+            struct us_osc_msg_bundle_s *self
+        );
+
         us_osc_msg_t *
         (*append)(
             struct us_osc_msg_bundle_s *self,
@@ -162,6 +166,11 @@ extern "C"
         us_allocator_t *allocator,
         uint32_t timetag_high,
         uint32_t timetag_low
+    );
+
+    void
+    us_osc_msg_bundle_destroy(
+        us_osc_msg_bundle_t *self
     );
 
     us_osc_msg_t *
@@ -778,7 +787,7 @@ extern "C"
 
     /**
      Parse either a bundle or an OSC message
-     
+
      @param allocator allocator to use to allocate msg or bundle
      @param msg pointer to msg pointer that will be filled in if buffer contains message
      @param bundle pointer to bundler pointer that will be filled in if buffer contains bundle
@@ -791,11 +800,11 @@ extern "C"
         us_osc_msg_t **msg,
         us_osc_msg_bundle_t **bundle,
         us_buffer_t *buffer
-        );
+    );
 
     /*@}*/
 
-    
+
 
     /*@}*/
 #ifdef __cplusplus

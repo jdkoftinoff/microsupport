@@ -212,6 +212,7 @@ us_osc_msg_bundle_create(
     {
         self->m_timetag_high = timetag_high;
         self->m_timetag_low = timetag_low;
+        self->destroy = us_osc_msg_bundle_destroy;
         self->append = us_osc_msg_bundle_append;
         self->flatten = us_osc_msg_bundle_flatten;
 #if US_ENABLE_PRINTING
@@ -222,6 +223,20 @@ us_osc_msg_bundle_create(
         r = self;
     }
     return r;
+}
+
+void
+us_osc_msg_bundle_destroy(
+    us_osc_msg_bundle_t *self
+)
+{
+    us_osc_msg_t *msg = self->m_first_msg;
+    while( msg )
+    {
+        us_osc_msg_t *next = msg->m_next;
+        msg->destroy( msg );
+        msg = next;
+    }
 }
 
 us_osc_msg_t *
@@ -1354,24 +1369,24 @@ us_osc_parse(
     us_osc_msg_t **msg,
     us_osc_msg_bundle_t **bundle,
     us_buffer_t *buffer
-    )
+)
 {
-  bool r=false;
-  *msg = 0;
-  *bundle = 0;
-  if( us_osc_msg_is_msg(buffer) )
-  {
-    *msg = us_osc_msg_unflatten(allocator, buffer);
-    if( *msg )
-        r=true;
-  }
-  else if( us_osc_msg_is_msg_bundle(buffer) )
-  {
-    *bundle = us_osc_msg_bundle_unflatten(allocator, buffer);
-    if( *bundle )
-        r=true;
-  }
-  return r;
+    bool r=false;
+    *msg = 0;
+    *bundle = 0;
+    if( us_osc_msg_is_msg(buffer) )
+    {
+        *msg = us_osc_msg_unflatten(allocator, buffer);
+        if( *msg )
+            r=true;
+    }
+    else if( us_osc_msg_is_msg_bundle(buffer) )
+    {
+        *bundle = us_osc_msg_bundle_unflatten(allocator, buffer);
+        if( *bundle )
+            r=true;
+    }
+    return r;
 }
 
 
