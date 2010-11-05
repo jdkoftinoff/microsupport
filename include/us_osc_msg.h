@@ -776,8 +776,26 @@ extern "C"
         us_buffer_t *buffer
     );
 
+    /**
+     Parse either a bundle or an OSC message
+     
+     @param allocator allocator to use to allocate msg or bundle
+     @param msg pointer to msg pointer that will be filled in if buffer contains message
+     @param bundle pointer to bundler pointer that will be filled in if buffer contains bundle
+     @param buffer pointer to buffer to parse
+     @return bool true if msg or bundle was parsed. One of msg or bundle will be non-zero
+     */
+    bool
+    us_osc_parse(
+        us_allocator_t *allocator,
+        us_osc_msg_t **msg,
+        us_osc_msg_bundle_t **bundle,
+        us_buffer_t *buffer
+        );
+
     /*@}*/
 
+    
 
     /*@}*/
 #ifdef __cplusplus

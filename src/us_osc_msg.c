@@ -1348,5 +1348,31 @@ us_osc_msg_element_I_unflatten(
     return result;
 }
 
+bool
+us_osc_parse(
+    us_allocator_t *allocator,
+    us_osc_msg_t **msg,
+    us_osc_msg_bundle_t **bundle,
+    us_buffer_t *buffer
+    )
+{
+  bool r=false;
+  *msg = 0;
+  *bundle = 0;
+  if( us_osc_msg_is_msg(buffer) )
+  {
+    *msg = us_osc_msg_unflatten(allocator, buffer);
+    if( *msg )
+        r=true;
+  }
+  else if( us_osc_msg_is_msg_bundle(buffer) )
+  {
+    *bundle = us_osc_msg_bundle_unflatten(allocator, buffer);
+    if( *bundle )
+        r=true;
+  }
+  return r;
+}
+
 
 

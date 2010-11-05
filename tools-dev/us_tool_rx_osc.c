@@ -17,18 +17,29 @@ void us_tool_rx_osc_udp_packet_received(
     socklen_t remote_addrlen
 )
 {
-    us_osc_msg_t *msg = us_osc_msg_unflatten(self->m_base.m_allocator, buf );
-    if( !msg )
+    bool r=false;
+    us_osc_msg_t *msg;
+    us_osc_bundle_t *bundle;
+    
+    r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf);
+    if( r )
     {
-        us_log_error( "unable to parse osc message" );
-    }
-    else
-    {
-        us_log_debug( "parsed osc msg" );
-        msg->print( msg, us_stdout );
-        us_stdout->printf( us_stdout, "\n" );
-        //received_osc( self, msg );
-        msg->destroy( msg );
+        if( msg )
+        {
+            us_log_debug( "parsed osc msg" );
+            msg->print( msg, us_stdout );
+            us_stdout->printf( us_stdout, "\n" );
+            //received_osc( self, msg );
+            msg->destroy( msg );
+        }
+        if( bundle )
+        {
+            us_log_debug("parsed osc bundle" );
+            bundle->print( bundle, us_stdout );
+            us_stdout->printf( us_stdout, "\n" );
+            //received_osc_bundle( self, msg );
+            bundle->destroy(bundle);
+        }
     }
 }
 
@@ -51,6 +62,7 @@ typedef struct us_tool_rx_osc_tcp_handler_s
     bool m_in_header;
     uint32_t m_todo_count;
     void (*received_osc)( struct us_tool_rx_osc_tcp_handler_s *self, const us_osc_msg_t *msg );
+    void (*received_osc_bundle)( struct us_tool_rx_osc_tcp_handler_s *self, const us_osc_msg_bundle_t *bundle );
 } us_tool_rx_osc_tcp_handler_t;
 
 bool us_tool_rx_osc_tcp_handler_readable (
@@ -95,27 +107,48 @@ bool us_tool_rx_osc_tcp_handler_readable (
                     {
                         us_buffer_t buf;
                         us_osc_msg_t *msg;
+                        us_osc_msg_bundle_t *bundle;
+                        
                         us_buffer_init(&buf, 0, flattened, p);
                         buf.m_cur_length = p;
                         buf.m_cur_read_pos = 0;
                         us_log_debug( "pulled in raw osc msg of length %d", p );
-                        msg = us_osc_msg_unflatten(self->m_base.m_base.m_allocator, &buf );
-                        if( !msg )
+                        
+                        r=us_osc_parse(self->m_base.m_base.m_allocator, &msg, &bundle, &buf)
+
+                        if( !r )
                         {
                             us_log_error( "unable to parse osc message" );
                             break;
                         }
                         else
                         {
-                            us_log_debug( "parsed osc msg" );
-                            self->m_in_header = true;
-                            msg->print( msg, us_stdout );
-                            us_stdout->printf( us_stdout, "\n" );
-                            if( self->received_osc )
+                            if( msg )
                             {
-                                self->received_osc( self, msg );
+                                us_log_debug( "parsed osc msg" );
+                                msg->print( msg, us_stdout );
+                                us_stdout->printf( us_stdout, "\n" );
+                                                        
+                                if( self->received_osc )
+                                {
+                                    self->received_osc( self, msg );
+                                }                                
+                                msg->destroy( msg );                            
                             }
-                            msg->destroy( msg );
+                            if( bundle )
+                            {
+                                us_log_debug( "parsed osc bundle" );
+                                bundle->print( bundle, us_stdout );
+                                us_stdout->printf( us_stdout, "\n" );
+                                                        
+                                if( self->received_osc_bundle )
+                                {
+                                    self->received_osc_bundle( self, bundle );
+                                }                                
+                                bundle->destroy( bundle );                            
+                            }
+                                
+                            self->m_in_header = true;
                         }
                     }
                 }
