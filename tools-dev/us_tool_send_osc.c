@@ -95,7 +95,7 @@ static us_osc_msg_t * us_tool_gen_osc(
     if ( self )
     {
         r = self;
-        for ( ; *t!=0 && osc_values!=0 && *osc_values!=0; ++t )
+        for ( ; *t!=0; ++t )
         {
             e = 0;
             switch ( *t )
@@ -129,7 +129,6 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 'F':
             {
                 e = us_osc_msg_element_F_create( allocator );
-                osc_values++;
             }
             break;
 #if US_ENABLE_FLOAT
