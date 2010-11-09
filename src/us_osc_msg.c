@@ -352,7 +352,7 @@ us_osc_msg_bundle_unflatten(
                          timetag_high,
                          timetag_low
                      );
-            while (true)
+            while ( buf->m_cur_read_pos < buf->m_cur_length )
             {
                 bool r = false;
                 int32_t msg_size = 0;
