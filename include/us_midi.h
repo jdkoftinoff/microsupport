@@ -356,7 +356,7 @@ extern "C"
     }
 
     /** Set the 7 bit controller value of a control change message */
-    static inline void us_midi_msg_setcontroller_value ( us_midi_msg_t *self, uint8_t v )
+    static inline void us_midi_msg_set_controller_value ( us_midi_msg_t *self, uint8_t v )
     {
         self->byte2 = v;
     }
