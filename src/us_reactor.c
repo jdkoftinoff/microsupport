@@ -31,7 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_reactor.h"
 #include "us_print.h"
 
-/*#define US_REACTOR_TCP_TRACE*/
+/* #define US_REACTOR_TCP_TRACE_TX */
+/* define US_REACTOR_TCP_TRACE_RX */
 
 bool us_reactor_handler_init (
     us_reactor_handler_t *self,
@@ -662,10 +663,10 @@ bool us_reactor_handler_tcp_readable (
     while( len<0 && errno==EINTR );
     if ( len > 0 )
     {
-#ifdef US_REACTOR_TCP_TRACE
+#ifdef US_REACTOR_TCP_TRACE_RX
         {
             int i;
-            us_stderr->printf( us_stderr, "READ TCP DATA (len %d): ", len );
+            us_stderr->printf( us_stderr, "\nREAD TCP DATA (len %d): ", len );
             for( i=0; i<len; i++ )
             {
                 us_stderr->printf( us_stderr, "%02x ", self->xfer_buf[i] );
@@ -715,10 +716,10 @@ bool us_reactor_handler_tcp_writable (
     {
         uint8_t *outgoing = us_queue_contig_read_ptr ( &self->m_outgoing_queue );
         int outgoing_len = us_queue_contig_readable_count ( &self->m_outgoing_queue );
-#ifdef US_REACTOR_TCP_TRACE
+#ifdef US_REACTOR_TCP_TRACE_TX
         {
             int i;
-            us_stderr->printf( us_stderr, "WRITE TCP DATA (len=%d): ", outgoing_len );
+            us_stderr->printf( us_stderr, "\nWRITE TCP DATA (len=%d): ", outgoing_len );
             for( i=0; i<len; i++ )
             {
                 us_stderr->printf( us_stderr, "%02x ", outgoing[i] );
