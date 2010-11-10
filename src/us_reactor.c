@@ -719,7 +719,7 @@ bool us_reactor_handler_tcp_writable (
 #ifdef US_REACTOR_TCP_TRACE_TX
         {
             int i;
-            us_stderr->printf( us_stderr, "\nWRITE TCP DATA (len=%d): ", outgoing_len );
+            us_stderr->printf( us_stderr, "\nWRITE TCP DATA (next_in=%d, next_out=%d) (len=%d): ", self->m_outgoing_queue.m_next_in, self->m_outgoing_queue.m_next_out, outgoing_len );
             for( i=0; i<len; i++ )
             {
                 us_stderr->printf( us_stderr, "%02x ", outgoing[i] );
