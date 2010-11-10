@@ -405,7 +405,7 @@ bool us_reactor_create_server (
         struct addrinfo *cur_addr = ai;
         while ( cur_addr != NULL )
         {
-            const char opt = 1;
+            const int opt = 1;
             int fd;
             do
             {
