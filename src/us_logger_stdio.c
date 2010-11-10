@@ -107,6 +107,7 @@ void us_log_error_stdio ( const char *fmt, ... )
     US_DEFAULT_VFPRINTF ( stderr, fmt, ap );
     US_DEFAULT_FPRINTF ( stderr, "\n" );
     va_end ( ap );
+    fflush( stderr );
 }
 
 void us_log_warn_stdio ( const char *fmt, ... )
@@ -117,6 +118,7 @@ void us_log_warn_stdio ( const char *fmt, ... )
     US_DEFAULT_VFPRINTF ( stderr, fmt, ap );
     US_DEFAULT_FPRINTF ( stderr, "\n" );
     va_end ( ap );
+    fflush( stderr );
 }
 
 void us_log_info_stdio ( const char *fmt, ... )
@@ -127,6 +129,7 @@ void us_log_info_stdio ( const char *fmt, ... )
     US_DEFAULT_VFPRINTF ( stdout, fmt, ap );
     US_DEFAULT_FPRINTF ( stdout, "\n" );
     va_end ( ap );
+    fflush( stdout );
 }
 
 void us_log_debug_stdio ( const char *fmt, ... )
@@ -137,6 +140,7 @@ void us_log_debug_stdio ( const char *fmt, ... )
     US_DEFAULT_VFPRINTF ( stdout, fmt, ap );
     US_DEFAULT_FPRINTF ( stdout, "\n" );
     va_end ( ap );
+    fflush( stdout );
 }
 
 
