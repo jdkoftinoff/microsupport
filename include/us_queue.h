@@ -79,7 +79,7 @@ extern "C"
     static inline int us_queue_contig_readable_count ( us_queue_t *self )
     {
         if ( self->m_next_in < self->m_next_out )
-            return ( self->m_buf_size - self->m_next_in ) & ( self->m_buf_size - 1 );
+            return ( self->m_buf_size - self->m_next_out ) & ( self->m_buf_size - 1 );
         else
             return ( self->m_next_in - self->m_next_out ) & ( self->m_buf_size - 1 );
     }
@@ -159,7 +159,7 @@ extern "C"
     static inline int us_queue_contig_writable_count ( us_queue_t *self )
     {
         if ( self->m_next_out >= self->m_next_in )
-            return ( ( self->m_buf_size - self->m_next_out ) - 1 ) & ( self->m_buf_size - 1 );
+            return ( ( self->m_buf_size - self->m_next_in ) - 1 ) & ( self->m_buf_size - 1 );
         else
             return ( ( self->m_next_out - self->m_next_in ) - 1 ) & ( self->m_buf_size - 1 );
     }
