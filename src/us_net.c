@@ -121,13 +121,14 @@ int us_net_create_udp_socket (
             }
             if ( do_bind )
             {
+                if ( setsockopt ( s, SOL_SOCKET, SO_REUSEADDR, ( const char * ) &on, sizeof ( on ) ) == -1 )
+                {
+                    perror ( "setsockopt SO_REUSEADDR:" );
+                    abort();
+                }
+                
                 if ( bind ( s, ai->ai_addr, ai->ai_addrlen ) == 0 )
                 {
-                    if ( setsockopt ( s, SOL_SOCKET, SO_REUSEADDR, ( const char * ) &on, sizeof ( on ) ) == -1 )
-                    {
-                        perror ( "setsockopt SO_REUSEADDR:" );
-                        abort();
-                    }
                     r = s;
                 }
                 else
@@ -192,7 +193,6 @@ int us_net_create_multicast_rx_udp_socket (
         perror ( "socket:" );
         abort();
     }
-    if ( bind ( s, listenaddr->ai_addr, listenaddr->ai_addrlen ) == 0 )
     {
         int on = 1;
         if ( setsockopt ( s, SOL_SOCKET, SO_REUSEADDR, ( const char * ) &on, sizeof ( on ) ) == -1 )
@@ -201,7 +201,7 @@ int us_net_create_multicast_rx_udp_socket (
             abort();
         }
     }
-    else
+    if ( bind ( s, listenaddr->ai_addr, listenaddr->ai_addrlen ) != 0 )
     {
         closesocket ( s );
         perror ( "bind: " );
