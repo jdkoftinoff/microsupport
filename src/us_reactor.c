@@ -559,8 +559,6 @@ bool us_reactor_handler_tcp_server_readable (
             else
             {
                 us_log_error( "unable to create tcp client handler" );
-                closesocket ( client_item->m_fd );
-                client_item->destroy ( client_item );
                 us_delete( self->m_base.m_allocator, client_item );
             }
         }
