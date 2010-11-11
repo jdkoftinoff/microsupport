@@ -485,7 +485,7 @@ bool us_reactor_create_server (
     }
     else
     {
-        us_log_error( "getaddrinfo: %s", strerror ( e ) );
+        us_log_error( "getaddrinfo: %s", gai_strerror ( e ) );
         return false;
     }
     if ( added_count > 0 )
@@ -799,7 +799,7 @@ int us_reactor_tcp_blocking_connect (
     }
     else
     {
-        us_log_error( "getaddrinfo: %s", strerror ( e ) );
+        us_log_error( "getaddrinfo: %s", gai_strerror ( e ) );
     }
     return fd;
 }
