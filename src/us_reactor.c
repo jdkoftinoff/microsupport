@@ -785,6 +785,8 @@ int us_reactor_tcp_blocking_connect (
             {
                 break;
             }
+            closesocket(fd);
+            fd=-1;
             cur_addr = cur_addr->ai_next;
         }
         freeaddrinfo ( ai );
@@ -920,16 +922,16 @@ bool us_reactor_handler_tcp_client_tick (
         /* TODO: Ideally make this non-blocking connect */
         sleep(1);
         self->m_try_once = false;
-        us_log_debug( "tcp client making connection to: [%s]:%s", self->m_client_host, self->m_client_port );
+        us_log_debug( "tcp client connecting to: '[%s]:%s'", self->m_client_host, self->m_client_port );
         self_->m_base.m_fd = us_reactor_tcp_blocking_connect( self->m_client_host, self->m_client_port );
         if( self_->m_base.m_fd >=0 )
         {
-            us_log_debug( "tcp client connected to: '[%s]:%s", self->m_client_host, self->m_client_port );
+            us_log_debug( "tcp client connected to '[%s]:%s'", self->m_client_host, self->m_client_port );
             self->m_is_connected=true;
         }
         else
         {
-            us_log_debug( "tcp client connection failed: %s", strerror(errno) );
+            us_log_debug( "tcp client connection to '[%s]:%s' failed: %s", self->m_client_host, self->m_client_port, strerror(errno) );
         }
     }
     return true;
