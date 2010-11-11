@@ -43,6 +43,7 @@ bool us_reactor_handler_init (
 )
 {
     self->m_allocator = allocator;
+    self->m_finished=false;
     self->m_next = 0;
     self->m_reactor = 0;
     self->m_extra = extra;
@@ -123,7 +124,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
     if ( self->m_num_handlers > 0 )
     {
         us_reactor_handler_t **item;
-        /* garbage collect handlers that are closed */
+        /* garbage collect handlers that are finished */
         item = &self->m_handlers;
         while ( *item )
         {
@@ -131,7 +132,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             {
                 ( *item )->tick ( *item );
             }
-            if ( ( *item )->fd == -1 )
+            if ( ( *item )->m_finished == true )
             {
                 us_reactor_handler_t *next = ( *item )->m_next;
                 ( *item )->destroy ( *item );
@@ -152,15 +153,18 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         item = self->m_handlers;
         while ( item )
         {
-            struct pollfd *p;
-            p = &self->m_poll_handlers[n++];
-            p->events = 0;
-            p->revents = 0;
-            p->fd = item->m_fd;
-            if ( item->m_wake_on_readable && item->readable != 0 )
-                p->events |= POLLIN;
-            if ( item->m_wake_on_writable && item->writable != 0 )
-                p->events |= POLLOUT;
+            if( item->m_fd!=-1 )
+            {
+                struct pollfd *p;
+                p = &self->m_poll_handlers[n++];
+                p->events = 0;
+                p->revents = 0;
+                p->fd = item->m_fd;
+                if ( item->m_wake_on_readable && item->readable != 0 )
+                    p->events |= POLLIN;
+                if ( item->m_wake_on_writable && item->writable != 0 )
+                    p->events |= POLLOUT;
+            }
             item = item->m_next;
         }
 #ifdef WIN32
@@ -180,11 +184,14 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             int n = 0;
             while ( item )
             {
-                struct pollfd *p = &self->m_poll_handlers[n++];
-                if ( item->m_wake_on_readable && ( p->revents & POLLIN ) && item->readable != 0 )
-                    item->readable ( item );
-                if ( item->wake_on_writable && ( p->revents & POLLOUT ) && item->writable != 0 )
-                    item->writable ( item );
+                if( item->m_fd!=-1 )
+                {
+                    struct pollfd *p = &self->m_poll_handlers[n++];
+                    if ( item->m_wake_on_readable && ( p->revents & POLLIN ) && item->readable != 0 )
+                        item->readable ( item );
+                    if ( item->wake_on_writable && ( p->revents & POLLOUT ) && item->writable != 0 )
+                        item->writable ( item );
+                }
                 item = item->m_next;
             }
             r = true;
@@ -212,7 +219,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             {
                 ( *item )->tick ( *item );
             }
-            if ( ( *item )->m_fd == -1 )
+            if ( ( *item )->m_finished == true )
             {
                 us_reactor_handler_t *next = ( *item )->m_next;
                 ( *item )->destroy ( *item );
@@ -347,30 +354,24 @@ bool us_reactor_remove_item (
 bool us_reactor_create_tcp_client (
     us_reactor_t *self,
     us_allocator_t *allocator,
+    void *extra,
+    int queue_buf_size,
+    int xfer_buf_size,
     const char *server_host,
     const char *server_port,
-    void *extra,
+    bool keep_open,
     us_reactor_handler_create_proc_t client_handler_create,
-    us_reactor_handler_init_proc_t client_handler_init
+    us_reactor_handler_tcp_client_init_proc_t client_handler_init
 )
 {
     bool r=false;
-    us_reactor_handler_t *handler = client_handler_create(allocator);
+    us_reactor_handler_tcp_client_t *handler = (us_reactor_handler_tcp_client_t *)client_handler_create(allocator);
     if( handler )
     {
-        int fd = us_reactor_tcp_blocking_connect(server_host, server_port);
-        if( fd!=-1 )
+        r=client_handler_init( &handler->m_base.m_base, allocator, -1, extra, queue_buf_size, xfer_buf_size, server_host, server_port, keep_open );
+        if( r )
         {
-            r=client_handler_init( handler, allocator, fd, extra );
-            if( r )
-            {
-                r=self->add_item( self, handler );
-            }
-            if( !r )
-            {
-                closesocket(fd);
-                handler->destroy( handler );
-            }
+            r=self->add_item( self, &handler->m_base.m_base );
         }
     }
     return r;
@@ -700,6 +701,7 @@ void us_reactor_handler_tcp_close(
     {
         closesocket ( self->m_base.m_fd );
         self->m_base.m_fd = -1;
+        self->m_base.m_finished = true;
         if( self->closed )
         {
             self->closed( self );
@@ -851,5 +853,98 @@ bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
     return r;
 }
 
+us_reactor_handler_t * us_reactor_handler_tcp_client_create ( us_allocator_t *allocator )
+{
+    return (us_reactor_handler_t *)us_new( allocator, us_reactor_handler_tcp_client_t );
+}
 
+
+bool us_reactor_handler_tcp_client_init (
+    us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra,
+    int queue_buf_size,
+    int xfer_buf_size,
+    const char *client_host,
+    const char *client_port,
+    bool keep_open
+)
+{
+    us_reactor_handler_tcp_client_t *self = (us_reactor_handler_tcp_client_t *)self_;
+    bool r=true;
+    r&=us_reactor_handler_tcp_init(
+           self_,
+           allocator,
+           fd,
+           extra,
+           queue_buf_size,
+           xfer_buf_size
+       );
+    if( r )
+    {
+        self->m_client_host = client_host;
+        self->m_client_port = client_port;
+        self->m_is_connected = false;
+        if( keep_open )
+        {
+            self->m_keep_open = true;
+            self->m_try_once=false;
+        }
+        else
+        {
+            self->m_keep_open = false;
+            self->m_try_once=true;
+        }
+        self->m_base.m_base.destroy = us_reactor_handler_tcp_client_destroy;
+        self->m_base.tick = us_reactor_handler_tcp_client_tick;
+        self->m_base.closed = us_reactor_handler_tcp_client_closed;
+    }
+    return r;
+}
+
+void us_reactor_handler_tcp_client_destroy (
+    us_reactor_handler_t *self
+)
+{
+    us_reactor_handler_tcp_destroy( self );
+}
+
+bool us_reactor_handler_tcp_client_tick (
+    us_reactor_handler_tcp_t *self_
+)
+{
+    us_reactor_handler_tcp_client_t *self = (us_reactor_handler_tcp_client_t *)self_;
+    if( !self->m_is_connected && ( self->m_keep_open || self->m_try_once) )
+    {
+        /* TODO: Ideally make this non-blocking connect */
+        sleep(1);
+        self->m_try_once = false;
+        us_log_debug( "tcp client making connection to: [%s]:%s", self->m_client_host, self->m_client_port );
+        self_->m_base.m_fd = us_reactor_tcp_blocking_connect( self->m_client_host, self->m_client_port );
+        if( self_->m_base.m_fd >=0 )
+        {
+            us_log_debug( "tcp client connected to: '[%s]:%s", self->m_client_host, self->m_client_port );
+            self->m_is_connected=true;
+        }
+        else
+        {
+            us_log_debug( "tcp client connection failed: %s", strerror(errno) );
+        }
+    }
+    return true;
+}
+
+
+void us_reactor_handler_tcp_client_closed (
+    struct us_reactor_handler_tcp_s *self_
+)
+{
+    us_reactor_handler_tcp_client_t *self = (us_reactor_handler_tcp_client_t *)self_;
+    self->m_is_connected=false;
+    if( self->m_keep_open )
+    {
+        self->m_base.m_base.m_finished=false;
+    }
+}
 

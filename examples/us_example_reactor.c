@@ -55,7 +55,12 @@ bool us_example_reactor_handler_http_init (
     us_reactor_handler_t *self,
     us_allocator_t *allocator,
     int fd,
-    void *extra
+    void *extra,
+    int queue_buf_size,
+    int xfer_buf_size,
+    const char *server_host,
+    const char *server_port,
+    bool keep_open
 );
 
 bool us_example_reactor_handler_http_tick (
@@ -118,11 +123,16 @@ bool us_example_reactor_handler_http_init (
     us_reactor_handler_t *self_,
     us_allocator_t *allocator,
     int fd,
-    void *extra
+    void *extra,
+    int queue_buf_size,
+    int xfer_buf_size,
+    const char *server_host,
+    const char *server_port,
+    bool keep_open
 )
 {
     us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
-    bool r = us_reactor_handler_tcp_init(self_, allocator, fd, extra, 8192, 2048);
+    bool r = us_reactor_handler_tcp_client_init(self_, allocator, fd, extra, queue_buf_size, xfer_buf_size, server_host, server_port, keep_open);
     if( r )
     {
         static const char *req = "GET / HTTP/1.0\r\nHost: "US_EXAMPLE_HTTP_HOST"\r\n\r\n";
@@ -345,8 +355,10 @@ bool us_example_reactor ( us_allocator_t *allocator )
         r = us_reactor_create_tcp_client(
                 &reactor,
                 allocator,
-                US_EXAMPLE_HTTP_HOST, "80",
                 (void *)stdout,
+                4096,
+                2048,
+                US_EXAMPLE_HTTP_HOST, "80", false,
                 us_example_reactor_handler_http_create,
                 us_example_reactor_handler_http_init
             );

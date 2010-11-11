@@ -51,6 +51,7 @@ extern "C"
         bool ( *readable ) ( struct us_reactor_handler_s *self );
         bool ( *writable ) ( struct us_reactor_handler_s *self );
         us_allocator_t *m_allocator;
+        bool m_finished;
         struct us_reactor_handler_s *m_next;
         struct us_reactor_s *m_reactor;
         void *m_extra;
@@ -66,6 +67,13 @@ extern "C"
     /**
     */
     us_reactor_handler_t * us_reactor_handler_create ( us_allocator_t *allocator  );
+
+    /**
+     */
+    static inline void us_reactor_handler_finish( us_reactor_handler_t *self )
+    {
+        self->m_finished = true;
+    }
 
     /**
     */
@@ -154,14 +162,29 @@ extern "C"
     );
 
 
+    typedef bool ( *us_reactor_handler_tcp_client_init_proc_t ) (
+        us_reactor_handler_t *self,
+        us_allocator_t *allocator,
+        int fd,
+        void *extra,
+        int queue_buf_size,
+        int xfer_buf_size,
+        const char *client_host,
+        const char *client_port,
+        bool keep_open
+    );
+
     bool us_reactor_create_tcp_client (
         us_reactor_t *self,
         us_allocator_t *allocator,
+        void *extra,
+        int queue_buf_size,
+        int xfer_buf_size,
         const char *server_host,
         const char *server_port,
-        void *extra,
+        bool keep_open,
         us_reactor_handler_create_proc_t client_handler_create,
-        us_reactor_handler_init_proc_t client_handler_init
+        us_reactor_handler_tcp_client_init_proc_t client_handler_init
     );
 
     /*@}*/
@@ -295,6 +318,49 @@ extern "C"
 
     void us_reactor_handler_tcp_close (
         us_reactor_handler_tcp_t *self
+    );
+
+
+    /*@}*/
+
+
+    /** \ingroup poll_reactor */
+    /** \defgroup reactor_handler_tcp_client reactor_handler_tcp_client  */
+    /*@{*/
+    typedef struct us_reactor_handler_tcp_client_s
+    {
+        us_reactor_handler_tcp_t m_base;
+        const char *m_client_host;
+        const char *m_client_port;
+        bool m_keep_open;
+        bool m_is_connected;
+        bool m_try_once;
+    } us_reactor_handler_tcp_client_t;
+
+    us_reactor_handler_t * us_reactor_handler_tcp_client_create ( us_allocator_t *allocator );
+
+    bool us_reactor_handler_tcp_client_init (
+        us_reactor_handler_t *self,
+        us_allocator_t *allocator,
+        int fd,
+        void *extra,
+        int queue_buf_size,
+        int xfer_buf_size,
+        const char *client_host,
+        const char *client_port,
+        bool keep_open
+    );
+
+    void us_reactor_handler_tcp_client_destroy (
+        us_reactor_handler_t *self
+    );
+
+    bool us_reactor_handler_tcp_client_tick (
+        us_reactor_handler_tcp_t *self
+    );
+
+    void us_reactor_handler_tcp_client_closed (
+        struct us_reactor_handler_tcp_s *self
     );
 
 
