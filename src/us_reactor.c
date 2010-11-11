@@ -402,6 +402,12 @@ bool us_reactor_create_server (
     hints.ai_flags = AI_PASSIVE;
 #endif
     hints.ai_socktype = ai_socktype;
+
+    if( server_host!=0 && *server_host=='\0' )
+        server_host=0;
+    if( server_port!=0 && *server_port=='\0' )
+        server_port=0;
+
     e = getaddrinfo ( server_host, server_port, &hints, &ai );
     if ( e == 0 )
     {

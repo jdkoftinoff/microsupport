@@ -57,6 +57,11 @@ struct addrinfo *us_net_get_addrinfo (
     hints.ai_family = AF_UNSPEC;
     hints.ai_protocol = 0;
 
+    if( ip_addr!=0 && *ip_addr=='\0' )
+        ip_addr=0;
+    if( ip_port!=0 && *ip_port=='\0' )
+        ip_port=0;
+
     do
     {
         e = getaddrinfo ( ip_addr, ip_port, &hints, &ai );
@@ -81,6 +86,7 @@ bool us_net_get_nameinfo (
 )
 {
     bool r = false;
+
     if ( getnameinfo (
                 ai->ai_addr, ai->ai_addrlen,
                 hostname_buf,
