@@ -126,7 +126,6 @@ int us_net_create_udp_socket (
                     perror ( "setsockopt SO_REUSEADDR:" );
                     abort();
                 }
-                
                 if ( bind ( s, ai->ai_addr, ai->ai_addrlen ) == 0 )
                 {
                     r = s;

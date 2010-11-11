@@ -94,17 +94,14 @@ static int us_platform_sigterm( int s )
 bool us_platform_init_sockets ( void )
 {
     struct sigaction act;
-
     act.sa_handler=SIG_IGN;
     sigemptyset(&act.sa_mask);
     act.sa_flags=0;
-    sigaction(SIGPIPE, &act, NULL); 
-
+    sigaction(SIGPIPE, &act, NULL);
     act.sa_handler=us_platform_sigterm;
     sigemptyset(&act.sa_mask);
     act.sa_flags=0;
     sigaction(SIGTERM, &act, NULL);
-
     return true;
 }
 
