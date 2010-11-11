@@ -85,10 +85,9 @@ bool us_platform_init_sockets ( void )
 
 volatile char us_platform_sigterm_seen=0;
 
-static int us_platform_sigterm( int s )
+static void us_platform_sigterm( int s )
 {
     us_platform_sigterm_seen = 1;
-    return 0;
 }
 
 bool us_platform_init_sockets ( void )
@@ -102,6 +101,11 @@ bool us_platform_init_sockets ( void )
     sigemptyset(&act.sa_mask);
     act.sa_flags=0;
     sigaction(SIGTERM, &act, NULL);
+    /* make SIGINT act like SIGTERM */
+    act.sa_handler=us_platform_sigterm;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags=0;
+    sigaction(SIGINT, &act, NULL);
     return true;
 }
 
