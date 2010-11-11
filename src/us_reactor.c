@@ -452,6 +452,26 @@ bool us_reactor_create_server (
                     if ( self->add_item ( self, item ) )
                     {
                         /* success, keep track of it */
+                        char host_buf[1024];
+                        char port_buf[256];
+                        int e1;
+
+                        e1=getnameinfo(
+                            cur_addr->ai_addr, cur_addr->ai_addrlen,
+                            host_buf, sizeof( host_buf), 
+                            port_buf, sizeof( port_buf),
+                            NI_NUMERICHOST | NI_NUMERICSERV 
+                            );
+
+                        if( e1==0 )
+                        {                            
+                            us_log_debug( "Added listener on [%s]:%s", host_buf, port_buf );
+                        }
+                        else
+                        {
+                            us_log_debug( "unable to getnameinfo on succesful listening port: %s",
+                                          gai_strerror( e1 ) );
+                        }
                         added_count++;
                     }
                     else
