@@ -3,7 +3,7 @@
 #include "us_allocator.h"
 
 #include "us_print.h"
-#include "us_logger_syslog.h"
+#include "us_logger.h"
 
 /*
   Copyright (c) 2010, Meyer Sound Laboratories, Inc.
