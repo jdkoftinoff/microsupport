@@ -922,16 +922,16 @@ bool us_reactor_handler_tcp_client_tick (
         /* TODO: Ideally make this non-blocking connect */
         sleep(1);
         self->m_try_once = false;
-        us_log_debug( "tcp client connecting to: '[%s]:%s'", self->m_client_host, self->m_client_port );
+        us_log_debug( "tcp client connecting '[%s]:%s'", self->m_client_host, self->m_client_port );
         self_->m_base.m_fd = us_reactor_tcp_blocking_connect( self->m_client_host, self->m_client_port );
         if( self_->m_base.m_fd >=0 )
         {
-            us_log_debug( "tcp client connected to '[%s]:%s'", self->m_client_host, self->m_client_port );
+            us_log_debug( "tcp client connected  '[%s]:%s'", self->m_client_host, self->m_client_port );
             self->m_is_connected=true;
         }
         else
         {
-            us_log_debug( "tcp client connection to '[%s]:%s' failed: %s", self->m_client_host, self->m_client_port, strerror(errno) );
+            us_log_debug( "tcp client connection '[%s]:%s' failed: %s", self->m_client_host, self->m_client_port, strerror(errno) );
         }
     }
     return true;
@@ -946,7 +946,12 @@ void us_reactor_handler_tcp_client_closed (
     self->m_is_connected=false;
     if( self->m_keep_open )
     {
+        us_log_debug( "tcp client connection '[%s]:%s' was closed, will re-connect", self->m_client_host, self->m_client_port );
         self->m_base.m_base.m_finished=false;
+    }
+    else
+    {
+        us_log_debug( "tcp client connection '[%s]:%s' was closed, will NOT re-connect", self->m_client_host, self->m_client_port );
     }
 }
 
