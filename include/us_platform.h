@@ -104,6 +104,9 @@ extern "C"
 #endif
     void us_gettimeofday ( struct timeval *tv );
     bool us_platform_init_sockets ( void );
+
+    extern volatile char us_platform_sigterm_seen;
+
 #if US_ENABLE_LWIP_STACK
 # include "lwip/opt.h"
 # include "lwip/arch.h"

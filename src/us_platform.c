@@ -83,9 +83,28 @@ bool us_platform_init_sockets ( void )
 
 #elif defined(US_CONFIG_POSIX)
 
+volatile char us_platform_sigterm_seen=0;
+
+static int us_platform_sigterm( int s )
+{
+    us_platform_sigterm_seen = 1;
+    return 0;
+}
+
 bool us_platform_init_sockets ( void )
 {
-    signal ( EPIPE, SIG_IGN );
+    struct sigaction act;
+
+    act.sa_handler=SIG_IGN;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags=0;
+    sigaction(SIGPIPE, &act, NULL); 
+
+    act.sa_handler=us_platform_sigterm;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags=0;
+    sigaction(SIGTERM, &act, NULL);
+
     return true;
 }
 
