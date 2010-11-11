@@ -208,7 +208,7 @@ bool us_example_reactor_handler_echo_init (
             fd,
             extra,
             16384,
-            1500
+            2048
         );
     self->readable = us_example_reactor_handler_echo_readable;
     self->tick = 0;
@@ -273,7 +273,7 @@ bool us_example_reactor_handler_quitter_init (
             fd,
             extra,
             2048,
-            1500
+            2048
         );
     self->readable = us_example_reactor_handler_quitter_readable;
     self->tick = 0;

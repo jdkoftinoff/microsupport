@@ -29,7 +29,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #include "us_reactor.h"
-#include "us_print.h"
+
+#include "us_logger.h"
 
 /* #define US_REACTOR_TCP_TRACE_TX */
 /* define US_REACTOR_TCP_TRACE_RX */
@@ -83,7 +84,7 @@ bool us_reactor_init ( us_reactor_t *self, us_allocator_t *allocator, int max_ha
     self->m_handlers = 0;
     self->m_max_handlers = max_handlers;
 #if defined(US_REACTOR_USE_POLL)
-    self->m_poll_handlers = calloc ( sizeof ( struct pollfd ), max_handlers );
+    self->m_poll_handlers = us_new_array( allocator, struct pollfd, max_handlers );
 #elif defined(US_REACTOR_USE_SELECT)
     FD_ZERO( &self->m_read_fds );
     FD_ZERO( &self->m_write_fds );
@@ -109,7 +110,7 @@ void us_reactor_destroy ( us_reactor_t *self )
         self->remove_item ( self, self->m_handlers );
     }
 #if defined(US_REACTOR_USE_POLL)
-    free ( self->m_poll_handlers );
+    us_delete( self->m_allocator, self->m_poll_handlers );
     self->m_poll_handlers = 0;
 #endif
 }
@@ -134,7 +135,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             {
                 us_reactor_handler_t *next = ( *item )->m_next;
                 ( *item )->destroy ( *item );
-                free ( *item );
+                us_delete( self->m_allocator, *item );
                 self->m_num_handlers--;
                 *item = next;
             }
@@ -215,7 +216,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             {
                 us_reactor_handler_t *next = ( *item )->m_next;
                 ( *item )->destroy ( *item );
-                free ( *item );
+                us_delete( self->m_allocator, *item );
                 self->m_num_handlers--;
                 *item = next;
             }
@@ -339,7 +340,7 @@ bool us_reactor_remove_item (
         }
     }
     item->destroy ( item );
-    free ( item );
+    us_delete( self->m_allocator, item );
     return r;
 }
 
@@ -415,7 +416,7 @@ bool us_reactor_create_server (
             while ( fd==-1 && errno==EINTR );
             if ( fd == -1 )
             {
-                us_stderr->printf( us_stderr, "socket: %s\n", strerror ( errno ) );
+                us_log_error( "socket: %s\n", strerror ( errno ) );
                 freeaddrinfo ( ai );
                 return false;
             }
@@ -426,7 +427,7 @@ bool us_reactor_create_server (
                 item = server_handler_create(allocator);
                 if ( !item )
                 {
-                    us_stderr->printf ( us_stderr, "item create failed\n" );
+                    us_log_error( "item create failed" );
                     freeaddrinfo ( ai );
                     return false;
                 }
@@ -434,7 +435,7 @@ bool us_reactor_create_server (
                 {
                     if ( listen ( fd, SOMAXCONN ) != 0 )
                     {
-                        us_stderr->printf ( us_stderr, "listen: %s\n", strerror ( errno ) );
+                        us_log_error( "listen: %s", strerror ( errno ) );
                         freeaddrinfo ( ai );
                         return false;
                     }
@@ -448,14 +449,14 @@ bool us_reactor_create_server (
                     }
                     else
                     {
-                        us_stderr->printf ( us_stderr, "unable to add item to reactor\n" );
+                        us_log_error( "unable to add item to reactor" );
                         freeaddrinfo ( ai );
                         return false;
                     }
                 }
                 else
                 {
-                    us_stderr->printf ( us_stderr, "unable to init server item\n" );
+                    us_log_error( "unable to init server item" );
                     freeaddrinfo ( ai );
                     return false;
                 }
@@ -464,7 +465,7 @@ bool us_reactor_create_server (
             {
                 if ( errno != EADDRINUSE )
                 {
-                    us_stderr->printf ( us_stderr, "bind: %s", strerror ( errno ) );
+                    us_log_error( "bind: %s", strerror ( errno ) );
                     freeaddrinfo ( ai );
                     return false;
                 }
@@ -477,7 +478,7 @@ bool us_reactor_create_server (
     }
     else
     {
-        us_stderr->printf ( us_stderr, "getaddrinfo: %s", strerror ( e ) );
+        us_log_error( "getaddrinfo: %s", strerror ( e ) );
         return false;
     }
     if ( added_count > 0 )
@@ -548,14 +549,19 @@ bool us_reactor_handler_tcp_server_readable (
                     {
                         r = tcp_item->connected ( tcp_item, ( struct sockaddr * ) &rem, remlen );
                     }
+                    if( !r )
+                    {
+                        closesocket ( client_item->m_fd );
+                        client_item->m_fd=-1;
+                    }
                 }
             }
-            if ( !r )
+            else
             {
-                us_stderr->printf ( us_stderr, "unabled to create tcp client handler\n" );
+                us_log_error( "unable to create tcp client handler" );
                 closesocket ( client_item->m_fd );
                 client_item->destroy ( client_item );
-                free ( client_item );
+                us_delete( self->m_base.m_allocator, client_item );
             }
         }
     }
@@ -666,12 +672,11 @@ bool us_reactor_handler_tcp_readable (
 #ifdef US_REACTOR_TCP_TRACE_RX
         {
             int i;
-            us_stderr->printf( us_stderr, "\nREAD TCP DATA (len %d): ", len );
+            us_log_debug( "READ TCP DATA (len %d): ", len );
             for( i=0; i<len; i++ )
             {
-                us_stderr->printf( us_stderr, "%02x ", self->xfer_buf[i] );
+                us_log_debug( "%02x", self->xfer_buf[i] );
             }
-            us_stderr->printf( us_stderr, "\n\n" );
         }
 #endif
         us_queue_write ( &self->m_incoming_queue, ( uint8_t* ) self->m_xfer_buf, len );
@@ -719,12 +724,11 @@ bool us_reactor_handler_tcp_writable (
 #ifdef US_REACTOR_TCP_TRACE_TX
         {
             int i;
-            us_stderr->printf( us_stderr, "\nWRITE TCP DATA (next_in=%d, next_out=%d) (len=%d): ", self->m_outgoing_queue.m_next_in, self->m_outgoing_queue.m_next_out, outgoing_len );
+            us_log_debug( "WRITE TCP DATA (next_in=%d, next_out=%d) (len=%d): ", self->m_outgoing_queue.m_next_in, self->m_outgoing_queue.m_next_out, outgoing_len );
             for( i=0; i<len; i++ )
             {
-                us_stderr->printf( us_stderr, "%02x ", outgoing[i] );
+                us_log_debug( "%02x ", outgoing[i] );
             }
-            us_stderr->printf( us_stderr, "\n\n" );
         }
 #endif
         do
@@ -735,7 +739,7 @@ bool us_reactor_handler_tcp_writable (
         if ( len > 0 )
         {
 #ifdef US_REACTOR_TCP_TRACE
-            us_stderr->printf( us_stderr, "WROTE (len=%d): ", len );
+            us_log_debug( "WROTE (len=%d): ", len );
 #endif
             us_queue_skip ( &self->m_outgoing_queue, len );
             r = true;
@@ -773,7 +777,7 @@ int us_reactor_tcp_blocking_connect (
             fd = socket ( cur_addr->ai_family, cur_addr->ai_socktype, cur_addr->ai_protocol );
             if ( fd == -1 )
             {
-                us_stderr->printf ( us_stderr, "socket: %s\n", strerror ( errno ) );
+                us_log_error( "socket: %s\n", strerror ( errno ) );
                 break;
             }
             e = connect( fd, cur_addr->ai_addr, cur_addr->ai_addrlen );
@@ -787,7 +791,7 @@ int us_reactor_tcp_blocking_connect (
     }
     else
     {
-        us_stderr->printf ( us_stderr, "getaddrinfo: %s", strerror ( e ) );
+        us_log_error( "getaddrinfo: %s", strerror ( e ) );
     }
     return fd;
 }

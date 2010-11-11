@@ -177,7 +177,7 @@ bool us_tool_rx_osc_tcp_handler_init (
             fd,
             extra,
             16384,
-            1500
+            2048
         );
     self->m_base.readable = us_tool_rx_osc_tcp_handler_readable;
     self->m_base.tick = 0;
