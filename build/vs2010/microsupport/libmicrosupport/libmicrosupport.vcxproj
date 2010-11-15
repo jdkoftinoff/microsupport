@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\include\us.h" />
     <ClInclude Include="..\..\..\..\include\us_allocator.h" />
+    <ClInclude Include="..\..\..\..\include\us_allocator_heap.h" />
     <ClInclude Include="..\..\..\..\include\us_allocator_print.h" />
     <ClInclude Include="..\..\..\..\include\us_buffer.h" />
     <ClInclude Include="..\..\..\..\include\us_buffer_print.h" />
@@ -49,6 +50,7 @@
     <ClInclude Include="..\..\..\..\include\us_test_midi_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_net_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_osc_dispatch_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_osc_io_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_osc_msg_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_queue_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_slip_main.h" />
@@ -65,6 +67,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_allocator_heap.c" />
     <ClCompile Include="..\..\..\..\src\us_allocator_print.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -174,6 +177,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_osc_test_osc_io.c" />
     <ClCompile Include="..\..\..\..\src\us_parse.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
