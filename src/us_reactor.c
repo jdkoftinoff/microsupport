@@ -612,7 +612,9 @@ bool us_reactor_handler_tcp_init (
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     uint8_t *in_buf = NULL;
     uint8_t *out_buf = NULL;
-    if ( us_reactor_handler_init ( self_, allocator, fd, extra ) )
+
+    r=us_reactor_handler_init ( self_, allocator, fd, extra );
+    if ( r )
     {
         self->m_base.destroy = us_reactor_handler_tcp_destroy;
         self->m_base.tick = us_reactor_handler_tcp_tick;
@@ -628,17 +630,32 @@ bool us_reactor_handler_tcp_init (
         out_buf = us_new_array( allocator, uint8_t, queue_buf_size );
         self->m_xfer_buf = us_new_array( allocator, char, xfer_buf_size );
     }
-    if ( in_buf != NULL && out_buf != NULL && self->m_xfer_buf != NULL )
-    {
-        us_queue_init ( &self->m_incoming_queue, in_buf, queue_buf_size );
-        us_queue_init ( &self->m_outgoing_queue, out_buf, queue_buf_size );
-        r = true;
-    }
     else
     {
-        self->m_base.destroy ( &self->m_base );
-        r = false;
+        us_log_error( "initializing reactor handler failed" );
     }
+
+    if ( r )
+    {
+        if( in_buf != NULL && out_buf != NULL && self->m_xfer_buf != NULL )
+        {
+            us_queue_init ( &self->m_incoming_queue, in_buf, queue_buf_size );
+            us_queue_init ( &self->m_outgoing_queue, out_buf, queue_buf_size );
+            r = true;
+        }
+        else
+        {
+            us_log_error( "allocation of tcp buffers failed" );
+            r=false;
+        }
+    }
+
+    if( !r )
+    {
+        us_log_error( "destroying failed tcp handler" );
+        self->m_base.destroy ( &self->m_base );
+    }
+
     return r;
 }
 
