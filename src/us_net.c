@@ -86,7 +86,6 @@ bool us_net_get_nameinfo (
 )
 {
     bool r = false;
-
     if ( getnameinfo (
                 ai->ai_addr, ai->ai_addrlen,
                 hostname_buf,

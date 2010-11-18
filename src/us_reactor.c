@@ -402,12 +402,10 @@ bool us_reactor_create_server (
     hints.ai_flags = AI_PASSIVE;
 #endif
     hints.ai_socktype = ai_socktype;
-
     if( server_host!=0 && *server_host=='\0' )
         server_host=0;
     if( server_port!=0 && *server_port=='\0' )
         server_port=0;
-
     e = getaddrinfo ( server_host, server_port, &hints, &ai );
     if ( e == 0 )
     {
@@ -455,16 +453,14 @@ bool us_reactor_create_server (
                         char host_buf[1024];
                         char port_buf[256];
                         int e1;
-
                         e1=getnameinfo(
-                            cur_addr->ai_addr, cur_addr->ai_addrlen,
-                            host_buf, sizeof( host_buf), 
-                            port_buf, sizeof( port_buf),
-                            NI_NUMERICHOST | NI_NUMERICSERV 
-                            );
-
+                               cur_addr->ai_addr, cur_addr->ai_addrlen,
+                               host_buf, sizeof( host_buf),
+                               port_buf, sizeof( port_buf),
+                               NI_NUMERICHOST | NI_NUMERICSERV
+                           );
                         if( e1==0 )
-                        {                            
+                        {
                             us_log_debug( "Added listener on [%s]:%s", host_buf, port_buf );
                         }
                         else
@@ -612,7 +608,6 @@ bool us_reactor_handler_tcp_init (
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     uint8_t *in_buf = NULL;
     uint8_t *out_buf = NULL;
-
     r=us_reactor_handler_init ( self_, allocator, fd, extra );
     if ( r )
     {
@@ -632,9 +627,8 @@ bool us_reactor_handler_tcp_init (
     }
     else
     {
-        us_log_error( "initializing reactor handler failed" );
+        us_log_error( "initializing tcp reactor handler failed" );
     }
-
     if ( r )
     {
         if( in_buf != NULL && out_buf != NULL && self->m_xfer_buf != NULL )
@@ -649,13 +643,11 @@ bool us_reactor_handler_tcp_init (
             r=false;
         }
     }
-
     if( !r )
     {
         us_log_error( "destroying failed tcp handler" );
         self->m_base.destroy ( &self->m_base );
     }
-
     return r;
 }
 
