@@ -324,12 +324,12 @@ void us_allocator_heap_report( us_allocator_heap_t *self )
         }
         cur = cur->m_next;
     }
-    us_log_info( "size of largest free chunk: %d", largest_free );
-    us_log_info( "size of largest used chunk: %d ", largest_used );
-    us_log_info( "total free mem: %d ", free_mem );
-    us_log_info( "total used mem: %d", used_mem );
-    us_log_info( "free chunk count: %d", free_chunks );
-    us_log_info( "used chunk count: %d", used_chunks );
+    us_log_debug( "size of largest free chunk: %d", largest_free );
+    us_log_debug( "size of largest used chunk: %d ", largest_used );
+    us_log_debug( "total free mem: %d ", free_mem );
+    us_log_debug( "total used mem: %d", used_mem );
+    us_log_debug( "free chunk count: %d", free_chunks );
+    us_log_debug( "used chunk count: %d", used_chunks );
 }
 
 
