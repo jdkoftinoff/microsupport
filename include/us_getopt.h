@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_world.h"
 #include "us_buffer.h"
+#include "us_print.h"
 
 /**
  \addtogroup us_getopt program options handling
@@ -41,19 +42,77 @@ extern "C"
 {
 #endif
 
+    typedef enum
+    {
+        US_GETOPT_NONE=0,
+        US_GETOPT_FLAG,
+        US_GETOPT_CHAR,
+        US_GETOPT_INT16,
+        US_GETOPT_UINT16,
+        US_GETOPT_INT32,
+        US_GETOPT_UINT32,
+        US_GETOPT_HEX16,
+        US_GETOPT_HEX32,
+        US_GETOPT_STRING,
+#if US_ENABLE_FLOAT
+        US_GETOPT_FLOAT
+#endif
+    } us_getopt_type_t;
+
+    extern const char *us_getopt_value_types[];
+
+    
+    bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len );
+    int us_getopt_unescape_char( char *dest, const char *str, int str_len );
+    bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len );
+
+    bool us_getopt_string_for_value(
+            char *buf,
+            int buf_len,
+            us_getopt_type_t type,
+            const void *value
+            );
+
+    bool us_getopt_value_for_string(
+            us_getopt_type_t type,
+            void *value,
+            const char *str,
+            int str_len
+            );
+
     typedef struct us_getopt_option_s
     {
         const char *m_name;
-        int m_value_type;
-        int m_value;
+        const char *m_description;
+        us_getopt_type_t m_value_type;
+        const void * m_default_value;
+        void * m_current_value;
     } us_getopt_option_t;
 
-    bool us_getopt_init( us_getopt_option_t *opt_list );
-    bool us_getopt_parse_args( us_getopt_option_t *opt_list, int argc, const char **argv );
-    bool us_getopt_parse_one( us_getopt_option_t *opt_list, const char *name, const char *value );
-    bool us_getopt_parse_file( us_getopt_option_t *opt_list, const char *fname );
-    bool us_getopt_parse_line( us_getopt_option_t *opt_list, const char *line );
-    bool us_getopt_parse_buffer( us_getopt_option_t *opt_list, us_buffer_t *buf );
+    typedef struct us_getopt_option_list_s
+    {
+        us_getopt_option_t *m_list;
+        const char *m_prefix;
+        struct us_getopt_option_list_s *m_next;
+    } us_getopt_option_list_t;
+
+    typedef struct us_getopt_s
+    {
+        void (*destroy)( struct us_getopt_s *self );
+        us_allocator_t *m_allocator;
+        us_getopt_option_list_t *m_option_lists;
+        us_getopt_option_list_t *m_last_option_list;
+    } us_getopt_t;
+
+    bool us_getopt_init( us_getopt_t *self, us_allocator_t *allocator );
+    void us_getopt_destroy( us_getopt_t *self );
+    bool us_getopt_add_list( us_getopt_t *self, us_getopt_option_list_t *list, const char *prefix );
+    bool us_getopt_print( us_getopt_t *self, us_print_t *printer );
+    bool us_getopt_parse_one( us_getopt_t *self, const char *name, const char *value, int value_len );
+    bool us_getopt_parse_args( us_getopt_t *self, int argc, const char **argv );
+    bool us_getopt_parse_file( us_getopt_t *self, const char *fname );
+    bool us_getopt_parse_line( us_getopt_t *self, const char *line );
+    bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf );
     
 #ifdef __cplusplus
 }

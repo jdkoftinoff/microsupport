@@ -28,16 +28,68 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+*/
 
 
 /** \addtogroup us_test_getopt */
 /*@{*/
 
+static int16_t log_level_default=0;
+static int16_t log_level;
+
+static int16_t log_type_default=1;
+static int16_t log_type;
+
+static const char log_filename_default[]="log.txt";
+static char *log_filename;
+
+static const char log_udp_default[]="127.0.0.1:9999";
+static char *log_udp;
+
+static us_getopt_option_t log_options[]  =
+{
+    { "level", "Log Level 0-5", US_GETOPT_INT16, &log_level_default, &log_level },
+    { "type", "Logger Type: 0=null, 1=stderr, 2=file, 3=udp", US_GETOPT_INT16, &log_type_default, &log_type },
+    { "file", "Logger Filename", US_GETOPT_STRING, &log_filename_default, &log_filename },
+    { "udp", "Logger Destination UDP address", US_GETOPT_STRING, &log_udp_default, &log_udp },
+    { 0, 0, 0, 0, 0 }
+};
+
+
+
+static const char control_greeting_default[] = "Hello";
+static char *control_greeting;
+
+static const char control_name_default[] = "Person";
+static char *control_name;
+
+
+static us_getopt_option_t control_options[] =
+{
+    { "greeting", "Greeting style", US_GETOPT_STRING, &control_greeting_default, &control_greeting },
+    { "name", "Target's name", US_GETOPT_STRING, &control_name_default, &control_name },
+    { 0, 0, 0, 0, 0 }
+};
+
+static us_getopt_t opt;
 
 bool us_test_getopt( int argc, char **argv )
 {
-    return false;
+    bool r=false;
+    us_allocator_t *allocator = us_testutil_sys_allocator;
+
+    if( us_getopt_init( &opt, allocator ) )
+    {
+        r=true;
+        r&=us_getopt_add_list( &opt, log_options, "log" );
+        r&=us_getopt_add_list( &opt, control_options, "control" );
+        if( r )
+        {
+            us_getopt_print( &opt, us_testutil_printer_stdout );
+        }
+        us_getopt_destroy( &opt );
+    }
+    return r;
 }
 
 int us_test_getopt_main ( int argc, char **argv )
