@@ -57,28 +57,29 @@ extern "C"
 #if US_ENABLE_FLOAT
         US_GETOPT_FLOAT
 #endif
-    } us_getopt_type_t;
+    }
+    us_getopt_type_t;
 
     extern const char *us_getopt_value_types[];
 
-    
+
     bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len );
     int us_getopt_unescape_char( char *dest, const char *str, int str_len );
     bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len );
 
     bool us_getopt_string_for_value(
-            char *buf,
-            int buf_len,
-            us_getopt_type_t type,
-            const void *value
-            );
+        char *buf,
+        int buf_len,
+        us_getopt_type_t type,
+        const void *value
+    );
 
     bool us_getopt_value_for_string(
-            us_getopt_type_t type,
-            void *value,
-            const char *str,
-            int str_len
-            );
+        us_getopt_type_t type,
+        void *value,
+        const char *str,
+        int str_len
+    );
 
     typedef struct us_getopt_option_s
     {
@@ -107,14 +108,14 @@ extern "C"
 
     bool us_getopt_init( us_getopt_t *self, us_allocator_t *allocator );
     void us_getopt_destroy( us_getopt_t *self );
-    bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t *list, const char *prefix, const char *description );
+    bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t list[], const char *prefix, const char *description );
     bool us_getopt_print( us_getopt_t *self, us_print_t *printer );
     bool us_getopt_parse_one( us_getopt_t *self, const char *name, const char *value, int value_len );
     bool us_getopt_parse_args( us_getopt_t *self, int argc, const char **argv );
     bool us_getopt_parse_file( us_getopt_t *self, const char *fname );
     bool us_getopt_parse_line( us_getopt_t *self, const char *line );
     bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf );
-    
+
 #ifdef __cplusplus
 }
 #endif

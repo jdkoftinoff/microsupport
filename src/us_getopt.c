@@ -6,7 +6,7 @@
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -17,7 +17,7 @@
  * Neither the name of the Meyer Sound Laboratories, Inc. nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -30,7 +30,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const char *us_getopt_value_types[] = {
+const char *us_getopt_value_types[] =
+{
     "none",
     "flag",
     "char",
@@ -48,18 +49,18 @@ const char *us_getopt_value_types[] = {
 };
 
 bool us_getopt_string_for_value(
-                                char *buf,
-                                int buf_len,
-                                us_getopt_type_t type,
-                                const void *value
-                                )
+    char *buf,
+    int buf_len,
+    us_getopt_type_t type,
+    const void *value
+)
 {
     bool r=false;
     if( value )
     {
         r=true;
-    switch( type )
-    {
+        switch( type )
+        {
         case US_GETOPT_NONE:
         {
             *buf='\0';
@@ -99,7 +100,6 @@ bool us_getopt_string_for_value(
             }
             break;
         }
-
         case US_GETOPT_INT32:
         {
             if( US_DEFAULT_SNPRINTF( buf, buf_len, "%d", *(int32_t*)value ) > buf_len )
@@ -163,7 +163,7 @@ bool us_getopt_string_for_value(
             *buf='\0';
             break;
         }
-    }
+        }
     }
     return r;
 }
@@ -197,53 +197,53 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
                 p++;
                 switch( *p )
                 {
-                    case '\\':
-                        *dest='\\';
-                        r=2;
-                        break;
-                    case 't':
-                        *dest='\t';
-                        r=2;
-                        break;
-                    case 'n':
-                        *dest='\n';
-                        r=2;
-                        break;
-                    case 'r':
-                        *dest='\r';
-                        r=2;
-                        break;
-                    case '\'':
-                        *dest='\'';
-                        r=2;
-                        break;
-                    case '\"':
-                        *dest='\"';
-                        r=2;
-                    case 'x':
-                        if( str_len>3 )
+                case '\\':
+                    *dest='\\';
+                    r=2;
+                    break;
+                case 't':
+                    *dest='\t';
+                    r=2;
+                    break;
+                case 'n':
+                    *dest='\n';
+                    r=2;
+                    break;
+                case 'r':
+                    *dest='\r';
+                    r=2;
+                    break;
+                case '\'':
+                    *dest='\'';
+                    r=2;
+                    break;
+                case '\"':
+                    *dest='\"';
+                    r=2;
+                case 'x':
+                    if( str_len>3 )
+                    {
+                        if( us_parse_hexoctet( dest, &p[1], 2, 0 ) )
                         {
-                            if( us_parse_hexoctet( dest, &p[1], 2, 0 ) )
-                            {
-                                r=4;
-                            }
+                            r=4;
                         }
-                        break;
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                        if( str_len>3 )
+                    }
+                    break;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                    if( str_len>3 )
+                    {
+                        if( isdigit( p[1]) && isdigit(p[2]))
                         {
-                            if( isdigit( p[1]) && isdigit(p[2]))
-                            {
-                                *dest = ((p[0]-'0')<<6) + ((p[1]-'0')<<3) + ((p[2])-'0');
-                                r=4;
-                            }
+                            *dest = ((p[0]-'0')<<6) + ((p[1]-'0')<<3) + ((p[2])-'0');
+                            r=4;
                         }
-                        break;
-                    default:
-                        break;
+                    }
+                    break;
+                default:
+                    break;
                 }
             }
         }
@@ -263,11 +263,11 @@ bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len 
 }
 
 bool us_getopt_value_for_string(
-                                us_getopt_type_t type,
-                                void *value,
-                                const char *str,
-                                int str_len
-                                )
+    us_getopt_type_t type,
+    void *value,
+    const char *str,
+    int str_len
+)
 {
     bool r=true;
     switch( type )
@@ -302,10 +302,9 @@ bool us_getopt_value_for_string(
     default:
         break;
     }
-    
     return r;
 }
-                                        
+
 
 bool us_getopt_init( us_getopt_t *self, us_allocator_t *allocator )
 {
@@ -315,7 +314,7 @@ bool us_getopt_init( us_getopt_t *self, us_allocator_t *allocator )
     self->m_last_option_list = 0;
     return true;
 }
-                                        
+
 static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_list_t *cur )
 {
     if( cur->m_next )
@@ -325,7 +324,7 @@ static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_l
     }
     us_delete( self->m_allocator, cur );
 }
-                                        
+
 void us_getopt_destroy( us_getopt_t *self )
 {
     us_getopt_option_list_t *cur = self->m_option_lists;
@@ -335,12 +334,11 @@ void us_getopt_destroy( us_getopt_t *self )
     }
     self->m_option_lists = 0;
 }
-                                        
-bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t *list, const char *prefix, const char *description )
+
+bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t list[], const char *prefix, const char *description )
 {
     bool r=false;
     us_getopt_option_list_t *p = 0;
-                
     p = us_new( self->m_allocator, us_getopt_option_list_t );
     if( p )
     {
@@ -349,7 +347,6 @@ bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t *list,
         p->m_prefix = prefix;
         p->m_description = description;
         r=true;
-                    
         if( self->m_last_option_list )
         {
             self->m_last_option_list->m_next = p;
@@ -363,13 +360,11 @@ bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t *list,
     }
     return r;
 }
-                                        
+
 bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
 {
     bool r=true;
-                
     us_getopt_option_list_t *list = self->m_option_lists;
-                
     while( list && r)
     {
         us_getopt_option_t *opt = list->m_list;
@@ -380,14 +375,11 @@ bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
         while( opt && r && opt->m_name!=0 )
         {
             char default_string[1024] = "";
-
             /* TODO: Form default_string */
-            
             if( !us_getopt_string_for_value( default_string, sizeof(default_string)-1, opt->m_value_type, opt->m_default_value ) )
             {
                 default_string[0] = '\0';
             }
-               
             r&=printer->printf( printer, "    %s.%s (%s) : %s%s%s%s\n",
                                 list->m_prefix,
                                 opt->m_name,
@@ -396,36 +388,30 @@ bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
                                 (( default_string[0]!='\0' ) ? ", default is: \"" : ""),
                                 default_string,
                                 (( default_string[0]!='\0' ) ? "\"" : "" )
-                );
+                              );
             opt++;
         }
-                    
         list=list->m_next;
     }
     return r;
 }
-                                        
+
 bool us_getopt_parse_one( us_getopt_t *self, const char *name, const char *value, int value_len )
 {
-                
 }
-                                        
+
 bool us_getopt_parse_args( us_getopt_t *self, int argc, const char **argv )
 {
-                
 }
-                                        
+
 bool us_getopt_parse_file( us_getopt_t *self, const char *fname )
 {
-                
 }
-                                        
+
 bool us_getopt_parse_line( us_getopt_t *self, const char *line )
 {
-                
 }
-                                        
+
 bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf )
 {
-                
 }

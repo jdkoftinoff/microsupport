@@ -46,7 +46,7 @@ static char *log_filename;
 static const char log_udp_default[]="127.0.0.1:9999";
 static char *log_udp;
 
-static us_getopt_option_t log_options[]  =
+static const us_getopt_option_t log_options[]  =
 {
     { "level", "Log Level 0-5", US_GETOPT_INT16, &log_level_default, &log_level },
     { "type", "Logger Type: 0=null, 1=stderr, 2=file, 3=udp", US_GETOPT_INT16, &log_type_default, &log_type },
@@ -64,7 +64,7 @@ static const char control_name_default[] = "Person";
 static char *control_name;
 
 
-static us_getopt_option_t control_options[] =
+static const us_getopt_option_t control_options[] =
 {
     { "greeting", "Greeting style", US_GETOPT_STRING, &control_greeting_default, &control_greeting },
     { "name", "Target's name", US_GETOPT_STRING, &control_name_default, &control_name },
@@ -77,7 +77,6 @@ bool us_test_getopt( int argc, char **argv )
 {
     bool r=false;
     us_allocator_t *allocator = us_testutil_sys_allocator;
-
     if( us_getopt_init( &opt, allocator ) )
     {
         r=true;
