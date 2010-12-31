@@ -336,7 +336,7 @@ void us_getopt_destroy( us_getopt_t *self )
     self->m_option_lists = 0;
 }
                                         
-bool us_getopt_add_list( us_getopt_t *self, us_getopt_option_list_t *list, const char *prefix )
+bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t *list, const char *prefix, const char *description )
 {
     bool r=false;
     us_getopt_option_list_t *p = 0;
@@ -347,6 +347,7 @@ bool us_getopt_add_list( us_getopt_t *self, us_getopt_option_list_t *list, const
         p->m_list = list;
         p->m_next = 0;
         p->m_prefix = prefix;
+        p->m_description = description;
         r=true;
                     
         if( self->m_last_option_list )
@@ -374,7 +375,7 @@ bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
         us_getopt_option_t *opt = list->m_list;
         if( list->m_prefix )
         {
-            r&=printer->printf( printer,"Option group '%s':\n", list->m_prefix );
+            r&=printer->printf( printer,"Option group '%s': %s\n", list->m_prefix, list->m_description );
         }
         while( opt && r && opt->m_name!=0 )
         {

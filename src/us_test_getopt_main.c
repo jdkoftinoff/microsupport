@@ -81,8 +81,8 @@ bool us_test_getopt( int argc, char **argv )
     if( us_getopt_init( &opt, allocator ) )
     {
         r=true;
-        r&=us_getopt_add_list( &opt, log_options, "log" );
-        r&=us_getopt_add_list( &opt, control_options, "control" );
+        r&=us_getopt_add_list( &opt, log_options, "log", "Logging options" );
+        r&=us_getopt_add_list( &opt, control_options, "control", "Control Options" );
         if( r )
         {
             us_getopt_print( &opt, us_testutil_printer_stdout );

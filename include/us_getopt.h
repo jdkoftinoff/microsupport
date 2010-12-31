@@ -93,6 +93,7 @@ extern "C"
     {
         us_getopt_option_t *m_list;
         const char *m_prefix;
+        const char *m_description;
         struct us_getopt_option_list_s *m_next;
     } us_getopt_option_list_t;
 
@@ -106,7 +107,7 @@ extern "C"
 
     bool us_getopt_init( us_getopt_t *self, us_allocator_t *allocator );
     void us_getopt_destroy( us_getopt_t *self );
-    bool us_getopt_add_list( us_getopt_t *self, us_getopt_option_list_t *list, const char *prefix );
+    bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t *list, const char *prefix, const char *description );
     bool us_getopt_print( us_getopt_t *self, us_print_t *printer );
     bool us_getopt_parse_one( us_getopt_t *self, const char *name, const char *value, int value_len );
     bool us_getopt_parse_args( us_getopt_t *self, int argc, const char **argv );
