@@ -1,18 +1,11 @@
-QT -= core gui
-CONFIG += create_prl
-TOPDIR= ../../..
+! include( ../common.pri ) {
+  error( need common.pri file )
+}
 
-INCLUDEPATH += $$TOPDIR/include 
-DEPENDPATH += $$INCLUDEPATH
-TEMPLATE = app
-CONFIG += debug
 
-LIBS += -L../us -lus
+TARGET=us_test_slip
 
-TEST = us_test_slip
-TARGET = $${TEST}
-
-SOURCES += $$TOPDIR/tests/$${TEST}.c
+SOURCES += $$TOPDIR/tests/us_test_slip.c
 
 HEADERS += $$TOPDIR/include/*.h
 

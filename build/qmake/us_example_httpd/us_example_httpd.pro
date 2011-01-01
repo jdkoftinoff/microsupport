@@ -3,9 +3,9 @@
 }
 
 
-TARGET=us_test_buffer
+TARGET=us_example_httpd
 
-SOURCES += $$TOPDIR/tests/us_test_buffer.c
+SOURCES += $$TOPDIR/examples/us_example_httpd.c
 
 HEADERS += $$TOPDIR/include/*.h
 

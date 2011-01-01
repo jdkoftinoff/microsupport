@@ -3,9 +3,9 @@
 }
 
 
-TARGET=us_test_buffer
+TARGET=us_tool_rx_osc
 
-SOURCES += $$TOPDIR/tests/us_test_buffer.c
+SOURCES += $$TOPDIR/tools-dev/us_tool_rx_osc.c
 
 HEADERS += $$TOPDIR/include/*.h
 

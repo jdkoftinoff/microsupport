@@ -3,9 +3,9 @@
 }
 
 
-TARGET=us_test_buffer
+TARGET=us_test_osc_dispatch
 
-SOURCES += $$TOPDIR/tests/us_test_buffer.c
+SOURCES += $$TOPDIR/tests/us_test_osc_dispatch.c
 
 HEADERS += $$TOPDIR/include/*.h
 

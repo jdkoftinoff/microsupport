@@ -5,4 +5,7 @@
 TEMPLATE = subdirs
 
 # Directories
-SUBDIRS += us/us-lib.pro us_test_allocator us_test_buffer us_test_slip
+SUBDIRS += $$system(echo */*.pro)
+
+
+

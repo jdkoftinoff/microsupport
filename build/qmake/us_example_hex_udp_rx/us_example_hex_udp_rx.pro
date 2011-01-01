@@ -3,9 +3,9 @@
 }
 
 
-TARGET=us_test_buffer
+TARGET=us_example_hex_udp_rx
 
-SOURCES += $$TOPDIR/tests/us_test_buffer.c
+SOURCES += $$TOPDIR/examples/us_example_hex_udp_rx.c
 
 HEADERS += $$TOPDIR/include/*.h
 
