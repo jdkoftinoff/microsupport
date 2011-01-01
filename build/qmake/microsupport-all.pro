@@ -5,7 +5,32 @@
 TEMPLATE = subdirs
 
 # Directories
-SUBDIRS += $$system(echo */*.pro)
-
+SUBDIRS += \
+us \
+us_example_hex_udp_rx \
+us_example_hex_udp_tx \
+us_example_httpd \
+us_example_json \
+us_example_mudp_rx \
+us_example_mudp_tx \
+us_example_reactor \
+us_test_all \
+us_test_allocator \
+us_test_buffer \
+us_test_getopt \
+us_test_http \
+us_test_json \
+us_test_line_parse \
+us_test_midi \
+us_test_net \
+us_test_osc_dispatch \
+us_test_osc_io \
+us_test_osc_msg \
+us_test_queue \
+us_test_slip \
+us_test_trie \
+us_tool_create_trie \
+us_tool_rx_osc \
+us_tool_send_osc 
 
 
