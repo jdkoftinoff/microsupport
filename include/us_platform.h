@@ -62,9 +62,9 @@ extern "C"
 
 #if US_ENABLE_BSD_SOCKETS && !defined(US_NO_DECLARE_CLOSESOCKET)
 # ifndef WIN32
-    static inline void closesocket ( int fd )
+    static inline int closesocket ( int fd )
     {
-        close ( fd );
+        return close ( fd );
     }
 # endif
 
