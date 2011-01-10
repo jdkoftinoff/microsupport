@@ -168,6 +168,51 @@ bool us_getopt_string_for_value(
     return r;
 }
 
+bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *default_value )
+{
+    bool r=true;
+    switch( type )
+    {
+    case US_GETOPT_NONE:
+        break;
+    case US_GETOPT_FLAG:
+        *(bool *)value = *(bool *)default_value;
+        break;
+    case US_GETOPT_CHAR:
+        *(char *)value = *(char *)default_value;
+        break;
+    case US_GETOPT_INT16:
+        *(int16_t *)value = *(int16_t *)default_value;
+        break;
+    case US_GETOPT_UINT16:
+        *(uint16_t *)value = *(uint16_t *)default_value;
+        break;
+    case US_GETOPT_INT32:
+        *(int32_t *)value = *(int32_t *)default_value;
+        break;
+    case US_GETOPT_UINT32:
+        *(uint32_t *)value = *(uint32_t *)default_value;
+        break;
+    case US_GETOPT_HEX16:
+        *(uint16_t *)value = *(uint16_t *)default_value;
+        break;
+    case US_GETOPT_HEX32:
+        *(uint32_t *)value = *(uint32_t *)default_value;
+        break;
+#ifdef US_ENABLE_FLOAT
+    case US_GETOPT_FLOAT:
+        *(float *)value = *(float *)default_value;
+        break;
+#endif
+    case US_GETOPT_STRING:
+        *(char **)value = strdup( (const char *)default_value );
+        break;
+    default:
+        break;
+    }
+    return r;
+}
+
 
 bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
 {
@@ -175,9 +220,11 @@ bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
     char *outp=dest;
     const char *inp = str;
     int leftover=dest_len;
-    while( leftover>1 )
+    while( leftover>1 && *inp != '\0' )
     {
-        /* TODO */
+        /* TODO, escape special characters */
+        *outp++ = *inp++;
+        leftover--;
     }
     *outp='\0';
     return r;
@@ -223,7 +270,7 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
                 case 'x':
                     if( str_len>3 )
                     {
-                        if( us_parse_hexoctet( dest, &p[1], 2, 0 ) )
+                        if( us_parse_hexoctet( (uint8_t *)dest, &p[1], 2, 0 ) )
                         {
                             r=4;
                         }
@@ -258,8 +305,9 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
 
 bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len )
 {
-    /* TODO: */
-    return false;
+    /* TODO */
+    strncpy( dest, str, dest_len-1 );
+    return true;
 }
 
 bool us_getopt_value_for_string(
@@ -278,26 +326,33 @@ bool us_getopt_value_for_string(
         *(bool *)value = true;
         break;
     case US_GETOPT_CHAR:
-        /* TODO: */
-        r = false; /* us_getopt_unescape_char( &*value->m_char, ); */
+        *(char *)value = str[0];
         break;
     case US_GETOPT_INT16:
+        *(int16_t *)value = strtol( str, 0, 10 );
         break;
     case US_GETOPT_UINT16:
+        *(uint16_t *)value = strtoul( str, 0, 10 );
         break;
     case US_GETOPT_INT32:
+        *(int32_t *)value = strtol( str, 0, 10 );
         break;
     case US_GETOPT_UINT32:
+        *(uint32_t *)value = strtoul( str, 0, 10 );
         break;
     case US_GETOPT_HEX16:
+        *(uint16_t *)value = strtoul( str, 0, 16 );
         break;
     case US_GETOPT_HEX32:
+        *(uint32_t *)value = strtoul( str, 0, 16 );
         break;
 #ifdef US_ENABLE_FLOAT
     case US_GETOPT_FLOAT:
+        *(float *)value = atof( str );
         break;
 #endif
     case US_GETOPT_STRING:
+        *(char **)value = strdup( str );
         break;
     default:
         break;
@@ -335,14 +390,14 @@ void us_getopt_destroy( us_getopt_t *self )
     self->m_option_lists = 0;
 }
 
-bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t list[], const char *prefix, const char *description )
+bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_t *options, const char *prefix, const char *description )
 {
     bool r=false;
     us_getopt_option_list_t *p = 0;
     p = us_new( self->m_allocator, us_getopt_option_list_t );
     if( p )
     {
-        p->m_list = list;
+        p->m_options = options;
         p->m_next = 0;
         p->m_prefix = prefix;
         p->m_description = description;
@@ -361,13 +416,30 @@ bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t list[]
     return r;
 }
 
+bool us_getopt_fill_defaults( us_getopt_t *self )
+{
+    bool r=true;
+    us_getopt_option_list_t *list = self->m_option_lists;
+    while( list && r)
+    {
+        const us_getopt_option_t *opt = list->m_options;
+        while( opt && r && opt->m_name!=0 )
+        {
+            us_getopt_copy_value( opt->m_current_value, opt->m_value_type, opt->m_default_value );
+            opt++;
+        }
+        list=list->m_next;
+    }
+    return r;
+}
+
 bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
 {
     bool r=true;
     us_getopt_option_list_t *list = self->m_option_lists;
     while( list && r)
     {
-        us_getopt_option_t *opt = list->m_list;
+        const us_getopt_option_t *opt = list->m_options;
         if( list->m_prefix )
         {
             r&=printer->printf( printer,"Option group '%s': %s\n", list->m_prefix, list->m_description );
@@ -396,22 +468,72 @@ bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
     return r;
 }
 
-bool us_getopt_parse_one( us_getopt_t *self, const char *name, const char *value, int value_len )
+bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, const char *value, int value_len )
 {
+    bool r=false;
+    us_getopt_option_list_t *list = self->m_option_lists;
+    while( list && !r)
+    {
+        int prefix_len = 0;
+        const char *subname = name;
+        int subname_len=name_len;
+        if( list->m_prefix!=0 )
+        {
+            prefix_len = strlen( list->m_prefix );
+            subname+=(prefix_len+1);
+            subname_len-=(prefix_len+1);
+        }
+        if( subname_len>0 && (prefix_len==0 || strncmp( name, list->m_prefix, prefix_len )==0 ) )
+        {
+            const us_getopt_option_t *opt = list->m_options;
+            while( opt && opt->m_name!=0 )
+            {
+                if( strncmp( subname, opt->m_name, subname_len ) == 0 )
+                {
+                    r=us_getopt_value_for_string( opt->m_value_type, opt->m_current_value, value, value_len );
+                    return r;
+                }
+                opt++;
+            }
+        }
+        list = list->m_next;
+    }
+    return r;
 }
 
-bool us_getopt_parse_args( us_getopt_t *self, int argc, const char **argv )
+bool us_getopt_parse_args( us_getopt_t *self, const char **argv )
 {
+    bool r=true;
+    while( *argv )
+    {
+        if( (*argv)[0]=='-' && (*argv)[1]=='-' )
+        {
+            const char *pos_equals = strchr( *argv, '=' );
+            const char *pos_name = (*argv)+2;
+            int name_len = (pos_equals ? pos_equals-pos_name : strlen(pos_name) );
+            const char *pos_value = (pos_equals ? pos_equals+1 : 0 );
+            int value_len = (pos_value ? strlen(pos_value) : 0 );
+            r&=us_getopt_parse_one( self, pos_name, name_len, pos_value, value_len );
+        }
+        ++argv;
+    }
+    return r;
 }
 
 bool us_getopt_parse_file( us_getopt_t *self, const char *fname )
 {
+    /* TODO: */
+    return false;
 }
 
 bool us_getopt_parse_line( us_getopt_t *self, const char *line )
 {
+    /* TODO: */
+    return false;
 }
 
 bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf )
 {
+    /* TODO: */
+    return false;
 }

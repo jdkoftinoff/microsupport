@@ -81,6 +81,8 @@ extern "C"
         int str_len
     );
 
+    bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *default_value );
+
     typedef struct us_getopt_option_s
     {
         const char *m_name;
@@ -92,7 +94,7 @@ extern "C"
 
     typedef struct us_getopt_option_list_s
     {
-        us_getopt_option_t *m_list;
+        const us_getopt_option_t *m_options;
         const char *m_prefix;
         const char *m_description;
         struct us_getopt_option_list_s *m_next;
@@ -108,10 +110,11 @@ extern "C"
 
     bool us_getopt_init( us_getopt_t *self, us_allocator_t *allocator );
     void us_getopt_destroy( us_getopt_t *self );
-    bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_list_t list[], const char *prefix, const char *description );
+    bool us_getopt_fill_defaults( us_getopt_t *self );
+    bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_t *options, const char *prefix, const char *description );
     bool us_getopt_print( us_getopt_t *self, us_print_t *printer );
-    bool us_getopt_parse_one( us_getopt_t *self, const char *name, const char *value, int value_len );
-    bool us_getopt_parse_args( us_getopt_t *self, int argc, const char **argv );
+    bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, const char *value, int value_len );
+    bool us_getopt_parse_args( us_getopt_t *self, const char **argv );
     bool us_getopt_parse_file( us_getopt_t *self, const char *fname );
     bool us_getopt_parse_line( us_getopt_t *self, const char *line );
     bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf );
