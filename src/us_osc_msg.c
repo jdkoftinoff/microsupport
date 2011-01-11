@@ -571,6 +571,9 @@ us_osc_msg_element_flatten(
     int32_t *total_length
 )
 {
+    (void)self;
+    (void)buf;
+    (void)total_length;
     /* default behaviour for msg element is to not be able to flatten.
      * This must be override by subclass.
      */
@@ -1195,6 +1198,9 @@ us_osc_msg_element_T_flatten(
 )
 {
     bool r = true;
+    (void)self_;
+    (void)buf;
+
     if ( total_length )
     {
         *total_length = 0;
@@ -1211,6 +1217,7 @@ us_osc_msg_element_T_unflatten(
 )
 {
     us_osc_msg_element_t *result = 0;
+    (void)buf;
     result = us_osc_msg_element_T_create(allocator);
     return result;
 }
@@ -1243,6 +1250,9 @@ us_osc_msg_element_F_flatten(
 )
 {
     bool r = true;
+    (void)self_;
+    (void)buf;
+    (void)total_length;
     if ( total_length )
     {
         *total_length = 0;
@@ -1259,6 +1269,7 @@ us_osc_msg_element_F_unflatten(
 )
 {
     us_osc_msg_element_t *result = 0;
+    (void)buf;
     result = us_osc_msg_element_F_create(allocator);
     return result;
 }
@@ -1292,6 +1303,10 @@ us_osc_msg_element_N_flatten(
 )
 {
     bool r = true;
+    (void)self_;
+    (void)buf;
+    (void)total_length;
+
     if ( total_length )
     {
         *total_length = 0;
@@ -1343,6 +1358,8 @@ us_osc_msg_element_I_flatten(
 )
 {
     bool r = true;
+    (void)self_;
+    (void)buf;
     if ( total_length )
     {
         *total_length = 0;
@@ -1359,6 +1376,7 @@ us_osc_msg_element_I_unflatten(
 )
 {
     us_osc_msg_element_t *result = 0;
+    (void)buf;
     result = us_osc_msg_element_I_create(allocator);
     return result;
 }

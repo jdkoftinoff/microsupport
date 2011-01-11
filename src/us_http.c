@@ -283,6 +283,27 @@ us_http_request_header_set_pathn (
     return self->m_path != 0;
 }
 
+bool
+us_http_request_header_set_content_type (
+    us_http_request_header_t *self,
+    const char *content_mime_type
+)
+{
+    return self->m_items->add ( self->m_items, "Content-Type", content_mime_type ) != 0;
+}
+
+
+bool
+us_http_request_header_set_content_length (
+    us_http_request_header_t *self,
+    int32_t content_length
+)
+{
+    char content_length_str[32];
+    US_DEFAULT_SNPRINTF ( content_length_str, sizeof ( content_length_str ), "%ld", ( long ) content_length );
+    return self->m_items->add ( self->m_items, "Content-Length", content_length_str ) != 0;
+}
+
 
 us_http_response_header_t *
 us_http_response_header_create ( us_allocator_t *allocator )
@@ -344,7 +365,9 @@ us_http_request_header_create_helper (
     us_allocator_t *allocator,
     const char *method,
     const char *host,
-    const char *path
+    const char *path,
+    const char *content_type,
+    int32_t content_length
 )
 {
     us_http_request_header_t *self;
@@ -366,6 +389,22 @@ us_http_request_header_create_helper (
                 self->destroy ( self );
                 self = 0;
             }
+            if( self && content_type )
+            {
+                if( !self->m_items->add( self->m_items, "Content-Type", content_type ))
+                {
+                    self->destroy( self );
+                    self = 0;
+                }
+            }
+            if( self && content_type )
+            {
+                if( !us_http_request_header_set_content_length( self, content_length ) )
+                {
+                    self->destroy( self );
+                    self = 0;
+                }
+            }
         }
     }
     return self;
@@ -383,7 +422,9 @@ us_http_request_header_create_get (
                allocator,
                "GET",
                host,
-               path
+               path,
+               0,
+               0
            );
 }
 
@@ -398,7 +439,9 @@ us_http_request_header_create_delete (
                allocator,
                "DELETE",
                host,
-               path
+               path,
+               0,
+               0
            );
 }
 
@@ -416,7 +459,9 @@ us_http_request_header_create_post (
                allocator,
                "POST",
                host,
-               path
+               path,
+               content_type,
+               content_length
            );
 }
 
@@ -434,7 +479,9 @@ us_http_request_header_create_put (
                allocator,
                "PUT",
                host,
-               path
+               path,
+               content_type,
+               content_length
            );
 }
 

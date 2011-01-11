@@ -180,12 +180,26 @@ extern "C"
         int len
     );
 
+    bool
+    us_http_request_header_set_content_type (
+        us_http_request_header_t *self,
+        const char *content_mime_type
+    );
+
+    bool
+    us_http_request_header_set_content_length (
+        us_http_request_header_t *self,
+        int32_t content_length
+    );
+
     us_http_request_header_t *
     us_http_request_header_create_helper (
         us_allocator_t *allocator,
         const char *method,
         const char *host,
-        const char *path
+        const char *path,
+        const char *content_type,
+        int32_t content_length
     );
 
     us_http_request_header_t *
@@ -256,6 +270,7 @@ extern "C"
         us_http_response_header_t *self,
         int32_t content_length
     );
+
     bool
     us_http_response_header_set_content_type (
         us_http_response_header_t *self,

@@ -121,6 +121,8 @@ void us_simple_allocator_free (
     const void *ptr
 )
 {
+    (void)self_;
+    (void)ptr;
     /* Do nothing; the simple allocator never frees */
 }
 
@@ -152,6 +154,7 @@ void us_malloc_allocator_destroy (
     us_allocator_t *self_
 )
 {
+    (void)self_;
     /* nothing to destroy, we do not keep track of all mallocs and frees */
 }
 
@@ -161,6 +164,7 @@ void *us_malloc_allocator_alloc (
     int32_t count
 )
 {
+    (void)self;
     return US_DEFAULT_MALLOC ( us_round_size ( length * count ) );
 }
 
@@ -171,6 +175,7 @@ void *us_malloc_allocator_realloc (
     int32_t count
 )
 {
+    (void)self;
     return US_DEFAULT_REALLOC ( ( void * ) orig_ptr, us_round_size ( length * count ) );
 }
 
@@ -179,6 +184,7 @@ void us_malloc_allocator_free (
     const void *ptr
 )
 {
+    (void)self;
     US_DEFAULT_FREE ( ( void * ) ptr );
 }
 

@@ -117,6 +117,10 @@ const char * us_midi_msg_to_text ( const us_midi_msg_t *self, char *txt, int max
     char buf[64];
     int buf_len = sizeof ( buf );
     int len = us_midi_msg_get_length ( self );
+    if( max_len<64 )
+    {
+        return 0;
+    }
     *txt = 0;
     if ( us_midi_msg_is_all_notes_off ( self ) )
     {
@@ -445,6 +449,7 @@ bool us_midi_parser_system_byte ( us_midi_parser_t *self, uint8_t b, us_midi_msg
 bool us_midi_parser_status_byte ( us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg )
 {
     int8_t len = us_midi_get_message_length ( b );
+    (void)msg;
     if ( len == 2 )
     {
         self->m_state = US_MIDI_PARSER_STATE_FIRST_OF_ONE;

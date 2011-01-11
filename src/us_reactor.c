@@ -74,6 +74,7 @@ us_reactor_handler_t * us_reactor_handler_create ( us_allocator_t *allocator )
 
 void us_reactor_handler_destroy ( us_reactor_handler_t *self )
 {
+    (void)self;
     /* nothing to do here */
 }
 

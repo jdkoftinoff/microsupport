@@ -150,7 +150,7 @@ bool us_getopt_string_for_value(
 //            if( us_getopt_escape( tmp, sizeof(tmp)-1, (const char *)value, strlen((const char *)value ) ) )
             {
                 strcpy( tmp, (const char *)value );
-                if( strlen( tmp )< buf_len-1 )
+                if( strlen( tmp )< (size_t)(buf_len-1) )
                 {
                     strncpy( buf, tmp, buf_len-1 );
                     r=true;
@@ -216,17 +216,14 @@ bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *defau
 
 bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
 {
+    /* TODO: escape individual chars */
     bool r=false;
-    char *outp=dest;
-    const char *inp = str;
-    int leftover=dest_len;
-    while( leftover>1 && *inp != '\0' )
+    if( dest_len>str_len+1 )
     {
-        /* TODO, escape special characters */
-        *outp++ = *inp++;
-        leftover--;
+        memcpy( dest, str, str_len+1 );
+        dest[str_len+1] = '\0';
+        r=true;
     }
-    *outp='\0';
     return r;
 }
 
@@ -305,9 +302,15 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
 
 bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len )
 {
-    /* TODO */
-    strncpy( dest, str, dest_len-1 );
-    return true;
+    /* TODO: unescape individual chars */
+    bool r=false;
+    if( dest_len>str_len+1 )
+    {
+        memcpy( dest, str, str_len+1 );
+        dest[str_len+1] = '\0';
+        r=true;
+    }
+    return r;
 }
 
 bool us_getopt_value_for_string(
@@ -317,6 +320,8 @@ bool us_getopt_value_for_string(
     int str_len
 )
 {
+    /* TODO: use str_len */
+    (void)str_len;
     bool r=true;
     switch( type )
     {
@@ -510,7 +515,7 @@ bool us_getopt_parse_args( us_getopt_t *self, const char **argv )
         {
             const char *pos_equals = strchr( *argv, '=' );
             const char *pos_name = (*argv)+2;
-            int name_len = (pos_equals ? pos_equals-pos_name : strlen(pos_name) );
+            int name_len = (pos_equals!=0 ? pos_equals-pos_name : (int)strlen(pos_name) );
             const char *pos_value = (pos_equals ? pos_equals+1 : 0 );
             int value_len = (pos_value ? strlen(pos_value) : 0 );
             r&=us_getopt_parse_one( self, pos_name, name_len, pos_value, value_len );
@@ -523,17 +528,23 @@ bool us_getopt_parse_args( us_getopt_t *self, const char **argv )
 bool us_getopt_parse_file( us_getopt_t *self, const char *fname )
 {
     /* TODO: */
+    (void)self;
+    (void)fname;
     return false;
 }
 
 bool us_getopt_parse_line( us_getopt_t *self, const char *line )
 {
     /* TODO: */
+    (void)self;
+    (void)line;
     return false;
 }
 
 bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf )
 {
     /* TODO: */
+    (void)self;
+    (void)buf;
     return false;
 }

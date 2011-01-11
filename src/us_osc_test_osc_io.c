@@ -54,6 +54,7 @@ do_test_osc_io(
     us_print_t *printer
 )
 {
+    /* TODO */
     return false;
 }
 

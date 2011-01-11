@@ -87,6 +87,7 @@ volatile char us_platform_sigterm_seen=0;
 
 static void us_platform_sigterm( int s )
 {
+    (void)s;
     us_platform_sigterm_seen = 1;
 }
 

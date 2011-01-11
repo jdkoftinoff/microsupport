@@ -90,9 +90,9 @@ PRECOMPILE_HH_FLAGS?=-x c++-header
 endif
 
 ETAGS_FLAGS?=
-ETAGS_LANGUAGE_FLAG?=--language-force=c++
+#ETAGS_LANGUAGE_FLAG?=-l c++
 CTAGS_FLAGS?=
-CTAGS_LANGUAGE_FLAG?=--language-force=c++
+#CTAGS_LANGUAGE_FLAG?=-l c++
 
 
 
