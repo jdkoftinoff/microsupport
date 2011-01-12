@@ -426,7 +426,7 @@ bool us_reactor_create_server (
                 freeaddrinfo ( ai );
                 return false;
             }
-            setsockopt ( fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof ( opt ) );
+            setsockopt ( fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt, sizeof ( opt ) );
             if ( bind ( fd, cur_addr->ai_addr, cur_addr->ai_addrlen ) == 0 )
             {
                 us_reactor_handler_t *item;
@@ -956,7 +956,11 @@ bool us_reactor_handler_tcp_client_tick (
     if( !self->m_is_connected && ( self->m_keep_open || self->m_try_once) )
     {
         /* TODO: Ideally make this non-blocking connect */
+#ifdef _WIN32
+        Sleep(1000);
+#else
         sleep(1);
+#endif
         self->m_try_once = false;
         us_log_debug( "tcp client connecting '[%s]:%s'", self->m_client_host, self->m_client_port );
         self_->m_base.m_fd = us_reactor_tcp_blocking_connect( self->m_client_host, self->m_client_port );

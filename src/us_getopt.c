@@ -320,9 +320,9 @@ bool us_getopt_value_for_string(
     int str_len
 )
 {
+    bool r=true;
     /* TODO: use str_len */
     (void)str_len;
-    bool r=true;
     switch( type )
     {
     case US_GETOPT_NONE:
@@ -334,26 +334,26 @@ bool us_getopt_value_for_string(
         *(char *)value = str[0];
         break;
     case US_GETOPT_INT16:
-        *(int16_t *)value = strtol( str, 0, 10 );
+        *(int16_t *)value = (int16_t)strtol( str, 0, 10 );
         break;
     case US_GETOPT_UINT16:
-        *(uint16_t *)value = strtoul( str, 0, 10 );
+        *(uint16_t *)value = (uint16_t)strtoul( str, 0, 10 );
         break;
     case US_GETOPT_INT32:
-        *(int32_t *)value = strtol( str, 0, 10 );
+        *(int32_t *)value = (int32_t)strtol( str, 0, 10 );
         break;
     case US_GETOPT_UINT32:
-        *(uint32_t *)value = strtoul( str, 0, 10 );
+        *(uint32_t *)value = (uint32_t)strtoul( str, 0, 10 );
         break;
     case US_GETOPT_HEX16:
-        *(uint16_t *)value = strtoul( str, 0, 16 );
+        *(uint16_t *)value = (uint16_t)strtoul( str, 0, 16 );
         break;
     case US_GETOPT_HEX32:
-        *(uint32_t *)value = strtoul( str, 0, 16 );
+        *(uint32_t *)value = (uint32_t)strtoul( str, 0, 16 );
         break;
 #ifdef US_ENABLE_FLOAT
     case US_GETOPT_FLOAT:
-        *(float *)value = atof( str );
+        *(float *)value = (float)atof( str );
         break;
 #endif
     case US_GETOPT_STRING:
