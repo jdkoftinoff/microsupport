@@ -3,7 +3,7 @@
 #include "us_buffer.h"
 #include "us_net.h"
 #include "us_http.h"
-
+#include "us_getopt.h"
 #include "us_logger_printer.h"
 
 #include "us_testutil.h"
@@ -45,7 +45,6 @@ bool us_example_httpd ( int argc, char **argv );
 bool us_example_httpd ( int argc, char **argv )
 {
     bool r = false;
-    us_log_error ( "Unimplemented" );
     return r;
 }
 

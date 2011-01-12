@@ -1200,7 +1200,6 @@ us_osc_msg_element_T_flatten(
     bool r = true;
     (void)self_;
     (void)buf;
-
     if ( total_length )
     {
         *total_length = 0;
@@ -1306,7 +1305,6 @@ us_osc_msg_element_N_flatten(
     (void)self_;
     (void)buf;
     (void)total_length;
-
     if ( total_length )
     {
         *total_length = 0;

@@ -350,9 +350,11 @@ extern "C"
     const char *
     us_http_reason_phrase ( int code );
 
+
 #ifdef __cplusplus
 }
 #endif
+
 
 
 #endif

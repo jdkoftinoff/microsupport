@@ -28,7 +28,6 @@
 
 #include "us_world.h"
 
-#include "us_logger_syslog.h"
 #include "us_http.h"
 
 us_http_header_item_list_t *
@@ -954,4 +953,6 @@ us_http_reason_phrase ( int code )
     }
     return r;
 }
+
+
 

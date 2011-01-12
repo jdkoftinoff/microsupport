@@ -135,7 +135,7 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 'f':
             {
                 float v;
-                v = strtof( *osc_values, 0 );
+                v = atof( *osc_values );
                 e = us_osc_msg_element_f_create( allocator, v );
                 osc_values++;
             }

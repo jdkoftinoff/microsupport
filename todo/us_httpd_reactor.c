@@ -32,19 +32,19 @@
 
 us_reactor_handler_t *
 us_http_server_reactor_handler_create(
-        us_allocator_t *allocator
-        )
+    us_allocator_t *allocator
+)
 {
     /* TODO: create our own structure */
     return us_reactor_handler_tcp_create( allocator );
 }
 
 bool us_http_server_reactor_handler_init(
-        us_reactor_handler_t *self_,
-        us_allocator_t *allocator,
-        int fd,
-        void *extra
-        )
+    us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+)
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r;

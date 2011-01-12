@@ -35,14 +35,14 @@ extern "C" {
 #endif
 
 
-/**
- \addtogroup us_parse Parse
- */
-/*@{*/
+    /**
+     \addtogroup us_parse Parse
+     */
+    /*@{*/
 
 
-bool us_parse_hexdig ( uint8_t *val, const char *buf, int buf_len, int *buf_pos );
-bool us_parse_hexoctet ( uint8_t *val, const char *buf, int buf_len, int *buf_pos );
+    bool us_parse_hexdig ( uint8_t *val, const char *buf, int buf_len, int *buf_pos );
+    bool us_parse_hexoctet ( uint8_t *val, const char *buf, int buf_len, int *buf_pos );
 
 
 #ifdef __cplusplus

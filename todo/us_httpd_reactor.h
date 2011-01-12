@@ -42,24 +42,24 @@ extern "C"
     {
         us_allocator_t *m_allocator;
         void (*destroy)(
-                struct us_httpd_request_handler_s *self,
-                );
+            struct us_httpd_request_handler_s *self,
+        );
         bool (*url_match)(
-                struct us_httpd_request_handler_s *self,
-                us_http_request_header_t *request_header
-                );
+            struct us_httpd_request_handler_s *self,
+            us_http_request_header_t *request_header
+        );
         int (*dispatch)(
-                struct us_httpd_request_handler_s *self,
-                us_http_request_header_t *request_header
-                );
+            struct us_httpd_request_handler_s *self,
+            us_http_request_header_t *request_header
+        );
         bool (*readable)(
-                struct us_httpd_request_handler_s *self,
-                us_queue_t *incoming_queue
-                );
+            struct us_httpd_request_handler_s *self,
+            us_queue_t *incoming_queue
+        );
         bool (*writable)(
-                struct us_httpd_request_handler_s *self,
-                us_queue_t *outgoing_queue
-                );
+            struct us_httpd_request_handler_s *self,
+            us_queue_t *outgoing_queue
+        );
     } us_httpd_request_handler_t;
 
     typedef struct us_httpd_director_s
@@ -77,16 +77,16 @@ extern "C"
 
     us_reactor_handler_t *
     us_httpd_reactor_handler_create(
-            us_allocator_t *allocator
-            );
+        us_allocator_t *allocator
+    );
 
     bool us_httpd_reactor_handler_init(
-            us_reactor_handler_t *self_,
-            us_allocator_t *allocator,
-            int fd,
-            void *extra,
+        us_reactor_handler_t *self_,
+        us_allocator_t *allocator,
+        int fd,
+        void *extra,
 
-            );
+    );
 
     bool us_http_server_reactor_handler_connected (
         us_reactor_handler_tcp_t *self,
