@@ -167,18 +167,21 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size 
         }
         /* now try find a free block that may be large enough */
         cur = self->m_first;
-        do
+        if( cur )
         {
-            if ( ( cur->m_size ) < 0 && (size_t) ( - ( cur->m_size ) )
-                    >= size )
+            do
             {
-                /* found a free memory block big enough! */
-                usable = cur;
-                break;
-            }
-            cur = cur->m_next;
+                if ( ( cur->m_size ) < 0 && (size_t) ( - ( cur->m_size ) )
+                        >= size )
+                {
+                    /* found a free memory block big enough! */
+                    /* usable = cur; */
+                    break;
+                }
+                cur = cur->m_next;
+            }        
+            while ( cur != NULL );
         }
-        while ( cur != NULL );
         /* no memory! return 0 */
         return 0;
     }

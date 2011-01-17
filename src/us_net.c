@@ -1,5 +1,6 @@
 #include "us_world.h"
 #include "us_net.h"
+#include "us_logger.h"
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -120,30 +121,30 @@ int us_net_create_udp_socket (
             {
                 if ( setsockopt ( s, SOL_SOCKET, SO_BROADCAST, ( const char * ) &on, sizeof ( on ) ) == -1 )
                 {
-                    perror ( "setsockopt SO_BROADCAST:" );
-                    abort();
+                    us_log_error ( "setsockopt SO_BROADCAST: %s", strerror(errno));
+                    closesocket( s );
+                    return -1;
                 }
             }
             if ( do_bind )
             {
                 if ( setsockopt ( s, SOL_SOCKET, SO_REUSEADDR, ( const char * ) &on, sizeof ( on ) ) == -1 )
                 {
-                    perror ( "setsockopt SO_REUSEADDR:" );
-                    abort();
+                    us_log_error ( "setsockopt SO_REUSEADDR: %s", strerror(errno) );
+                    closesocket(s);
+                    return -1;
                 }
-                if ( bind ( s, ai->ai_addr, ai->ai_addrlen ) == 0 )
+                if ( bind ( s, ai->ai_addr, ai->ai_addrlen ) < 0 )
                 {
-                    r = s;
-                }
-                else
-                {
-                    perror ( "socket: " );
+                    us_log_error ( "bind: %s", strerror(errno) );
+                    closesocket(s);
+                    return -1;
                 }
             }
         }
         else
         {
-            perror ( "socket: " );
+            us_log_error ( "socket: %s", strerror(errno) );
         }
         return r;
     }
@@ -194,22 +195,24 @@ int us_net_create_multicast_rx_udp_socket (
     s = socket ( listenaddr->ai_family, listenaddr->ai_socktype, listenaddr->ai_protocol );
     if ( s < 0 )
     {
-        perror ( "socket:" );
-        abort();
+        us_log_error ( "socket: %s", strerror(errno) );
+        closesocket(s);
+        return -1;
     }
     {
         int on = 1;
         if ( setsockopt ( s, SOL_SOCKET, SO_REUSEADDR, ( const char * ) &on, sizeof ( on ) ) == -1 )
         {
-            perror ( "setsockopt SO_REUSEADDR:" );
-            abort();
+            us_log_error ( "setsockopt SO_REUSEADDR: %s", strerror(errno) );
+            closesocket(s);
+            return -1;
         }
     }
     if ( bind ( s, listenaddr->ai_addr, listenaddr->ai_addrlen ) != 0 )
     {
         closesocket ( s );
-        perror ( "bind: " );
-        abort();
+        us_log_error ( "bind: %s", strerror(errno) );
+        return -1;
     }
     if ( multicastgroup->ai_family == PF_INET6 )
     {
@@ -224,9 +227,9 @@ int us_net_create_multicast_rx_udp_socket (
                     sizeof ( multicast_request ) ) != 0
            )
         {
-            perror ( "setsockopt IPV6_JOIN_GROUP:" );
+            us_log_error ( "setsockopt IPV6_JOIN_GROUP: %s", strerror(errno) );
             closesocket ( s );
-            abort();
+            return -1;
         }
     }
     else
@@ -247,9 +250,9 @@ int us_net_create_multicast_rx_udp_socket (
                         ( char* ) &multicast_request, sizeof ( multicast_request ) ) != 0
                )
             {
-                perror ( "setsockopt IP_ADD_MEMBERSHIP:" );
+                us_log_error ( "setsockopt IP_ADD_MEMBERSHIP: %s", strerror(errno));
                 closesocket ( s );
-                abort();
+                return -1;
             }
         }
     }
@@ -278,8 +281,8 @@ int us_net_create_multicast_tx_udp_socket (
     s = socket ( localaddr->ai_family, localaddr->ai_socktype, localaddr->ai_protocol );
     if ( s < 0 )
     {
-        perror ( "socket:" );
-        abort();
+        us_log_error ( "socket: %s", strerror(errno) );
+        return -1;
     }
     if ( localaddr->ai_family == PF_INET )
     {
@@ -293,9 +296,9 @@ int us_net_create_multicast_tx_udp_socket (
                     sizeof ( in_local )
                 ) != 0 )
         {
-            perror ( "setsockopt IP_MULTICAST_IF" );
+            us_log_error ( "setsockopt IP_MULTICAST_IF %s", strerror(errno) );
             closesocket ( s );
-            abort();
+            return -1;
         }
     }
     return s;
@@ -316,19 +319,16 @@ int us_net_create_tcp_socket (
             r = s;
             if ( do_bind )
             {
-                if ( bind ( s, ai->ai_addr, ai->ai_addrlen ) == 0 )
+                if ( bind ( s, ai->ai_addr, ai->ai_addrlen ) < 0 )
                 {
-                    r = s;
-                }
-                else
-                {
-                    perror ( "socket: " );
+                    us_log_error ( "bind: %s", strerror(errno) );
+                    r=-1;                    
                 }
             }
         }
         else
         {
-            perror ( "socket: " );
+            us_log_error ( "socket: %s", strerror(errno) );
         }
         return r;
     }
