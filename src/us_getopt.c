@@ -171,44 +171,47 @@ bool us_getopt_string_for_value(
 bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *default_value )
 {
     bool r=true;
-    switch( type )
+    if( default_value )
     {
-    case US_GETOPT_NONE:
-        break;
-    case US_GETOPT_FLAG:
-        *(bool *)value = *(bool *)default_value;
-        break;
-    case US_GETOPT_CHAR:
-        *(char *)value = *(char *)default_value;
-        break;
-    case US_GETOPT_INT16:
-        *(int16_t *)value = *(int16_t *)default_value;
-        break;
-    case US_GETOPT_UINT16:
-        *(uint16_t *)value = *(uint16_t *)default_value;
-        break;
-    case US_GETOPT_INT32:
-        *(int32_t *)value = *(int32_t *)default_value;
-        break;
-    case US_GETOPT_UINT32:
-        *(uint32_t *)value = *(uint32_t *)default_value;
-        break;
-    case US_GETOPT_HEX16:
-        *(uint16_t *)value = *(uint16_t *)default_value;
-        break;
-    case US_GETOPT_HEX32:
-        *(uint32_t *)value = *(uint32_t *)default_value;
-        break;
+        switch( type )
+        {
+        case US_GETOPT_NONE:
+            break;
+        case US_GETOPT_FLAG:
+            *(bool *)value = *(bool *)default_value;
+            break;
+        case US_GETOPT_CHAR:
+            *(char *)value = *(char *)default_value;
+            break;
+        case US_GETOPT_INT16:
+            *(int16_t *)value = *(int16_t *)default_value;
+            break;
+        case US_GETOPT_UINT16:
+            *(uint16_t *)value = *(uint16_t *)default_value;
+            break;
+        case US_GETOPT_INT32:
+            *(int32_t *)value = *(int32_t *)default_value;
+            break;
+        case US_GETOPT_UINT32:
+            *(uint32_t *)value = *(uint32_t *)default_value;
+            break;
+        case US_GETOPT_HEX16:
+            *(uint16_t *)value = *(uint16_t *)default_value;
+            break;
+        case US_GETOPT_HEX32:
+            *(uint32_t *)value = *(uint32_t *)default_value;
+            break;
 #ifdef US_ENABLE_FLOAT
-    case US_GETOPT_FLOAT:
-        *(float *)value = *(float *)default_value;
-        break;
+        case US_GETOPT_FLOAT:
+            *(float *)value = *(float *)default_value;
+            break;
 #endif
-    case US_GETOPT_STRING:
-        *(char **)value = strdup( (const char *)default_value );
-        break;
-    default:
-        break;
+        case US_GETOPT_STRING:
+            *(char **)value = strdup( (const char *)default_value );
+            break;
+        default:
+            break;
+        }
     }
     return r;
 }
@@ -457,8 +460,9 @@ bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
             {
                 default_string[0] = '\0';
             }
-            r&=printer->printf( printer, "    %s.%s (%s) : %s%s%s%s\n",
-                                list->m_prefix,
+            r&=printer->printf( printer, "    %s%c%s (%s) : %s%s%s%s\n",
+                                ( list->m_prefix ? list->m_prefix : "" ),
+                                ( list->m_prefix ? '.' : ' ' ),
                                 opt->m_name,
                                 us_getopt_value_types[opt->m_value_type],
                                 opt->m_description,
