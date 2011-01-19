@@ -322,7 +322,7 @@ int us_net_create_tcp_socket (
                 if ( bind ( s, ai->ai_addr, ai->ai_addrlen ) < 0 )
                 {
                     us_log_error ( "bind: %s", strerror(errno) );
-                    r=-1;                    
+                    r=-1;
                 }
             }
         }

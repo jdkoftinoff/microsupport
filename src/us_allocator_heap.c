@@ -179,7 +179,7 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size 
                     break;
                 }
                 cur = cur->m_next;
-            }        
+            }
             while ( cur != NULL );
         }
         /* no memory! return 0 */
