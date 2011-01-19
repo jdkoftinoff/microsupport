@@ -9,7 +9,8 @@ SUBDIRS += \
 us \
 us_example_hex_udp_rx \
 us_example_hex_udp_tx \
-us_example_httpd \
+us_example_http_server \
+us_example_http_client \
 us_example_json \
 us_example_mudp_rx \
 us_example_mudp_tx \
@@ -29,6 +30,8 @@ us_test_osc_msg \
 us_test_queue \
 us_test_slip \
 us_test_trie \
+us_test_http_server \
+us_test_http_client \
 us_tool_create_trie \
 us_tool_rx_osc \
 us_tool_send_osc 

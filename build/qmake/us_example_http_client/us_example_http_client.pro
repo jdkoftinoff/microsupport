@@ -3,9 +3,9 @@
 }
 
 
-TARGET=us_example_httpd
+TARGET=us_example_http_client
 
-SOURCES += $$TOPDIR/examples/us_example_httpd.c
+SOURCES += $$TOPDIR/examples/us_example_http_client.c
 
 HEADERS += $$TOPDIR/include/*.h
 
