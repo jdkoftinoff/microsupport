@@ -657,15 +657,12 @@ us_http_header_item_list_flatten (
     return r;
 }
 
-us_http_response_header_t *
-us_http_response_header_parse (
-    us_allocator_t *allocator,
+bool us_http_response_header_parse (
+    us_http_response_header_t *self,
     us_buffer_t *buf
 )
 {
-    us_http_response_header_t *r = 0;
-    us_http_response_header_t *self;
-    self = us_http_response_header_create ( allocator );
+    bool r=false;
     if ( self )
     {
         int32_t len;
@@ -692,9 +689,12 @@ us_http_response_header_parse (
                     {
                         if ( us_buffer_advance ( buf, 1 ) )
                         {
+                            const char *p = us_buffer_read_ptr ( buf );
+                            if( *p=='\n' )
+                                us_buffer_advance( buf,1 );
                             if ( us_http_header_item_list_parse ( self->m_items, buf ) )
                             {
-                                r = self;
+                                r = true;
                             }
                         }
                     }
@@ -702,22 +702,23 @@ us_http_response_header_parse (
             }
         }
     }
-    if ( r == 0 && self != 0 )
+    if( !r )
     {
-        self->destroy ( self );
+        self->m_items->destroy ( self->m_items );
+        self->m_items = 0;
+        us_delete ( self->m_allocator, self->m_version );
+        self->m_version = 0;
     }
     return r;
 }
 
-us_http_request_header_t *
+bool
 us_http_request_header_parse (
-    us_allocator_t *allocator,
+    us_http_request_header_t *self,
     us_buffer_t *buf
 )
 {
-    us_http_request_header_t *r = 0;
-    us_http_request_header_t *self;
-    self = us_http_request_header_create ( allocator );
+    bool r=false;
     if ( self )
     {
         int32_t len;
@@ -753,9 +754,12 @@ us_http_request_header_parse (
                             {
                                 if ( us_buffer_advance ( buf, len + 1 ) )
                                 {
+                                    const char *p = us_buffer_read_ptr ( buf );
+                                    if( *p=='\n' )
+                                        us_buffer_advance( buf,1 );
                                     if ( us_http_header_item_list_parse ( self->m_items, buf ) )
                                     {
-                                        r = self;
+                                        r = true;
                                     }
                                 }
                             }
@@ -765,9 +769,16 @@ us_http_request_header_parse (
             }
         }
     }
-    if ( r == 0 && self != 0 )
+    if ( !r )
     {
-        self->destroy ( self );
+        self->m_items->destroy( self->m_items );
+        self->m_items = 0;
+        us_delete ( self->m_allocator, self->m_method );
+        self->m_method = 0;
+        us_delete ( self->m_allocator, self->m_version );
+        self->m_version = 0;
+        us_delete ( self->m_allocator, self->m_path );
+        self->m_path = 0;
     }
     return r;
 }
@@ -807,6 +818,9 @@ us_http_header_item_list_parse (
             value = us_buffer_read_ptr ( buf );
             value_len = us_buffer_find_string_len ( buf, '\r', '\n' );
             us_buffer_advance ( buf, value_len + 1 );
+            p=us_buffer_read_ptr ( buf );
+            if( *p=='\n' )
+                us_buffer_advance( buf,1 );
             if ( key && key_len > 0 && value && value_len > 0 )
             {
                 self->addn ( self, key, key_len, value, value_len );

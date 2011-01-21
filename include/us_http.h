@@ -329,15 +329,15 @@ extern "C"
     );
 
 
-    us_http_response_header_t *
+    bool
     us_http_response_header_parse (
-        us_allocator_t *allocator,
+        us_http_response_header_t *self,
         us_buffer_t *buf
     );
 
-    us_http_request_header_t *
+    bool
     us_http_request_header_parse (
-        us_allocator_t *allocator,
+        us_http_request_header_t *self,
         us_buffer_t *buf
     );
 

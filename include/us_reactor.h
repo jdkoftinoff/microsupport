@@ -283,6 +283,12 @@ extern "C"
         bool ( *readable ) (
             struct us_reactor_handler_tcp_s *self
         );
+        bool ( *writable ) (
+            struct us_reactor_handler_tcp_s *self
+        );
+        bool ( *incoming_eof ) (
+            struct us_reactor_handler_tcp_s *self
+        );
         void ( *closed ) (
             struct us_reactor_handler_tcp_s *self
         );

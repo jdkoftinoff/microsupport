@@ -67,13 +67,16 @@ static bool us_test_http_request ( void )
                 us_buffer_print_string ( buf, us_testutil_printer_stdout );
                 {
                     us_http_request_header_t *parsed_req;
-                    parsed_req = us_http_request_header_parse ( us_testutil_session_allocator, buf );
+                    parsed_req = us_http_request_header_create( us_testutil_session_allocator );
                     if ( parsed_req )
                     {
-                        us_log_info ( "parsed request:" );
-                        us_buffer_reset ( buf );
-                        r &= us_http_request_header_flatten ( parsed_req, buf );
-                        us_buffer_print_string ( buf, us_testutil_printer_stdout );
+                        if( us_http_request_header_parse ( parsed_req, buf ) )
+                        {
+                            us_log_info ( "parsed request:" );
+                            us_buffer_reset ( buf );
+                            r &= us_http_request_header_flatten ( parsed_req, buf );
+                            us_buffer_print_string ( buf, us_testutil_printer_stdout );
+                        }
                         parsed_req->destroy ( parsed_req );
                     }
                 }
@@ -118,13 +121,16 @@ static bool us_test_http_response ( void )
                 us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "%s\n", html );
                 {
                     us_http_response_header_t *parsed_resp;
-                    parsed_resp = us_http_response_header_parse ( us_testutil_session_allocator, buf );
+                    parsed_resp = us_http_response_header_create( us_testutil_session_allocator );
                     if ( parsed_resp )
                     {
-                        us_log_info ( "parsed response:" );
-                        us_buffer_reset ( buf );
-                        r &= us_http_response_header_flatten ( parsed_resp, buf );
-                        us_buffer_print_string ( buf, us_testutil_printer_stdout );
+                        if( us_http_response_header_parse ( parsed_resp, buf ) )
+                        {
+                            us_log_info ( "parsed response:" );
+                            us_buffer_reset ( buf );
+                            r &= us_http_response_header_flatten ( parsed_resp, buf );
+                            us_buffer_print_string ( buf, us_testutil_printer_stdout );
+                        }
                         parsed_resp->destroy ( parsed_resp );
                     }
                 }

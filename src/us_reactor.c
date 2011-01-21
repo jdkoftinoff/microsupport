@@ -621,7 +621,9 @@ bool us_reactor_handler_tcp_init (
         self->close = us_reactor_handler_tcp_close;
         self->connected = 0;
         self->readable = 0;
+        self->writable = 0;
         self->tick = 0;
+        self->incoming_eof = 0;
         in_buf = us_new_array( allocator, uint8_t, queue_buf_size );
         out_buf = us_new_array( allocator, uint8_t, queue_buf_size );
         self->m_xfer_buf = us_new_array( allocator, char, xfer_buf_size );
@@ -723,7 +725,17 @@ bool us_reactor_handler_tcp_readable (
     }
     else
     {
-        self->close( self );
+        if( self->incoming_eof )
+        {
+            if( !self->incoming_eof( self ) )
+            {
+                self->close(self);
+            }
+        }
+        else
+        {
+            self->close( self );
+        }
     }
     return true;
 }
@@ -753,6 +765,11 @@ bool us_reactor_handler_tcp_writable (
     bool r = false;
     int len;
     len = us_queue_readable_count ( &self->m_outgoing_queue );
+    if( len==0 && self->writable )
+    {
+        self->writable( self );
+        len = us_queue_readable_count ( &self->m_outgoing_queue );
+    }
     if ( len > 0 )
     {
         uint8_t *outgoing = us_queue_contig_read_ptr ( &self->m_outgoing_queue );
