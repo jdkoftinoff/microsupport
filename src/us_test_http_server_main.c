@@ -45,6 +45,40 @@ static bool us_test_http_server ( void )
 {
     /* TODO: */
     bool r = false;
+    us_allocator_t *allocator = us_testutil_sys_allocator;
+    us_http_server_director_t director;
+    if( us_http_server_director_init( &director, allocator ) )
+    {
+        us_http_server_handler_t *handler = (us_http_server_handler_t *)us_http_server_handler_create( allocator );
+        if( handler )
+        {
+            if( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, 8192, &director ) )
+            {
+                us_queue_t *data_to_server = &handler->m_base.m_incoming_queue;
+                us_queue_t *data_from_server = &handler->m_base.m_outgoing_queue;
+                const char *request = "GET /some/path HTTP/1.1\r\nHost: localhost:80\r\nConnection: Close\r\n\r\n";
+                handler->m_base.connected( &handler->m_base, 0, 0 );
+                us_queue_write( data_to_server, (uint8_t *)request, strlen( request));
+                if( handler->m_base.readable )
+                {
+                    handler->m_base.readable( &handler->m_base );
+                }
+                if( handler->m_base.incoming_eof)
+                {
+                    handler->m_base.incoming_eof( &handler->m_base );
+                }
+                if( handler->m_base.writable )
+                {
+                    handler->m_base.writable( &handler->m_base );
+                }
+                us_queue_write_byte( data_from_server, '\0' );
+                us_stdout->printf( us_stdout, "response:\n%s\n", data_from_server->m_buf );
+            }
+            handler->m_base.m_base.destroy( &handler->m_base.m_base );
+            us_delete( allocator, handler );
+        }
+    }
+    director.destroy( &director );
     return r;
 }
 

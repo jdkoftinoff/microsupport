@@ -20,6 +20,8 @@ us_test_allocator \
 us_test_buffer \
 us_test_getopt \
 us_test_http \
+us_test_http_server \
+us_test_http_client \
 us_test_json \
 us_test_line_parse \
 us_test_midi \

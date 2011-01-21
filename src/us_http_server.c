@@ -61,7 +61,7 @@ int us_http_server_app_dispatch(
 }
 
 
-us_http_server_director_t *us_http_server_director_init( us_http_server_director_t *self, us_allocator_t *allocator )
+bool us_http_server_director_init( us_http_server_director_t *self, us_allocator_t *allocator )
 {
     self->destroy = us_http_server_director_destroy;
     self->dispatch = us_http_server_director_dispatch;
@@ -69,7 +69,7 @@ us_http_server_director_t *us_http_server_director_init( us_http_server_director
     self->m_apps = 0;
     self->m_last_app = 0;
     /* TODO: */
-    return 0;
+    return true;
 }
 
 
@@ -241,7 +241,7 @@ bool us_http_server_handler_connected(
 {
     /* someone made a tcp connection to us, clear our buffers, allocators, and parsers */
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
-    if( us_log_level >= US_LOG_LEVEL_DEBUG )
+    if( us_log_level >= US_LOG_LEVEL_DEBUG && addr )
     {
         char hostname_buf[1024];
         char srv_buf[64];
@@ -269,7 +269,7 @@ bool us_http_server_handler_readable_request_header(
     int i;
     bool found_end_of_header=false;
     /* scan until "\r\n\r\n" is seen in the incoming queue */
-    for( i=self->m_byte_count; i<us_queue_readable_count(incoming)-4; i++ )
+    for( i=self->m_byte_count; i<us_queue_readable_count(incoming)-3; i++ )
     {
         if( us_queue_peek( incoming, i )=='\r' &&
                 us_queue_peek( incoming, i+1 )=='\n' &&
@@ -287,11 +287,6 @@ bool us_http_server_handler_readable_request_header(
         /* found the end of the header, try parse it */
         r=us_http_server_handler_parse_request_header(self);
         /* if parsing fails, r=false means that the socket will close */
-        if( r )
-        {
-            /* parsing was successful, go to receiving_request_content state */
-            us_http_server_handler_set_state_receiving_request_content(self);
-        }
     }
     else
     {
@@ -314,6 +309,7 @@ bool us_http_server_handler_parse_request_header(
         self->m_base.m_incoming_queue.m_buf,
         self->m_base.m_incoming_queue.m_next_in
     );
+    incoming_buffer.m_cur_length = incoming_buffer.m_max_length;
     r=us_http_request_header_parse(
           self->m_request_header,
           &incoming_buffer
@@ -384,6 +380,7 @@ bool us_http_server_handler_dispatch(
         incoming->m_buf + incoming->m_next_out,
         us_queue_readable_count( incoming )
     );
+    request_content.m_cur_length = request_content.m_max_length;
     if( self->m_director->dispatch(
                 self->m_director,
                 self->m_request_header,
@@ -408,7 +405,7 @@ bool us_http_server_handler_dispatch(
             if( us_queue_writable_count( outgoing )>self->m_response_content->m_cur_length )
             {
                 us_queue_write(outgoing,self->m_response_content->m_buffer,self->m_response_content->m_cur_length);
-                us_http_server_handler_set_state_sending_response_header(self);
+                us_http_server_handler_set_state_sending_response(self);
                 /* response header and response content is now in the outgoing buffer */
                 r=true;
             }
@@ -456,25 +453,20 @@ bool us_http_server_handler_eof_request_content(
 }
 
 
-bool us_http_server_handler_eof_response_header(
+bool us_http_server_handler_writable_response(
     us_reactor_handler_tcp_t *self_
 )
 {
-    us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
-    bool r=true;
-    /* eof on incoming data while sending response header is to be ignored */
-    return r;
+    /* once the entire response is sent, close the socket */
+    return false;
 }
 
-
-
-bool us_http_server_handler_eof_response_content(
+bool us_http_server_handler_eof_response(
     us_reactor_handler_tcp_t *self_
 )
 {
-    us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=true;
-    /* eof on incoming data while sending response content is to be ignored */
+    /* eof on incoming data while sending response header is to be ignored */
     return r;
 }
 
@@ -486,9 +478,5 @@ void us_http_server_handler_closed(
     us_reactor_handler_tcp_t *self_
 )
 {
-    bool r=false;
-    us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
-    /* TODO */
+    /* nothing to do here */
 }
-
-
