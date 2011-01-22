@@ -49,6 +49,7 @@ extern "C"
     void us_log_warn_printer ( const char *fmt, ... );
     void us_log_info_printer ( const char *fmt, ... );
     void us_log_debug_printer ( const char *fmt, ... );
+    void us_log_trace_printer ( const char *fmt, ... );
 
 #ifdef __cplusplus
 }

@@ -104,6 +104,7 @@ bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port )
         us_log_warn_proc = us_log_warn_udp;
         us_log_info_proc = us_log_info_udp;
         us_log_debug_proc = us_log_debug_udp;
+        us_log_trace_proc = us_log_trace_udp;
         us_logger_finish = us_logger_udp_finish;
     }
     else
@@ -170,6 +171,17 @@ void us_log_debug_udp ( const char *fmt, ... )
     va_start ( ap, fmt );
     us_logger_udp_printer_impl.m_cur_length = 0;
     us_logger_udp_printer->printf ( us_logger_udp_printer, "DEBUG:\t" );
+    us_logger_udp_printer->vprintf ( us_logger_udp_printer, fmt, ap );
+    us_log_udp_send();
+    va_end ( ap );
+}
+
+void us_log_trace_udp ( const char *fmt, ... )
+{
+    va_list ap;
+    va_start ( ap, fmt );
+    us_logger_udp_printer_impl.m_cur_length = 0;
+    us_logger_udp_printer->printf ( us_logger_udp_printer, "TRACE:\t" );
     us_logger_udp_printer->vprintf ( us_logger_udp_printer, fmt, ap );
     us_log_udp_send();
     va_end ( ap );

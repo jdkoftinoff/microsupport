@@ -38,6 +38,7 @@ void ( *us_log_error_proc ) ( const char *fmt, ... ) = us_log_null;
 void ( *us_log_warn_proc ) ( const char *fmt, ... ) = us_log_null;
 void ( *us_log_info_proc ) ( const char *fmt, ... ) = us_log_null;
 void ( *us_log_debug_proc ) ( const char *fmt, ... ) = us_log_null;
+void ( *us_log_trace_proc ) ( const char *fmt, ... ) = us_log_null;
 void ( *us_logger_finish ) ( void ) = us_logger_null_finish;
 
 void us_log_null ( const char *fmt, ... )

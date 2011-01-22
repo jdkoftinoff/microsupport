@@ -48,6 +48,7 @@ extern "C"
     void us_log_warn_syslog ( const char *fmt, ... );
     void us_log_info_syslog ( const char *fmt, ... );
     void us_log_debug_syslog ( const char *fmt, ... );
+    void us_log_trace_syslog ( const char *fmt, ... );
 
 #ifdef __cplusplus
 }

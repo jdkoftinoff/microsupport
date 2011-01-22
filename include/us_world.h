@@ -160,7 +160,7 @@ typedef unsigned char uint8_t;
 #endif
 
 #include "us_platform.h"
-
+#include "us_logger.h"
 /*@}*/
 
 #endif

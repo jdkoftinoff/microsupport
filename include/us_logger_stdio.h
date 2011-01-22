@@ -54,6 +54,7 @@ extern "C"
     void us_log_warn_stdio ( const char *fmt, ... );
     void us_log_info_stdio ( const char *fmt, ... );
     void us_log_debug_stdio ( const char *fmt, ... );
+    void us_log_trace_stdio ( const char *fmt, ... );
 
 #ifdef __cplusplus
 }

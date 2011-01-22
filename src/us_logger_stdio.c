@@ -47,6 +47,7 @@ bool us_logger_stdio_start ( FILE *outfile, FILE *errfile )
     us_log_warn_proc = us_log_warn_stdio;
     us_log_info_proc = us_log_info_stdio;
     us_log_debug_proc = us_log_debug_stdio;
+    us_log_trace_proc = us_log_trace_stdio;
     us_logger_finish = us_logger_stdio_finish;
     return true;
 }
@@ -143,6 +144,16 @@ void us_log_debug_stdio ( const char *fmt, ... )
     fflush( stdout );
 }
 
+void us_log_trace_stdio ( const char *fmt, ... )
+{
+    va_list ap;
+    va_start ( ap, fmt );
+    US_DEFAULT_FPRINTF ( stdout, "TRACE:\t" );
+    US_DEFAULT_VFPRINTF ( stdout, fmt, ap );
+    US_DEFAULT_FPRINTF ( stdout, "\n" );
+    va_end ( ap );
+    fflush( stdout );
+}
 
 #endif
 

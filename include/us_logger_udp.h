@@ -70,6 +70,7 @@ extern "C"
     void us_log_warn_udp ( const char *fmt, ... );
     void us_log_info_udp ( const char *fmt, ... );
     void us_log_debug_udp ( const char *fmt, ... );
+    void us_log_trace_udp ( const char *fmt, ... );
 
 
 # endif

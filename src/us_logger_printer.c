@@ -44,6 +44,7 @@ bool us_logger_printer_start ( us_print_t *out_printer, us_print_t *err_printer 
     us_log_warn_proc = us_log_warn_printer;
     us_log_info_proc = us_log_info_printer;
     us_log_debug_proc = us_log_debug_printer;
+    us_log_trace_proc = us_log_trace_printer;
     us_logger_finish = us_logger_printer_finish;
     return true;
 }
@@ -103,6 +104,19 @@ void us_log_debug_printer ( const char *fmt, ... )
     if ( us_logger_printer_out )
     {
         us_logger_printer_out->printf ( us_logger_printer_out, "DEBUG:\t" );
+        us_logger_printer_out->vprintf ( us_logger_printer_out, fmt, ap );
+        us_logger_printer_out->printf ( us_logger_printer_out, "\n" );
+    }
+    va_end ( ap );
+}
+
+void us_log_trace_printer ( const char *fmt, ... )
+{
+    va_list ap;
+    va_start ( ap, fmt );
+    if ( us_logger_printer_out )
+    {
+        us_logger_printer_out->printf ( us_logger_printer_out, "TRACE:\t" );
         us_logger_printer_out->vprintf ( us_logger_printer_out, fmt, ap );
         us_logger_printer_out->printf ( us_logger_printer_out, "\n" );
     }

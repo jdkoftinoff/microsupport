@@ -39,6 +39,7 @@ bool us_logger_syslog_start ( const char *ident )
     us_log_warn_proc = us_log_warn_syslog;
     us_log_info_proc = us_log_info_syslog;
     us_log_debug_proc = us_log_debug_syslog;
+    us_log_trace_proc = us_log_trace_syslog;
     us_logger_finish = us_logger_syslog_finish;
     return true;
 }
@@ -79,6 +80,14 @@ void us_log_info_syslog ( const char *fmt, ... )
 }
 
 void us_log_debug_syslog ( const char *fmt, ... )
+{
+    va_list ap;
+    va_start ( ap, fmt );
+    syslog ( LOG_DEBUG, fmt, ap );
+    va_end ( ap );
+}
+
+void us_log_trace_syslog ( const char *fmt, ... )
 {
     va_list ap;
     va_start ( ap, fmt );
