@@ -187,67 +187,20 @@ extern "C"
         us_http_server_handler_t *self
     );
 
-    static inline void us_http_server_handler_set_state_waiting_for_connection(
+    void us_http_server_handler_set_state_waiting_for_connection(
         us_http_server_handler_t *self
-    )
-    {
-        us_queue_init(
-            &self->m_base.m_incoming_queue,
-            self->m_base.m_incoming_queue.m_buf,
-            self->m_base.m_incoming_queue.m_buf_size
-        );
-        self->m_state = us_http_server_handler_state_waiting_for_connection;
-        self->m_base.readable = 0;
-        self->m_base.incoming_eof = 0;
-        self->m_base.writable = 0;
-        self->m_base.connected = us_http_server_handler_connected;
-        self->m_byte_count = 0;
-        self->m_todo_count = 0;
-        self->m_base.m_base.m_wake_on_readable = true;
-        self->m_base.m_base.m_wake_on_writable = false;
-    }
+    );
+    void us_http_server_handler_set_state_receiving_request_header(
+        us_http_server_handler_t *self
+    );
 
-    static inline void us_http_server_handler_set_state_receiving_request_header(
+    void us_http_server_handler_set_state_receiving_request_content(
         us_http_server_handler_t *self
-    )
-    {
-        self->m_state = us_http_server_handler_state_receiving_request_header;
-        self->m_base.readable = us_http_server_handler_readable_request_header;
-        self->m_base.incoming_eof = 0;
-        self->m_base.writable = 0;
-        self->m_base.connected = 0;
-        self->m_byte_count = 0;
-        self->m_base.m_base.m_wake_on_readable = true;
-        self->m_base.m_base.m_wake_on_writable = false;
-    }
+    );
 
-    static inline void us_http_server_handler_set_state_receiving_request_content(
+    void us_http_server_handler_set_state_sending_response(
         us_http_server_handler_t *self
-    )
-    {
-        self->m_state = us_http_server_handler_state_receiving_request_content;
-        self->m_base.readable = us_http_server_handler_readable_request_content;
-        self->m_base.incoming_eof = us_http_server_handler_eof_request_content;
-        self->m_base.writable = 0;
-        self->m_base.connected = 0;
-        self->m_byte_count = 0;
-        self->m_base.m_base.m_wake_on_readable = true;
-        self->m_base.m_base.m_wake_on_writable = false;
-    }
-
-    static inline void us_http_server_handler_set_state_sending_response(
-        us_http_server_handler_t *self
-    )
-    {
-        self->m_state = us_http_server_handler_state_sending_response;
-        self->m_base.readable = 0;
-        self->m_base.incoming_eof = us_http_server_handler_eof_response;
-        self->m_base.writable = us_http_server_handler_writable_response;
-        self->m_base.connected = 0;
-        self->m_byte_count = 0;
-        self->m_base.m_base.m_wake_on_readable = false;
-        self->m_base.m_base.m_wake_on_writable = true;
-    }
+    );
 
 
     void us_http_server_handler_closed(

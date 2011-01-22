@@ -128,7 +128,8 @@ int us_http_server_director_dispatch(
     }
     response_header->m_code = 200;
     if ( !us_http_response_header_set_content_type ( response_header, "text/plain" ) ||
-            !us_http_response_header_set_content_length ( response_header, response_content->m_cur_length ) )
+            !us_http_response_header_set_content_length ( response_header, response_content->m_cur_length ) ||
+            !us_http_response_header_set_connection_close ( response_header )  )
     {
         return -1;
     }
@@ -152,57 +153,68 @@ bool us_http_server_handler_init(
 {
     bool r=false;
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
+    us_log_tracepoint();
     r = us_reactor_handler_tcp_init(
             &self->m_base.m_base,
             allocator,
             fd,
             extra,
-            US_HTTP_SERVER_HANDLER_REQUEST_HEADER_SIZE + max_request_buffer_size,
-            US_HTTP_SERVER_HANDLER_RESPONSE_HEADER_SIZE + max_response_buffer_size
+            US_HTTP_SERVER_HANDLER_REQUEST_HEADER_SIZE + max_response_buffer_size,
+            4096
         );
+    self->m_base.m_base.destroy = us_http_server_handler_destroy;
     if( r )
     {
+        int32_t local_allocator_size = US_HTTP_SERVER_HANDLER_LOCAL_BUFFER_SIZE + max_response_buffer_size;
         self->m_local_allocator_buffer = us_new_array(
                                              allocator,
                                              char,
-                                             US_HTTP_SERVER_HANDLER_LOCAL_BUFFER_SIZE + max_response_buffer_size
+                                             local_allocator_size
                                          );
         self->m_request_header = 0;
         self->m_response_header = 0;
         if( self->m_local_allocator_buffer )
         {
-            us_simple_allocator_init( &self->m_local_allocator, self->m_local_allocator_buffer, US_HTTP_SERVER_HANDLER_LOCAL_BUFFER_SIZE );
+            us_simple_allocator_init( &self->m_local_allocator, self->m_local_allocator_buffer, local_allocator_size );
             self->m_request_header = us_http_request_header_create( &self->m_local_allocator.m_base );
             self->m_response_header = us_http_response_header_create( &self->m_local_allocator.m_base );
             self->m_response_content = us_buffer_create(&self->m_local_allocator.m_base, max_response_buffer_size );
             self->m_director = director;
-            us_http_server_handler_set_state_waiting_for_connection( self );
-#ifdef __linux__
+            if( self->m_request_header && self->m_response_header && self->m_response_content )
             {
-                int arg = 2; /* seconds when idle */
-                if (setsockopt(fd, SOL_TCP, TCP_KEEPIDLE, &arg, sizeof(arg)) != 0)
+                us_http_server_handler_set_state_waiting_for_connection( self );
+#ifdef __linux__
                 {
-                    us_log_error( "unable to set TCP_KEEPIDLE" );
+                    int arg = 2; /* seconds when idle */
+                    if (setsockopt(fd, SOL_TCP, TCP_KEEPIDLE, &arg, sizeof(arg)) != 0)
+                    {
+                        us_log_error( "unable to set TCP_KEEPIDLE" );
+                    }
+                    arg = 2; /* seconds when not idle */
+                    if (setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &arg, sizeof(arg)) != 0)
+                    {
+                        us_log_error( "unable to set TCP_KEEPINTVL" );
+                    }
+                    arg = 2; /* max probe count before closing socket */
+                    if (setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &arg, sizeof(arg)) != 0)
+                    {
+                        us_log_error( "unable to set TCP_KEEPCNT" );
+                    }
+                    arg = 1; /* enable keepalive */
+                    if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &arg, sizeof(arg)) != 0)
+                    {
+                        us_log_error( "unable to set SO_KEEPALIVE" );
+                    }
                 }
-                arg = 2; /* seconds when not idle */
-                if (setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &arg, sizeof(arg)) != 0)
-                {
-                    us_log_error( "unable to set TCP_KEEPINTVL" );
-                }
-                arg = 2; /* max probe count before closing socket */
-                if (setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &arg, sizeof(arg)) != 0)
-                {
-                    us_log_error( "unable to set TCP_KEEPCNT" );
-                }
-                arg = 1; /* enable keepalive */
-                if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &arg, sizeof(arg)) != 0)
-                {
-                    us_log_error( "unable to set SO_KEEPALIVE" );
-                }
-            }
 #endif
-            r=true;
+                r=true;
+            }
         }
+    }
+    if( !r )
+    {
+        us_log_error( "Unable to init http server handler");
+        self->m_base.m_base.destroy( &self->m_base.m_base );
     }
     return r;
 }
@@ -212,6 +224,7 @@ void us_http_server_handler_destroy(
 )
 {
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
+    us_log_tracepoint();
     if( self->m_request_header )
     {
         self->m_request_header->destroy( self->m_request_header );
@@ -232,6 +245,62 @@ void us_http_server_handler_destroy(
     us_reactor_handler_tcp_destroy(&self->m_base.m_base);
 }
 
+void us_http_server_handler_set_state_waiting_for_connection(
+    us_http_server_handler_t *self
+)
+{
+    us_log_tracepoint();
+    us_queue_init(
+        &self->m_base.m_incoming_queue,
+        self->m_base.m_incoming_queue.m_buf,
+        self->m_base.m_incoming_queue.m_buf_size
+    );
+    self->m_state = us_http_server_handler_state_waiting_for_connection;
+    self->m_base.readable = 0;
+    self->m_base.incoming_eof = 0;
+    self->m_base.writable = 0;
+    self->m_base.connected = us_http_server_handler_connected;
+    self->m_base.closed = 0;
+}
+
+void us_http_server_handler_set_state_receiving_request_header(
+    us_http_server_handler_t *self
+)
+{
+    us_log_tracepoint();
+    self->m_state = us_http_server_handler_state_receiving_request_header;
+    self->m_base.readable = us_http_server_handler_readable_request_header;
+    self->m_base.incoming_eof = 0;
+    self->m_base.writable = 0;
+    self->m_base.connected = 0;
+    self->m_base.closed = 0;
+}
+
+void us_http_server_handler_set_state_receiving_request_content(
+    us_http_server_handler_t *self
+)
+{
+    us_log_tracepoint();
+    self->m_state = us_http_server_handler_state_receiving_request_content;
+    self->m_base.readable = us_http_server_handler_readable_request_content;
+    self->m_base.incoming_eof = us_http_server_handler_eof_request_content;
+    self->m_base.writable = 0;
+    self->m_base.connected = 0;
+    self->m_base.closed = 0;
+}
+
+void us_http_server_handler_set_state_sending_response(
+    us_http_server_handler_t *self
+)
+{
+    us_log_tracepoint();
+    self->m_state = us_http_server_handler_state_sending_response;
+    self->m_base.readable = 0;
+    self->m_base.incoming_eof = us_http_server_handler_eof_response;
+    self->m_base.writable = us_http_server_handler_writable_response;
+    self->m_base.connected = 0;
+    self->m_base.closed = 0;
+}
 
 bool us_http_server_handler_connected(
     us_reactor_handler_tcp_t *self_,
@@ -241,6 +310,7 @@ bool us_http_server_handler_connected(
 {
     /* someone made a tcp connection to us, clear our buffers, allocators, and parsers */
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
+    us_log_tracepoint();
     if( us_log_level >= US_LOG_LEVEL_DEBUG && addr )
     {
         char hostname_buf[1024];
@@ -268,6 +338,7 @@ bool us_http_server_handler_readable_request_header(
     us_queue_t *incoming = &self->m_base.m_incoming_queue;
     int i;
     bool found_end_of_header=false;
+    us_log_tracepoint();
     /* scan until "\r\n\r\n" is seen in the incoming queue */
     for( i=self->m_byte_count; i<us_queue_readable_count(incoming)-3; i++ )
     {
@@ -287,6 +358,14 @@ bool us_http_server_handler_readable_request_header(
         /* found the end of the header, try parse it */
         r=us_http_server_handler_parse_request_header(self);
         /* if parsing fails, r=false means that the socket will close */
+        if( r )
+        {
+            us_log_debug( "Parsed header" );
+        }
+        else
+        {
+            us_log_debug( "Parsing header failed");
+        }
     }
     else
     {
@@ -303,6 +382,7 @@ bool us_http_server_handler_parse_request_header(
 {
     bool r=false;
     us_buffer_t incoming_buffer;
+    us_log_tracepoint();
     us_buffer_init(
         &incoming_buffer,
         0,
@@ -350,6 +430,12 @@ bool us_http_server_handler_parse_request_header(
                 self->m_todo_count = 0;
             }
         }
+        us_log_debug(
+            "Request verb is '%s', path is '%s', content length is %d",
+            self->m_request_header->m_method,
+            self->m_request_header->m_path,
+            self->m_todo_count
+        );
         /* now, if we have a non-zero content-length to exepect, either -1 or >0, then we go to receive content state */
         /* otherwise, we go straight to handling the request immediately */
         if( self->m_todo_count!=0 )
@@ -362,6 +448,10 @@ bool us_http_server_handler_parse_request_header(
             r=us_http_server_handler_dispatch( self );
         }
     }
+    if( !r )
+    {
+        self->m_base.close( &self->m_base );
+    }
     return r;
 }
 
@@ -370,6 +460,7 @@ bool us_http_server_handler_dispatch(
 )
 {
     bool r=false;
+    us_log_tracepoint();
     us_queue_t *incoming = &self->m_base.m_incoming_queue;
     us_queue_t *outgoing = &self->m_base.m_outgoing_queue;
     us_buffer_t request_content;
@@ -408,12 +499,22 @@ bool us_http_server_handler_dispatch(
                 us_http_server_handler_set_state_sending_response(self);
                 /* response header and response content is now in the outgoing buffer */
                 r=true;
+                us_log_debug( "response header and content ready");
             }
             else
             {
                 r=false;
+                us_log_error( "unable to buffer http response content");
             }
         }
+        else
+        {
+            us_log_error( "unable to flatten response header");
+        }
+    }
+    if( !r )
+    {
+        self->m_base.close( &self->m_base );
     }
     return r;
 }
@@ -425,6 +526,7 @@ bool us_http_server_handler_readable_request_content(
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=true;
     us_queue_t *incoming = &self->m_base.m_incoming_queue;
+    us_log_tracepoint();
     /* if content length is -1, we read until close */
     /* if content length is non zero, we read until incoming queue contains that much */
     if( self->m_todo_count == -1 )
@@ -433,6 +535,7 @@ bool us_http_server_handler_readable_request_content(
     }
     else if( us_queue_readable_count(incoming) >= self->m_todo_count )
     {
+        us_log_debug("got request content of %d bytes", self->m_todo_count );
         r=us_http_server_handler_dispatch( self );
     }
     return r;
@@ -444,10 +547,17 @@ bool us_http_server_handler_eof_request_content(
 {
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=false;
+    us_queue_t *incoming = &self->m_base.m_incoming_queue;
+    us_log_tracepoint();
     if( self->m_todo_count ==-1 )
     {
         /* when content length is unknown then eof means end of request content, time to dispatch request */
+        us_log_debug( "got request content of %d bytes by closed socket", us_queue_readable_count(incoming));
         r=us_http_server_handler_dispatch( self );
+    }
+    else
+    {
+        us_log_debug( "eof during request content xfer");
     }
     return r;
 }
@@ -458,6 +568,8 @@ bool us_http_server_handler_writable_response(
 )
 {
     /* once the entire response is sent, close the socket */
+    us_log_tracepoint();
+    us_log_debug( "entire response sent, socket is closing");
     return false;
 }
 
@@ -467,16 +579,9 @@ bool us_http_server_handler_eof_response(
 {
     bool r=true;
     /* eof on incoming data while sending response header is to be ignored */
+    us_log_tracepoint();
+    us_log_debug( "incoming socket closed during response, ignored");
     return r;
 }
 
 
-
-
-
-void us_http_server_handler_closed(
-    us_reactor_handler_tcp_t *self_
-)
-{
-    /* nothing to do here */
-}

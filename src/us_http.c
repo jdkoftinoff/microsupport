@@ -486,6 +486,14 @@ us_http_request_header_create_put (
 
 
 bool
+us_http_response_header_set_connection_close (
+    us_http_response_header_t *self
+)
+{
+    return self->m_items->add ( self->m_items, "Connection", "close" ) != 0;
+}
+
+bool
 us_http_response_header_set_content_length (
     us_http_response_header_t *self,
     int32_t content_length
@@ -771,8 +779,11 @@ us_http_request_header_parse (
     }
     if ( !r )
     {
-        self->m_items->destroy( self->m_items );
-        self->m_items = 0;
+        if( self->m_items )
+        {
+            self->m_items->destroy( self->m_items );
+            self->m_items = 0;
+        }
         us_delete ( self->m_allocator, self->m_method );
         self->m_method = 0;
         us_delete ( self->m_allocator, self->m_version );

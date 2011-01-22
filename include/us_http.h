@@ -272,6 +272,11 @@ extern "C"
     );
 
     bool
+    us_http_response_header_set_connection_close (
+        us_http_response_header_t *self
+    );
+
+    bool
     us_http_response_header_set_content_type (
         us_http_response_header_t *self,
         const char *content_mime_type
