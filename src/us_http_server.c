@@ -405,30 +405,19 @@ bool us_http_server_handler_parse_request_header(
         /* bool connection_keep_alive = us_http_request_header_get_connection_keep_alive */
         /* TODO: try find the expected content length */
         /* Get Content-Length field, if there is one */
-        us_http_header_item_t *content_length_item;
-        content_length_item = self->m_request_header->m_items->find( self->m_request_header->m_items, "Content-Length" );
-        if( content_length_item )
-        {
-            /* found it, extract the value as our todo count */
-            self->m_todo_count = strtol( content_length_item->m_value, 0, 10 );
-        }
+
+
         /* Some verbs might have content even if content length field is nonexistant */
         if( strcmp( self->m_request_header->m_method, "POST" )==0 ||
                 strcmp( self->m_request_header->m_method, "PUT" )==0 )
         {
             /* if we don't have a content_length item, by default todo_count is -1 meaning 'wait for close' */
-            if( !content_length_item )
-            {
-                self->m_todo_count=-1;
-            }
+            self->m_todo_count = us_http_request_header_get_content_length( self->m_request_header, -1 );
         }
         else
         {
             /* any other verb by default has no content if content-length is missing */
-            if( !content_length_item )
-            {
-                self->m_todo_count = 0;
-            }
+            self->m_todo_count = us_http_request_header_get_content_length( self->m_request_header, 0 );
         }
         us_log_debug(
             "Request verb is '%s', path is '%s', content length is %d",

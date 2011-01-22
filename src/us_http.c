@@ -291,6 +291,13 @@ us_http_request_header_set_content_type (
     return self->m_items->add ( self->m_items, "Content-Type", content_mime_type ) != 0;
 }
 
+bool
+us_http_request_header_set_connection_close (
+    us_http_request_header_t *self
+)
+{
+    return self->m_items->add ( self->m_items, "Connection", "close" ) != 0;
+}
 
 bool
 us_http_request_header_set_content_length (
@@ -298,9 +305,51 @@ us_http_request_header_set_content_length (
     int32_t content_length
 )
 {
+    bool r=true;
     char content_length_str[32];
-    US_DEFAULT_SNPRINTF ( content_length_str, sizeof ( content_length_str ), "%ld", ( long ) content_length );
-    return self->m_items->add ( self->m_items, "Content-Length", content_length_str ) != 0;
+    if( content_length != -1 )
+    {
+        US_DEFAULT_SNPRINTF ( content_length_str, sizeof ( content_length_str ), "%ld", ( long ) content_length );
+        if (!self->m_items->add ( self->m_items, "Content-Length", content_length_str ) )
+        {
+            r=false;
+        }
+    }
+    return r;
+}
+
+
+int32_t
+us_http_request_header_get_content_length (
+    const us_http_request_header_t *self,
+    int32_t default_length
+)
+{
+    int32_t content_length=default_length;
+    us_http_header_item_t *content_length_item;
+    content_length_item = self->m_items->find( self->m_items, "Content-Length" );
+    if( content_length_item )
+    {
+        content_length = strtol( content_length_item->m_value, 0, 10 );
+    }
+    return content_length;
+
+}
+
+const char *
+us_http_request_header_get_content_type (
+    const us_http_request_header_t *self
+)
+{
+    const char *content_type="";
+    us_http_header_item_t *content_type_item;
+    content_type_item = self->m_items->find( self->m_items, "Content-Type" );
+    if( content_type_item )
+    {
+        /* found it, extract the value as our todo count */
+        content_type = content_type_item->m_value;
+    }
+    return content_type;
 }
 
 
@@ -314,7 +363,7 @@ us_http_response_header_create ( us_allocator_t *allocator )
         self->m_allocator = allocator;
         self->destroy = us_http_response_header_destroy;
         self->m_code = 0;
-        self->m_version = us_strdup ( allocator, "HTTP/1.1" );
+        self->m_version = us_strdup ( allocator, "HTTP/1.1" );        
         self->m_items = us_http_header_item_list_create ( allocator );
         if ( !self->m_items )
         {
@@ -359,9 +408,9 @@ us_http_response_header_set_versionn (
 
 
 
-us_http_request_header_t *
-us_http_request_header_create_helper (
-    us_allocator_t *allocator,
+
+bool us_http_request_header_init_helper (
+    us_http_request_header_t *self,
     const char *method,
     const char *host,
     const char *path,
@@ -369,56 +418,42 @@ us_http_request_header_create_helper (
     int32_t content_length
 )
 {
-    us_http_request_header_t *self;
-    self = us_http_request_header_create ( allocator );
+    bool r=false;
     if ( self )
     {
-        self->m_method = us_strdup ( allocator, method );
-        self->m_path = us_strdup ( allocator, path );
-        self->m_version = us_strdup ( allocator, "HTTP/1.1" );
-        if ( self->m_path == 0 )
+        us_delete ( self->m_allocator, self->m_method );
+        self->m_method = us_strdup ( self->m_allocator, method );
+        us_delete ( self->m_allocator, self->m_path );
+        self->m_path = us_strdup ( self->m_allocator, path );
+        us_delete ( self->m_allocator, self->m_version );
+        self->m_version = us_strdup ( self->m_allocator, "HTTP/1.1" );
+        if ( self->m_path && self->m_method && self->m_version )
         {
-            self->destroy ( self );
-            self = 0;
-        }
-        else
-        {
-            if ( !self->m_items->add ( self->m_items, "Host", host ) )
+            if( self->m_items->add ( self->m_items, "Host", host )==0 )
+                r=false;
+
+            if( r && content_type )
             {
-                self->destroy ( self );
-                self = 0;
-            }
-            if( self && content_type )
-            {
-                if( !self->m_items->add( self->m_items, "Content-Type", content_type ))
+                r&=us_http_request_header_set_content_type( self, content_type );
+                if( content_length!=-1 )
                 {
-                    self->destroy( self );
-                    self = 0;
-                }
-            }
-            if( self && content_type )
-            {
-                if( !us_http_request_header_set_content_length( self, content_length ) )
-                {
-                    self->destroy( self );
-                    self = 0;
+                    r&=us_http_request_header_set_content_length( self, content_length );
                 }
             }
         }
     }
-    return self;
+    return r;
 }
 
 
-us_http_request_header_t *
-us_http_request_header_create_get (
-    us_allocator_t *allocator,
+bool us_http_request_header_init_get (
+        us_http_request_header_t *self,
     const char *host,
     const char *path
 )
 {
-    return us_http_request_header_create_helper (
-               allocator,
+    return us_http_request_header_init_helper (
+               self,
                "GET",
                host,
                path,
@@ -427,15 +462,14 @@ us_http_request_header_create_get (
            );
 }
 
-us_http_request_header_t *
-us_http_request_header_create_delete (
-    us_allocator_t *allocator,
+bool us_http_request_header_init_delete (
+        us_http_request_header_t *self,
     const char *host,
     const char *path
 )
 {
-    return us_http_request_header_create_helper (
-               allocator,
+    return us_http_request_header_init_helper (
+               self,
                "DELETE",
                host,
                path,
@@ -445,17 +479,16 @@ us_http_request_header_create_delete (
 }
 
 
-us_http_request_header_t *
-us_http_request_header_create_post (
-    us_allocator_t *allocator,
+bool us_http_request_header_init_post (
+        us_http_request_header_t *self,
     const char *host,
     const char *path,
     const char *content_type,
     uint32_t content_length
 )
 {
-    return us_http_request_header_create_helper (
-               allocator,
+    return us_http_request_header_init_helper (
+            self,
                "POST",
                host,
                path,
@@ -465,17 +498,16 @@ us_http_request_header_create_post (
 }
 
 
-us_http_request_header_t *
-us_http_request_header_create_put (
-    us_allocator_t *allocator,
+bool us_http_request_header_init_put (
+        us_http_request_header_t *self,
     const char *host,
     const char *path,
     const char *content_type,
     uint32_t content_length
 )
 {
-    return us_http_request_header_create_helper (
-               allocator,
+    return us_http_request_header_init_helper (
+               self,
                "PUT",
                host,
                path,
@@ -499,9 +531,17 @@ us_http_response_header_set_content_length (
     int32_t content_length
 )
 {
+    bool r=true;
     char content_length_str[32];
-    US_DEFAULT_SNPRINTF ( content_length_str, sizeof ( content_length_str ), "%ld", ( long ) content_length );
-    return self->m_items->add ( self->m_items, "Content-Length", content_length_str ) != 0;
+    if( content_length != -1 )
+    {
+        US_DEFAULT_SNPRINTF ( content_length_str, sizeof ( content_length_str ), "%ld", ( long ) content_length );
+        if (!self->m_items->add ( self->m_items, "Content-Length", content_length_str ) )
+        {
+            r=false;
+        }
+    }
+    return r;
 }
 
 
@@ -517,89 +557,84 @@ us_http_response_header_set_content_type (
 
 int32_t
 us_http_response_header_get_content_length (
-    const us_http_response_header_t *self
+    const us_http_response_header_t *self,
+    int32_t default_length
 )
 {
-    /* TODO */
-    return 0;
+    int32_t content_length=default_length;
+    us_http_header_item_t *content_length_item;
+    content_length_item = self->m_items->find( self->m_items, "Content-Length" );
+    if( content_length_item )
+    {
+        /* found it, extract the value as our todo count */
+        content_length = strtol( content_length_item->m_value, 0, 10 );
+    }
+    return content_length;
 }
 
 const char *
-us_http_response_header_get_mime_type (
+us_http_response_header_get_content_type (
     const us_http_response_header_t *self
 )
 {
-    /* TODO */
-    return 0;
+    const char *content_type="";
+    us_http_header_item_t *content_type_item;
+    content_type_item = self->m_items->find( self->m_items, "Content-Type" );
+    if( content_type_item )
+    {
+        /* found it, extract the value as our todo count */
+        content_type = content_type_item->m_value;
+    }
+    return content_type;
 }
 
 
 
-us_http_response_header_t *
-us_http_response_header_create_error (
-    us_allocator_t *allocator,
+bool us_http_response_header_init_error (
+    us_http_response_header_t *self,
     int32_t http_error_code,
     const char *content_type,
     uint32_t content_length
 )
 {
-    us_http_response_header_t *self;
-    self = us_http_response_header_create ( allocator );
-    if ( self )
+    bool r=false;
+    self->m_code = http_error_code;
+    if( content_type )
     {
-        self->m_code = http_error_code;
-        if ( !us_http_response_header_set_content_type ( self, content_type ) ||
-                !us_http_response_header_set_content_length ( self, content_length ) )
-        {
-            self->destroy ( self );
-            self = 0;
-        }
+        r&=us_http_response_header_set_content_type ( self, content_type );
+        r&=us_http_response_header_set_content_length ( self, content_length );
     }
-    return self;
+    return r;
 }
 
-us_http_response_header_t *
-us_http_response_header_create_redirect (
-    us_allocator_t *allocator,
-    int32_t http_redirect_code,
-    const char *redirect_to_url
-)
+bool us_http_response_header_init_redirect (
+        us_http_response_header_t *self,
+        int32_t http_redirect_code,
+        const char *redirect_to_url
+        )
 {
-    us_http_response_header_t *self;
-    self = us_http_response_header_create ( allocator );
-    if ( self )
+    bool r=false;
+    self->m_code = http_redirect_code;
+    if ( self->m_items->add ( self->m_items, "Location", redirect_to_url ) )
     {
-        self->m_code = http_redirect_code;
-        if ( !self->m_items->add ( self->m_items, "Location", redirect_to_url ) )
-        {
-            self->destroy ( self );
-            self = 0;
-        }
+        r=true;
     }
-    return self;
+    return r;
 }
 
-us_http_response_header_t *
-us_http_response_header_create_ok (
-    us_allocator_t *allocator,
+
+bool us_http_response_header_create_ok (
+    us_http_response_header_t *self,
     int32_t http_ok_code,
     const char *content_type,
     uint32_t content_length
 )
 {
-    us_http_response_header_t *self;
-    self = us_http_response_header_create ( allocator );
-    if ( self )
-    {
-        self->m_code = http_ok_code;
-        if ( !us_http_response_header_set_content_type ( self, content_type ) ||
-                !us_http_response_header_set_content_length ( self, content_length ) )
-        {
-            self->destroy ( self );
-            self = 0;
-        }
-    }
-    return self;
+    bool r=true;
+    self->m_code = http_ok_code;
+    r&=us_http_response_header_set_content_type ( self, content_type );
+    r&=us_http_response_header_set_content_length ( self, content_length );
+    return r;
 }
 
 

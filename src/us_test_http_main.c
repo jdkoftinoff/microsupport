@@ -49,7 +49,7 @@ static bool us_test_http_request ( void )
 {
     bool r = true;
     us_http_request_header_t *req;
-    req = us_http_request_header_create_get (
+    req = us_http_request_header_init_get (
               us_testutil_session_allocator,
               "www.meyersound.com:80",
               "/products/d-mitri/"

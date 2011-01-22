@@ -192,9 +192,26 @@ extern "C"
         int32_t content_length
     );
 
-    us_http_request_header_t *
-    us_http_request_header_create_helper (
-        us_allocator_t *allocator,
+    bool
+    us_http_request_header_set_connection_close (
+        us_http_request_header_t *self
+    );
+
+
+    int32_t
+    us_http_request_header_get_content_length (
+        const us_http_request_header_t *self,
+        int32_t default_length
+    );
+
+    const char *
+    us_http_request_header_get_content_type (
+        const us_http_request_header_t *self
+    );
+
+
+    bool us_http_request_header_init_helper (
+            us_http_request_header_t *self,
         const char *method,
         const char *host,
         const char *path,
@@ -202,33 +219,29 @@ extern "C"
         int32_t content_length
     );
 
-    us_http_request_header_t *
-    us_http_request_header_create_get (
-        us_allocator_t *allocator,
+    bool us_http_request_header_init_get (
+            us_http_request_header_t *self,
         const char *host,
         const char *path
     );
 
-    us_http_request_header_t *
-    us_http_request_header_create_delete (
-        us_allocator_t *allocator,
+    bool us_http_request_header_init_delete (
+            us_http_request_header_t *self,
         const char *host,
         const char *path
     );
 
 
-    us_http_request_header_t *
-    us_http_request_header_create_post (
-        us_allocator_t *allocator,
+    bool us_http_request_header_init_post (
+            us_http_request_header_t *self,
         const char *host,
         const char *path,
         const char *content_type,
         uint32_t content_length
     );
 
-    us_http_request_header_t *
-    us_http_request_header_create_put (
-        us_allocator_t *allocator,
+    bool us_http_request_header_init_put (
+            us_http_request_header_t *self,
         const char *host,
         const char *path,
         const char *content_type,
@@ -284,35 +297,35 @@ extern "C"
 
     int32_t
     us_http_response_header_get_content_length (
-        const us_http_response_header_t *self
+        const us_http_response_header_t *self,
+        int32_t default_length
     );
+
     const char *
-    us_http_response_header_get_mime_type (
+    us_http_response_header_get_content_type (
         const us_http_response_header_t *self
     );
 
 
-    us_http_response_header_t *
-    us_http_response_header_create_error (
-        us_allocator_t *allocator,
+    bool us_http_response_header_init_error (
+            us_http_response_header_t *self,
         int32_t http_error_code,
         const char *content_type,
         uint32_t content_length
     );
 
-    us_http_response_header_t *
-    us_http_response_header_create_redirect (
-        us_allocator_t *allocator,
+    bool us_http_response_header_init_redirect (
+            us_http_response_header_t *self,
         int32_t http_redirect_code,
         const char *redirect_to_url
     );
 
-    us_http_response_header_t *
-    us_http_response_header_create_ok (
-        us_allocator_t *allocator,
+    bool us_http_response_header_init_ok (
+            us_http_response_header_t *self,
         int32_t http_ok_code,
         const char *content_type,
-        uint32_t content_length
+        uint32_t content_length,
+        bool connection_close
     );
 
     bool
