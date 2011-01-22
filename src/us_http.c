@@ -428,14 +428,16 @@ bool us_http_request_header_init_helper (
         self->m_version = us_strdup ( self->m_allocator, "HTTP/1.1" );
         if ( self->m_path && self->m_method && self->m_version )
         {
-            if( self->m_items->add ( self->m_items, "Host", host )==0 )
-                r=false;
-            if( r && content_type )
+            if( self->m_items->add ( self->m_items, "Host", host ) )
             {
-                r&=us_http_request_header_set_content_type( self, content_type );
-                if( content_length!=-1 )
+                r=true;
+                if( content_type )
                 {
-                    r&=us_http_request_header_set_content_length( self, content_length );
+                    r&=us_http_request_header_set_content_type( self, content_type );
+                    if( content_length!=-1 )
+                    {
+                        r&=us_http_request_header_set_content_length( self, content_length );
+                    }
                 }
             }
         }
@@ -587,6 +589,28 @@ us_http_response_header_get_content_type (
 }
 
 
+bool us_http_response_header_init_ok (
+    us_http_response_header_t *self,
+    int32_t http_ok_code,
+    const char *content_type,
+    uint32_t content_length,
+    bool connection_close
+)
+{
+    bool r=true;
+    self->m_code = http_ok_code;
+    if( content_type )
+    {
+        r&=us_http_response_header_set_content_type ( self, content_type );
+        r&=us_http_response_header_set_content_length ( self, content_length );
+    }
+    if( connection_close )
+    {
+        r&=us_http_response_header_set_connection_close( self );
+    }
+    return r;
+}
+
 
 bool us_http_response_header_init_error (
     us_http_response_header_t *self,
@@ -595,7 +619,7 @@ bool us_http_response_header_init_error (
     uint32_t content_length
 )
 {
-    bool r=false;
+    bool r=true;
     self->m_code = http_error_code;
     if( content_type )
     {
@@ -611,11 +635,11 @@ bool us_http_response_header_init_redirect (
     const char *redirect_to_url
 )
 {
-    bool r=false;
+    bool r=true;
     self->m_code = http_redirect_code;
-    if ( self->m_items->add ( self->m_items, "Location", redirect_to_url ) )
+    if ( !self->m_items->add ( self->m_items, "Location", redirect_to_url ) )
     {
-        r=true;
+        r=false;
     }
     return r;
 }

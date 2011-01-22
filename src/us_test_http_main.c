@@ -47,14 +47,18 @@ static bool us_test_http_response ( void );
 
 static bool us_test_http_request ( void )
 {
-    bool r = true;
+    bool r = false;
     us_http_request_header_t *req;
-    req = us_http_request_header_init_get (
-              us_testutil_session_allocator,
-              "www.meyersound.com:80",
-              "/products/d-mitri/"
-          );
-    if ( req )
+    req = us_http_request_header_create( us_testutil_session_allocator );
+    if( req )
+    {
+        r = us_http_request_header_init_get (
+                req,
+                "www.meyersound.com:80",
+                "/products/d-mitri/"
+            );
+    }
+    if ( r )
     {
         us_buffer_t *buf;
         buf = us_buffer_create ( us_testutil_session_allocator, 4096 );
@@ -98,15 +102,20 @@ static bool us_test_http_request ( void )
 
 static bool us_test_http_response ( void )
 {
-    bool r = true;
+    bool r = false;
     const char *html = "<html><head><title>Test</title></head><body><p>Hello There</p></body></html>";
     us_http_response_header_t *resp;
-    resp = us_http_response_header_create_ok (
-               us_testutil_session_allocator,
-               200,
-               "text/html",
-               ( uint32_t ) ( strlen ( html ) )
-           );
+    resp = us_http_response_header_create( us_testutil_session_allocator );
+    if( resp )
+    {
+        r = us_http_response_header_init_ok (
+                resp,
+                200,
+                "text/html",
+                ( uint32_t ) ( strlen ( html ) ),
+                true
+            );
+    }
     if ( resp )
     {
         us_buffer_t *buf;
