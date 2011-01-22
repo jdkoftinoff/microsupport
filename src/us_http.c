@@ -333,7 +333,6 @@ us_http_request_header_get_content_length (
         content_length = strtol( content_length_item->m_value, 0, 10 );
     }
     return content_length;
-
 }
 
 const char *
@@ -363,7 +362,7 @@ us_http_response_header_create ( us_allocator_t *allocator )
         self->m_allocator = allocator;
         self->destroy = us_http_response_header_destroy;
         self->m_code = 0;
-        self->m_version = us_strdup ( allocator, "HTTP/1.1" );        
+        self->m_version = us_strdup ( allocator, "HTTP/1.1" );
         self->m_items = us_http_header_item_list_create ( allocator );
         if ( !self->m_items )
         {
@@ -431,7 +430,6 @@ bool us_http_request_header_init_helper (
         {
             if( self->m_items->add ( self->m_items, "Host", host )==0 )
                 r=false;
-
             if( r && content_type )
             {
                 r&=us_http_request_header_set_content_type( self, content_type );
@@ -447,7 +445,7 @@ bool us_http_request_header_init_helper (
 
 
 bool us_http_request_header_init_get (
-        us_http_request_header_t *self,
+    us_http_request_header_t *self,
     const char *host,
     const char *path
 )
@@ -463,7 +461,7 @@ bool us_http_request_header_init_get (
 }
 
 bool us_http_request_header_init_delete (
-        us_http_request_header_t *self,
+    us_http_request_header_t *self,
     const char *host,
     const char *path
 )
@@ -480,7 +478,7 @@ bool us_http_request_header_init_delete (
 
 
 bool us_http_request_header_init_post (
-        us_http_request_header_t *self,
+    us_http_request_header_t *self,
     const char *host,
     const char *path,
     const char *content_type,
@@ -488,7 +486,7 @@ bool us_http_request_header_init_post (
 )
 {
     return us_http_request_header_init_helper (
-            self,
+               self,
                "POST",
                host,
                path,
@@ -499,7 +497,7 @@ bool us_http_request_header_init_post (
 
 
 bool us_http_request_header_init_put (
-        us_http_request_header_t *self,
+    us_http_request_header_t *self,
     const char *host,
     const char *path,
     const char *content_type,
@@ -608,10 +606,10 @@ bool us_http_response_header_init_error (
 }
 
 bool us_http_response_header_init_redirect (
-        us_http_response_header_t *self,
-        int32_t http_redirect_code,
-        const char *redirect_to_url
-        )
+    us_http_response_header_t *self,
+    int32_t http_redirect_code,
+    const char *redirect_to_url
+)
 {
     bool r=false;
     self->m_code = http_redirect_code;

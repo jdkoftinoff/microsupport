@@ -405,8 +405,6 @@ bool us_http_server_handler_parse_request_header(
         /* bool connection_keep_alive = us_http_request_header_get_connection_keep_alive */
         /* TODO: try find the expected content length */
         /* Get Content-Length field, if there is one */
-
-
         /* Some verbs might have content even if content length field is nonexistant */
         if( strcmp( self->m_request_header->m_method, "POST" )==0 ||
                 strcmp( self->m_request_header->m_method, "PUT" )==0 )

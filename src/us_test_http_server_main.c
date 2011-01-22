@@ -75,7 +75,6 @@ static bool us_test_http_server ( void )
             }
             handler->m_base.m_base.destroy( &handler->m_base.m_base );
             us_delete( allocator, handler );
-
             handler = (us_http_server_handler_t *)us_http_server_handler_create( allocator );
             if( handler )
             {
