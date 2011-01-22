@@ -32,8 +32,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_logger.h"
 
-/* #define US_REACTOR_TCP_TRACE_TX */
-/* define US_REACTOR_TCP_TRACE_RX */
+#if 0
+#define US_REACTOR_TCP_TRACE_TX
+#define US_REACTOR_TCP_TRACE_RX
+#endif
 
 bool us_reactor_handler_init (
     us_reactor_handler_t *self,
@@ -624,6 +626,7 @@ bool us_reactor_handler_tcp_init (
         self->writable = 0;
         self->tick = 0;
         self->incoming_eof = 0;
+        self->closed = 0;
         in_buf = us_new_array( allocator, uint8_t, queue_buf_size );
         out_buf = us_new_array( allocator, uint8_t, queue_buf_size );
         self->m_xfer_buf = us_new_array( allocator, char, xfer_buf_size );
@@ -672,7 +675,11 @@ bool us_reactor_handler_tcp_tick (
 {
     bool r = true;
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-    if ( us_queue_writable_count ( &self->m_incoming_queue ) >= self->m_xfer_buf_size )
+    int32_t incoming_count = us_queue_writable_count ( &self->m_incoming_queue );
+    bool outgoing_available = us_queue_can_read_byte ( &self->m_outgoing_queue );
+    us_log_tracepoint();
+    /* If we have space in our xfer buf, wake up if the socket is readable */
+    if ( incoming_count >= self->m_xfer_buf_size )
     {
         self->m_base.m_wake_on_readable = true;
     }
@@ -680,7 +687,9 @@ bool us_reactor_handler_tcp_tick (
     {
         self->m_base.m_wake_on_readable = false;
     }
-    if ( us_queue_can_read_byte ( &self->m_outgoing_queue ) )
+    /* if we have data to send, wake up if the socket is writable */
+    /* and if we have a tcp writable function active and we do not have data to send, wake when the socket is writable */
+    if ( outgoing_available || (!outgoing_available && self->writable) )
     {
         self->m_base.m_wake_on_writable = true;
     }
@@ -690,6 +699,7 @@ bool us_reactor_handler_tcp_tick (
     }
     if ( self->tick )
         r = self->tick ( self );
+    us_log_trace( "fd %d WOR: %d WOW: %d", self->m_base.m_fd, self->m_base.m_wake_on_readable, self->m_base.m_wake_on_writable );
     return r;
 }
 
@@ -699,6 +709,7 @@ bool us_reactor_handler_tcp_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     int len;
+    us_log_tracepoint();
     do
     {
         len = recv ( self->m_base.m_fd, self->m_xfer_buf, self->m_xfer_buf_size, 0 );
@@ -712,7 +723,7 @@ bool us_reactor_handler_tcp_readable (
             us_log_debug( "READ TCP DATA (len %d): ", len );
             for( i=0; i<len; i++ )
             {
-                us_log_debug( "%02x", self->xfer_buf[i] );
+                us_log_debug( "%02x", self->m_xfer_buf[i] );
             }
         }
 #endif
@@ -745,6 +756,7 @@ void us_reactor_handler_tcp_close(
 )
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
+    us_log_tracepoint();
     if( self->m_base.m_fd != -1 )
     {
         closesocket ( self->m_base.m_fd );
@@ -764,6 +776,7 @@ bool us_reactor_handler_tcp_writable (
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r = false;
     int len;
+    us_log_tracepoint();
     len = us_queue_readable_count ( &self->m_outgoing_queue );
     if( len==0 && self->writable )
     {

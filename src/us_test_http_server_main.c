@@ -43,7 +43,6 @@
 
 static bool us_test_http_server ( void )
 {
-    /* TODO: */
     bool r = false;
     us_allocator_t *allocator = us_testutil_sys_allocator;
     us_http_server_director_t director;
@@ -90,7 +89,7 @@ int us_test_http_server_main ( int argc, char **argv )
 #if US_ENABLE_LOGGING
         us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-        us_log_set_level ( US_LOG_LEVEL_DEBUG );
+        us_log_set_level ( US_LOG_LEVEL_TRACE );
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
         if ( us_test_http_server() )
             r = 0;
