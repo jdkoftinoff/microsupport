@@ -177,6 +177,8 @@ bool us_example_http_server ( us_allocator_t *allocator )
     bool r = false;
     us_webapp_director_t director;
     us_webapp_director_init( &director, allocator );
+    us_webapp_diag_t *diag_app = us_webapp_diag_create( allocator );
+    us_webapp_director_add_404_app( &director, diag_app );
     us_reactor_t reactor;
     r = us_reactor_init (
             &reactor,

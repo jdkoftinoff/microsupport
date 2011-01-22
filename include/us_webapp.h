@@ -70,6 +70,71 @@ extern "C"
         us_buffer_t *response_content
     );
 
+
+    typedef struct us_webapp_static_buffer_s
+    {
+        us_webapp_t m_base;
+        char *m_path;
+        char *m_content_type;
+        us_buffer_t *m_buffer;
+        bool m_owned_buffer;
+    } us_webapp_static_buffer_t;
+
+    us_webapp_static_buffer_t *us_webapp_static_buffer_create(
+        us_allocator_t *allocator
+    );
+
+    us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_buffer(
+        us_allocator_t *allocator,
+        const char *path,
+        const char *content_type,
+        us_buffer_t *buffer,
+        bool own_buffer
+    );
+
+    us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_string(
+        us_allocator_t *allocator,
+        const char *path,
+        const char *content_type,
+        const char *str
+    );
+
+    void us_webapp_static_buffer_destroy(
+        us_webapp_t *self
+    );
+
+    bool us_webapp_static_buffer_path_match(us_webapp_t *self, const char *url );
+    int us_webapp_static_buffer_dispatch(
+        us_webapp_t *self,
+        const us_http_request_header_t *request_header,
+        const us_buffer_t *request_content,
+        us_http_response_header_t *response_header,
+        us_buffer_t *response_content
+    );
+
+    typedef struct us_webapp_diag_s
+    {
+        us_webapp_t m_base;
+    } us_webapp_diag_t;
+
+    us_webapp_diag_t *us_webapp_diag_create(
+        us_allocator_t *allocator
+    );
+
+    void us_webapp_diag_destroy(
+        us_webapp_t *self
+    );
+
+    bool us_webapp_diag_path_match(us_webapp_t *self, const char *url );
+    int us_webapp_diag_dispatch(
+        us_webapp_t *self,
+        const us_http_request_header_t *request_header,
+        const us_buffer_t *request_content,
+        us_http_response_header_t *response_header,
+        us_buffer_t *response_content
+    );
+
+
     typedef struct us_webapp_director_s
     {
         us_allocator_t *m_allocator;
@@ -83,7 +148,7 @@ extern "C"
         );
         us_webapp_t *m_apps;
         us_webapp_t *m_last_app;
-
+        us_webapp_t *m_404_app;
     } us_webapp_director_t;
 
 
@@ -92,6 +157,9 @@ extern "C"
     void us_webapp_director_destroy( us_webapp_director_t *self );
 
     bool us_webapp_director_add_app( us_webapp_director_t *self, us_webapp_t *m_app );
+
+    bool us_webapp_director_add_404_app( us_webapp_director_t *self, us_webapp_t *m_app );
+
 
     int us_webapp_director_dispatch(
         us_webapp_director_t *self,
