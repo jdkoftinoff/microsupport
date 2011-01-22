@@ -83,7 +83,7 @@ bool us_example_http_server_handler_init (
             extra,
             16384,
             16384,
-            (us_http_server_director_t *)extra
+            (us_webapp_director_t *)extra
         );
     return r;
 }
@@ -174,8 +174,8 @@ bool us_example_quitter_readable (
 bool us_example_webapp ( us_allocator_t *allocator )
 {
     bool r = false;
-    us_http_server_director_t director;
-    us_http_server_director_init( &director, allocator );
+    us_webapp_director_t director;
+    us_webapp_director_init( &director, allocator );
     us_reactor_t reactor;
     r = us_reactor_init (
             &reactor,

@@ -30,27 +30,27 @@
 
 #include "us_webapp.h"
 
-bool us_http_server_app_init( us_http_server_app_t *self, us_allocator_t *allocator )
+bool us_webapp_init( us_webapp_t *self, us_allocator_t *allocator )
 {
     self->m_allocator = allocator;
-    self->destroy = us_http_server_app_destroy;
-    self->path_match = us_http_server_app_path_match;
-    self->dispatch = us_http_server_app_dispatch;
+    self->destroy = us_webapp_destroy;
+    self->path_match = us_webapp_path_match;
+    self->dispatch = us_webapp_dispatch;
     return true;
 }
 
-void us_http_server_app_destroy( us_http_server_app_t *self )
+void us_webapp_destroy( us_webapp_t *self )
 {
 }
 
-bool us_http_server_app_path_match(us_http_server_app_t *self, const char *path )
+bool us_webapp_path_match(us_webapp_t *self, const char *path )
 {
     return true;
 }
 
 
-int us_http_server_app_dispatch(
-    us_http_server_app_t *self,
+int us_webapp_dispatch(
+    us_webapp_t *self,
     const us_http_request_header_t *request_header,
     const us_buffer_t *request_content,
     us_http_response_header_t *response_header,
@@ -61,10 +61,10 @@ int us_http_server_app_dispatch(
 }
 
 
-bool us_http_server_director_init( us_http_server_director_t *self, us_allocator_t *allocator )
+bool us_webapp_director_init( us_webapp_director_t *self, us_allocator_t *allocator )
 {
-    self->destroy = us_http_server_director_destroy;
-    self->dispatch = us_http_server_director_dispatch;
+    self->destroy = us_webapp_director_destroy;
+    self->dispatch = us_webapp_director_dispatch;
     self->m_allocator = allocator;
     self->m_apps = 0;
     self->m_last_app = 0;
@@ -73,19 +73,19 @@ bool us_http_server_director_init( us_http_server_director_t *self, us_allocator
 }
 
 
-void us_http_server_director_destroy( us_http_server_director_t *self )
+void us_webapp_director_destroy( us_webapp_director_t *self )
 {
-    us_http_server_app_t *cur = self->m_apps;
+    us_webapp_t *cur = self->m_apps;
     while( cur )
     {
-        us_http_server_app_t *next = cur->m_next;
+        us_webapp_t *next = cur->m_next;
         cur->destroy( cur );
         cur = next;
     }
 }
 
 
-bool us_http_server_director_add_app( us_http_server_director_t *self, us_http_server_app_t *app )
+bool us_webapp_director_add_app( us_webapp_director_t *self, us_webapp_t *app )
 {
     if( self->m_last_app )
     {
@@ -100,8 +100,8 @@ bool us_http_server_director_add_app( us_http_server_director_t *self, us_http_s
     return true;
 }
 
-int us_http_server_director_dispatch(
-    us_http_server_director_t *self,
+int us_webapp_director_dispatch(
+    us_webapp_director_t *self,
     const us_http_request_header_t *request_header,
     const us_buffer_t *request_content,
     us_http_response_header_t *response_header,

@@ -39,62 +39,62 @@ extern "C"
 #endif
 
 
-    typedef struct us_http_server_app_s
+    typedef struct us_webapp_s
     {
         us_allocator_t *m_allocator;
         void (*destroy)(
-            struct us_http_server_app_s *self
+            struct us_webapp_s *self
         );
         bool (*path_match)(
-            struct us_http_server_app_s *self,
+            struct us_webapp_s *self,
             const char *path
         );
         int (*dispatch)(
-            struct us_http_server_app_s *self,
+            struct us_webapp_s *self,
             const us_http_request_header_t *request_header,
             const us_buffer_t *request_content,
             us_http_response_header_t *response_header,
             us_buffer_t *response_content
         );
-        struct us_http_server_app_s *m_next;
-    } us_http_server_app_t;
+        struct us_webapp_s *m_next;
+    } us_webapp_t;
 
-    bool us_http_server_app_init( us_http_server_app_t *self, us_allocator_t *allocator );
-    void us_http_server_app_destroy( us_http_server_app_t *self );
-    bool us_http_server_app_path_match(us_http_server_app_t *self, const char *url );
-    int us_http_server_app_dispatch(
-        us_http_server_app_t *self,
+    bool us_webapp_init( us_webapp_t *self, us_allocator_t *allocator );
+    void us_webapp_destroy( us_webapp_t *self );
+    bool us_webapp_path_match(us_webapp_t *self, const char *url );
+    int us_webapp_dispatch(
+        us_webapp_t *self,
         const us_http_request_header_t *request_header,
         const us_buffer_t *request_content,
         us_http_response_header_t *response_header,
         us_buffer_t *response_content
     );
 
-    typedef struct us_http_server_director_s
+    typedef struct us_webapp_director_s
     {
         us_allocator_t *m_allocator;
-        void (*destroy)( struct us_http_server_director_s *self );
+        void (*destroy)( struct us_webapp_director_s *self );
         int (*dispatch)(
-            struct us_http_server_director_s *self,
+            struct us_webapp_director_s *self,
             const us_http_request_header_t *request_header,
             const us_buffer_t *request_content,
             us_http_response_header_t *response_header,
             us_buffer_t *response_content
         );
-        us_http_server_app_t *m_apps;
-        us_http_server_app_t *m_last_app;
+        us_webapp_t *m_apps;
+        us_webapp_t *m_last_app;
 
-    } us_http_server_director_t;
+    } us_webapp_director_t;
 
 
-    bool us_http_server_director_init( us_http_server_director_t *self, us_allocator_t *allocator );
+    bool us_webapp_director_init( us_webapp_director_t *self, us_allocator_t *allocator );
 
-    void us_http_server_director_destroy( us_http_server_director_t *self );
+    void us_webapp_director_destroy( us_webapp_director_t *self );
 
-    bool us_http_server_director_add_app( us_http_server_director_t *self, us_http_server_app_t *m_app );
+    bool us_webapp_director_add_app( us_webapp_director_t *self, us_webapp_t *m_app );
 
-    int us_http_server_director_dispatch(
-        us_http_server_director_t *self,
+    int us_webapp_director_dispatch(
+        us_webapp_director_t *self,
         const us_http_request_header_t *request_header,
         const us_buffer_t *request_content,
         us_http_response_header_t *response_header,

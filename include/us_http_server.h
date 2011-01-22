@@ -45,7 +45,7 @@ extern "C"
 #define US_HTTP_SERVER_HANDLER_REQUEST_HEADER_SIZE (8192)
 #define US_HTTP_SERVER_HANDLER_RESPONSE_HEADER_SIZE (8192)
 #define US_HTTP_SERVER_HANDLER_LOCAL_BUFFER_SIZE (16384)
-    struct us_http_server_director_s;
+    struct us_webapp_director_s;
 
     typedef enum us_http_server_handler_state_e
     {
@@ -70,7 +70,7 @@ extern "C"
         int32_t m_byte_count;
         int32_t m_todo_count;
 
-        struct us_http_server_director_s *m_director;
+        struct us_webapp_director_s *m_director;
 
     } us_http_server_handler_t;
 
@@ -84,7 +84,7 @@ extern "C"
         void *extra,
         int32_t max_request_buffer_size,
         int32_t max_response_buffer_size,
-        struct us_http_server_director_s *director
+        struct us_webapp_director_s *director
     );
 
     void us_http_server_handler_destroy(

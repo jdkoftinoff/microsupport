@@ -44,7 +44,7 @@ bool us_http_server_handler_init(
     void *extra,
     int32_t max_request_buffer_size,
     int32_t max_response_buffer_size,
-    us_http_server_director_t *director
+    us_webapp_director_t *director
 )
 {
     bool r=false;
