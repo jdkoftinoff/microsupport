@@ -29,112 +29,8 @@
 #include "us_world.h"
 
 #include "us_http_server.h"
+#include "us_webapp.h"
 
-bool us_http_server_app_init( us_http_server_app_t *self, us_allocator_t *allocator )
-{
-    self->m_allocator = allocator;
-    self->destroy = us_http_server_app_destroy;
-    self->path_match = us_http_server_app_path_match;
-    self->dispatch = us_http_server_app_dispatch;
-    return true;
-}
-
-void us_http_server_app_destroy( us_http_server_app_t *self )
-{
-}
-
-bool us_http_server_app_path_match(us_http_server_app_t *self, const char *path )
-{
-    return true;
-}
-
-
-int us_http_server_app_dispatch(
-    us_http_server_app_t *self,
-    const us_http_request_header_t *request_header,
-    const us_buffer_t *request_content,
-    us_http_response_header_t *response_header,
-    us_buffer_t *response_content
-)
-{
-    return -1;
-}
-
-
-bool us_http_server_director_init( us_http_server_director_t *self, us_allocator_t *allocator )
-{
-    self->destroy = us_http_server_director_destroy;
-    self->dispatch = us_http_server_director_dispatch;
-    self->m_allocator = allocator;
-    self->m_apps = 0;
-    self->m_last_app = 0;
-    /* TODO: */
-    return true;
-}
-
-
-void us_http_server_director_destroy( us_http_server_director_t *self )
-{
-    us_http_server_app_t *cur = self->m_apps;
-    while( cur )
-    {
-        us_http_server_app_t *next = cur->m_next;
-        cur->destroy( cur );
-        cur = next;
-    }
-}
-
-
-bool us_http_server_director_add_app( us_http_server_director_t *self, us_http_server_app_t *app )
-{
-    if( self->m_last_app )
-    {
-        self->m_last_app->m_next = app;
-        self->m_last_app = app;
-    }
-    else
-    {
-        self->m_apps =app;
-        self->m_last_app = app;
-    }
-    return true;
-}
-
-int us_http_server_director_dispatch(
-    us_http_server_director_t *self,
-    const us_http_request_header_t *request_header,
-    const us_buffer_t *request_content,
-    us_http_response_header_t *response_header,
-    us_buffer_t *response_content
-)
-{
-    us_http_header_item_t *item=0;
-    /* TODO: go through app list, find one that matches the path and dispatch to it */
-    us_buffer_append_string(response_content, "Request Info\r\nMethod='" );
-    us_buffer_append_string(response_content, request_header->m_method );
-    us_buffer_append_string(response_content, "'\r\nPath='" );
-    us_buffer_append_string(response_content, request_header->m_path );
-    us_buffer_append_string(response_content, "'\r\nVersion='" );
-    us_buffer_append_string(response_content, request_header->m_version );
-    us_buffer_append_string(response_content, "'\r\n\r\n" );
-    item=request_header->m_items->m_first;
-    while( item )
-    {
-        us_buffer_append_string(response_content,item->m_key);
-        us_buffer_append_string(response_content,": ");
-        us_buffer_append_string(response_content,item->m_value);
-        us_buffer_append_string(response_content,"\r\n");
-        item=item->m_next;
-    }
-    response_header->m_code = 200;
-    if ( !us_http_response_header_set_content_type ( response_header, "text/plain" ) ||
-            !us_http_response_header_set_content_length ( response_header, response_content->m_cur_length ) ||
-            !us_http_response_header_set_connection_close ( response_header )  )
-    {
-        return -1;
-    }
-    return response_header->m_code;
-}
 
 us_reactor_handler_t * us_http_server_handler_create(us_allocator_t *allocator)
 {
@@ -423,12 +319,23 @@ bool us_http_server_handler_parse_request_header(
             self->m_request_header->m_path,
             self->m_todo_count
         );
-        /* now, if we have a non-zero content-length to exepect, either -1 or >0, then we go to receive content state */
-        /* otherwise, we go straight to handling the request immediately */
+        /*
+           now, if we have a non-zero content-length to exepect, either -1 or >0,
+           and this there is still content to receive,
+           then we go to receive content state.
+           otherwise, we go straight to handling the request immediately
+        */
         if( self->m_todo_count!=0 )
         {
-            us_http_server_handler_set_state_receiving_request_content( self );
-            r=true;
+            if( self->m_todo_count > us_queue_readable_count( &self->m_base.m_incoming_queue) )
+            {
+                us_http_server_handler_set_state_receiving_request_content( self );
+                r=true;
+            }
+            else
+            {
+                r=us_http_server_handler_dispatch( self );
+            }
         }
         else
         {

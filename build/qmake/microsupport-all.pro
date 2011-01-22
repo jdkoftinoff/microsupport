@@ -15,6 +15,7 @@ us_example_json \
 us_example_mudp_rx \
 us_example_mudp_tx \
 us_example_reactor \
+us_example_webapp \
 us_test_all \
 us_test_allocator \
 us_test_buffer \
@@ -32,8 +33,7 @@ us_test_osc_msg \
 us_test_queue \
 us_test_slip \
 us_test_trie \
-us_test_http_server \
-us_test_http_client \
+us_test_webapp \
 us_tool_create_trie \
 us_tool_rx_osc \
 us_tool_send_osc 

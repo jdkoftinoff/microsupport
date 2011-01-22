@@ -45,68 +45,7 @@ extern "C"
 #define US_HTTP_SERVER_HANDLER_REQUEST_HEADER_SIZE (8192)
 #define US_HTTP_SERVER_HANDLER_RESPONSE_HEADER_SIZE (8192)
 #define US_HTTP_SERVER_HANDLER_LOCAL_BUFFER_SIZE (16384)
-
-    typedef struct us_http_server_app_s
-    {
-        us_allocator_t *m_allocator;
-        void (*destroy)(
-            struct us_http_server_app_s *self
-        );
-        bool (*path_match)(
-            struct us_http_server_app_s *self,
-            const char *path
-        );
-        int (*dispatch)(
-            struct us_http_server_app_s *self,
-            const us_http_request_header_t *request_header,
-            const us_buffer_t *request_content,
-            us_http_response_header_t *response_header,
-            us_buffer_t *response_content
-        );
-        struct us_http_server_app_s *m_next;
-    } us_http_server_app_t;
-
-    bool us_http_server_app_init( us_http_server_app_t *self, us_allocator_t *allocator );
-    void us_http_server_app_destroy( us_http_server_app_t *self );
-    bool us_http_server_app_path_match(us_http_server_app_t *self, const char *url );
-    int us_http_server_app_dispatch(
-        us_http_server_app_t *self,
-        const us_http_request_header_t *request_header,
-        const us_buffer_t *request_content,
-        us_http_response_header_t *response_header,
-        us_buffer_t *response_content
-    );
-
-    typedef struct us_http_server_director_s
-    {
-        us_allocator_t *m_allocator;
-        void (*destroy)( struct us_http_server_director_s *self );
-        int (*dispatch)(
-            struct us_http_server_director_s *self,
-            const us_http_request_header_t *request_header,
-            const us_buffer_t *request_content,
-            us_http_response_header_t *response_header,
-            us_buffer_t *response_content
-        );
-        us_http_server_app_t *m_apps;
-        us_http_server_app_t *m_last_app;
-
-    } us_http_server_director_t;
-
-
-    bool us_http_server_director_init( us_http_server_director_t *self, us_allocator_t *allocator );
-
-    void us_http_server_director_destroy( us_http_server_director_t *self );
-
-    bool us_http_server_director_add_app( us_http_server_director_t *self, us_http_server_app_t *m_app );
-
-    int us_http_server_director_dispatch(
-        us_http_server_director_t *self,
-        const us_http_request_header_t *request_header,
-        const us_buffer_t *request_content,
-        us_http_response_header_t *response_header,
-        us_buffer_t *response_content
-    );
+    struct us_http_server_director_s;
 
     typedef enum us_http_server_handler_state_e
     {
@@ -131,7 +70,7 @@ extern "C"
         int32_t m_byte_count;
         int32_t m_todo_count;
 
-        us_http_server_director_t *m_director;
+        struct us_http_server_director_s *m_director;
 
     } us_http_server_handler_t;
 
@@ -145,7 +84,7 @@ extern "C"
         void *extra,
         int32_t max_request_buffer_size,
         int32_t max_response_buffer_size,
-        us_http_server_director_t *director
+        struct us_http_server_director_s *director
     );
 
     void us_http_server_handler_destroy(

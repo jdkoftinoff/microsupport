@@ -1,9 +1,8 @@
 #include "us_world.h"
 #include "us_http_server.h"
-#include "us_webapp.h"
 #include "us_getopt.h"
 #include "us_logger_stdio.h"
-
+#include "us_webapp.h"
 #include "us_testutil.h"
 
 /*
@@ -172,7 +171,7 @@ bool us_example_quitter_readable (
 }
 
 
-bool us_example_http_server ( us_allocator_t *allocator )
+bool us_example_webapp ( us_allocator_t *allocator )
 {
     bool r = false;
     us_http_server_director_t director;
@@ -230,7 +229,7 @@ int main ( int argc, char **argv )
 #endif
     us_log_set_level ( US_LOG_LEVEL_TRACE );
     us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-    r=us_example_http_server( &allocator.m_base );
+    r=us_example_webapp( &allocator.m_base );
     us_malloc_allocator_destroy( &allocator.m_base );
     if ( r )
     {

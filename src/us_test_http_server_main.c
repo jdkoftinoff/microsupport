@@ -3,7 +3,7 @@
 #include "us_buffer.h"
 #include "us_buffer_print.h"
 #include "us_http_server.h"
-
+#include "us_webapp.h"
 #include "us_logger_printer.h"
 
 #include "us_testutil.h"
@@ -43,7 +43,7 @@
 
 static bool us_test_http_server ( void )
 {
-    bool r = false;
+    bool r = true;
     us_allocator_t *allocator = us_testutil_sys_allocator;
     us_http_server_director_t director;
     if( us_http_server_director_init( &director, allocator ) )
