@@ -124,7 +124,6 @@ typedef unsigned char uint8_t;
 # define _POSIX_SOURCE 1
 # define _POSIX_C_SOURCE 1
 # define _DARWIN_C_SOURCE 1
-
 # include <locale.h>
 # include <fcntl.h>
 # include <sys/types.h>
@@ -138,14 +137,12 @@ typedef unsigned char uint8_t;
 # include <unistd.h>
 # include <netdb.h>
 # include <netinet/in.h>
+# include <netinet/tcp.h>
 # include <arpa/inet.h>
 # include <sys/poll.h>
 # include <errno.h>
 # include <strings.h>
 # include <net/if.h>
-# ifdef __linux__
-#  include <linux/socket.h>
-# endif
 #endif
 
 #include <assert.h>
