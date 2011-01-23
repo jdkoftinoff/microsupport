@@ -2,6 +2,7 @@
 #include "us_http_server.h"
 #include "us_webapp.h"
 #include "us_getopt.h"
+#include "us_webapp_fs.h"
 #include "us_logger_stdio.h"
 
 #include "us_testutil.h"
@@ -37,8 +38,6 @@
 /** \addtogroup us_test_net */
 /*@{*/
 
-bool global_quit = false;
-
 bool us_example_http_server ( us_allocator_t *allocator );
 
 bool us_example_http_server_handler_init (
@@ -53,19 +52,6 @@ bool us_example_http_server_init (
     us_allocator_t *allocator,
     int fd,
     void *extra
-);
-
-us_reactor_handler_t * us_example_quitter_create ( us_allocator_t *allocator );
-
-bool us_example_quitter_init (
-    us_reactor_handler_t *self,
-    us_allocator_t *allocator,
-    int fd,
-    void *extra
-);
-
-bool us_example_quitter_readable (
-    us_reactor_handler_tcp_t *self
 );
 
 
@@ -83,7 +69,7 @@ bool us_example_http_server_handler_init (
             fd,
             extra,
             16384,
-            16384,
+            256*1024,
             (us_webapp_director_t *)extra
         );
     return r;
@@ -108,83 +94,43 @@ bool us_example_http_server_init (
 
 
 
-bool us_example_reactor_quitter_server_init (
-    us_reactor_handler_t *self,
-    us_allocator_t *allocator,
-    int fd,
-    void *extra
-)
-{
-    return us_reactor_handler_tcp_server_init (
-               self,
-               allocator,
-               fd,
-               extra,
-               us_example_quitter_create,
-               us_example_quitter_init
-           );
-}
-
-
-us_reactor_handler_t *
-us_example_quitter_create ( us_allocator_t *allocator )
-{
-    return us_reactor_handler_tcp_create( allocator );
-}
-
-bool us_example_quitter_init (
-    us_reactor_handler_t *self_,
-    us_allocator_t *allocator,
-    int fd,
-    void *extra
-)
-{
-    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-    bool r;
-    r = us_reactor_handler_tcp_init (
-            &self->m_base,
-            allocator,
-            fd,
-            extra,
-            1024,
-            256
-        );
-    self->readable = us_example_quitter_readable;
-    self->tick = 0;
-    return r;
-}
-
-bool us_example_quitter_readable (
-    us_reactor_handler_tcp_t *self_
-)
-{
-    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-    /* wait for the letter Q, then signal a quit flag */
-    while ( us_queue_can_read_byte ( &self->m_incoming_queue ) )
-    {
-        char c = ( char ) us_queue_read_byte ( &self->m_incoming_queue );
-        if ( c == 'Q' )
-        {
-            global_quit = true;
-        }
-    }
-    return true;
-}
-
-
 bool us_example_http_server ( us_allocator_t *allocator )
 {
     bool r = false;
     us_webapp_director_t director;
-    us_webapp_director_init( &director, allocator );
-    us_webapp_diag_t *diag_app = us_webapp_diag_create( allocator );
-    us_webapp_director_add_404_app( &director, &diag_app->m_base );
     us_reactor_t reactor;
+    us_webapp_redirect_t *redir_app;
+    us_webapp_fs_t *fs_app;
+
+    us_webapp_director_init( &director, allocator );
+    redir_app = us_webapp_redirect_create(allocator,"/","/index.html",302);
+    if( !redir_app )
+    {
+        return false;
+    }
+    if( !us_webapp_director_add_app(&director,&redir_app->m_base) )
+    {
+        return false;
+    }
+
+    fs_app = us_webapp_fs_create(allocator, 0, "/", "." );
+    if( !fs_app )
+    {
+        return false;
+    }
+    if( !us_webapp_director_add_app(&director,&fs_app->m_base) )
+    {
+        return false;
+    }
+
+    us_webapp_director_add_404_app( &director, 0 );
+
     r = us_reactor_init (
             &reactor,
             allocator,
             16 /* max simultaneous sockets, including server sockets and connections */
         );
+
     if ( r )
     {
         r = us_reactor_create_server (
@@ -199,19 +145,7 @@ bool us_example_http_server ( us_allocator_t *allocator )
     }
     if ( r )
     {
-        r = us_reactor_create_server (
-                &reactor,
-                allocator,
-                0, "8988",
-                SOCK_STREAM,
-                0,
-                us_reactor_handler_tcp_server_create,
-                us_example_reactor_quitter_server_init
-            );
-    }
-    if ( r )
-    {
-        while ( !global_quit && reactor.poll ( &reactor, 2000 ) )
+        while ( reactor.poll ( &reactor, 2000 ) && !us_platform_sigterm_seen && !us_platform_sigint_seen )
         {
             fprintf ( stdout, "tick\n" );
         }
@@ -230,7 +164,8 @@ int main ( int argc, char **argv )
 #if US_ENABLE_LOGGING
     us_logger_stdio_start ( stdout, stderr );
 #endif
-    us_log_set_level ( US_LOG_LEVEL_TRACE );
+    us_log_set_level ( US_LOG_LEVEL_DEBUG );
+    us_platform_init_sockets();
     us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
     r=us_example_http_server( &allocator.m_base );
     us_malloc_allocator_destroy( &allocator.m_base );

@@ -38,6 +38,11 @@ void us_queue_init (
     self->m_buf_size = buf_size;
     self->m_next_in = 0;
     self->m_next_out = 0;
+    if( (buf_size & (buf_size-1)) != 0 )
+    {
+        us_log_error( "logic error, queue size is not a power of two");
+        abort();
+    }
 }
 
 void us_queue_read ( us_queue_t *self, uint8_t *dest_data, int dest_data_cnt )

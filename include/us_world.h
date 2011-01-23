@@ -172,6 +172,10 @@ typedef unsigned char uint8_t;
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C"  {
+#endif
+
 static inline bool us_strncpy( char *dest, const char *src, int32_t dest_buf_size )
 {
     bool r=false;
@@ -203,6 +207,10 @@ static inline bool us_strncat( char *dest, const char *src, int32_t dest_buf_siz
     }
     return r;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #include "us_platform.h"

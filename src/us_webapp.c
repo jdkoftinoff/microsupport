@@ -205,6 +205,76 @@ int us_webapp_static_buffer_dispatch(
     return response_header->m_code;
 }
 
+us_webapp_redirect_t *us_webapp_redirect_create(
+    us_allocator_t *allocator,
+    const char *original_path,
+    const char *new_path,
+    int redirect_code
+)
+{
+    us_webapp_redirect_t *self = us_new( allocator, us_webapp_redirect_t );
+    if( self )
+    {
+        if( !us_webapp_init( &self->m_base, allocator ) )
+        {
+            us_webapp_destroy(&self->m_base);
+            self=0;
+        }
+    }
+    if( self )
+    {
+        self->m_base.destroy = us_webapp_redirect_destroy;
+        self->m_base.dispatch = us_webapp_redirect_dispatch;
+        self->m_base.path_match = us_webapp_redirect_path_match;
+        self->m_original_path = us_strdup( allocator, original_path );
+        self->m_new_path = us_strdup( allocator, new_path );
+        self->m_redirect_code = redirect_code;
+
+        if( !self->m_original_path || !self->m_new_path )
+        {
+            self->m_base.destroy( &self->m_base );
+            self=0;
+        }
+    }
+    return self;
+}
+
+void us_webapp_redirect_destroy(
+    us_webapp_t *self_
+)
+{
+    us_webapp_redirect_t *self = (us_webapp_redirect_t *)self_;
+    us_delete( self->m_base.m_allocator, self->m_original_path );
+    us_delete( self->m_base.m_allocator, self->m_new_path );
+    us_webapp_destroy( self_ );
+}
+
+bool us_webapp_redirect_path_match(us_webapp_t *self_, const char *path )
+{
+    bool r=false;
+    us_webapp_redirect_t *self = (us_webapp_redirect_t *)self_;
+    if( strcmp( path, self->m_original_path )==0 )
+    {
+        r=true;
+    }
+    return r;
+}
+
+int us_webapp_redirect_dispatch(
+    us_webapp_t *self_,
+    const us_http_request_header_t *request_header,
+    const us_buffer_t *request_content,
+    us_http_response_header_t *response_header,
+    us_buffer_t *response_content
+)
+{
+    us_webapp_redirect_t *self = (us_webapp_redirect_t *)self_;
+
+    us_http_response_header_init_redirect( response_header, self->m_redirect_code, self->m_new_path );
+    return response_header->m_code;
+}
+
+
 
 us_webapp_diag_t *us_webapp_diag_create(
     us_allocator_t *allocator
@@ -348,6 +418,10 @@ int us_webapp_director_dispatch(
                             response_header,
                             response_content
                         );
+        }
+        if( http_code==-1 )
+        {
+            cur = cur->m_next;
         }
     }
     /* if http_code is still -1, then no one handled it, pass it to 404 */

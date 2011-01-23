@@ -86,9 +86,9 @@ us_webapp_fs_t *us_webapp_fs_create(
     }
     if( self )
     {
-        self->m_base.destroy = us_webapp_static_buffer_destroy;
-        self->m_base.dispatch = us_webapp_static_buffer_dispatch;
-        self->m_base.path_match = us_webapp_static_buffer_path_match;
+        self->m_base.destroy = us_webapp_fs_destroy;
+        self->m_base.dispatch = us_webapp_fs_dispatch;
+        self->m_base.path_match = us_webapp_fs_path_match;
         self->m_web_path_prefix_len = strlen( web_path_prefix );
         self->m_filesystem_path = us_strdup( allocator, filesystem_path );
         self->m_web_path_prefix = us_strdup( allocator, web_path_prefix );
@@ -100,7 +100,7 @@ us_webapp_fs_t *us_webapp_fs_create(
         {
             self->m_ext_map = us_webapp_fs_default_ext_map;
         }
-        if( self->m_filesystem_path!=0 || self->m_web_path_prefix!=0 )
+        if( self->m_filesystem_path==0 || self->m_web_path_prefix==0 )
         {
             self->m_base.destroy( &self->m_base );
             self=0;
@@ -108,7 +108,6 @@ us_webapp_fs_t *us_webapp_fs_create(
     }
     return self;
 }
-
 
 
 void us_webapp_fs_destroy(
@@ -122,7 +121,7 @@ void us_webapp_fs_destroy(
 }
 
 
-bool us_webapp_static_buffer_path_match(us_webapp_t *self_, const char *path )
+bool us_webapp_fs_path_match(us_webapp_t *self_, const char *path )
 {
     bool r=false;
     us_webapp_fs_t *self = (us_webapp_fs_t *)self_;
@@ -171,9 +170,16 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
     FILE *f;
     bool r=false;
     char full_path[4096];
+    static const char default_index[] = "index.html";
 
-    if( us_strncpy( full_path, fs_path, sizeof(full_path) ) && us_strncat( full_path, file_path, sizeof(full_path) ) )
+    if( us_strncpy( full_path, fs_path, sizeof(full_path)-sizeof(default_index) ) &&
+        us_strncat( full_path, file_path, sizeof(full_path)-sizeof(default_index) ) )
     {
+        int len = strlen( full_path );
+        if( len>0 && full_path[len-1]=='/' )
+        {
+            us_strncat( full_path, default_index, sizeof(full_path));
+        }
         f=fopen( full_path, "rb" );
         if( f )
         {
@@ -182,16 +188,25 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
             file_len = ftell(f);
             if( file_len>0 )
             {
+                fseek(f,0,SEEK_SET);
                 if( file_len<=buf->m_max_length )
                 {
                     if( fread( buf->m_buffer, file_len, 1, f)==1 )
                     {
+                        buf->m_cur_length = file_len;
                         r=true;
+                    }
+                    else
+                    {
+                        us_log_error( "webapp_fs file '%s' unable to be read" );
                     }
                 }
                 else
                 {
                     /* too big */
+                    us_log_error( "webapp_fs file '%s' is too big, %ld bytes > buffer %ld bytes",
+                                  full_path, file_len, buf->m_max_length
+                                  );
                     r=false;
                 }
             }
@@ -202,7 +217,7 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
 }
 
 
-int us_webapp_fd_dispatch(
+int us_webapp_fs_dispatch(
     us_webapp_t *self_,
     const us_http_request_header_t *request_header,
     const us_buffer_t *request_content,
@@ -221,6 +236,7 @@ int us_webapp_fd_dispatch(
     if( !is_head && !is_get )
     {
         us_http_response_header_init_error( response_header, 404, 0, 0 );
+        us_log_debug( "invalid request method '%s'' for fs path '%s'", request_header->m_method, request_header->m_path );
         return 404;
     }
 
@@ -229,6 +245,7 @@ int us_webapp_fd_dispatch(
     if( !r )
     {
         us_http_response_header_init_error( response_header, 400, 0, 0 );
+        us_log_debug( "invalid characters in path '%s'",request_header->m_path );
         return 400;
     }
 
@@ -239,6 +256,7 @@ int us_webapp_fd_dispatch(
     if( !r )
     {
         us_http_response_header_init_error( response_header, 404, 0, 0 );
+        us_log_debug( "unable to open file in '%s' for path '%s'",self->m_filesystem_path, request_header->m_path );
         return 404;
     }
 
@@ -254,6 +272,7 @@ int us_webapp_fd_dispatch(
     }
     else
     {
+        us_log_error( "unable to fill response header, replying with 500");
         us_http_response_header_init_error( response_header, 500, 0, 0 );
     }
 

@@ -56,7 +56,7 @@ bool us_http_server_handler_init(
             allocator,
             fd,
             extra,
-            US_HTTP_SERVER_HANDLER_REQUEST_HEADER_SIZE + max_response_buffer_size,
+            max_response_buffer_size,
             4096
         );
     self->m_base.m_base.destroy = us_http_server_handler_destroy;
@@ -308,18 +308,23 @@ bool us_http_server_handler_parse_request_header(
         {
             /* if we don't have a content_length item, by default todo_count is -1 meaning 'wait for close' */
             self->m_todo_count = us_http_request_header_get_content_length( self->m_request_header, -1 );
+            us_log_debug(
+                "Request method is '%s', path is '%s', content length is %d",
+                self->m_request_header->m_method,
+                self->m_request_header->m_path,
+                self->m_todo_count
+            );
         }
         else
         {
             /* any other verb by default has no content if content-length is missing */
             self->m_todo_count = us_http_request_header_get_content_length( self->m_request_header, 0 );
+            us_log_debug(
+                "Request method is '%s', path is '%s'",
+                self->m_request_header->m_method,
+                self->m_request_header->m_path
+            );
         }
-        us_log_debug(
-            "Request verb is '%s', path is '%s', content length is %d",
-            self->m_request_header->m_method,
-            self->m_request_header->m_path,
-            self->m_todo_count
-        );
         /*
            now, if we have a non-zero content-length to exepect, either -1 or >0,
            and this there is still content to receive,
@@ -346,6 +351,10 @@ bool us_http_server_handler_parse_request_header(
     if( !r )
     {
         self->m_base.close( &self->m_base );
+    }
+    if( r )
+    {
+        us_log_debug( "Response code is %d, content length is %ld", self->m_response_header->m_code, self->m_response_content->m_cur_length );
     }
     return r;
 }

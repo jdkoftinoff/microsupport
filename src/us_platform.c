@@ -27,6 +27,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+volatile char us_platform_sigterm_seen=0;
+volatile char us_platform_sigint_seen=0;
+
 #ifdef _WIN32
 
 #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
@@ -83,13 +86,19 @@ bool us_platform_init_sockets ( void )
 
 #elif defined(US_CONFIG_POSIX)
 
-volatile char us_platform_sigterm_seen=0;
 
 static void us_platform_sigterm( int s )
 {
     (void)s;
     us_platform_sigterm_seen = 1;
 }
+
+static void us_platform_sigint( int s )
+{
+    (void)s;
+    us_platform_sigint_seen = 1;
+}
+
 
 bool us_platform_init_sockets ( void )
 {
@@ -102,8 +111,7 @@ bool us_platform_init_sockets ( void )
     sigemptyset(&act.sa_mask);
     act.sa_flags=0;
     sigaction(SIGTERM, &act, NULL);
-    /* make SIGINT act like SIGTERM */
-    act.sa_handler=us_platform_sigterm;
+    act.sa_handler=us_platform_sigint;
     sigemptyset(&act.sa_mask);
     act.sa_flags=0;
     sigaction(SIGINT, &act, NULL);
