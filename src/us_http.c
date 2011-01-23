@@ -554,6 +554,21 @@ us_http_response_header_set_content_type (
     return self->m_items->add ( self->m_items, "Content-Type", content_mime_type ) != 0;
 }
 
+bool us_http_response_header_set_no_cache(
+        us_http_response_header_t *self
+  )
+{
+    bool r=false;
+    if( self->m_items->add(self->m_items,"Cache-Control", "no-cache, no-store, must-revalidate") &&
+        self->m_items->add(self->m_items,"Expires","0") &&
+        self->m_items->add(self->m_items,"Pragma", "no-cache") )
+    {
+        r=true;
+    }
+
+    return true;
+}
+
 
 int32_t
 us_http_response_header_get_content_length (

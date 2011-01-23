@@ -388,18 +388,29 @@ bool us_http_server_handler_dispatch(
         if( r )
         {
             outgoing->m_next_in = response_header_buffer.m_cur_length;
-            if( us_queue_writable_count( outgoing )>self->m_response_content->m_cur_length )
+
+            /* Send content if it was not a HEAD request */
+
+            if( strcmp(self->m_request_header->m_method,"HEAD")!=0 )
             {
-                us_queue_write(outgoing,self->m_response_content->m_buffer,self->m_response_content->m_cur_length);
-                us_http_server_handler_set_state_sending_response(self);
-                /* response header and response content is now in the outgoing buffer */
-                r=true;
-                us_log_debug( "response header and content ready");
+                if( us_queue_writable_count( outgoing )>self->m_response_content->m_cur_length )
+                {
+                    us_queue_write(outgoing,self->m_response_content->m_buffer,self->m_response_content->m_cur_length);
+                    us_http_server_handler_set_state_sending_response(self);
+                    /* response header and response content is now in the outgoing buffer */
+                    r=true;
+                    us_log_debug( "response header and content ready");
+                }
+                else
+                {
+                    r=false;
+                    us_log_error( "unable to buffer http response content");
+                }
             }
             else
             {
-                r=false;
-                us_log_error( "unable to buffer http response content");
+                us_http_server_handler_set_state_sending_response(self);
+                r=true;
             }
         }
         else

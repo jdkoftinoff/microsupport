@@ -295,6 +295,10 @@ extern "C"
         const char *content_mime_type
     );
 
+    bool us_http_response_header_set_no_cache(
+            us_http_response_header_t *self
+      );
+
     int32_t
     us_http_response_header_get_content_length (
         const us_http_response_header_t *self,
