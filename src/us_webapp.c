@@ -407,6 +407,9 @@ int us_webapp_director_dispatch(
 {
     int http_code=-1;
     us_webapp_t *cur = self->m_apps;
+
+    /* TODO: convert path '%' escape codes and '+' into ascii */
+
     while( cur && http_code==-1 )
     {
         if( cur->path_match( cur, request_header->m_path ) )
@@ -424,16 +427,31 @@ int us_webapp_director_dispatch(
             cur = cur->m_next;
         }
     }
-    /* if http_code is still -1, then no one handled it, pass it to 404 */
-    if( self->m_404_app )
+    /* if http_code is still -1 or 404 then no one handled it, pass it to 404 */
+    if( http_code==-1 || http_code==404 )
     {
-        http_code = self->m_404_app->dispatch(
-                        self->m_404_app,
-                        request_header,
-                        request_content,
-                        response_header,
-                        response_content
+        if( self->m_404_app )
+        {
+            http_code = self->m_404_app->dispatch(
+                    self->m_404_app,
+                    request_header,
+                    request_content,
+                    response_header,
+                    response_content
                     );
+        }
+        else
+        {
+            static const char default_404_type[] = "text/html; charset=utf-8";
+            static const char default_404[] = "<html><head><title>Error 404: Not Found</title></head><body><h1>Error 404</h1><p>Not Found</p></body></html>";
+
+            us_http_response_header_init_error(
+                    response_header, 404,
+                    default_404_type,
+                    sizeof(default_404)
+                    );
+            us_buffer_append_string( response_content, default_404 );
+        }
     }
     /* if we STILL have -1, then this is an internal server error */
     if( http_code==-1 )

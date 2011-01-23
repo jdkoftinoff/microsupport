@@ -170,16 +170,10 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
     FILE *f;
     bool r=false;
     char full_path[4096];
-    static const char default_index[] = "index.html";
 
-    if( us_strncpy( full_path, fs_path, sizeof(full_path)-sizeof(default_index) ) &&
-        us_strncat( full_path, file_path, sizeof(full_path)-sizeof(default_index) ) )
+    if( us_strncpy( full_path, fs_path, sizeof(full_path) ) &&
+        us_strncat( full_path, file_path, sizeof(full_path) ) )
     {
-        int len = strlen( full_path );
-        if( len>0 && full_path[len-1]=='/' )
-        {
-            us_strncat( full_path, default_index, sizeof(full_path));
-        }
         f=fopen( full_path, "rb" );
         if( f )
         {
@@ -249,8 +243,31 @@ int us_webapp_fs_dispatch(
         return 400;
     }
 
-    /* try open the file */
+    /* path ends in / means readirect to index.html */
+    {
+        int len = strlen( request_header->m_path );
+        if( len>0 && request_header->m_path[len-1]=='/' )
+        {
+            char new_path[4096];
+            if(
+                us_strncpy( new_path, request_header->m_path, sizeof(new_path)  ) &&
+                us_strncat( new_path, "index.html", sizeof( new_path) ) )
+            {
+                r=us_http_response_header_init_redirect(response_header,302,new_path);
+            }
+            else
+            {
+                r=false;
+            }
+            if( !r )
+            {
+                response_header->m_code=500;
+            }
+            return response_header->m_code;
+        }
+    }
 
+    /* try open the file */
     r=us_webapp_fs_read_file( response_content, self->m_filesystem_path, request_header->m_path );
 
     if( !r )

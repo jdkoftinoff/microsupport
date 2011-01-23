@@ -54,6 +54,81 @@ bool us_example_http_server_init (
     void *extra
 );
 
+typedef struct us_webapp_json_test_s
+{
+    us_webapp_t m_base;
+} us_webapp_json_test_t;
+
+us_webapp_t *us_webapp_json_test_create(
+    us_allocator_t *allocator
+);
+
+void us_webapp_json_test_destroy(
+    us_webapp_t *self
+);
+
+bool us_webapp_json_test_path_match(us_webapp_t *self, const char *path );
+
+int us_webapp_json_test_dispatch(
+    us_webapp_t *self,
+    const us_http_request_header_t *request_header,
+    const us_buffer_t *request_content,
+    us_http_response_header_t *response_header,
+    us_buffer_t *response_content
+);
+
+us_webapp_t *us_webapp_json_test_create(
+    us_allocator_t *allocator
+)
+{
+    us_webapp_json_test_t *self = us_new(allocator,us_webapp_json_test_t);
+
+    if( self )
+    {
+        self->m_base.destroy = us_webapp_json_test_destroy;
+        self->m_base.path_match = us_webapp_json_test_path_match;
+        self->m_base.dispatch = us_webapp_json_test_dispatch;
+    }
+    return &self->m_base;
+}
+
+void us_webapp_json_test_destroy(
+    us_webapp_t *self_
+)
+{
+    us_webapp_json_test_t *self = (us_webapp_json_test_t *)self_;
+    us_webapp_destroy( &self->m_base );
+}
+
+bool us_webapp_json_test_path_match(us_webapp_t *self_, const char *path )
+{
+    static char p[] =  "/cgi-bin/json_test";
+    if( strncmp( path, p, sizeof(p) )==0 )
+        return true;
+    else
+        return false;
+}
+
+int us_webapp_json_test_dispatch(
+    us_webapp_t *self_,
+    const us_http_request_header_t *request_header,
+    const us_buffer_t *request_content,
+    us_http_response_header_t *response_header,
+    us_buffer_t *response_content
+)
+{
+    bool r=true;
+    char json[4096];
+    static int cnt=1;
+    sprintf( json, "{ \"time\" : \%ld, \"access_count\" = %d }", (long)time(0), (int)cnt++ );
+    r&=us_buffer_append_string( response_content, json );
+    r&=us_http_response_header_init_ok( response_header, 200, "application/json",response_content->m_cur_length,true);
+    r&=us_http_response_header_set_no_cache( response_header );
+    if( r )
+        return response_header->m_code;
+    else
+        return 500;
+}
 
 bool us_example_http_server_handler_init (
     us_reactor_handler_t *self_,
@@ -103,6 +178,9 @@ bool us_example_http_server ( us_allocator_t *allocator )
     us_webapp_fs_t *fs_app;
 
     us_webapp_director_init( &director, allocator );
+
+    us_webapp_director_add_app(&director, us_webapp_json_test_create(allocator));
+
     redir_app = us_webapp_redirect_create(allocator,"/","/index.html",302);
     if( !redir_app )
     {

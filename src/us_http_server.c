@@ -80,30 +80,7 @@ bool us_http_server_handler_init(
             if( self->m_request_header && self->m_response_header && self->m_response_content )
             {
                 us_http_server_handler_set_state_waiting_for_connection( self );
-#ifdef __linux__
-                {
-                    int arg = 2; /* seconds when idle */
-                    if (setsockopt(fd, SOL_TCP, TCP_KEEPIDLE, &arg, sizeof(arg)) != 0)
-                    {
-                        us_log_error( "unable to set TCP_KEEPIDLE" );
-                    }
-                    arg = 2; /* seconds when not idle */
-                    if (setsockopt(fd, SOL_TCP, TCP_KEEPINTVL, &arg, sizeof(arg)) != 0)
-                    {
-                        us_log_error( "unable to set TCP_KEEPINTVL" );
-                    }
-                    arg = 2; /* max probe count before closing socket */
-                    if (setsockopt(fd, SOL_TCP, TCP_KEEPCNT, &arg, sizeof(arg)) != 0)
-                    {
-                        us_log_error( "unable to set TCP_KEEPCNT" );
-                    }
-                    arg = 1; /* enable keepalive */
-                    if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &arg, sizeof(arg)) != 0)
-                    {
-                        us_log_error( "unable to set SO_KEEPALIVE" );
-                    }
-                }
-#endif
+
                 r=true;
             }
         }
