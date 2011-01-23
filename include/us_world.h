@@ -143,6 +143,9 @@ typedef unsigned char uint8_t;
 # include <errno.h>
 # include <strings.h>
 # include <net/if.h>
+# ifdef __linux__
+#  include <linux/socket.h>
+# endif
 #endif
 
 #include <assert.h>
