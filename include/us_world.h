@@ -159,6 +159,52 @@ typedef unsigned char uint8_t;
 # include <io.h>
 #endif
 
+#ifndef __cplusplus
+# ifndef bool
+    typedef int bool_;
+# define bool bool_
+# endif
+# ifndef true
+# define true (1)
+# endif
+# ifndef false
+# define false (0)
+# endif
+#endif
+
+static inline bool us_strncpy( char *dest, const char *src, int32_t dest_buf_size )
+{
+    bool r=false;
+    if( dest && src && dest_buf_size>2 )
+    {
+        int src_len = strlen(src);
+        if( src_len<dest_buf_size-1)
+        {
+            strncpy( dest, src, dest_buf_size-1 );
+            r=true;
+        }
+    }
+    return r;
+}
+
+static inline bool us_strncat( char *dest, const char *src, int32_t dest_buf_size )
+{
+    bool r=false;
+    if( dest && src && dest_buf_size>2 )
+    {
+        int src_len = strlen(src);
+        int dest_len = strlen(dest);
+
+        if( (src_len+dest_len)<dest_buf_size-1)
+        {
+            strncat( dest, src, dest_buf_size-1 );
+            r=true;
+        }
+    }
+    return r;
+}
+
+
 #include "us_platform.h"
 #include "us_logger.h"
 /*@}*/

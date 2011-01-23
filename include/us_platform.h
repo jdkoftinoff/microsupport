@@ -47,18 +47,6 @@ extern "C"
 
 #define US_COUNTOF(x) (sizeof(x)/sizeof(x[0]))
 
-#ifndef __cplusplus
-# ifndef bool
-    typedef int bool_;
-# define bool bool_
-# endif
-# ifndef true
-# define true (1)
-# endif
-# ifndef false
-# define false (0)
-# endif
-#endif
 
 #if US_ENABLE_BSD_SOCKETS && !defined(US_NO_DECLARE_CLOSESOCKET)
 # ifndef WIN32
