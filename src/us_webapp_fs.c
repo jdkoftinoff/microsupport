@@ -171,30 +171,32 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
     FILE *f;
     bool r=false;
     char full_path[4096];
-    strcpy( full_path, fs_path );
-    strcat( full_path, file_path );
-    f=fopen( full_path, "rb" );
-    if( f )
+
+    if( us_strncpy( full_path, fs_path, sizeof(full_path) ) && us_strncat( full_path, file_path, sizeof(full_path) ) )
     {
-        int32_t file_len=0;
-        fseek(f,0,SEEK_END);
-        file_len = ftell(f);
-        if( file_len>0 )
+        f=fopen( full_path, "rb" );
+        if( f )
         {
-            if( file_len<=buf->m_max_length )
+            int32_t file_len=0;
+            fseek(f,0,SEEK_END);
+            file_len = ftell(f);
+            if( file_len>0 )
             {
-                if( fread( buf->m_buffer, file_len, 1, f)==1 )
+                if( file_len<=buf->m_max_length )
                 {
-                    r=true;
+                    if( fread( buf->m_buffer, file_len, 1, f)==1 )
+                    {
+                        r=true;
+                    }
+                }
+                else
+                {
+                    /* too big */
+                    r=false;
                 }
             }
-            else
-            {
-                /* too big */
-                r=false;
-            }
+            fclose(f);
         }
-        fclose(f);
     }
     return r;
 }
