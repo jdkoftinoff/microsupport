@@ -180,7 +180,7 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
             int32_t file_len=0;
             fseek(f,0,SEEK_END);
             file_len = ftell(f);
-            if( file_len>0 )
+            if( file_len>=0 )
             {
                 fseek(f,0,SEEK_SET);
                 if( file_len<=buf->m_max_length )
