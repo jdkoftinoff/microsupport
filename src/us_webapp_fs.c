@@ -185,14 +185,21 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
                 fseek(f,0,SEEK_SET);
                 if( file_len<=buf->m_max_length )
                 {
-                    if( fread( buf->m_buffer, file_len, 1, f)==1 )
+                    if( file_len>0 )
                     {
-                        buf->m_cur_length = file_len;
-                        r=true;
+                        if( fread( buf->m_buffer, file_len, 1, f)==1 )
+                        {
+                            buf->m_cur_length = file_len;
+                            r=true;
+                        }
+                        else
+                        {
+                            us_log_error( "webapp_fs file '%s' unable to be read" );
+                        }
                     }
                     else
                     {
-                        us_log_error( "webapp_fs file '%s' unable to be read" );
+                        r=true;
                     }
                 }
                 else

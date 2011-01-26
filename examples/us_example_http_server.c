@@ -225,7 +225,7 @@ bool us_example_http_server ( us_allocator_t *allocator )
     {
         while ( reactor.poll ( &reactor, 2000 ) && !us_platform_sigterm_seen && !us_platform_sigint_seen )
         {
-            fprintf ( stdout, "tick\n" );
+            ;
         }
         reactor.destroy ( &reactor );
         r = true;
@@ -242,7 +242,7 @@ int main ( int argc, char **argv )
 #if US_ENABLE_LOGGING
     us_logger_stdio_start ( stdout, stderr );
 #endif
-    us_log_set_level ( US_LOG_LEVEL_DEBUG );
+    us_log_set_level ( US_LOG_LEVEL_INFO );
     us_platform_init_sockets();
     us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
     r=us_example_http_server( &allocator.m_base );

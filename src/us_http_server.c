@@ -214,7 +214,8 @@ bool us_http_server_handler_readable_request_header(
     bool found_end_of_header=false;
     us_log_tracepoint();
     /* scan until "\r\n\r\n" is seen in the incoming queue */
-    for( i=self->m_byte_count; i<us_queue_readable_count(incoming)-3; i++ )
+
+    for( i=0; i<us_queue_readable_count(incoming)-3; i++ )
     {
         if( us_queue_peek( incoming, i )=='\r' &&
                 us_queue_peek( incoming, i+1 )=='\n' &&
@@ -240,11 +241,6 @@ bool us_http_server_handler_readable_request_header(
         {
             us_log_debug( "Parsing header failed");
         }
-    }
-    else
-    {
-        /* next time, continue scanning where we left off */
-        self->m_byte_count = i;
     }
     return r;
 }
