@@ -61,7 +61,7 @@ int us_webapp_dispatch(
 }
 
 
-us_webapp_static_buffer_t *us_webapp_static_buffer_create(
+us_webapp_t *us_webapp_static_buffer_create(
     us_allocator_t *allocator
 )
 {
@@ -84,10 +84,10 @@ us_webapp_static_buffer_t *us_webapp_static_buffer_create(
         self->m_content_type = 0;
         self->m_owned_buffer = false;
     }
-    return self;
+    return &self->m_base;
 }
 
-us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_buffer(
+us_webapp_t *us_webapp_static_buffer_create_with_buffer(
     us_allocator_t *allocator,
     const char *path,
     const char *content_type,
@@ -95,7 +95,7 @@ us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_buffer(
     bool own_buffer
 )
 {
-    us_webapp_static_buffer_t *self = us_webapp_static_buffer_create( allocator );
+    us_webapp_static_buffer_t *self = (us_webapp_static_buffer_t *)us_webapp_static_buffer_create( allocator );
     if( self )
     {
         self->m_path = us_strdup( self->m_base.m_allocator, path );
@@ -108,10 +108,10 @@ us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_buffer(
             self = 0;
         }
     }
-    return self;
+    return &self->m_base;
 }
 
-us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_string(
+us_webapp_t *us_webapp_static_buffer_create_with_string(
     us_allocator_t *allocator,
     const char *path,
     const char *content_type,
@@ -122,7 +122,7 @@ us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_string(
     us_buffer_t *buf = us_buffer_create(allocator,strlen(str));
     if( buf )
     {
-        self = us_webapp_static_buffer_create( allocator );
+        self = (us_webapp_static_buffer_t *)us_webapp_static_buffer_create( allocator );
         if( self )
         {
             self->m_content_type = us_strdup( self->m_base.m_allocator, content_type );
@@ -142,7 +142,7 @@ us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_string(
             buf->destroy( buf );
         }
     }
-    return self;
+    return &self->m_base;
 }
 
 void us_webapp_static_buffer_destroy(
@@ -205,7 +205,7 @@ int us_webapp_static_buffer_dispatch(
     return response_header->m_code;
 }
 
-us_webapp_redirect_t *us_webapp_redirect_create(
+us_webapp_t *us_webapp_redirect_create(
     us_allocator_t *allocator,
     const char *original_path,
     const char *new_path,
@@ -236,7 +236,7 @@ us_webapp_redirect_t *us_webapp_redirect_create(
             self=0;
         }
     }
-    return self;
+    return &self->m_base;
 }
 
 void us_webapp_redirect_destroy(
@@ -276,7 +276,7 @@ int us_webapp_redirect_dispatch(
 
 
 
-us_webapp_diag_t *us_webapp_diag_create(
+us_webapp_t *us_webapp_diag_create(
     us_allocator_t *allocator
 )
 {
@@ -295,7 +295,7 @@ us_webapp_diag_t *us_webapp_diag_create(
         self->m_base.dispatch = us_webapp_diag_dispatch;
         self->m_base.path_match = us_webapp_diag_path_match;
     }
-    return self;
+    return &self->m_base;
 }
 
 void us_webapp_diag_destroy(
@@ -378,17 +378,24 @@ void us_webapp_director_destroy( us_webapp_director_t *self )
 
 bool us_webapp_director_add_app( us_webapp_director_t *self, us_webapp_t *app )
 {
-    if( self->m_last_app )
+    bool r=false;
+
+    if( app )
     {
-        self->m_last_app->m_next = app;
-        self->m_last_app = app;
+        if( self->m_last_app )
+        {
+            self->m_last_app->m_next = app;
+            self->m_last_app = app;
+        }
+        else
+        {
+            self->m_apps =app;
+            self->m_last_app = app;
+        }
+        r=true;
     }
-    else
-    {
-        self->m_apps =app;
-        self->m_last_app = app;
-    }
-    return true;
+
+    return r;
 }
 
 bool us_webapp_director_add_404_app( us_webapp_director_t *self, us_webapp_t *m_app )

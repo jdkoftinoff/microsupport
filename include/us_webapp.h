@@ -79,11 +79,11 @@ extern "C"
         bool m_owned_buffer;
     } us_webapp_static_buffer_t;
 
-    us_webapp_static_buffer_t *us_webapp_static_buffer_create(
+    us_webapp_t *us_webapp_static_buffer_create(
         us_allocator_t *allocator
     );
 
-    us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_buffer(
+    us_webapp_t *us_webapp_static_buffer_create_with_buffer(
         us_allocator_t *allocator,
         const char *path,
         const char *content_type,
@@ -91,7 +91,7 @@ extern "C"
         bool own_buffer
     );
 
-    us_webapp_static_buffer_t *us_webapp_static_buffer_create_with_string(
+    us_webapp_t *us_webapp_static_buffer_create_with_string(
         us_allocator_t *allocator,
         const char *path,
         const char *content_type,
@@ -119,7 +119,7 @@ extern "C"
         int m_redirect_code;
     } us_webapp_redirect_t;
 
-    us_webapp_redirect_t *us_webapp_redirect_create(
+    us_webapp_t *us_webapp_redirect_create(
         us_allocator_t *allocator,
         const char *original_path,
         const char *new_path,
@@ -147,7 +147,7 @@ extern "C"
         us_webapp_t m_base;
     } us_webapp_diag_t;
 
-    us_webapp_diag_t *us_webapp_diag_create(
+    us_webapp_t *us_webapp_diag_create(
         us_allocator_t *allocator
     );
 

@@ -68,7 +68,7 @@ static const char * us_webapp_file_ext_mime_map_find( us_webapp_file_ext_mime_ma
 
 #if US_ENABLE_STDIO
 
-us_webapp_fs_t *us_webapp_fs_create(
+us_webapp_t *us_webapp_fs_create(
         us_allocator_t *allocator,
         us_webapp_file_ext_mime_map_t *ext_map,
         const char *web_path_prefix,
@@ -106,7 +106,7 @@ us_webapp_fs_t *us_webapp_fs_create(
             self=0;
         }
     }
-    return self;
+    return &self->m_base;
 }
 
 

@@ -56,7 +56,7 @@ extern "C"
         const char *m_filesystem_path;
     } us_webapp_fs_t;
 
-    us_webapp_fs_t *us_webapp_fs_create(
+    us_webapp_t *us_webapp_fs_create(
         us_allocator_t *allocator,
         us_webapp_file_ext_mime_map_t *ext_map,
         const char *web_path_prefix,
