@@ -174,29 +174,17 @@ bool us_example_http_server ( us_allocator_t *allocator )
     bool r = false;
     us_webapp_director_t director;
     us_reactor_t reactor;
-    us_webapp_redirect_t *redir_app;
-    us_webapp_fs_t *fs_app;
 
     us_webapp_director_init( &director, allocator );
 
     us_webapp_director_add_app(&director, us_webapp_json_test_create(allocator));
 
-    redir_app = us_webapp_redirect_create(allocator,"/","/index.html",302);
-    if( !redir_app )
-    {
-        return false;
-    }
-    if( !us_webapp_director_add_app(&director,&redir_app->m_base) )
+    if( !us_webapp_director_add_app(&director,us_webapp_redirect_create(allocator,"/","/index.html",302)) )
     {
         return false;
     }
 
-    fs_app = us_webapp_fs_create(allocator, 0, "/", "." );
-    if( !fs_app )
-    {
-        return false;
-    }
-    if( !us_webapp_director_add_app(&director,&fs_app->m_base) )
+    if( !us_webapp_director_add_app(&director,us_webapp_fs_create(allocator, 0, "/", "." )) )
     {
         return false;
     }

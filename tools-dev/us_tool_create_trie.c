@@ -78,7 +78,7 @@ us_trie_dyn_t *us_tool_read_trie (
     int max_nodes
 )
 {
-    us_trie_node_flags_t item;
+    us_trie_node_flags_t item=0;
     us_trie_dyn_t *trie;
     func_name_list_t **cur_func = func_list;
     trie = us_trie_dyn_create (
