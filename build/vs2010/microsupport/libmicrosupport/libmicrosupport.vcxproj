@@ -20,6 +20,8 @@
     <ClInclude Include="..\..\..\..\include\us_cgi.h" />
     <ClInclude Include="..\..\..\..\include\us_getopt.h" />
     <ClInclude Include="..\..\..\..\include\us_http.h" />
+    <ClInclude Include="..\..\..\..\include\us_http_client.h" />
+    <ClInclude Include="..\..\..\..\include\us_http_server.h" />
     <ClInclude Include="..\..\..\..\include\us_json.h" />
     <ClInclude Include="..\..\..\..\include\us_json_parser.h" />
     <ClInclude Include="..\..\..\..\include\us_line_parse.h" />
@@ -28,6 +30,7 @@
     <ClInclude Include="..\..\..\..\include\us_logger_stdio.h" />
     <ClInclude Include="..\..\..\..\include\us_logger_syslog.h" />
     <ClInclude Include="..\..\..\..\include\us_logger_udp.h" />
+    <ClInclude Include="..\..\..\..\include\us_mdns_avahi.h" />
     <ClInclude Include="..\..\..\..\include\us_midi.h" />
     <ClInclude Include="..\..\..\..\include\us_net.h" />
     <ClInclude Include="..\..\..\..\include\us_options.h" />
@@ -46,7 +49,9 @@
     <ClInclude Include="..\..\..\..\include\us_test_allocator_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_buffer_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_getopt_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_http_client_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_http_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_http_server_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_json_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_line_parse_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_midi_main.h" />
@@ -57,9 +62,12 @@
     <ClInclude Include="..\..\..\..\include\us_test_queue_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_slip_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_trie_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_webapp_main.h" />
     <ClInclude Include="..\..\..\..\include\us_time.h" />
     <ClInclude Include="..\..\..\..\include\us_trie.h" />
     <ClInclude Include="..\..\..\..\include\us_trie_dump.h" />
+    <ClInclude Include="..\..\..\..\include\us_webapp.h" />
+    <ClInclude Include="..\..\..\..\include\us_webapp_fs.h" />
     <ClInclude Include="..\..\..\..\include\us_world.h" />
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +109,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_http_client.c" />
+    <ClCompile Include="..\..\..\..\src\us_http_server.c" />
     <ClCompile Include="..\..\..\..\src\us_json.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -149,6 +159,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_mdns_avahi.c" />
     <ClCompile Include="..\..\..\..\src\us_midi.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -242,12 +253,14 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\us_test_getopt_main.c" />
+    <ClCompile Include="..\..\..\..\src\us_test_http_client_main.c" />
     <ClCompile Include="..\..\..\..\src\us_test_http_main.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_http_server_main.c" />
     <ClCompile Include="..\..\..\..\src\us_test_json_main.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -297,6 +310,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_webapp_main.c" />
     <ClCompile Include="..\..\..\..\src\us_time.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -321,6 +335,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_webapp.c" />
+    <ClCompile Include="..\..\..\..\src\us_webapp_fs.c" />
     <ClCompile Include="..\..\..\..\src\us_world.c">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>

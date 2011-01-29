@@ -46,7 +46,7 @@ static bool us_test_http_server ( void )
     bool r = true;
     us_allocator_t *allocator = us_testutil_sys_allocator;
     us_webapp_director_t director;
-    us_webapp_diag_t *diag_app = us_webapp_diag_create( allocator );
+    us_webapp_diag_t *diag_app = (us_webapp_diag_t *)us_webapp_diag_create( allocator );
     if( diag_app && us_webapp_director_init( &director, allocator ) )
     {
         us_http_server_handler_t *handler = (us_http_server_handler_t *)us_http_server_handler_create( allocator );

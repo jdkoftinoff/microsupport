@@ -337,11 +337,11 @@ bool us_http_server_handler_dispatch(
 )
 {
     bool r=false;
-    us_log_tracepoint();
     us_queue_t *incoming = &self->m_base.m_incoming_queue;
     us_queue_t *outgoing = &self->m_base.m_outgoing_queue;
     us_buffer_t request_content;
     us_buffer_t response_header_buffer;
+    us_log_tracepoint();
     us_buffer_init(
         &request_content,
         0,
