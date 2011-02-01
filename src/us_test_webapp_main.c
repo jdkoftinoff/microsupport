@@ -47,7 +47,7 @@ static bool us_test_webapp ( void )
     return r;
 }
 
-int us_test_http_server_main ( int argc, char **argv )
+int us_test_webapp_main ( int argc, char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )
