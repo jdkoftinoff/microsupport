@@ -1,6 +1,7 @@
 #include "us_world.h"
 #include "us_allocator.h"
 #include "us_buffer.h"
+#include "us_buffer_print.h"
 #include "us_json.h"
 
 #include "us_logger_printer.h"
@@ -44,7 +45,40 @@ static bool us_test_json ( void );
 static bool us_test_json ( void )
 {
     bool r = false;
-    us_log_error ( "Unimplemented" );
+    us_allocator_t *allocator = us_testutil_sys_allocator;
+    us_json_t *j = us_json_create( allocator );
+    us_buffer_t *b = us_buffer_create( allocator, 1024 );
+    if( !b )
+    {
+        abort();
+    }
+
+    if( j )
+    {
+        us_json_t *a=0;
+        char name[32]="Jeff";
+        char city[32]="Vernon";
+        char country[32]="Canada"; 
+        static int32_t hitpoints=90210;
+        r=true;
+
+        if( !us_json_append_string_ptr( j, "name", name ) )
+            r=false;
+        if( !us_json_append_int32_ptr( j, "hitpoints", &hitpoints ) )
+            r=false;
+        a=us_json_append_object( j, "address" );
+        if( !us_json_append_string_ptr( a, "city", city ) )
+            r=false;
+        if( !us_json_append_string_ptr( a, "country", country ) )
+            r=false;
+
+        us_json_flatten_to_buffer( j, b );
+        
+        j->destroy(j);
+    }
+
+    us_buffer_print( b, us_testutil_printer_stdout );
+
     return r;
 }
 
