@@ -154,6 +154,7 @@ void us_json_destroy( us_json_t *self )
     }
 }
 
+
 us_json_entry_t *us_json_append_entry( us_json_t *self, us_json_entry_t *entry )
 {
     if( self && entry )
@@ -221,7 +222,7 @@ bool us_json_flatten_to_buffer( const us_json_t *self, us_buffer_t *buffer )
 {
     bool r=true;
     us_json_entry_t *entry=self->m_first_item;
-    us_buffer_append_string( buffer, "{ " );
+    us_buffer_append_string( buffer, self->m_is_array ? "[ " : "{ " );
     while( entry )
     {
         us_json_entry_flatten_to_buffer( entry, buffer );
@@ -231,7 +232,7 @@ bool us_json_flatten_to_buffer( const us_json_t *self, us_buffer_t *buffer )
         }
         entry=entry->m_next;
     }
-    us_buffer_append_string( buffer, " }\n" );
+    us_buffer_append_string( buffer, self->m_is_array ? " ]\n" : " }\n" );
     return r;
 }
 

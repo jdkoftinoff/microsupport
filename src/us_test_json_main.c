@@ -54,10 +54,14 @@ static bool us_test_json ( void )
     }
     if( j )
     {
+        int i;
         us_json_t *a=0;
+        us_json_t *a1=0;
         char name[32]="Jeff";
         char city[32]="Vernon";
         char country[32]="Canada";
+        int32_t histogram[11] = { 1, 3,6,10, 15, 14, 11, 4, 2, 1, 0 };
+
         static int32_t hitpoints=90210;
         r=true;
         if( !us_json_append_string_ptr( j, "name", name ) )
@@ -69,10 +73,46 @@ static bool us_test_json ( void )
             r=false;
         if( !us_json_append_string_ptr( a, "country", country ) )
             r=false;
-        us_json_flatten_to_buffer( j, b );
-        j->destroy(j);
+
+        a1=us_json_append_object( j, "histogram" );
+        us_json_set_array( a1, true );
+        for( i=0; i<sizeof(histogram)/sizeof(histogram[0]); ++i )
+        {
+            if( !us_json_append_int32_ptr( a1, 0, &histogram[i] ))
+            {
+                r=false;
+                break;
+            }
+        }
+
+
+        r&=us_json_flatten_to_buffer( j, b );
+
+        r&=us_buffer_append_string( b, ", \n" );
+
+        strcpy( name, "John" );
+        strcpy( city, "Berkeley" );
+        strcpy( country, "United States" );
+        hitpoints = 999;
+
+        for( i=0; i<sizeof(histogram)/sizeof(histogram[0]); ++i )
+        {
+            histogram[i] = i*i;
+        }
+        
+        r&=us_json_flatten_to_buffer( j, b );
+
+        j->destroy(j);        
     }
-    us_buffer_print( b, us_testutil_printer_stdout );
+    {
+        int i=0;
+        for( i=0; i<b->m_cur_length; ++i )
+        {
+            fprintf( stdout, "%c", b->m_buffer[i] );
+        }
+        fprintf( stdout, "\n" );
+    }
+
     return r;
 }
 

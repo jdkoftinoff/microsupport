@@ -80,10 +80,16 @@ extern "C"
         us_allocator_t *m_allocator;
         us_json_entry_t *m_first_item;
         us_json_entry_t *m_last_item;
+        bool m_is_array;
     } us_json_t;
 
     us_json_t *us_json_create( us_allocator_t *allocator );
     void us_json_destroy( us_json_t *self );
+
+    static inline void us_json_set_array( us_json_t *self, bool f )
+    {
+        self->m_is_array = f;
+    }
 
     us_json_entry_t *us_json_append_entry( us_json_t *self, us_json_entry_t *entry );
     us_json_entry_t *us_json_append_string_ptr( us_json_t *self, const char *key, const char *value );
