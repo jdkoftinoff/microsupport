@@ -148,6 +148,7 @@ void us_http_server_handler_set_state_receiving_request_header(
     self->m_base.writable = 0;
     self->m_base.connected = 0;
     self->m_base.closed = 0;
+	self->m_byte_count = 0;
 }
 
 void us_http_server_handler_set_state_receiving_request_content(
@@ -215,7 +216,7 @@ bool us_http_server_handler_readable_request_header(
     us_log_tracepoint();
     /* scan until "\r\n\r\n" is seen in the incoming queue */
 
-    for( i=0; i<us_queue_readable_count(incoming)-3; i++ )
+    for( i=self->m_byte_count; i<us_queue_readable_count(incoming)-3; i++ )
     {
         if( us_queue_peek( incoming, i )=='\r' &&
                 us_queue_peek( incoming, i+1 )=='\n' &&
@@ -242,6 +243,13 @@ bool us_http_server_handler_readable_request_header(
             us_log_debug( "Parsing header failed");
         }
     }
+	else
+	{
+		if( i>4 )
+		{
+			self->m_byte_count = i-4;
+		}
+	}
     return r;
 }
 
