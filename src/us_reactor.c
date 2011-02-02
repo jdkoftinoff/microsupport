@@ -269,7 +269,6 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         do
         {
             n = select(max_fd+1, &self->m_read_fds, &self->m_write_fds, 0, &tv_timeout );
-
         }
         while (n<0 && (errno==EINTR || errno==EAGAIN ) );
         if ( n < 0 )

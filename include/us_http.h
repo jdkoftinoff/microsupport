@@ -296,8 +296,8 @@ extern "C"
     );
 
     bool us_http_response_header_set_no_cache(
-            us_http_response_header_t *self
-      );
+        us_http_response_header_t *self
+    );
 
     int32_t
     us_http_response_header_get_content_length (

@@ -161,7 +161,7 @@ typedef unsigned char uint8_t;
 
 #ifndef __cplusplus
 # ifndef bool
-    typedef int bool_;
+typedef int bool_;
 # define bool bool_
 # endif
 # ifndef true
@@ -176,37 +176,36 @@ typedef unsigned char uint8_t;
 extern "C"  {
 #endif
 
-static inline bool us_strncpy( char *dest, const char *src, int32_t dest_buf_size )
-{
-    bool r=false;
-    if( dest && src && dest_buf_size>2 )
+    static inline bool us_strncpy( char *dest, const char *src, int32_t dest_buf_size )
     {
-        int src_len = strlen(src);
-        if( src_len<dest_buf_size-1)
+        bool r=false;
+        if( dest && src && dest_buf_size>2 )
         {
-            strncpy( dest, src, dest_buf_size-1 );
-            r=true;
+            int src_len = strlen(src);
+            if( src_len<dest_buf_size-1)
+            {
+                strncpy( dest, src, dest_buf_size-1 );
+                r=true;
+            }
         }
+        return r;
     }
-    return r;
-}
 
-static inline bool us_strncat( char *dest, const char *src, int32_t dest_buf_size )
-{
-    bool r=false;
-    if( dest && src && dest_buf_size>2 )
+    static inline bool us_strncat( char *dest, const char *src, int32_t dest_buf_size )
     {
-        int src_len = strlen(src);
-        int dest_len = strlen(dest);
-
-        if( (src_len+dest_len)<dest_buf_size-1)
+        bool r=false;
+        if( dest && src && dest_buf_size>2 )
         {
-            strncat( dest, src, dest_buf_size-1 );
-            r=true;
+            int src_len = strlen(src);
+            int dest_len = strlen(dest);
+            if( (src_len+dest_len)<dest_buf_size-1)
+            {
+                strncat( dest, src, dest_buf_size-1 );
+                r=true;
+            }
         }
+        return r;
     }
-    return r;
-}
 
 #ifdef __cplusplus
 }

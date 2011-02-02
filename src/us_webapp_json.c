@@ -24,18 +24,15 @@ us_webapp_t *us_webapp_json_create(
 )
 {
     us_webapp_json_t *self = us_new(allocator,us_webapp_json_t);
-    
     if( self )
     {
         us_webapp_init( &self->m_base, allocator );
-
         self->m_base.destroy = us_webapp_json_destroy;
         self->m_base.path_match = us_webapp_json_path_match;
         self->m_base.dispatch = us_webapp_json_dispatch;
         self->m_path = path;
         self->update_data = update_data;
     }
-
     return &self->m_base;
 }
 
@@ -50,12 +47,10 @@ void us_webapp_json_destroy(
 bool us_webapp_json_path_match(us_webapp_t *self_, const char *path )
 {
     us_webapp_json_t *self = (us_webapp_json_t *)self_;
-
     if( strcmp( path, self->m_path) ==0 )
         return true;
     else
         return false;
-
 }
 
 int us_webapp_json_dispatch(
@@ -68,7 +63,6 @@ int us_webapp_json_dispatch(
 {
     bool r=false;
     us_webapp_json_t *self = (us_webapp_json_t *)self_;
-
     if( strcmp( request_header->m_method, "POST" )==0 )
     {
         r=self->update_data( request_content, self->m_json_data );

@@ -229,7 +229,6 @@ us_webapp_t *us_webapp_redirect_create(
         self->m_original_path = us_strdup( allocator, original_path );
         self->m_new_path = us_strdup( allocator, new_path );
         self->m_redirect_code = redirect_code;
-
         if( !self->m_original_path || !self->m_new_path )
         {
             self->m_base.destroy( &self->m_base );
@@ -269,7 +268,6 @@ int us_webapp_redirect_dispatch(
 )
 {
     us_webapp_redirect_t *self = (us_webapp_redirect_t *)self_;
-
     us_http_response_header_init_redirect( response_header, self->m_redirect_code, self->m_new_path );
     return response_header->m_code;
 }
@@ -379,7 +377,6 @@ void us_webapp_director_destroy( us_webapp_director_t *self )
 bool us_webapp_director_add_app( us_webapp_director_t *self, us_webapp_t *app )
 {
     bool r=false;
-
     if( app )
     {
         if( self->m_last_app )
@@ -394,7 +391,6 @@ bool us_webapp_director_add_app( us_webapp_director_t *self, us_webapp_t *app )
         }
         r=true;
     }
-
     return r;
 }
 
@@ -414,9 +410,7 @@ int us_webapp_director_dispatch(
 {
     int http_code=-1;
     us_webapp_t *cur = self->m_apps;
-
     /* TODO: convert path '%' escape codes and '+' into ascii */
-
     while( cur && http_code==-1 )
     {
         if( cur->path_match( cur, request_header->m_path ) )
@@ -440,23 +434,22 @@ int us_webapp_director_dispatch(
         if( self->m_404_app )
         {
             http_code = self->m_404_app->dispatch(
-                    self->m_404_app,
-                    request_header,
-                    request_content,
-                    response_header,
-                    response_content
-                    );
+                            self->m_404_app,
+                            request_header,
+                            request_content,
+                            response_header,
+                            response_content
+                        );
         }
         else
         {
             static const char default_404_type[] = "text/html; charset=utf-8";
             static const char default_404[] = "<html><head><title>Error 404: Not Found</title></head><body><h1>Error 404</h1><p>Not Found</p></body></html>";
-
             us_http_response_header_init_error(
-                    response_header, 404,
-                    default_404_type,
-                    sizeof(default_404)
-                    );
+                response_header, 404,
+                default_404_type,
+                sizeof(default_404)
+            );
             us_buffer_append_string( response_content, default_404 );
         }
     }

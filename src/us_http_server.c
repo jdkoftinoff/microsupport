@@ -80,7 +80,6 @@ bool us_http_server_handler_init(
             if( self->m_request_header && self->m_response_header && self->m_response_content )
             {
                 us_http_server_handler_set_state_waiting_for_connection( self );
-
                 r=true;
             }
         }
@@ -148,7 +147,7 @@ void us_http_server_handler_set_state_receiving_request_header(
     self->m_base.writable = 0;
     self->m_base.connected = 0;
     self->m_base.closed = 0;
-	self->m_byte_count = 0;
+    self->m_byte_count = 0;
 }
 
 void us_http_server_handler_set_state_receiving_request_content(
@@ -215,7 +214,6 @@ bool us_http_server_handler_readable_request_header(
     bool found_end_of_header=false;
     us_log_tracepoint();
     /* scan until "\r\n\r\n" is seen in the incoming queue */
-
     for( i=self->m_byte_count; i<us_queue_readable_count(incoming)-3; i++ )
     {
         if( us_queue_peek( incoming, i )=='\r' &&
@@ -243,13 +241,13 @@ bool us_http_server_handler_readable_request_header(
             us_log_debug( "Parsing header failed");
         }
     }
-	else
-	{
-		if( i>4 )
-		{
-			self->m_byte_count = i-4;
-		}
-	}
+    else
+    {
+        if( i>4 )
+        {
+            self->m_byte_count = i-4;
+        }
+    }
     return r;
 }
 
@@ -378,9 +376,7 @@ bool us_http_server_handler_dispatch(
         if( r )
         {
             outgoing->m_next_in = response_header_buffer.m_cur_length;
-
             /* Send content if it was not a HEAD request */
-
             if( strcmp(self->m_request_header->m_method,"HEAD")!=0 )
             {
                 if( us_queue_writable_count( outgoing )>self->m_response_content->m_cur_length )

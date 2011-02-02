@@ -82,7 +82,6 @@ us_webapp_t *us_webapp_json_test_create(
 )
 {
     us_webapp_json_test_t *self = us_new(allocator,us_webapp_json_test_t);
-
     if( self )
     {
         self->m_base.destroy = us_webapp_json_test_destroy;
@@ -174,29 +173,22 @@ bool us_example_http_server ( us_allocator_t *allocator )
     bool r = false;
     us_webapp_director_t director;
     us_reactor_t reactor;
-
     us_webapp_director_init( &director, allocator );
-
     us_webapp_director_add_app(&director, us_webapp_json_test_create(allocator));
-
     if( !us_webapp_director_add_app(&director,us_webapp_redirect_create(allocator,"/","/index.html",302)) )
     {
         return false;
     }
-
     if( !us_webapp_director_add_app(&director,us_webapp_fs_create(allocator, 0, "/", "." )) )
     {
         return false;
     }
-
     us_webapp_director_add_404_app( &director, 0 );
-
     r = us_reactor_init (
             &reactor,
             allocator,
             16 /* max simultaneous sockets, including server sockets and connections */
         );
-
     if ( r )
     {
         r = us_reactor_create_server (

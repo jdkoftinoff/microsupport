@@ -51,23 +51,20 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
                  description->m_name,
                  description->m_type,
                  description->m_port
-                 );
-
+               );
         while( curtxt )
         {
             fprintf( f, "   <txt-record>%s=%s</txt-record>\n", curtxt->m_key, curtxt->m_value );
             curtxt = curtxt->m_next;
         }
-
         fprintf( f,
                  " </service>\n"
                  "</service-group>\n"
-                 );
+               );
         fflush(f);
         if( !ferror(f) )
         {
             us_mdns_avahi_t *cur = us_mdns_avahi_service_list;
-
             description->m_next = 0;
             if( cur==0 )
             {

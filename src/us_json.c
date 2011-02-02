@@ -48,12 +48,12 @@ us_json_entry_t *us_json_entry_create( us_allocator_t *allocator, const char *ke
 
 void us_json_entry_destroy( us_json_entry_t *self )
 {
-   if( self->m_next )
-   {
-       us_json_entry_destroy( self->m_next );
-   }
-   us_json_entry_remove_value( self );
-   us_delete( self->m_allocator, self );
+    if( self->m_next )
+    {
+        us_json_entry_destroy( self->m_next );
+    }
+    us_json_entry_remove_value( self );
+    us_delete( self->m_allocator, self );
 }
 
 void us_json_entry_remove_value( us_json_entry_t *self )
@@ -90,7 +90,6 @@ void us_json_entry_set_value_int32_ptr( us_json_entry_t *self, int32_t *value )
 bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *buffer )
 {
     bool r=true;
-
     if( self->m_key )
     {
         r&=us_buffer_append_string( buffer, "\"" );
@@ -98,33 +97,32 @@ bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *
         r&=us_buffer_append_string( buffer, self->m_key );
         r&=us_buffer_append_string( buffer, "\" : " );
     }
-    
     switch( self->m_type )
     {
-        case us_json_type_none:
-            r&=us_buffer_append_string( buffer, "null" );
-            break;
-        case us_json_type_json:
-            r&=us_json_flatten_to_buffer( self->m_value_json, buffer );
-            break;
-        case us_json_type_string_ptr:
-            r&=us_buffer_append_string( buffer, "\"" );
-            /* TODO: Do json escaping */
-            r&=us_buffer_append_string( buffer, self->m_value_string_ptr );
-            r&=us_buffer_append_string( buffer, "\"" );
-            break;
-        case us_json_type_int32_ptr:
-            {
-                char s[32];
-                snprintf( s, sizeof(s), "%d", *self->m_value_int32_ptr );
-                r&=us_buffer_append_string( buffer, s );
-            }
-            break;
-        default:
-            us_log_error( "invalid json entry type" );
-            r=false;
-            break;
-    } 
+    case us_json_type_none:
+        r&=us_buffer_append_string( buffer, "null" );
+        break;
+    case us_json_type_json:
+        r&=us_json_flatten_to_buffer( self->m_value_json, buffer );
+        break;
+    case us_json_type_string_ptr:
+        r&=us_buffer_append_string( buffer, "\"" );
+        /* TODO: Do json escaping */
+        r&=us_buffer_append_string( buffer, self->m_value_string_ptr );
+        r&=us_buffer_append_string( buffer, "\"" );
+        break;
+    case us_json_type_int32_ptr:
+    {
+        char s[32];
+        snprintf( s, sizeof(s), "%d", *self->m_value_int32_ptr );
+        r&=us_buffer_append_string( buffer, s );
+    }
+    break;
+    default:
+        us_log_error( "invalid json entry type" );
+        r=false;
+        break;
+    }
     return r;
 }
 
@@ -149,7 +147,7 @@ void us_json_destroy( us_json_t *self )
         us_json_entry_t *cur = self->m_first_item;
         if( cur )
         {
-           us_json_entry_destroy( cur );
+            us_json_entry_destroy( cur );
         }
         self->m_first_item = 0;
         self->m_last_item = 0;
@@ -158,25 +156,25 @@ void us_json_destroy( us_json_t *self )
 
 us_json_entry_t *us_json_append_entry( us_json_t *self, us_json_entry_t *entry )
 {
-   if( self && entry )
-   {
-       if( self->m_last_item )
-       {
-           self->m_last_item->m_next = entry;
-           self->m_last_item = entry;
-       }
-       else
-       {
-           self->m_first_item=entry;
-           self->m_last_item=entry;
-       }
-   }
-   if( !self && entry )
-   {
-       us_json_entry_destroy( entry );
-       entry=0;
-   }
-   return entry;
+    if( self && entry )
+    {
+        if( self->m_last_item )
+        {
+            self->m_last_item->m_next = entry;
+            self->m_last_item = entry;
+        }
+        else
+        {
+            self->m_first_item=entry;
+            self->m_last_item=entry;
+        }
+    }
+    if( !self && entry )
+    {
+        us_json_entry_destroy( entry );
+        entry=0;
+    }
+    return entry;
 }
 
 us_json_entry_t *us_json_append_string_ptr( us_json_t *self, const char *key, const char *value )
@@ -231,8 +229,8 @@ bool us_json_flatten_to_buffer( const us_json_t *self, us_buffer_t *buffer )
         {
             us_buffer_append_string( buffer, ",\n" );
         }
-        entry=entry->m_next; 
-    } 
+        entry=entry->m_next;
+    }
     us_buffer_append_string( buffer, " }\n" );
     return r;
 }

@@ -52,16 +52,14 @@ static bool us_test_json ( void )
     {
         abort();
     }
-
     if( j )
     {
         us_json_t *a=0;
         char name[32]="Jeff";
         char city[32]="Vernon";
-        char country[32]="Canada"; 
+        char country[32]="Canada";
         static int32_t hitpoints=90210;
         r=true;
-
         if( !us_json_append_string_ptr( j, "name", name ) )
             r=false;
         if( !us_json_append_int32_ptr( j, "hitpoints", &hitpoints ) )
@@ -71,14 +69,10 @@ static bool us_test_json ( void )
             r=false;
         if( !us_json_append_string_ptr( a, "country", country ) )
             r=false;
-
         us_json_flatten_to_buffer( j, b );
-        
         j->destroy(j);
     }
-
     us_buffer_print( b, us_testutil_printer_stdout );
-
     return r;
 }
 

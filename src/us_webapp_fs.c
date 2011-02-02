@@ -69,11 +69,11 @@ static const char * us_webapp_file_ext_mime_map_find( us_webapp_file_ext_mime_ma
 #if US_ENABLE_STDIO
 
 us_webapp_t *us_webapp_fs_create(
-        us_allocator_t *allocator,
-        us_webapp_file_ext_mime_map_t *ext_map,
-        const char *web_path_prefix,
-        const char *filesystem_path
-        )
+    us_allocator_t *allocator,
+    us_webapp_file_ext_mime_map_t *ext_map,
+    const char *web_path_prefix,
+    const char *filesystem_path
+)
 {
     us_webapp_fs_t *self = us_new( allocator, us_webapp_fs_t );
     if( self )
@@ -139,7 +139,6 @@ static bool us_webapp_fs_validate_path( const char *path )
     bool last_was_dot=false;
     int i;
     int len = strlen( path );
-
     for( i=0; i<len; ++i )
     {
         char c= path[i];
@@ -170,9 +169,8 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
     FILE *f;
     bool r=false;
     char full_path[4096];
-
     if( us_strncpy( full_path, fs_path, sizeof(full_path) ) &&
-        us_strncat( full_path, file_path, sizeof(full_path) ) )
+            us_strncat( full_path, file_path, sizeof(full_path) ) )
     {
         f=fopen( full_path, "rb" );
         if( f )
@@ -207,7 +205,7 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
                     /* too big */
                     us_log_error( "webapp_fs file '%s' is too big, %ld bytes > buffer %ld bytes",
                                   full_path, file_len, buf->m_max_length
-                                  );
+                                );
                     r=false;
                 }
             }
@@ -232,7 +230,6 @@ int us_webapp_fs_dispatch(
     bool is_get=(strcmp( request_header->m_method, "GET")==0);
     const char *content_type = "application/octet-stream";
     (void)request_content;
-
     /* only try handle HEAD and GET requests */
     if( !is_head && !is_get )
     {
@@ -240,7 +237,6 @@ int us_webapp_fs_dispatch(
         us_log_debug( "invalid request method '%s'' for fs path '%s'", request_header->m_method, request_header->m_path );
         return 404;
     }
-
     /* validate that the path only contains safe characters */
     r=us_webapp_fs_validate_path( request_header->m_path );
     if( !r )
@@ -249,7 +245,6 @@ int us_webapp_fs_dispatch(
         us_log_debug( "invalid characters in path '%s'",request_header->m_path );
         return 400;
     }
-
     /* path ends in / means readirect to index.html */
     {
         int len = strlen( request_header->m_path );
@@ -273,23 +268,18 @@ int us_webapp_fs_dispatch(
             return response_header->m_code;
         }
     }
-
     /* try open the file */
     r=us_webapp_fs_read_file( response_content, self->m_filesystem_path, request_header->m_path );
-
     if( !r )
     {
         us_http_response_header_init_error( response_header, 404, 0, 0 );
         us_log_debug( "unable to open file in '%s' for path '%s'",self->m_filesystem_path, request_header->m_path );
         return 404;
     }
-
     content_type=us_webapp_file_ext_mime_map_find( self->m_ext_map, request_header->m_path );
-
     r&=us_http_response_header_set_content_type ( response_header, content_type );
     r&=us_http_response_header_set_connection_close ( response_header );
     r&=us_http_response_header_set_content_length ( response_header, response_content->m_cur_length );
-
     if( r )
     {
         response_header->m_code = 200;
@@ -299,7 +289,6 @@ int us_webapp_fs_dispatch(
         us_log_error( "unable to fill response header, replying with 500");
         us_http_response_header_init_error( response_header, 500, 0, 0 );
     }
-
     return response_header->m_code;
 }
 
