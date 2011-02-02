@@ -61,7 +61,6 @@ static bool us_test_json ( void )
         char city[32]="Vernon";
         char country[32]="Canada";
         int32_t histogram[11] = { 1, 3,6,10, 15, 14, 11, 4, 2, 1, 0 };
-
         static int32_t hitpoints=90210;
         r=true;
         if( !us_json_append_string_ptr( j, "name", name ) )
@@ -73,7 +72,6 @@ static bool us_test_json ( void )
             r=false;
         if( !us_json_append_string_ptr( a, "country", country ) )
             r=false;
-
         a1=us_json_append_object( j, "histogram" );
         us_json_set_array( a1, true );
         for( i=0; i<sizeof(histogram)/sizeof(histogram[0]); ++i )
@@ -84,25 +82,18 @@ static bool us_test_json ( void )
                 break;
             }
         }
-
-
         r&=us_json_flatten_to_buffer( j, b );
-
         r&=us_buffer_append_string( b, ", \n" );
-
         strcpy( name, "John" );
         strcpy( city, "Berkeley" );
         strcpy( country, "United States" );
         hitpoints = 999;
-
         for( i=0; i<sizeof(histogram)/sizeof(histogram[0]); ++i )
         {
             histogram[i] = i*i;
         }
-        
         r&=us_json_flatten_to_buffer( j, b );
-
-        j->destroy(j);        
+        j->destroy(j);
     }
     {
         int i=0;
@@ -112,7 +103,6 @@ static bool us_test_json ( void )
         }
         fprintf( stdout, "\n" );
     }
-
     return r;
 }
 

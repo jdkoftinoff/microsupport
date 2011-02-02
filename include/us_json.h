@@ -51,6 +51,8 @@ extern "C"
             struct us_json_s *m_value_json;
             const char *m_value_string_ptr;
             int32_t *m_value_int32_ptr;
+            us_buffer_t *m_value_string_buffer;
+            int32_t m_value_int32;
         };
 
         enum
@@ -58,7 +60,9 @@ extern "C"
             us_json_type_none,
             us_json_type_json,
             us_json_type_string_ptr,
-            us_json_type_int32_ptr
+            us_json_type_int32_ptr,
+            us_json_type_string_buffer,
+            us_json_type_int32
         } m_type;
 
         struct us_json_entry_s *m_next;
@@ -71,6 +75,8 @@ extern "C"
     void us_json_entry_set_value_json( us_json_entry_t *self, struct us_json_s *value );
     void us_json_entry_set_value_string_ptr( us_json_entry_t *self, const char*s );
     void us_json_entry_set_value_int32_ptr( us_json_entry_t *self, int32_t *value );
+    void us_json_entry_set_value_string_buffer( us_json_entry_t *self, us_buffer_t *buf );
+    void us_json_entry_set_value_int32( us_json_entry_t *self, int32_t value );
 
     bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *buffer );
 

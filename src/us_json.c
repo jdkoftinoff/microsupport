@@ -62,6 +62,10 @@ void us_json_entry_remove_value( us_json_entry_t *self )
     {
         us_json_destroy( self->m_value_json );
     }
+    else if( self->m_type == us_json_type_string_buffer )
+    {
+        self->m_value_string_buffer->destroy( self->m_value_string_buffer );
+    }
     self->m_type = us_json_type_none;
 }
 
@@ -84,6 +88,20 @@ void us_json_entry_set_value_int32_ptr( us_json_entry_t *self, int32_t *value )
     us_json_entry_remove_value( self );
     self->m_value_int32_ptr = value;
     self->m_type = us_json_type_int32_ptr;
+}
+
+void us_json_entry_set_value_string_buffer( us_json_entry_t *self, us_buffer_t *buf )
+{
+    us_json_entry_remove_value( self );
+    self->m_value_string_buffer = buf;
+    self->m_type = us_json_type_string_buffer;
+}
+
+void us_json_entry_set_value_int32( us_json_entry_t *self, int32_t value )
+{
+    us_json_entry_remove_value( self );
+    self->m_value_int32 = value;
+    self->m_type = us_json_type_int32;
 }
 
 
@@ -117,7 +135,18 @@ bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *
         snprintf( s, sizeof(s), "%d", *self->m_value_int32_ptr );
         r&=us_buffer_append_string( buffer, s );
     }
+    case us_json_type_int32:
+    {
+        char s[32];
+        snprintf( s, sizeof(s), "%d", self->m_value_int32 );
+        r&=us_buffer_append_string( buffer, s );
+    }
     break;
+    case us_json_type_string_buffer:
+        r&=us_buffer_append_string( buffer, "\"" );
+        /* TODO: Do json escaping */
+        r&=us_buffer_append_data( buffer, self->m_value_string_buffer->m_buffer, self->m_value_string_buffer->m_cur_length );
+        r&=us_buffer_append_string( buffer, "\"" );
     default:
         us_log_error( "invalid json entry type" );
         r=false;
