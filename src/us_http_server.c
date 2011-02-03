@@ -443,7 +443,6 @@ bool us_http_server_handler_eof_request_content(
     if( self->m_todo_count ==-1 )
     {
         /* when content length is unknown then eof means end of request content, time to dispatch request */
-        us_log_debug( "got request content of %d bytes by closed socket", us_queue_readable_count(incoming));
         r=us_http_server_handler_dispatch( self );
     }
     else
