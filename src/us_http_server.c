@@ -439,7 +439,6 @@ bool us_http_server_handler_eof_request_content(
 {
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=false;
-    us_queue_t *incoming = &self->m_base.m_incoming_queue;
     us_log_tracepoint();
     if( self->m_todo_count ==-1 )
     {
