@@ -53,7 +53,7 @@ extern "C"
             int32_t *m_value_int32_ptr;
             us_buffer_t *m_value_string_buffer;
             int32_t m_value_int32;
-        };
+        } value;
 
         enum
         {

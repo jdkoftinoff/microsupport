@@ -60,11 +60,11 @@ void us_json_entry_remove_value( us_json_entry_t *self )
 {
     if( self->m_type == us_json_type_json )
     {
-        us_json_destroy( self->m_value_json );
+        us_json_destroy( self->value.m_value_json );
     }
     else if( self->m_type == us_json_type_string_buffer )
     {
-        self->m_value_string_buffer->destroy( self->m_value_string_buffer );
+        self->value.m_value_string_buffer->destroy( self->value.m_value_string_buffer );
     }
     self->m_type = us_json_type_none;
 }
@@ -72,35 +72,35 @@ void us_json_entry_remove_value( us_json_entry_t *self )
 void us_json_entry_set_value_json( us_json_entry_t *self, struct us_json_s *value )
 {
     us_json_entry_remove_value( self );
-    self->m_value_json = value;
+    self->value.m_value_json = value;
     self->m_type = us_json_type_json;
 }
 
 void us_json_entry_set_value_string_ptr( us_json_entry_t *self, const char *s )
 {
     us_json_entry_remove_value( self );
-    self->m_value_string_ptr = s;
+    self->value.m_value_string_ptr = s;
     self->m_type = us_json_type_string_ptr;
 }
 
 void us_json_entry_set_value_int32_ptr( us_json_entry_t *self, int32_t *value )
 {
     us_json_entry_remove_value( self );
-    self->m_value_int32_ptr = value;
+    self->value.m_value_int32_ptr = value;
     self->m_type = us_json_type_int32_ptr;
 }
 
 void us_json_entry_set_value_string_buffer( us_json_entry_t *self, us_buffer_t *buf )
 {
     us_json_entry_remove_value( self );
-    self->m_value_string_buffer = buf;
+    self->value.m_value_string_buffer = buf;
     self->m_type = us_json_type_string_buffer;
 }
 
 void us_json_entry_set_value_int32( us_json_entry_t *self, int32_t value )
 {
     us_json_entry_remove_value( self );
-    self->m_value_int32 = value;
+    self->value.m_value_int32 = value;
     self->m_type = us_json_type_int32;
 }
 
@@ -121,31 +121,31 @@ bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *
         r&=us_buffer_append_string( buffer, "null" );
         break;
     case us_json_type_json:
-        r&=us_json_flatten_to_buffer( self->m_value_json, buffer );
+        r&=us_json_flatten_to_buffer( self->value.m_value_json, buffer );
         break;
     case us_json_type_string_ptr:
         r&=us_buffer_append_string( buffer, "\"" );
         /* TODO: Do json escaping */
-        r&=us_buffer_append_string( buffer, self->m_value_string_ptr );
+        r&=us_buffer_append_string( buffer, self->value.m_value_string_ptr );
         r&=us_buffer_append_string( buffer, "\"" );
         break;
     case us_json_type_int32_ptr:
     {
         char s[32];
-        snprintf( s, sizeof(s), "%d", *self->m_value_int32_ptr );
+        snprintf( s, sizeof(s), "%d", *self->value.m_value_int32_ptr );
         r&=us_buffer_append_string( buffer, s );
     }
     case us_json_type_int32:
     {
         char s[32];
-        snprintf( s, sizeof(s), "%d", self->m_value_int32 );
+        snprintf( s, sizeof(s), "%d", self->value.m_value_int32 );
         r&=us_buffer_append_string( buffer, s );
     }
     break;
     case us_json_type_string_buffer:
         r&=us_buffer_append_string( buffer, "\"" );
         /* TODO: Do json escaping */
-        r&=us_buffer_append_data( buffer, self->m_value_string_buffer->m_buffer, self->m_value_string_buffer->m_cur_length );
+        r&=us_buffer_append_data( buffer, self->value.m_value_string_buffer->m_buffer, self->value.m_value_string_buffer->m_cur_length );
         r&=us_buffer_append_string( buffer, "\"" );
         break;
     default:
