@@ -575,19 +575,20 @@ bool us_reactor_handler_tcp_server_readable (
                     {
                         r = tcp_item->connected ( tcp_item, ( struct sockaddr * ) &rem, remlen );
                     }
-                    if( !r )
-                    {
-                        closesocket ( client_item->m_fd );
-                        client_item->m_fd=-1;
-                    }
                 }
             }
-            else
+			if( !r )
             {
-                us_log_error( "unable to create tcp client handler" );
                 us_delete( self->m_base.m_allocator, client_item );
+				client_item=0;
             }
         }
+		
+		if( client_item == NULL )
+		{
+			/* no client item, therefore fd must close */
+			closesocket( accepted_fd );
+		}
     }
     return r;
 }
