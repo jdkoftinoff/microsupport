@@ -162,6 +162,7 @@ us_json_t *us_json_create( us_allocator_t *allocator )
     if( self )
     {
         self->m_allocator = allocator;
+        self->m_is_array = false;
         self->destroy = us_json_destroy;
         self->m_first_item=0;
         self->m_last_item=0;
