@@ -761,12 +761,12 @@ void us_reactor_handler_tcp_close(
     if( self->m_base.m_fd != -1 )
     {
         closesocket ( self->m_base.m_fd );
-        self->m_base.m_fd = -1;
-        self->m_base.m_finished = true;
         if( self->closed )
         {
             self->closed( self );
         }
+        self->m_base.m_fd = -1;
+        self->m_base.m_finished = true;
     }
 }
 
