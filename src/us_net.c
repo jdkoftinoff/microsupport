@@ -267,10 +267,13 @@ int us_net_create_multicast_tx_udp_socket (
 )
 {
     int s = -1;
+#if 0
     int if_index = 0;
     if ( interface_name && *interface_name != '\0' )
-        if_index = if_nametoindex ( interface_name );
+        if_index = if_nametoindex ( interface_name );        
     /* TODO: use if_index to bind socket to transmit only on interface */
+#endif
+
     if ( !localaddr )
     {
         if ( multicastgroup->ai_family == PF_INET6 )

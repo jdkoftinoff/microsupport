@@ -107,8 +107,8 @@ static bool us_test_http_server ( void )
                 us_delete( allocator, handler );
             }
         }
+        director.destroy( &director );        
     }
-    director.destroy( &director );
     return r;
 }
 

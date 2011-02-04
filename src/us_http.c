@@ -565,7 +565,7 @@ bool us_http_response_header_set_no_cache(
     {
         r=true;
     }
-    return true;
+    return r;
 }
 
 
@@ -780,13 +780,16 @@ bool us_http_response_header_parse (
                 }
             }
         }
-    }
-    if( !r )
-    {
-        self->m_items->destroy ( self->m_items );
-        self->m_items = 0;
-        us_delete ( self->m_allocator, self->m_version );
-        self->m_version = 0;
+        if( !r )
+        {
+            if( self->m_items )
+            {
+                self->m_items->destroy ( self->m_items );            
+                self->m_items = 0;
+            }
+            us_delete ( self->m_allocator, self->m_version );
+            self->m_version = 0;
+        }
     }
     return r;
 }
@@ -847,20 +850,20 @@ us_http_request_header_parse (
                 }
             }
         }
-    }
-    if ( !r )
-    {
-        if( self->m_items )
+        if ( !r )
         {
-            self->m_items->destroy( self->m_items );
-            self->m_items = 0;
+            if( self->m_items )
+            {
+                self->m_items->destroy( self->m_items );
+                self->m_items = 0;
+            }
+            us_delete ( self->m_allocator, self->m_method );
+            self->m_method = 0;
+            us_delete ( self->m_allocator, self->m_version );
+            self->m_version = 0;
+            us_delete ( self->m_allocator, self->m_path );
+            self->m_path = 0;
         }
-        us_delete ( self->m_allocator, self->m_method );
-        self->m_method = 0;
-        us_delete ( self->m_allocator, self->m_version );
-        self->m_version = 0;
-        us_delete ( self->m_allocator, self->m_path );
-        self->m_path = 0;
     }
     return r;
 }

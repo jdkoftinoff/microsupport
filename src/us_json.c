@@ -147,6 +147,7 @@ bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *
         /* TODO: Do json escaping */
         r&=us_buffer_append_data( buffer, self->m_value_string_buffer->m_buffer, self->m_value_string_buffer->m_cur_length );
         r&=us_buffer_append_string( buffer, "\"" );
+        break;
     default:
         us_log_error( "invalid json entry type" );
         r=false;
