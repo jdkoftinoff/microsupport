@@ -198,15 +198,24 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                 if( item->m_fd!=-1 )
                 {
                     struct pollfd *p = &self->m_poll_handlers[n++];
-                    if ( item->m_wake_on_readable && ( p->revents & POLLIN ) && item->readable != 0 )
+                    if( (p->revents && POLLHUP) || (p->revents && POLLERR) )
                     {
-                        us_log_debug( "item %p fd %d is readable", item, item->m_fd );
-                        item->readable ( item );
+                        us_log_debug("poll item %p fd %d got HUP or ERR: %d", (void *)item, item->m_fd, p->revents );
+                        closesocket( item->m_fd );
+						item->m_fd=-1;
                     }
-                    if ( item->m_wake_on_writable && ( p->revents & POLLOUT ) && item->writable != 0 )
+                    else
                     {
-                        us_log_debug( "item %p fd %d is writable", item, item->m_fd );
-                        item->writable ( item );
+                        if ( item->m_wake_on_readable && ( p->revents & POLLIN ) && item->readable != 0 )
+                        {
+                            us_log_debug( "item %p fd %d is readable", item, item->m_fd );
+                            item->readable ( item );
+                        }
+                        if ( item->m_wake_on_writable && ( p->revents & POLLOUT ) && item->writable != 0 )
+                        {
+                            us_log_debug( "item %p fd %d is writable", item, item->m_fd );
+                            item->writable ( item );
+                        }
                     }
                 }
                 item = item->m_next;
