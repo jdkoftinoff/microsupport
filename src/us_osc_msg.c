@@ -335,6 +335,7 @@ us_osc_msg_bundle_unflatten(
 {
     us_osc_msg_bundle_t *result = 0;
     us_osc_msg_bundle_t *bundle = 0;
+    us_log_tracepoint();
     if ( us_osc_msg_is_msg_bundle(buf) )
     {
         uint32_t timetag_high;
@@ -352,6 +353,11 @@ us_osc_msg_bundle_unflatten(
                          timetag_high,
                          timetag_low
                      );
+            if( !bundle )
+            {
+                us_log_error( "Creating osc bundle" );
+                return 0;
+            }
             while ( buf->m_cur_read_pos < buf->m_cur_length )
             {
                 bool r = false;
@@ -364,12 +370,18 @@ us_osc_msg_bundle_unflatten(
                 /* failure to read message length means fail */
                 if ( r==false )
                 {
+                    us_log_error( "reading message length" );
                     return 0;
                 }
                 /* message length of 0 means no more messages for this bundle */
                 if ( msg_size==0 )
                 {
                     break;
+                }
+                if( msg_size>1024 )
+                {
+                    us_log_error( "OSC message size %d >1024", msg_size );
+                    return 0;
                 }
                 /* try unflatten message */
                 msg = us_osc_msg_unflatten(
@@ -379,6 +391,7 @@ us_osc_msg_bundle_unflatten(
                 /* fail if unflattening message failed */
                 if ( !msg )
                 {
+                    us_log_error( "unflattening osc message" );
                     return 0;
                 }
                 /* append msg to bundle or else fail */
@@ -387,6 +400,7 @@ us_osc_msg_bundle_unflatten(
                             msg
                         )==0 )
                 {
+                    us_log_error( "appending osc message" );
                     return 0;
                 }
             }
@@ -468,11 +482,13 @@ us_osc_msg_unflatten(
                     /* Check for error unflattening element */
                     if ( !e )
                     {
+                        us_log_error( "error unflatten element type '%c'", *cur_type );
                         return 0;
                     }
                     /* Check for error appending element to message */
                     if ( !us_osc_msg_append(msg, e ) )
                     {
+                        us_log_error( "error appending osc element" );
                         return 0;
                     }
                     /* go to next element type */

@@ -24,7 +24,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "us_allocator.h"
 
 #if !defined(US_REACTOR_USE_POLL) && !defined(US_REACTOR_USE_SELECT)
+#if defined(WIN32)
 # define US_REACTOR_USE_SELECT
+#else
+# define US_REACTOR_USE_POLL
+#endif
 #endif
 
 #ifdef __cplusplus

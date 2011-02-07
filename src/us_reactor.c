@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_logger.h"
 
-#if 0
+#if 1
 #define US_REACTOR_TCP_TRACE_TX
 #define US_REACTOR_TCP_TRACE_RX
 #endif
@@ -138,6 +138,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             if ( ( *item )->m_finished == true )
             {
                 us_reactor_handler_t *next = ( *item )->m_next;
+                us_log_debug( "reactor item %p finished", (void *)*item );
                 ( *item )->destroy ( *item );
                 us_delete( self->m_allocator, *item );
                 self->m_num_handlers--;
@@ -164,9 +165,15 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                 p->revents = 0;
                 p->fd = item->m_fd;
                 if ( item->m_wake_on_readable && item->readable != 0 )
+                {
+                    us_log_debug( "item %p wor fd=%d", (void *)item, item->m_fd );
                     p->events |= POLLIN;
+                }
                 if ( item->m_wake_on_writable && item->writable != 0 )
+                {
+                    us_log_debug( "item %p wow fd=%d", (void *)item, item->m_fd );
                     p->events |= POLLOUT;
+                }
             }
             item = item->m_next;
         }
@@ -178,6 +185,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         if ( n < 0 )
         {
             /* error doing poll, stop loop */
+            us_log_debug( "error doing poll, errno=%d", errno );
             r = false;
         }
         if ( n > 0 )
@@ -191,9 +199,15 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                 {
                     struct pollfd *p = &self->m_poll_handlers[n++];
                     if ( item->m_wake_on_readable && ( p->revents & POLLIN ) && item->readable != 0 )
+                    {
+                        us_log_debug( "item %p fd %d is readable", item, item->m_fd );
                         item->readable ( item );
-                    if ( item->wake_on_writable && ( p->revents & POLLOUT ) && item->writable != 0 )
+                    }
+                    if ( item->m_wake_on_writable && ( p->revents & POLLOUT ) && item->writable != 0 )
+                    {
+                        us_log_debug( "item %p fd %d is writable", item, item->m_fd );
                         item->writable ( item );
+                    }
                 }
                 item = item->m_next;
             }
