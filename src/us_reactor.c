@@ -198,7 +198,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                 if( item->m_fd!=-1 )
                 {
                     struct pollfd *p = &self->m_poll_handlers[n++];
-                    if( (p->revents && POLLHUP) || (p->revents && POLLERR) )
+                    if( (p->revents & POLLHUP) || (p->revents & POLLERR) )
                     {
                         us_log_debug("poll item %p fd %d got HUP or ERR: %d", (void *)item, item->m_fd, p->revents );
                         closesocket( item->m_fd );
