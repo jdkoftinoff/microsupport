@@ -132,13 +132,13 @@ bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *
     case us_json_type_int32_ptr:
     {
         char s[32];
-        snprintf( s, sizeof(s), "%d", *self->value.m_value_int32_ptr );
+        US_DEFAULT_SNPRINTF( s, sizeof(s), "%d", *self->value.m_value_int32_ptr );
         r&=us_buffer_append_string( buffer, s );
     }
     case us_json_type_int32:
     {
         char s[32];
-        snprintf( s, sizeof(s), "%d", self->value.m_value_int32 );
+        US_DEFAULT_SNPRINTF( s, sizeof(s), "%d", self->value.m_value_int32 );
         r&=us_buffer_append_string( buffer, s );
     }
     break;
