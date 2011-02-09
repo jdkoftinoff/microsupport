@@ -192,7 +192,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
 #else
         n = poll ( self->m_poll_handlers, self->m_num_handlers, timeout );
 #endif
-        if ( n < 0 )
+        if ( n < 0 && errno!=EINTR )
         {
             /* error doing poll, stop loop */
             us_log_debug( "error doing poll, errno=%d", errno );
@@ -660,6 +660,10 @@ bool us_reactor_handler_tcp_init (
         else
         {
             us_log_error( "allocation of tcp buffers failed" );
+			us_delete( allocator, in_buf );
+			us_delete( allocator, out_buf );
+			us_delete( allocator, self->m_xfer_buf );
+			self->m_xfer_buf = 0;
             r=false;
         }
     }
