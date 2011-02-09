@@ -784,7 +784,7 @@ bool us_http_response_header_parse (
         {
             if( self->m_items )
             {
-                self->m_items->destroy ( self->m_items );            
+                self->m_items->destroy ( self->m_items );
                 self->m_items = 0;
             }
             us_delete ( self->m_allocator, self->m_version );

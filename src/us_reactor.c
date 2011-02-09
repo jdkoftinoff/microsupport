@@ -76,8 +76,11 @@ us_reactor_handler_t * us_reactor_handler_create ( us_allocator_t *allocator )
 
 void us_reactor_handler_destroy ( us_reactor_handler_t *self )
 {
-    (void)self;
-    /* nothing to do here */
+    if( self->m_fd!=-1 )
+    {
+        closesocket( self->m_fd );
+    }
+    us_delete( self->m_allocator, self );
 }
 
 
@@ -120,63 +123,70 @@ void us_reactor_destroy ( us_reactor_t *self )
 }
 
 
+void us_reactor_collect_finished( us_reactor_t *self )
+{
+    us_reactor_handler_t **item;
+    /* garbage collect handlers that are finished */
+    item = &self->m_handlers;
+    while ( *item )
+    {
+        if ( ( *item )->tick )
+        {
+            ( *item )->tick ( *item );
+        }
+        if ( ( *item )->m_finished == true || (*item)->m_fd==-1 )
+        {
+            us_reactor_handler_t *next = ( *item )->m_next;
+            us_log_debug( "reactor item %p finished", (void *)*item );
+            self->remove_item( self, *item );
+            *item = next;
+        }
+        else
+        {
+            item = & ( *item )->m_next;
+        }
+    }
+}
+
 #if defined(US_REACTOR_USE_POLL )
+
+void us_reactor_fill_poll( us_reactor_t *self )
+{
+    us_reactor_handler_t *item;
+    int n = 0;
+    item = self->m_handlers;
+    while ( item )
+    {
+        if( item->m_fd!=-1 && !item->m_finished )
+        {
+            struct pollfd *p;
+            p = &self->m_poll_handlers[n++];
+            p->events = 0;
+            p->revents = 0;
+            p->fd = item->m_fd;
+            if ( item->m_wake_on_readable && item->readable != 0 )
+            {
+                us_log_debug( "item %p wor fd=%d", (void *)item, item->m_fd );
+                p->events |= POLLIN;
+            }
+            if ( item->m_wake_on_writable && item->writable != 0 )
+            {
+                us_log_debug( "item %p wow fd=%d", (void *)item, item->m_fd );
+                p->events |= POLLOUT;
+            }
+        }
+        item = item->m_next;
+    }
+}
+
 bool us_reactor_poll ( us_reactor_t *self, int timeout )
 {
     bool r = false;
+    us_reactor_collect_finished( self );
+    us_reactor_fill_poll( self );
     if ( self->m_num_handlers > 0 )
     {
-        us_reactor_handler_t **item;
-        /* garbage collect handlers that are finished */
-        item = &self->m_handlers;
-        while ( *item )
-        {
-            if ( ( *item )->tick )
-            {
-                ( *item )->tick ( *item );
-            }
-            if ( ( *item )->m_finished == true )
-            {
-                us_reactor_handler_t *next = ( *item )->m_next;
-                us_log_debug( "reactor item %p finished", (void *)*item );
-                ( *item )->destroy ( *item );
-                us_delete( self->m_allocator, *item );
-                self->m_num_handlers--;
-                *item = next;
-            }
-            else
-            {
-                item = & ( *item )->m_next;
-            }
-        }
-    }
-    if ( self->m_num_handlers > 0 )
-    {
-        us_reactor_handler_t *item;
-        int n = 0;
-        item = self->m_handlers;
-        while ( item )
-        {
-            if( item->m_fd!=-1 )
-            {
-                struct pollfd *p;
-                p = &self->m_poll_handlers[n++];
-                p->events = 0;
-                p->revents = 0;
-                p->fd = item->m_fd;
-                if ( item->m_wake_on_readable && item->readable != 0 )
-                {
-                    us_log_debug( "item %p wor fd=%d", (void *)item, item->m_fd );
-                    p->events |= POLLIN;
-                }
-                if ( item->m_wake_on_writable && item->writable != 0 )
-                {
-                    us_log_debug( "item %p wow fd=%d", (void *)item, item->m_fd );
-                    p->events |= POLLOUT;
-                }
-            }
-            item = item->m_next;
-        }
+        int n;
 #ifdef WIN32
         n = WSAPoll ( self->m_poll_handlers, self->m_num_handlers, timeout );
 #else
@@ -192,44 +202,41 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         {
             /* some handlers to be handled */
             us_reactor_handler_t *item = self->m_handlers;
-            int n = 0;
-            while ( item )
+            int n;
+            int num=self->m_num_handlers;
+            for( n=0; n<num; ++n, item=item->m_next )
             {
-                if( item->m_fd!=-1 )
+                struct pollfd *p = &self->m_poll_handlers[n];
+                if( p->fd != item->m_fd )
                 {
-                    struct pollfd *p = &self->m_poll_handlers[n++];
-                    if( (p->revents & POLLHUP) || (p->revents & POLLERR) || (p->revents & POLLNVAL) )
-                    {
-                        if( (p->revents & POLLHUP) ) 
-                        {
-                            us_log_debug("poll item %p fd %d got HUP: %d", (void *)item, item->m_fd, p->revents );
-                        }
-                        if( (p->revents & POLLERR) ) 
-                        {
-                            us_log_debug("poll item %p fd %d got ERR: %d", (void *)item, item->m_fd, p->revents );
-                        }
-                        if( (p->revents & POLLNVAL) ) 
-                        {
-                            us_log_debug("poll item %p fd %d got NVAL: %d", (void *)item, item->m_fd, p->revents );
-                        }
-                        closesocket( item->m_fd );
-						item->m_fd=-1;
-                    }
-                    else
-                    {
-                        if ( item->m_wake_on_readable && ( p->revents & POLLIN ) && item->readable != 0 )
-                        {
-                            us_log_debug( "item %p fd %d is readable", item, item->m_fd );
-                            item->readable ( item );
-                        }
-                        if ( item->m_wake_on_writable && ( p->revents & POLLOUT ) && item->writable != 0 )
-                        {
-                            us_log_debug( "item %p fd %d is writable", item, item->m_fd );
-                            item->writable ( item );
-                        }
-                    }
+                    us_log_error("item %p fd %d != p->fd", (void*)item, item->m_fd, p->fd );
+                    abort();
                 }
-                item = item->m_next;
+                if ( item->m_wake_on_readable && ( p->revents & POLLIN ) )
+                {
+                    us_log_debug( "item %p fd %d is readable", item, item->m_fd );
+                    item->readable ( item );
+                }
+                if ( item->m_wake_on_writable && ( p->revents & POLLOUT ) )
+                {
+                    us_log_debug( "item %p fd %d is writable", item, item->m_fd );
+                    item->writable ( item );
+                }
+                if( (p->revents & POLLHUP) )
+                {
+                    us_log_debug("poll item %p fd %d got HUP: %d", (void *)item, item->m_fd, p->revents );
+                    us_reactor_handler_finish( item );
+                }
+                if( (p->revents & POLLERR) )
+                {
+                    us_log_debug("poll item %p fd %d got ERR: %d", (void *)item, item->m_fd, p->revents );
+                    us_reactor_handler_finish( item );
+                }
+                if( (p->revents & POLLNVAL) )
+                {
+                    us_log_error("poll item %p fd %d got NVAL: %d", (void *)item, item->m_fd, p->revents );
+                    us_reactor_handler_finish( item );
+                }
             }
             r = true;
         }
@@ -245,31 +252,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
 bool us_reactor_poll ( us_reactor_t *self, int timeout )
 {
     bool r = false;
-    if ( self->m_num_handlers > 0 )
-    {
-        us_reactor_handler_t **item;
-        /* garbage collect handlers that are closed */
-        item = &self->m_handlers;
-        while ( *item )
-        {
-            if ( ( *item )->tick )
-            {
-                ( *item )->tick ( *item );
-            }
-            if ( ( *item )->m_finished == true )
-            {
-                us_reactor_handler_t *next = ( *item )->m_next;
-                ( *item )->destroy ( *item );
-                us_delete( self->m_allocator, *item );
-                self->m_num_handlers--;
-                *item = next;
-            }
-            else
-            {
-                item = & ( *item )->m_next;
-            }
-        }
-    }
+    us_reactor_collect_finished( self );
     if ( self->m_num_handlers > 0 )
     {
         us_reactor_handler_t *item;
@@ -283,7 +266,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         FD_ZERO( &self->m_write_fds );
         while ( item )
         {
-            if( item->m_fd!=-1 )
+            if( item->m_fd!=-1 && !item->m_finished )
             {
                 if ( item->m_wake_on_readable && item->readable != 0 )
                 {
@@ -316,14 +299,14 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             us_reactor_handler_t *item = self->m_handlers;
             while ( item )
             {
-                if( item->m_fd!=-1 )
+                if( item->m_fd!=-1 && !item->m_finished)
                 {
-                    if ( item->m_wake_on_readable && FD_ISSET( item->m_fd, &self->m_read_fds ) && item->readable )
+                    if ( item->m_wake_on_readable && FD_ISSET( item->m_fd, &self->m_read_fds ) )
                         item->readable ( item );
                 }
-                if( item->m_fd!=-1 )
+                if( item->m_fd!=-1 && !item->m_finished)
                 {
-                    if ( item->m_wake_on_writable && FD_ISSET( item->m_fd, &self->m_write_fds ) && item->writable )
+                    if ( item->m_wake_on_writable && FD_ISSET( item->m_fd, &self->m_write_fds ) )
                         item->writable ( item );
                 }
                 item = item->m_next;
@@ -369,6 +352,7 @@ bool us_reactor_remove_item (
 {
     bool r = false;
     us_reactor_handler_t **node = &self->m_handlers;
+    us_log_debug( "removing reactor item %p fd %d finished %d", (void*)item, item->m_fd, item->m_finished );
     while ( *node )
     {
         if ( *node == item )
@@ -384,7 +368,6 @@ bool us_reactor_remove_item (
         }
     }
     item->destroy ( item );
-    us_delete( self->m_allocator, item );
     return r;
 }
 
@@ -596,33 +579,29 @@ bool us_reactor_handler_tcp_server_readable (
     if ( accepted_fd != -1 )
     {
         us_reactor_handler_t *client_item = self->client_handler_create(self->m_base.m_allocator);
+        us_reactor_handler_tcp_t * tcp_item = ( us_reactor_handler_tcp_t * ) client_item;
         if ( client_item != NULL )
         {
             r = self->client_handler_init ( client_item, self->m_base.m_allocator, accepted_fd, self->m_base.m_extra );
-            if ( r )
-            {
-                us_reactor_handler_tcp_t * tcp_item = ( us_reactor_handler_tcp_t * ) client_item;
-                r = self->m_base.m_reactor->add_item ( self->m_base.m_reactor, client_item );
-                if ( r )
-                {
-                    if ( tcp_item->connected )
-                    {
-                        r = tcp_item->connected ( tcp_item, ( struct sockaddr * ) &rem, remlen );
-                    }
-                }
-            }
-			if( !r )
-            {
-                us_delete( self->m_base.m_allocator, client_item );
-				client_item=0;
-            }
         }
-		
-		if( client_item == NULL )
-		{
-			/* no client item, therefore fd must close */
-			closesocket( accepted_fd );
-		}
+        if ( r && tcp_item->connected )
+        {
+            r = tcp_item->connected ( tcp_item, ( struct sockaddr * ) &rem, remlen );
+        }
+        if ( r )
+        {
+            r = self->m_base.m_reactor->add_item ( self->m_base.m_reactor, client_item );
+        }
+        if( !r && client_item )
+        {
+            client_item->destroy( client_item );
+        }
+        if( !client_item )
+        {
+            /* no client item, therefore fd must close */
+            us_log_debug( "accepted incoming socket %d but not client created, closing", accepted_fd );
+            closesocket( accepted_fd );
+        }
     }
     return r;
 }
@@ -792,14 +771,12 @@ void us_reactor_handler_tcp_close(
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     us_log_tracepoint();
-    if( self->m_base.m_fd != -1 )
+    if( !self->m_base.m_finished )
     {
-        closesocket ( self->m_base.m_fd );
         if( self->closed )
         {
             self->closed( self );
         }
-        self->m_base.m_fd = -1;
         self->m_base.m_finished = true;
     }
 }

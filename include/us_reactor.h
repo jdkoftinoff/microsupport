@@ -133,6 +133,14 @@ extern "C"
 
     /**
     */
+    void us_reactor_collect_finished( us_reactor_t *self );
+
+    /**
+    */
+    void us_reactor_fill_poll( us_reactor_t *self );
+
+    /**
+    */
     bool us_reactor_poll ( us_reactor_t *self, int timeout );
 
     /**
