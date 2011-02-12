@@ -599,7 +599,7 @@ bool us_reactor_handler_tcp_server_readable (
         if( !client_item )
         {
             /* no client item, therefore fd must close */
-            us_log_debug( "accepted incoming socket %d but not client created, closing", accepted_fd );
+            us_log_error( "accepted incoming socket %d but no client created, closing", accepted_fd );
             closesocket( accepted_fd );
         }
     }
