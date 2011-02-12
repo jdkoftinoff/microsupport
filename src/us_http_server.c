@@ -191,7 +191,7 @@ bool us_http_server_handler_connected(
         char srv_buf[64];
         if( getnameinfo( addr, addrlen, hostname_buf, sizeof(hostname_buf), srv_buf, sizeof(srv_buf), NI_NUMERICHOST | NI_NUMERICSERV )==0 )
         {
-            us_log_debug( "accepted connection from '%s:%s'", hostname_buf, srv_buf );
+            us_log_debug( "accepted connection from '%s port %s'", hostname_buf, srv_buf );
         }
         else
         {
