@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_logger.h"
 
-#if 1
+#if 0
 #define US_REACTOR_TCP_TRACE_TX
 #define US_REACTOR_TCP_TRACE_RX
 #endif
