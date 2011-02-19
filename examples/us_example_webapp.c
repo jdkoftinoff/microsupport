@@ -82,7 +82,6 @@ bool us_example_http_server_handler_init (
             fd,
             extra,
             16384,
-            16384,
             (us_webapp_director_t *)extra
         );
     return r;
@@ -159,9 +158,9 @@ bool us_example_quitter_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     /* wait for the letter Q, then signal a quit flag */
-    while ( us_queue_can_read_byte ( &self->m_incoming_queue ) )
+    while ( us_buffer_can_read_byte ( &self->m_incoming_queue ) )
     {
-        char c = ( char ) us_queue_read_byte ( &self->m_incoming_queue );
+        char c = ( char ) us_buffer_read_byte ( &self->m_incoming_queue );
         if ( c == 'Q' )
         {
             global_quit = true;

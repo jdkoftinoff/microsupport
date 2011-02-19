@@ -653,17 +653,17 @@ bool us_reactor_handler_tcp_init (
     {
         if( in_buf != NULL && out_buf != NULL && self->m_xfer_buf != NULL )
         {
-            us_queue_init ( &self->m_incoming_queue, in_buf, queue_buf_size );
-            us_queue_init ( &self->m_outgoing_queue, out_buf, queue_buf_size );
+            us_buffer_init ( &self->m_incoming_queue, 0, in_buf, queue_buf_size );
+            us_buffer_init ( &self->m_outgoing_queue, 0, out_buf, queue_buf_size );
             r = true;
         }
         else
         {
             us_log_error( "allocation of tcp buffers failed" );
-			us_delete( allocator, in_buf );
-			us_delete( allocator, out_buf );
-			us_delete( allocator, self->m_xfer_buf );
-			self->m_xfer_buf = 0;
+            us_delete( allocator, in_buf );
+            us_delete( allocator, out_buf );
+            us_delete( allocator, self->m_xfer_buf );
+            self->m_xfer_buf = 0;
             r=false;
         }
     }
@@ -681,8 +681,8 @@ void us_reactor_handler_tcp_destroy (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     self->close( self );
-    us_delete( self->m_base.m_allocator, self->m_incoming_queue.m_buf );
-    us_delete( self->m_base.m_allocator, self->m_outgoing_queue.m_buf );
+    us_delete( self->m_base.m_allocator, self->m_incoming_queue.m_buffer );
+    us_delete( self->m_base.m_allocator, self->m_outgoing_queue.m_buffer );
     us_delete( self->m_base.m_allocator, self->m_xfer_buf );
     us_reactor_handler_destroy ( &self->m_base );
 }
@@ -693,8 +693,8 @@ bool us_reactor_handler_tcp_tick (
 {
     bool r = true;
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-    int32_t incoming_count = us_queue_writable_count ( &self->m_incoming_queue );
-    bool outgoing_available = us_queue_can_read_byte ( &self->m_outgoing_queue );
+    int32_t incoming_count = us_buffer_writable_count ( &self->m_incoming_queue );
+    bool outgoing_available = us_buffer_can_read_byte ( &self->m_outgoing_queue );
     us_log_tracepoint();
     /* If we have space in our xfer buf, wake up if the socket is readable */
     if ( incoming_count >= self->m_xfer_buf_size )
@@ -745,7 +745,7 @@ bool us_reactor_handler_tcp_readable (
             }
         }
 #endif
-        us_queue_write ( &self->m_incoming_queue, ( uint8_t* ) self->m_xfer_buf, len );
+        us_buffer_write ( &self->m_incoming_queue, ( uint8_t* ) self->m_xfer_buf, len );
         self->m_base.m_wake_on_readable = true;
         if ( self->readable )
         {
@@ -793,16 +793,16 @@ bool us_reactor_handler_tcp_writable (
     bool r = false;
     int len;
     us_log_tracepoint();
-    len = us_queue_readable_count ( &self->m_outgoing_queue );
+    len = us_buffer_readable_count ( &self->m_outgoing_queue );
     if( len==0 && self->writable )
     {
         self->writable( self );
-        len = us_queue_readable_count ( &self->m_outgoing_queue );
+        len = us_buffer_readable_count ( &self->m_outgoing_queue );
     }
     if ( len > 0 )
     {
-        uint8_t *outgoing = us_queue_contig_read_ptr ( &self->m_outgoing_queue );
-        int outgoing_len = us_queue_contig_readable_count ( &self->m_outgoing_queue );
+        const uint8_t *outgoing = us_buffer_contig_read_ptr ( &self->m_outgoing_queue );
+        int outgoing_len = us_buffer_contig_readable_count ( &self->m_outgoing_queue );
 #ifdef US_REACTOR_TCP_TRACE_TX
         {
             int i;
@@ -823,7 +823,7 @@ bool us_reactor_handler_tcp_writable (
 #ifdef US_REACTOR_TCP_TRACE
             us_log_debug( "WROTE (len=%d): ", len );
 #endif
-            us_queue_skip ( &self->m_outgoing_queue, len );
+            us_buffer_skip ( &self->m_outgoing_queue, len );
             r = true;
         }
     }
@@ -915,19 +915,21 @@ void us_reactor_handler_udp_destroy ( us_reactor_handler_t *self_ )
 bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
 {
     bool r=false;
+    int len;
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
     struct sockaddr_storage remote_addr;
     socklen_t remote_addrlen = sizeof( remote_addr );
-    self->m_incoming_packet->m_cur_read_pos = 0;
-    self->m_incoming_packet->m_cur_length = recvfrom(
-            self->m_base.m_fd,
-            self->m_incoming_packet->m_buffer,
-            self->m_incoming_packet->m_max_length, 0,
-            (struct sockaddr *)&remote_addr,
-            &remote_addrlen
-                                            );
-    if( self->m_incoming_packet->m_cur_length>0 )
+    us_buffer_reset( self->m_incoming_packet );
+    len = recvfrom(
+              self->m_base.m_fd,
+              self->m_incoming_packet->m_buffer,
+              self->m_incoming_packet->m_max_length, 0,
+              (struct sockaddr *)&remote_addr,
+              &remote_addrlen
+          );
+    if( len>0 )
     {
+        self->m_incoming_packet->m_next_in = len;
         r=true;
         if( self->packet_received )
         {

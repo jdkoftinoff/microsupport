@@ -61,40 +61,11 @@ extern "C"
             struct us_buffer_s * self
         );
 
-        /** append
-
-         append implementation for the selected buffer object.
-
-         @param self pointer to buffer object
-         @returns bool true on success, false on memory of file error
-         */
-        bool ( *append ) (
-            struct us_buffer_s *self,
-            const void *data,
-            int32_t data_length
-        );
-
-#if US_ENABLE_PRINTING
-        /** print
-
-         print the raw hex data content of this buffer to the printer object.
-
-         @param self pointer to buffer object
-         @param printer pointer to printer object to print to.
-         @returns bool true on sucess
-         */
-        bool ( *print ) (
-            struct us_buffer_s *self,
-            us_print_t * printer
-        );
-#endif
         us_allocator_t *m_allocator;
         uint8_t *m_buffer;
-        uint8_t *m_cur_write_ptr;
-        int32_t m_cur_read_pos;
-        int32_t m_cur_length;
+        int32_t m_next_in;
+        int32_t m_next_out;
         int32_t m_max_length;
-
     } us_buffer_t;
 
 
@@ -148,6 +119,226 @@ extern "C"
         us_buffer_t *self
     );
 
+    /** us_buffer_readable_count
+    @param self us_buffer_t
+    @returns int length of data that can be read from queue
+    */
+    static inline int us_buffer_readable_count ( const us_buffer_t *self )
+    {
+        return ( self->m_next_in - self->m_next_out + self->m_max_length ) % self->m_max_length;
+    }
+
+    /** us_buffer_contig_readable_count
+     @param self us_buffer_t
+     @returns int length of data that can be read from queue contiguously.
+     */
+    static inline int us_buffer_contig_readable_count ( const us_buffer_t *self )
+    {
+        if ( self->m_next_in < self->m_next_out )
+            return ( self->m_max_length - self->m_next_out ) % self->m_max_length;
+        else
+            return ( self->m_next_in - self->m_next_out ) % self->m_max_length;
+    }
+
+    static inline const uint8_t *us_buffer_contig_read_ptr ( const us_buffer_t *self )
+    {
+        return &self->m_buffer[ self->m_next_out ];
+    }
+
+
+    /** us_buffer_can_read_byte
+     @param self us_buffer_t to use
+     @returns bool true if there is one or more data bytes available
+     */
+    static inline bool us_buffer_can_read_byte ( const us_buffer_t *self )
+    {
+        return ( self->m_next_out != self->m_next_in );
+    }
+
+    /** us_buffer_read_byte
+     @param self us_buffer_t to use
+     @returns uint8_t next byte read from queue
+     */
+    static inline uint8_t us_buffer_read_byte ( us_buffer_t *self )
+    {
+        uint8_t r = self->m_buffer[ self->m_next_out ];
+        self->m_next_out = ( self->m_next_out + 1 ) % self->m_max_length;
+        return r;
+    }
+
+
+    /** us_buffer_read Read Data from queue
+     @param self us_buffer_t to read from
+     @param dest_data data pointer to write to
+     @param dest_data_cnt count of data to transfer
+     @returns void
+     */
+    static inline void
+    us_buffer_read ( us_buffer_t *self, uint8_t *dest_data, int dest_data_cnt )
+    {
+        int i;
+        for( i=0; i<dest_data_cnt; ++i )
+        {
+            dest_data[i] = us_buffer_read_byte( self );
+        }
+    }
+
+    /** us_buffer_peek Peek at data in buffer
+     @param self us_buffer_t to peek at
+     @param offset uint32_t offset to peek at
+     @returns uint8_t value at position in queue
+     */
+    static inline uint8_t us_buffer_peek ( const us_buffer_t *self, int offset )
+    {
+        return self->m_buffer[ ( self->m_next_out + offset ) % self->m_max_length ];
+    }
+
+    static inline int32_t us_buffer_in_position ( const us_buffer_t *self )
+    {
+        return self->m_next_in;
+    }
+
+    static inline int32_t us_buffer_out_position ( const us_buffer_t *self )
+    {
+        return self->m_next_out;
+    }
+
+
+    /** us_buffer_poke Poke data to buffer at position
+     @param self us_buffer_t to poke at
+     @param offset uint32_t offset to peek at
+     @param uint8_t value to position in queue
+     @returns void
+     */
+    static inline void us_buffer_poke ( us_buffer_t *self, int offset, uint8_t val )
+    {
+        self->m_buffer[ offset ] = val;
+    }
+
+    /** us_buffer_poke_uint32 Poke uint32_t data to buffer at position
+     @param self us_buffer_t to poke at
+     @param offset uint32_t offset to peek at
+     @param uint32_t value to position in queue
+     @returns void
+     */
+    static inline void us_buffer_poke_uint32 ( us_buffer_t *self, int offset, uint32_t val )
+    {
+        self->m_buffer[ offset ] = US_GET_BYTE_3(val);
+        self->m_buffer[ (offset+1) % self->m_max_length ] = US_GET_BYTE_2(val);
+        self->m_buffer[ (offset+2) % self->m_max_length ] = US_GET_BYTE_1(val);
+        self->m_buffer[ (offset+3) % self->m_max_length ] = US_GET_BYTE_0(val);
+    }
+
+
+    /** us_buffer_poke_int32 Poke int32_t data to buffer at position
+     @param self us_buffer_t to poke at
+     @param offset uint32_t offset to peek at
+     @param int32_t value to position in queue
+     @returns void
+     */
+    static inline void us_buffer_poke_int32 ( us_buffer_t *self, int offset, int32_t val )
+    {
+        self->m_buffer[ offset ] = US_GET_BYTE_3(val);
+        self->m_buffer[ (offset+1) % self->m_max_length ] = US_GET_BYTE_2(val);
+        self->m_buffer[ (offset+2) % self->m_max_length ] = US_GET_BYTE_1(val);
+        self->m_buffer[ (offset+3) % self->m_max_length ] = US_GET_BYTE_0(val);
+    }
+
+    /** us_buffer_skip Skip data in buffer
+     @param self us_buffer_t to modify
+     @param count int number of bytes to skip
+     */
+    static inline void us_buffer_skip ( us_buffer_t *self, int count )
+    {
+        self->m_next_out = ( self->m_next_out + count ) % self->m_max_length;
+    }
+
+    /** us_buffer_writable_count
+     @param self us_buffer_t to use
+     @returns int length of data that can be written to queue
+     */
+    static inline int us_buffer_writable_count ( const us_buffer_t *self )
+    {
+        return ( ( self->m_next_out - self->m_next_in - 1  + self->m_max_length) % self->m_max_length );
+    }
+
+    static inline uint8_t *us_buffer_contig_write_ptr ( us_buffer_t *self )
+    {
+        return &self->m_buffer[ self->m_next_in ];
+    }
+
+    /** us_buffer_contig_writable_count
+     @param self us_buffer_t
+     @returns int length of data that can be written to queue contiguously.
+     */
+    static inline int us_buffer_contig_writable_count ( const us_buffer_t *self )
+    {
+        if ( self->m_next_out >= self->m_next_in )
+            return ( ( self->m_max_length - self->m_next_in ) - 1  + self->m_max_length) % ( self->m_max_length );
+        else
+            return ( ( self->m_next_out - self->m_next_in ) - 1  + self->m_max_length) % ( self->m_max_length );
+    }
+
+
+
+    /** us_buffer_can_write_byte
+     @param self us_buffer_t to use
+     @returns bool true if there is space to write one byte into queue
+     */
+    static inline bool us_buffer_can_write_byte ( const us_buffer_t *self )
+    {
+        return (( self->m_next_in + 1) % self->m_max_length) != self->m_next_out;
+    }
+
+    /** us_buffer_write_byte
+     @param self us_buffer_t to use
+     @param value uint8_t to write
+     @returns void
+     */
+    static inline void us_buffer_write_byte ( us_buffer_t *self, uint8_t value )
+    {
+        self->m_buffer[ self->m_next_in ] = value;
+        self->m_next_in = ( self->m_next_in + 1) % ( self->m_max_length );
+    }
+
+    /** us_buffer_write Write Data to queue
+     @param self us_buffer_t to write to
+     @param src_data data pointer to read from
+     @param src_data_cnt count of data to transfer
+     @returns void
+     */
+    static inline void us_buffer_write ( us_buffer_t *self, const uint8_t *src_data, int src_data_cnt )
+    {
+        int i;
+        for( i=0; i<src_data_cnt; ++i )
+        {
+            us_buffer_write_byte( self, src_data[i] );
+        }
+    }
+
+    /** us_buffer_write_buffer
+      @param self us_buffer_t to use
+      @param buf contents of buf get written to self, buf is not cleared
+      @returns void
+      */
+    static inline bool us_buffer_write_buffer( us_buffer_t *self, const us_buffer_t *buf )
+    {
+        bool r=false;
+        int rc = us_buffer_readable_count(buf);
+        if( us_buffer_writable_count(self) >= rc )
+        {
+            int i;
+            /* todo: this can be replaced with 1 or two memcpy() calls */
+            for( i=0; i<rc; ++i )
+            {
+                us_buffer_write_byte( self, us_buffer_peek(buf,i));
+            }
+            r=true;
+        }
+        return r;
+    }
+
+
 
     /**
      Get the current read position from the buffer
@@ -160,9 +351,9 @@ extern "C"
     )
     {
         const char *p = 0;
-        if ( self->m_cur_read_pos < self->m_cur_length )
+        if ( us_buffer_can_read_byte(self) )
         {
-            p = ( const char * ) &self->m_buffer[ self->m_cur_read_pos ];
+            p = ( const char * ) &self->m_buffer[ self->m_next_out ];
         }
         return p;
     }
@@ -178,10 +369,10 @@ extern "C"
     )
     {
         const char *p = 0;
-        if ( self->m_cur_read_pos + count < self->m_cur_length )
+        if ( us_buffer_readable_count(self)>=count )
         {
-            self->m_cur_read_pos += count;
-            p = ( const char * ) &self->m_buffer[ self->m_cur_read_pos ];
+            self->m_next_out = (self->m_next_out+count) % self->m_max_length;
+            p = ( const char * ) &self->m_buffer[ self->m_next_out ];
         }
         return p;
     }
@@ -206,6 +397,33 @@ extern "C"
     );
 
 
+    /** find the string with len len in the buffer at start_pos
+      @param self the buffer to look in
+      @param start_pos the position in the buffer to look in
+      @param string the string to look for
+      @param len the exact length to compare
+      @return bool true if exact match is found
+      */
+    static inline bool
+    us_buffer_string_compare( const us_buffer_t *self, int start_pos, const char *string, int len )
+    {
+        bool r=false;
+        if( us_buffer_readable_count(self)>=len+start_pos )
+        {
+            int i;
+            r=true;
+            for( i=0; i<len; ++i )
+            {
+                if( us_buffer_peek( self, start_pos+i ) != (uint8_t)string[i] )
+                {
+                    r=false;
+                    break;
+                }
+            }
+        }
+        return r;
+    }
+
     /**
 
      Search the buffer from the current read position for character c,
@@ -214,7 +432,7 @@ extern "C"
      */
     int32_t
     us_buffer_find_string_len (
-        us_buffer_t *self,
+        const us_buffer_t *self,
         char search_char,
         char eol_char
     );
@@ -227,12 +445,22 @@ extern "C"
      @param data_length length of data
      @returns bool true on success
      */
-    bool
+    static inline bool
     us_buffer_append (
         us_buffer_t *self,
-        const void *data,
+        const void *data_,
         int32_t data_length
-    );
+    )
+    {
+        bool r=false;
+        const uint8_t *data = (const uint8_t*)data_;
+        if( us_buffer_writable_count(self)>=data_length )
+        {
+            us_buffer_write( self, data, data_length );
+            r=true;
+        }
+        return r;
+    }
 
     /**
      Append a single data byte to the buffer.
@@ -241,26 +469,21 @@ extern "C"
      @param value 8 bit value to append
      @returns bool true on success
      */
-    bool
-    us_buffer_append_byte (
+    static inline bool us_buffer_append_byte (
         us_buffer_t *self,
         int value
-    );
+    )
+    {
+        bool r=false;
+        if( us_buffer_can_write_byte(self))
+        {
+            uint8_t byte_value = ( uint8_t ) value;
+            us_buffer_write_byte( self, byte_value );
+            r=true;
+        }
+        return r;
+    }
 
-
-    /**
-     Read a single byte from the buffer's current read position
-     into value_ptr and increment the read position
-
-     @param self buffer to read from
-     @param value_ptr ptr to value to store byte into
-     @returns bool true on success
-     */
-    bool
-    us_buffer_read_byte (
-        us_buffer_t *self,
-        void *value_ptr
-    );
 
     /**
      Append a null terminated ascii or utf-8 string to the buffer.
@@ -408,6 +631,7 @@ extern "C"
         int32_t max_data_length,
         int32_t *data_length
     );
+
 
 #ifdef __cplusplus
 }

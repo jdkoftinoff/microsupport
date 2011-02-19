@@ -98,7 +98,7 @@ int us_slip_decoder_parse (
             break;
         case us_slip_state_in_packet:
             /* put unescaped data into buffer and check for END */
-            if ( c == US_SLIP_END && self->m_buffer->m_cur_length != 0 )
+            if ( c == US_SLIP_END && us_buffer_readable_count( self->m_buffer ) > 0 )
             {
                 /* found a complete non empty packet - dispatch it */
                 self->m_packet_formed_callback ( self, self->m_buffer );
@@ -147,6 +147,80 @@ int us_slip_decoder_parse (
     return packet_count;
 }
 
+
+int us_slip_decoder_parse_buffer (
+    us_slip_decoder_t *self,
+    us_buffer_t *buffer
+)
+{
+    int packet_count = 0;
+    int i;
+    int len = us_buffer_readable_count(buffer);
+    for ( i = 0; i < len; ++i )
+    {
+        uint8_t c = us_buffer_read_byte(buffer);
+        switch ( self->m_state )
+        {
+        case us_slip_state_before_packet:
+            /* ignore data until we see a valid end of packet */
+            if ( c == US_SLIP_END )
+            {
+                /* found end of packet byte, so start scanning for real data */
+                self->m_state = us_slip_state_in_packet;
+            }
+            break;
+        case us_slip_state_in_packet:
+            /* put unescaped data into buffer and check for END */
+            if ( c == US_SLIP_END && us_buffer_readable_count( self->m_buffer ) > 0 )
+            {
+                /* found a complete non empty packet - dispatch it */
+                self->m_packet_formed_callback ( self, self->m_buffer );
+                /* clear the buffer */
+                us_buffer_reset ( self->m_buffer );
+                /* increment packet counter */
+                packet_count++;
+                /* and stay in this state */
+            }
+            else if ( c == US_SLIP_ESC )
+            {
+                /* found escape code, so go into ESC state */
+                self->m_state = us_slip_state_in_esc;
+            }
+            else
+            {
+                /* any other character gets appended into the buffer */
+                us_buffer_append_byte ( self->m_buffer, c );
+            }
+            break;
+        case us_slip_state_in_esc:
+            if ( c == US_SLIP_ESC_END )
+            {
+                /* code was an escaped END character, so append an END char */
+                us_buffer_append_byte ( self->m_buffer, US_SLIP_END );
+                self->m_state = us_slip_state_in_packet;
+            }
+            else if ( c == US_SLIP_ESC_ESC )
+            {
+                /* code was an escaped ESC character, so append an ESC char */
+                us_buffer_append_byte ( self->m_buffer, US_SLIP_ESC );
+                self->m_state = us_slip_state_in_packet;
+            }
+            else
+            {
+                /* unknown escape character, this is a protocol error so reset the buffer and state machine */
+                us_slip_decoder_reset ( self );
+            }
+            break;
+        default:
+            /* unknown state, reset everything */
+            us_slip_decoder_reset ( self );
+            break;
+        }
+    }
+    return packet_count;
+}
+
+
 bool us_slip_encode (
     us_buffer_t *dest_buffer,
     us_buffer_t *src_buffer
@@ -154,18 +228,19 @@ bool us_slip_encode (
 {
     bool r = true;
     int32_t i;
-    if ( src_buffer->m_cur_length > 0 )
+    int32_t len =us_buffer_readable_count(src_buffer);
+    if ( len > 0 )
     {
         /* start the packet with an END code to ensure packet beginning is seen */
         r &= us_buffer_append_byte ( dest_buffer, US_SLIP_END );
-        for ( i = 0; i < src_buffer->m_cur_length; ++i )
+        for ( i = 0; i < len; ++i )
         {
             uint8_t c;
             /* if appending buffer failed stop trying */
             if ( !r )
                 break;
             /* get character to encode */
-            c = src_buffer->m_buffer[i];
+            c = us_buffer_peek( src_buffer, i );
             if ( c == US_SLIP_END )
             {
                 /* Send ESC code with code for escaped END */

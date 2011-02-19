@@ -121,7 +121,7 @@ int us_webapp_json_test_dispatch(
     static int cnt=1;
     sprintf( json, "{ \"time\" : \%ld, \"access_count\" = %d }", (long)time(0), (int)cnt++ );
     r&=us_buffer_append_string( response_content, json );
-    r&=us_http_response_header_init_ok( response_header, 200, "application/json",response_content->m_cur_length,true);
+    r&=us_http_response_header_init_ok( response_header, 200, "application/json", us_buffer_readable_count( response_content ),true);
     r&=us_http_response_header_set_no_cache( response_header );
     if( r )
         return response_header->m_code;
@@ -142,7 +142,6 @@ bool us_example_http_server_handler_init (
             allocator,
             fd,
             extra,
-            16384,
             256*1024,
             (us_webapp_director_t *)extra
         );
@@ -222,7 +221,7 @@ int main ( int argc, char **argv )
 #if US_ENABLE_LOGGING
     us_logger_stdio_start ( stdout, stderr );
 #endif
-    us_log_set_level ( US_LOG_LEVEL_INFO );
+    us_log_set_level ( US_LOG_LEVEL_TRACE );
     us_platform_init_sockets();
     us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
     r=us_example_http_server( &allocator.m_base );

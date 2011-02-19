@@ -53,13 +53,13 @@ static bool us_test_http_server ( void )
         us_webapp_director_add_404_app( &director, &diag_app->m_base );
         if( handler )
         {
-            if( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, 8192, &director ) )
+            if( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, &director ) )
             {
-                us_queue_t *data_to_server = &handler->m_base.m_incoming_queue;
-                us_queue_t *data_from_server = &handler->m_base.m_outgoing_queue;
+                us_buffer_t *data_to_server = &handler->m_base.m_incoming_queue;
+                us_buffer_t *data_from_server = &handler->m_base.m_outgoing_queue;
                 const char *request = "GET /some/path HTTP/1.1\r\nHost: localhost:80\r\nConnection: Close\r\n\r\n";
                 handler->m_base.connected( &handler->m_base, 0, 0 );
-                us_queue_write( data_to_server, (uint8_t *)request, strlen( request));
+                us_buffer_write( data_to_server, (uint8_t *)request, strlen( request));
                 if( handler->m_base.readable )
                 {
                     handler->m_base.readable( &handler->m_base );
@@ -72,22 +72,21 @@ static bool us_test_http_server ( void )
                 {
                     handler->m_base.writable( &handler->m_base );
                 }
-                us_queue_write_byte( data_from_server, '\0' );
-                us_stdout->printf( us_stdout, "response:\n%s\n", data_from_server->m_buf );
+                us_buffer_write_byte( data_from_server, '\0' );
             }
             handler->m_base.m_base.destroy( &handler->m_base.m_base );
             us_delete( allocator, handler );
             handler = (us_http_server_handler_t *)us_http_server_handler_create( allocator );
             if( handler )
             {
-                if( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, 8192, &director ) )
+                if( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, &director ) )
                 {
-                    us_queue_t *data_to_server = &handler->m_base.m_incoming_queue;
-                    us_queue_t *data_from_server = &handler->m_base.m_outgoing_queue;
+                    us_buffer_t *data_to_server = &handler->m_base.m_incoming_queue;
+                    us_buffer_t *data_from_server = &handler->m_base.m_outgoing_queue;
                     const char *request = "POST /some/post/path HTTP/1.1\r\nHost: localhost:80\r\nContent-Length: 40\r\nContent-Type: text/plain\r\nConnection: Close\r\n\r\n"
                                           "1234567890123456789012345678901234567890";
                     handler->m_base.connected( &handler->m_base, 0, 0 );
-                    us_queue_write( data_to_server, (uint8_t *)request, strlen( request));
+                    us_buffer_write( data_to_server, (uint8_t *)request, strlen( request));
                     if( handler->m_base.readable )
                     {
                         handler->m_base.readable( &handler->m_base );
@@ -100,8 +99,7 @@ static bool us_test_http_server ( void )
                     {
                         handler->m_base.writable( &handler->m_base );
                     }
-                    us_queue_write_byte( data_from_server, '\0' );
-                    us_stdout->printf( us_stdout, "response:\n%s\n", data_from_server->m_buf );
+                    us_buffer_write_byte( data_from_server, '\0' );
                 }
                 handler->m_base.m_base.destroy( &handler->m_base.m_base );
                 us_delete( allocator, handler );

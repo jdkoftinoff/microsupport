@@ -97,9 +97,10 @@ static bool us_test_json ( void )
     }
     {
         int i=0;
-        for( i=0; i<b->m_cur_length; ++i )
+        int len = us_buffer_readable_count(b);
+        for( i=0; i<len; ++i )
         {
-            fprintf( stdout, "%c", b->m_buffer[i] );
+            fprintf( stdout, "%c", us_buffer_peek(b,i) );
         }
         fprintf( stdout, "\n" );
     }

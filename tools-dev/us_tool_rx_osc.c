@@ -70,18 +70,18 @@ bool us_tool_rx_osc_tcp_handler_readable (
 {
     bool done=false;
     us_tool_rx_osc_tcp_handler_t *self = ( us_tool_rx_osc_tcp_handler_t * ) self_;
-    us_queue_t *incoming = &self->m_base.m_incoming_queue;
-    while (!done && us_queue_readable_count(incoming)>0 )
+    us_buffer_t *incoming = &self->m_base.m_incoming_queue;
+    while (!done && us_buffer_readable_count(incoming)>0 )
     {
         if( self->m_in_header  )
         {
-            if( us_queue_readable_count( incoming )>=4 )
+            if( us_buffer_readable_count( incoming )>=4 )
             {
                 self->m_todo_count =
-                    (((int32_t)us_queue_read_byte( incoming )) << 24) +
-                    (((int32_t)us_queue_read_byte( incoming )) << 16) +
-                    (((int32_t)us_queue_read_byte( incoming )) << 8)+
-                    (((int32_t)us_queue_read_byte( incoming )) << 0);
+                    (((int32_t)us_buffer_read_byte( incoming )) << 24) +
+                    (((int32_t)us_buffer_read_byte( incoming )) << 16) +
+                    (((int32_t)us_buffer_read_byte( incoming )) << 8)+
+                    (((int32_t)us_buffer_read_byte( incoming )) << 0);
                 self->m_in_header = false;
                 us_log_debug( "got osc length field: %d", self->m_todo_count );
             }
@@ -92,15 +92,15 @@ bool us_tool_rx_osc_tcp_handler_readable (
         }
         if( !self->m_in_header )
         {
-            if( us_queue_readable_count( incoming )>=self->m_todo_count )
+            if( us_buffer_readable_count( incoming )>=self->m_todo_count )
             {
                 uint8_t flattened[4096];
                 int p=0;
-                while ( us_queue_can_read_byte ( incoming ) )
+                while ( us_buffer_can_read_byte ( incoming ) )
                 {
                     if( p<sizeof(flattened) )
                     {
-                        flattened[p] = us_queue_read_byte(incoming);
+                        flattened[p] = us_buffer_read_byte(incoming);
                     }
                     if( ++p == self->m_todo_count )
                     {
@@ -108,9 +108,9 @@ bool us_tool_rx_osc_tcp_handler_readable (
                         us_buffer_t buf;
                         us_osc_msg_t *msg;
                         us_osc_msg_bundle_t *bundle;
-                        us_buffer_init(&buf, 0, flattened, p);
-                        buf.m_cur_length = p;
-                        buf.m_cur_read_pos = 0;
+                        us_buffer_init(&buf, 0, flattened, sizeof(flattened));
+                        buf.m_next_in = p;
+                        buf.m_next_out = 0;
                         us_log_debug( "pulled in raw osc msg of length %d", p );
                         r=us_osc_parse(self->m_base.m_base.m_allocator, &msg, &bundle, &buf);
                         if( !r )

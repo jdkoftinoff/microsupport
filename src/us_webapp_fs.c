@@ -169,6 +169,7 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
     FILE *f;
     bool r=false;
     char full_path[4096];
+    us_buffer_reset( buf );
     if( us_strncpy( full_path, fs_path, sizeof(full_path) ) &&
             us_strncat( full_path, file_path, sizeof(full_path) ) )
     {
@@ -187,7 +188,7 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
                     {
                         if( fread( buf->m_buffer, file_len, 1, f)==1 )
                         {
-                            buf->m_cur_length = file_len;
+                            buf->m_next_in = file_len;
                             r=true;
                         }
                         else
@@ -279,7 +280,7 @@ int us_webapp_fs_dispatch(
     content_type=us_webapp_file_ext_mime_map_find( self->m_ext_map, request_header->m_path );
     r&=us_http_response_header_set_content_type ( response_header, content_type );
     r&=us_http_response_header_set_connection_close ( response_header );
-    r&=us_http_response_header_set_content_length ( response_header, response_content->m_cur_length );
+    r&=us_http_response_header_set_content_length ( response_header, us_buffer_readable_count( response_content ) );
     if( r )
     {
         response_header->m_code = 200;

@@ -80,20 +80,6 @@ extern "C"
         return us_osc_msg_is_msg_bundle ( self->m_incoming_buffer );
     }
 
-    static inline uint8_t *us_osc_io_packet_get_incoming_ptr(
-        us_osc_io_packet_t *self
-    )
-    {
-        us_buffer_reset( self->m_incoming_buffer );
-        return self->m_incoming_buffer->m_cur_write_ptr;
-    }
-
-    static inline int32_t us_osc_io_packet_get_incoming_max_size(
-        us_osc_io_packet_t *self
-    )
-    {
-        return self->m_incoming_buffer->m_max_length;
-    }
 
     bool us_osc_io_packet_get_msg(
         us_osc_io_packet_t *self,
@@ -162,20 +148,6 @@ extern "C"
         return us_osc_msg_is_msg_bundle ( self->m_incoming_buffer );
     }
 
-    static inline uint8_t *us_osc_io_slip_stream_get_incoming_ptr(
-        us_osc_io_slip_stream_t *self
-    )
-    {
-        us_buffer_reset( self->m_incoming_buffer );
-        return self->m_incoming_buffer->m_cur_write_ptr;
-    }
-
-    static inline int32_t us_osc_io_slip_stream_get_incoming_max_size(
-        us_osc_io_slip_stream_t *self
-    )
-    {
-        return self->m_incoming_buffer->m_max_length;
-    }
 
     bool us_osc_io_slip_stream_get_msg(
         us_osc_io_slip_stream_t *self,
@@ -244,20 +216,6 @@ extern "C"
         return us_osc_msg_is_msg_bundle ( &self->m_incoming_buffer );
     }
 
-    static inline uint8_t *us_osc_io_packet_stream_get_incoming_ptr(
-        us_osc_io_packet_stream_t *self
-    )
-    {
-        us_buffer_reset( &self->m_incoming_buffer );
-        return self->m_incoming_buffer.m_cur_write_ptr;
-    }
-
-    static inline int32_t us_osc_io_packet_stream_get_incoming_max_size(
-        us_osc_io_packet_stream_t *self
-    )
-    {
-        return self->m_incoming_buffer.m_max_length;
-    }
 
     bool us_osc_io_packet_stream_get_msg(
         us_osc_io_packet_stream_t *self,

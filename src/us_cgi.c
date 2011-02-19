@@ -78,7 +78,7 @@ bool us_cgi_unescape ( const char *src, int src_len, us_buffer_t *dest_buf )
             if ( in_percent == 0 )
             {
                 c = ( char ) partial;
-                if ( !dest_buf->append ( dest_buf, &c, 1 ) )
+                if ( !us_buffer_append_byte(dest_buf, c ) )
                 {
                     return false;
                 }
@@ -91,7 +91,7 @@ bool us_cgi_unescape ( const char *src, int src_len, us_buffer_t *dest_buf )
         }
         else
         {
-            if ( !dest_buf->append ( dest_buf, &c, 1 ) )
+            if ( !us_buffer_append_byte(dest_buf, c ) )
             {
                 return false;
             }
@@ -112,14 +112,14 @@ bool us_cgi_escape ( const char *src, int src_len, us_buffer_t *dest_buf )
             escaped[0] = '%';
             escaped[1] = us_cgi_tohexdigit[ ( c>>4 ) &0xf ];
             escaped[2] = us_cgi_tohexdigit[ c&0xf ];
-            if ( ! dest_buf->append ( dest_buf, escaped, 3 ) )
+            if ( ! us_buffer_append_data(dest_buf,escaped,3) )
             {
                 return false;
             }
         }
         else
         {
-            if ( ! dest_buf->append ( dest_buf, &c, 1 ) )
+            if ( ! us_buffer_append_byte(dest_buf, c ) )
             {
                 return false;
             }

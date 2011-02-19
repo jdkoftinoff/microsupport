@@ -94,7 +94,7 @@ test_unflatten(
 #if US_ENABLE_PRINTING
                         {
                             printer->printf( printer, "Flattened message buffer contents:\n" );
-                            second_buffer->print( second_buffer, printer );
+                            us_buffer_print( second_buffer, printer );
                         }
 #endif
                     }
@@ -124,7 +124,7 @@ test_unflatten(
 #if US_ENABLE_PRINTING
                         {
                             printer->printf( printer, "Flattened message buffer contents:\n" );
-                            second_buffer->print( second_buffer, printer );
+                            us_buffer_print( second_buffer, printer );
                         }
 #endif
                     }
@@ -183,7 +183,7 @@ static bool do_test_osc_msg(
 #if US_ENABLE_PRINTING
                 {
                     printer->printf( printer, "Flattened message buffer contents:\n" );
-                    buffer->print( buffer, printer );
+                    us_buffer_print( buffer, printer );
                 }
 #endif
                 r=test_unflatten(allocator, buffer, printer );
@@ -240,11 +240,11 @@ static bool do_test_osc_msg_bundle(
             if ( bundle->flatten( bundle, buffer, 0 ) )
             {
 #if US_ENABLE_PRINTING
-                int32_t bundle_size = buffer->m_cur_length;
+                int32_t bundle_size = us_buffer_readable_count(buffer);
                 {
                     printer->printf( printer, "bundle size: %ld\n", bundle_size );
                     printer->printf( printer, "Flattened message bundle buffer contents:\n" );
-                    buffer->print( buffer, printer );
+                    us_buffer_print( buffer, printer );
                 }
 #endif
                 r=test_unflatten(allocator, buffer, printer );

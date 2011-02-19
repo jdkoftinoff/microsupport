@@ -35,33 +35,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 bool
 us_osc_msg_is_msg_bundle(
-    us_buffer_t *buffer
+    const us_buffer_t *buffer
 )
 {
     bool r=false;
-    if ( buffer->m_cur_read_pos+8 < buffer->m_cur_length )
-    {
-        if ( strncmp( (const char *)buffer->m_buffer + buffer->m_cur_read_pos, "#bundle", 7 ) == 0 )
-        {
-            r=true;
-        }
-    }
+    r = us_buffer_string_compare( buffer, 0, "#bundle", 7 );
     return r;
 }
 
 bool
 us_osc_msg_is_msg(
-    us_buffer_t *buffer
+    const us_buffer_t *buffer
 )
 {
     bool r=false;
-    if ( buffer->m_cur_read_pos+8 < buffer->m_cur_length )
+    if( us_buffer_readable_count(buffer)>8 && us_buffer_peek(buffer,0)=='/' )
     {
-        const char * p = (const char *)buffer->m_buffer + buffer->m_cur_read_pos;
-        if ( p != NULL && *p=='/' )
-        {
-            r=true;
-        }
+        r=true;
     }
     return r;
 }
@@ -271,8 +261,8 @@ us_osc_msg_bundle_flatten(
 {
     bool r = true;
     us_osc_msg_t *cur = 0;
-    int32_t start_length = (int32_t)buf->m_cur_length;
-    r &= buf->append(buf, "#bundle", 8);
+    int32_t start_length = us_buffer_readable_count(buf);
+    r &= us_buffer_append_data(buf, "#bundle", 8);
     r &= us_buffer_append_uint64(
              buf,
              self->m_timetag_high,
@@ -290,11 +280,11 @@ us_osc_msg_bundle_flatten(
     else
     {
         int32_t msg_size = 0;
-        uint8_t *last_msg_size_ptr = 0;
+        int32_t last_msg_size_pos = 0;
         while (cur && r)
         {
             /* get the position of the length field in the buffer */
-            last_msg_size_ptr = buf->m_cur_write_ptr;
+            last_msg_size_pos = us_buffer_in_position(buf);
             /* put a placeholder there */
             r &= us_buffer_append_int32(
                      buf,
@@ -306,10 +296,7 @@ us_osc_msg_bundle_flatten(
                      &msg_size
                  );
             /* fill in the placeholder with the actual length */
-            *last_msg_size_ptr++ = US_GET_BYTE_3(msg_size);
-            *last_msg_size_ptr++ = US_GET_BYTE_2(msg_size);
-            *last_msg_size_ptr++ = US_GET_BYTE_1(msg_size);
-            *last_msg_size_ptr = US_GET_BYTE_0(msg_size);
+            us_buffer_poke_uint32(buf,last_msg_size_pos,msg_size);
             /* go to the next msg in list */
             cur = cur->m_next;
         }
@@ -322,7 +309,7 @@ us_osc_msg_bundle_flatten(
     /* figure out how long the whole thing was and  fill in total_length */
     if (total_length)
     {
-        *total_length = buf->m_cur_length - start_length;
+        *total_length = us_buffer_readable_count(buf) - start_length;
     }
     return r;
 }
@@ -340,7 +327,7 @@ us_osc_msg_bundle_unflatten(
     {
         uint32_t timetag_high;
         uint32_t timetag_low;
-        buf->m_cur_read_pos += 8;
+        us_buffer_advance(buf,8);
         if ( us_buffer_read_uint64(
                     buf,
                     &timetag_high,
@@ -358,7 +345,7 @@ us_osc_msg_bundle_unflatten(
                 us_log_error( "Creating osc bundle" );
                 return 0;
             }
-            while ( buf->m_cur_read_pos < buf->m_cur_length )
+            while ( us_buffer_can_read_byte(buf) )
             {
                 bool r = false;
                 int32_t msg_size = 0;
@@ -467,10 +454,12 @@ us_osc_msg_unflatten(
     {
         if ( us_buffer_read_rounded_string( buf, types, sizeof(types) ) )
         {
+            char *cur_type = &types[0];
             msg = us_osc_msg_create(allocator, addr );
-            if ( msg && types[0]==',' )
+            if ( msg )
             {
-                char *cur_type = &types[1];
+                if( *cur_type==',' ) /* ',' prefix of typetags is actually optional */
+                    cur_type++;
                 while ( *cur_type )
                 {
                     us_osc_msg_element_t *e;
@@ -535,7 +524,7 @@ us_osc_msg_flatten(
 )
 {
     bool r = true;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     us_osc_msg_element_t *cur = 0;
     char typetag[128] = ",";
     char *typetag_pos = &typetag[1];
@@ -560,7 +549,7 @@ us_osc_msg_flatten(
     }
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -733,11 +722,11 @@ us_osc_msg_element_s_flatten(
 {
     bool r = true;
     us_osc_msg_element_s_t *self = (us_osc_msg_element_s_t *) self_;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     r&=us_buffer_append_rounded_string(buf, self->m_value );
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -791,11 +780,11 @@ us_osc_msg_element_f_flatten(
 {
     bool r = true;
     us_osc_msg_element_f_t *self = (us_osc_msg_element_f_t *) self_;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     r&=us_buffer_append_float32(buf, (float)self->m_value );
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -850,11 +839,11 @@ us_osc_msg_element_d_flatten(
 {
     bool r = true;
     us_osc_msg_element_d_t *self = (us_osc_msg_element_d_t *) self_;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     r&=us_buffer_append_float64(buf, self->m_value );
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -908,11 +897,11 @@ us_osc_msg_element_i_flatten(
 {
     bool r = true;
     us_osc_msg_element_i_t *self = (us_osc_msg_element_i_t *) self_;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     r&=us_buffer_append_int32( buf, self->m_value );
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -981,11 +970,11 @@ us_osc_msg_element_b_flatten(
 {
     bool r = true;
     us_osc_msg_element_b_t *self = (us_osc_msg_element_b_t *) self_;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     r&=us_buffer_append_rounded_data(buf, self->m_data, self->m_length);
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -1040,11 +1029,11 @@ us_osc_msg_element_t_flatten(
 {
     bool r = true;
     us_osc_msg_element_t_t *self = (us_osc_msg_element_t_t *) self_;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     r&=us_buffer_append_uint64(buf, self->m_time_high, self->m_time_low );
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -1099,11 +1088,11 @@ us_osc_msg_element_a_flatten(
 {
     bool r = true;
     us_osc_msg_element_a_t *self = (us_osc_msg_element_a_t *) self_;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     r&=us_buffer_append_uint64(buf, self->m_time_high, self->m_time_low );
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -1158,11 +1147,11 @@ us_osc_msg_element_h_flatten(
 {
     bool r = true;
     us_osc_msg_element_h_t *self = (us_osc_msg_element_h_t *) self_;
-    int32_t start_length = buf->m_cur_length;
+    int32_t start_length = us_buffer_readable_count(buf);
     r&=us_buffer_append_uint64(buf, self->m_value_high, self->m_value_low);
     if ( total_length )
     {
-        *total_length = buf->m_cur_length-start_length;
+        *total_length = us_buffer_readable_count(buf)-start_length;
     }
     return r;
 }
@@ -1337,6 +1326,7 @@ us_osc_msg_element_N_unflatten(
 )
 {
     us_osc_msg_element_t *result = 0;
+    (void)buf;
     result = us_osc_msg_element_N_create(allocator);
     return result;
 }

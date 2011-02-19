@@ -771,7 +771,7 @@ extern "C"
      */
     bool
     us_osc_msg_is_msg_bundle(
-        us_buffer_t *buffer
+        const us_buffer_t *buffer
     );
 
     /**
@@ -782,7 +782,7 @@ extern "C"
      */
     bool
     us_osc_msg_is_msg(
-        us_buffer_t *buffer
+        const us_buffer_t *buffer
     );
 
     /**

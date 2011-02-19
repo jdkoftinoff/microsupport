@@ -7,6 +7,8 @@
 #include "us_slip.h"
 #include "us_osc_msg.h"
 #include "us_osc_msg_print.h"
+#include "us_buffer.h"
+#include "us_buffer_print.h"
 
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -240,7 +242,8 @@ static bool us_tool_send_osc_udp(
     int s = socket( src_addr->ai_family, src_addr->ai_socktype, 0 );
     if( s>=0 )
     {
-        if( sendto(s, buf->m_buffer, buf->m_cur_length, 0, dest_addr->ai_addr, dest_addr->ai_addrlen)==buf->m_cur_length )
+        int len = us_buffer_readable_count(buf);
+        if( sendto(s, buf->m_buffer, len, 0, dest_addr->ai_addr, dest_addr->ai_addrlen)== len )
         {
             r=true;
         }
@@ -265,15 +268,16 @@ static bool us_tool_send_osc_tcp(
         if( connect(s, dest_addr->ai_addr, dest_addr->ai_addrlen)>=0 )
         {
             uint8_t length[4];
+            int len=us_buffer_readable_count( buf );
             r=true;
-            length[0] = US_GET_BYTE_3( buf->m_cur_length );
-            length[1] = US_GET_BYTE_2( buf->m_cur_length );
-            length[2] = US_GET_BYTE_1( buf->m_cur_length );
-            length[3] = US_GET_BYTE_0( buf->m_cur_length );
+            length[0] = US_GET_BYTE_3( len );
+            length[1] = US_GET_BYTE_2( len );
+            length[2] = US_GET_BYTE_1( len );
+            length[3] = US_GET_BYTE_0( len );
             r&=us_net_blocking_send(s, length, sizeof(length) );
             if( r )
             {
-                r&=us_net_blocking_send(s, buf->m_buffer, buf->m_cur_length);
+                r&=us_net_blocking_send(s, buf->m_buffer, len );
             }
             if( !r )
             {
@@ -298,16 +302,18 @@ static bool us_tool_send_osc_tcpslip(
     bool r=false;
     int s;
     uint8_t slipped_mem[4096];
+    int l;
     us_buffer_t slipped_buffer;
     us_buffer_init(&slipped_buffer, 0, slipped_mem, sizeof( slipped_mem ) );
     us_slip_encode(&slipped_buffer, buf);
+    l = us_buffer_readable_count( &slipped_buffer );
     s = us_net_create_tcp_socket(dest_addr, false);
     if( s>=0 )
     {
         if( connect(s, dest_addr->ai_addr, dest_addr->ai_addrlen)>=0 )
         {
             r=true;
-            r&=us_net_blocking_send(s, slipped_buffer.m_buffer, slipped_buffer.m_cur_length);
+            r&=us_net_blocking_send(s, slipped_buffer.m_buffer, l );
             if( !r )
             {
                 us_stderr->printf( us_stderr, "Error sending slipped packet to TCP socket: %s\n", strerror(errno) );
@@ -382,7 +388,7 @@ static bool us_tool_send_osc(
         r=us_tool_gen_flattened_osc( us_testutil_sys_allocator, buf, osc_address, osc_typetags, osc_values );
         if( r )
         {
-            buf->print( buf, us_stdout );
+            us_buffer_print( buf, us_stdout );
             if( sock_type==SOCK_DGRAM )
             {
                 r=us_tool_send_osc_udp( src_addr, dest_addr, buf );

@@ -43,16 +43,17 @@ us_buffer_print (
     bool r = false;
     if ( self && printer )
     {
+        int len=us_buffer_readable_count(self);
         r = true;
         r &= printer->printf (
                  printer,
                  "length: 0x%x\nContents:\n",
-                 self->m_cur_length
+                 len
              );
         if ( r )
         {
             int32_t i;
-            for ( i = 0; i < self->m_cur_length; ++i )
+            for ( i = 0; i < len; ++i )
             {
                 r &= printer->printf ( printer, "%02x ", self->m_buffer[ i ] );
                 if ( !r )
@@ -75,16 +76,17 @@ us_buffer_print_string (
     bool r = false;
     if ( self && printer )
     {
+        int len=us_buffer_readable_count(self);
         r = true;
         r &= printer->printf (
                  printer,
                  "length: 0x%x\nContents:\n",
-                 self->m_cur_length
+                 len
              );
         if ( r )
         {
             int32_t i;
-            for ( i = 0; i < self->m_cur_length; ++i )
+            for ( i = 0; i < len; ++i )
             {
                 r &= printer->printf ( printer, "%c", self->m_buffer[ i ] );
                 if ( !r )

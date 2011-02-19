@@ -1,6 +1,7 @@
 #include "us_world.h"
 #include "us_allocator.h"
 #include "us_buffer.h"
+#include "us_buffer_print.h"
 #include "us_slip.h"
 
 #include "us_logger_printer.h"
@@ -58,7 +59,7 @@ static us_buffer_t * us_test_slip_fill_buffer ( void )
                 {
 #if US_ENABLE_PRINTING
                     us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of test buffer:\n" );
-                    buf->print ( buf, us_testutil_printer_stdout );
+                    us_buffer_print ( buf, us_testutil_printer_stdout );
                     us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
 #endif
                     r = true;
@@ -81,7 +82,7 @@ static void us_test_slip_callback ( us_slip_decoder_t *self, us_buffer_t *buf )
     us_log_info ( "Successfully parsed slip encoded buffer" );
 #if US_ENABLE_PRINTING
     us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of decoded buffer:\n" );
-    buf->print ( buf, us_testutil_printer_stdout );
+    us_buffer_print ( buf, us_testutil_printer_stdout );
     us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
 #endif
 }
@@ -103,7 +104,7 @@ static bool us_test_slip ( void )
         {
 #if US_ENABLE_PRINTING
             us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of encoded buffer:\n" );
-            slipped_buf->print ( slipped_buf, us_testutil_printer_stdout );
+            us_buffer_print ( slipped_buf, us_testutil_printer_stdout );
             us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
 #endif
             us_log_info ( "decoding buffer" );

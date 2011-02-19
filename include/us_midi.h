@@ -710,22 +710,17 @@ extern "C"
 
     static inline int32_t us_midi_sysex_get_length ( const us_midi_sysex_t *self )
     {
-        return self->m_buffer->m_cur_length;
+        return us_buffer_readable_count( self->m_buffer );
     }
 
     static inline uint8_t us_midi_sysex_get_data ( const us_midi_sysex_t *self, int i )
     {
-        return self->m_buffer->m_buffer[i];
+        return us_buffer_peek( self->m_buffer, i);
     }
 
     static inline bool us_midi_sysex_is_full ( const us_midi_sysex_t *self )
     {
-        return self->m_buffer->m_cur_length >= self->m_buffer->m_max_length;
-    }
-
-    static inline const uint8_t *us_midi_sysex_get_buf ( const us_midi_sysex_t *self )
-    {
-        return self->m_buffer->m_buffer;
+        return us_buffer_writable_count( self->m_buffer )==0;
     }
 
     /*@}*/

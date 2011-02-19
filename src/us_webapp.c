@@ -186,14 +186,14 @@ int us_webapp_static_buffer_dispatch(
     bool r=true;
     if( self->m_buffer )
     {
-        r&=us_buffer_append_data(response_content, self->m_buffer->m_buffer, self->m_buffer->m_cur_length);
+        r&=us_buffer_write_buffer(response_content, self->m_buffer );
     }
     if( self->m_content_type )
     {
         r&=us_http_response_header_set_content_type ( response_header, self->m_content_type );
     }
     r&=us_http_response_header_set_connection_close ( response_header );
-    r&=us_http_response_header_set_content_length ( response_header, response_content->m_cur_length );
+    r&=us_http_response_header_set_content_length ( response_header, us_buffer_readable_count( response_content ) );
     if( r )
     {
         response_header->m_code = 200;
@@ -334,10 +334,10 @@ int us_webapp_diag_dispatch(
         item=item->m_next;
     }
     us_buffer_append_string(response_content, "\r\nContent is:\r\n" );
-    us_buffer_append_data( response_content, request_content->m_buffer, request_content->m_cur_length );
+    us_buffer_write_buffer( response_content, request_content );
     response_header->m_code = 200;
     if ( !us_http_response_header_set_content_type ( response_header, "text/plain" ) ||
-            !us_http_response_header_set_content_length ( response_header, response_content->m_cur_length ) ||
+            !us_http_response_header_set_content_length ( response_header, us_buffer_readable_count(response_content) ) ||
             !us_http_response_header_set_connection_close ( response_header )  )
     {
         return -1;

@@ -43,7 +43,6 @@ bool us_http_server_handler_init(
     us_allocator_t *allocator,
     int fd,
     void *extra,
-    int32_t max_request_buffer_size,
     int32_t max_response_buffer_size,
     us_webapp_director_t *director
 )
@@ -123,11 +122,8 @@ void us_http_server_handler_set_state_waiting_for_connection(
 )
 {
     us_log_tracepoint();
-    us_queue_init(
-        &self->m_base.m_incoming_queue,
-        self->m_base.m_incoming_queue.m_buf,
-        self->m_base.m_incoming_queue.m_buf_size
-    );
+    us_buffer_reset( &self->m_base.m_incoming_queue );
+    us_buffer_reset( &self->m_base.m_outgoing_queue );
     self->m_state = us_http_server_handler_state_waiting_for_connection;
     self->m_base.readable = 0;
     self->m_base.incoming_eof = 0;
@@ -195,7 +191,7 @@ bool us_http_server_handler_connected(
         }
         else
         {
-            us_log_debug( "accepted connection, unable to resolve adress" );
+            us_log_debug( "accepted connection, unable to resolve address" );
         }
     }
     /* we are now in receiving request header */
@@ -209,21 +205,20 @@ bool us_http_server_handler_readable_request_header(
 {
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=true;
-    us_queue_t *incoming = &self->m_base.m_incoming_queue;
+    us_buffer_t *incoming = &self->m_base.m_incoming_queue;
     int i;
     bool found_end_of_header=false;
     us_log_tracepoint();
     /* scan until "\r\n\r\n" is seen in the incoming queue */
-    for( i=self->m_byte_count; i<us_queue_readable_count(incoming)-3; i++ )
+    for( i=self->m_byte_count; i<us_buffer_readable_count(incoming)-3; i++ )
     {
-        if( us_queue_peek( incoming, i )=='\r' &&
-                us_queue_peek( incoming, i+1 )=='\n' &&
-                us_queue_peek( incoming, i+2 )=='\r' &&
-                us_queue_peek( incoming, i+3 )=='\n' )
+        if( us_buffer_peek( incoming, i )=='\r' &&
+                us_buffer_peek( incoming, i+1 )=='\n' &&
+                us_buffer_peek( incoming, i+2 )=='\r' &&
+                us_buffer_peek( incoming, i+3 )=='\n' )
         {
             found_end_of_header=true;
             /* skip over the request header that we parsed */
-            us_queue_skip( incoming, i+4 );
             break;
         }
     }
@@ -257,18 +252,10 @@ bool us_http_server_handler_parse_request_header(
 )
 {
     bool r=false;
-    us_buffer_t incoming_buffer;
     us_log_tracepoint();
-    us_buffer_init(
-        &incoming_buffer,
-        0,
-        self->m_base.m_incoming_queue.m_buf,
-        self->m_base.m_incoming_queue.m_next_in
-    );
-    incoming_buffer.m_cur_length = incoming_buffer.m_max_length;
     r=us_http_request_header_parse(
           self->m_request_header,
-          &incoming_buffer
+          &self->m_base.m_incoming_queue
       );
     if( r )
     {
@@ -312,7 +299,7 @@ bool us_http_server_handler_parse_request_header(
         */
         if( self->m_todo_count!=0 )
         {
-            if( self->m_todo_count > us_queue_readable_count( &self->m_base.m_incoming_queue) )
+            if( self->m_todo_count > us_buffer_readable_count( &self->m_base.m_incoming_queue) )
             {
                 us_http_server_handler_set_state_receiving_request_content( self );
                 r=true;
@@ -333,7 +320,7 @@ bool us_http_server_handler_parse_request_header(
     }
     if( r )
     {
-        us_log_debug( "Response code is %d, content length is %ld", self->m_response_header->m_code, self->m_response_content->m_cur_length );
+        us_log_debug( "Response code is %d, content length is %ld", self->m_response_header->m_code, us_buffer_readable_count( self->m_response_content) );
     }
     return r;
 }
@@ -343,45 +330,29 @@ bool us_http_server_handler_dispatch(
 )
 {
     bool r=false;
-    us_queue_t *incoming = &self->m_base.m_incoming_queue;
-    us_queue_t *outgoing = &self->m_base.m_outgoing_queue;
-    us_buffer_t request_content;
-    us_buffer_t response_header_buffer;
+    us_buffer_t *incoming = &self->m_base.m_incoming_queue;
+    us_buffer_t *outgoing = &self->m_base.m_outgoing_queue;
     us_log_tracepoint();
-    us_buffer_init(
-        &request_content,
-        0,
-        incoming->m_buf + incoming->m_next_out,
-        us_queue_readable_count( incoming )
-    );
-    request_content.m_cur_length = request_content.m_max_length;
     if( self->m_director->dispatch(
                 self->m_director,
                 self->m_request_header,
-                &request_content,
+                incoming,
                 self->m_response_header,
                 self->m_response_content
             )>=0 )
     {
-        us_buffer_init(
-            &response_header_buffer,
-            0,
-            outgoing->m_buf,
-            outgoing->m_buf_size
-        );
         r=us_http_response_header_flatten(
               self->m_response_header,
-              &response_header_buffer
+              outgoing
           );
         if( r )
         {
-            outgoing->m_next_in = response_header_buffer.m_cur_length;
             /* Send content if it was not a HEAD request */
             if( strcmp(self->m_request_header->m_method,"HEAD")!=0 )
             {
-                if( us_queue_writable_count( outgoing )>self->m_response_content->m_cur_length )
+                if( us_buffer_writable_count( outgoing ) > us_buffer_readable_count( self->m_response_content ) )
                 {
-                    us_queue_write(outgoing,self->m_response_content->m_buffer,self->m_response_content->m_cur_length);
+                    us_buffer_write_buffer( outgoing, self->m_response_content );
                     us_http_server_handler_set_state_sending_response(self);
                     /* response header and response content is now in the outgoing buffer */
                     r=true;
@@ -417,7 +388,7 @@ bool us_http_server_handler_readable_request_content(
 {
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=true;
-    us_queue_t *incoming = &self->m_base.m_incoming_queue;
+    us_buffer_t *incoming = &self->m_base.m_incoming_queue;
     us_log_tracepoint();
     /* if content length is -1, we read until close */
     /* if content length is non zero, we read until incoming queue contains that much */
@@ -425,7 +396,7 @@ bool us_http_server_handler_readable_request_content(
     {
         r=true;
     }
-    else if( us_queue_readable_count(incoming) >= self->m_todo_count )
+    else if( us_buffer_readable_count(incoming) >= self->m_todo_count )
     {
         us_log_debug("got request content of %d bytes", self->m_todo_count );
         r=us_http_server_handler_dispatch( self );
@@ -457,6 +428,7 @@ bool us_http_server_handler_writable_response(
     us_reactor_handler_tcp_t *self_
 )
 {
+    (void)self_;
     /* once the entire response is sent, close the socket */
     us_log_tracepoint();
     us_log_debug( "entire response sent, socket is closing");
@@ -468,6 +440,7 @@ bool us_http_server_handler_eof_response(
 )
 {
     bool r=true;
+    (void)self_;
     /* eof on incoming data while sending response header is to be ignored */
     us_log_tracepoint();
     us_log_debug( "incoming socket closed during response, ignored");

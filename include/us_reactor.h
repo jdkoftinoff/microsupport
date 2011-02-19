@@ -277,8 +277,8 @@ extern "C"
         us_reactor_handler_t m_base;
         int m_xfer_buf_size;
         char *m_xfer_buf;
-        us_queue_t m_outgoing_queue;
-        us_queue_t m_incoming_queue;
+        us_buffer_t m_outgoing_queue;
+        us_buffer_t m_incoming_queue;
 
         void ( *close ) (
             struct us_reactor_handler_tcp_s *self

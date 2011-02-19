@@ -82,7 +82,6 @@ extern "C"
         us_allocator_t *allocator,
         int fd,
         void *extra,
-        int32_t max_request_buffer_size,
         int32_t max_response_buffer_size,
         struct us_webapp_director_s *director
     );

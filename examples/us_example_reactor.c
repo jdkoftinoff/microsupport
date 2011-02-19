@@ -31,6 +31,7 @@
 #include "us_buffer.h"
 #include "us_net.h"
 #include "us_logger_printer.h"
+#include "us_logger_stdio.h"
 
 #include "us_testutil.h"
 
@@ -139,7 +140,7 @@ bool us_example_reactor_handler_http_init (
         self->readable = us_example_reactor_handler_http_readable;
         self->tick = us_example_reactor_handler_http_tick;
         self->closed = us_example_reactor_handler_http_closed;
-        us_queue_write(&self->m_outgoing_queue, (const uint8_t*)req, strlen(req) );
+        us_buffer_write(&self->m_outgoing_queue, (const uint8_t*)req, strlen(req) );
     }
     return r;
 }
@@ -167,10 +168,10 @@ bool us_example_reactor_handler_http_readable (
 )
 {
     FILE *f = (FILE *) self->m_base.m_extra;
-    fprintf( f, "HTTP Response data (len=%d):\n", us_queue_readable_count(&self->m_incoming_queue) );
-    while ( us_queue_can_read_byte ( &self->m_incoming_queue ) )
+    fprintf( f, "HTTP Response data (len=%d):\n", us_buffer_readable_count(&self->m_incoming_queue) );
+    while ( us_buffer_can_read_byte ( &self->m_incoming_queue ) )
     {
-        char c = ( char ) us_queue_read_byte ( &self->m_incoming_queue );
+        char c = ( char ) us_buffer_read_byte ( &self->m_incoming_queue );
         fprintf( f, "%c", c );
     }
     return true;
@@ -187,12 +188,12 @@ bool us_example_reactor_handler_echo_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     /* echo all incoming data from input queue to output queue while converting to uppercase */
-    while ( us_queue_can_write_byte ( &self->m_outgoing_queue ) &&
-            us_queue_can_read_byte ( &self->m_incoming_queue ) )
+    while ( us_buffer_can_write_byte ( &self->m_outgoing_queue ) &&
+            us_buffer_can_read_byte ( &self->m_incoming_queue ) )
     {
-        uint8_t c = us_queue_read_byte ( &self->m_incoming_queue );
+        uint8_t c = us_buffer_read_byte ( &self->m_incoming_queue );
         c = toupper ( c );
-        us_queue_write_byte ( &self->m_outgoing_queue, c );
+        us_buffer_write_byte ( &self->m_outgoing_queue, c );
     }
     return true;
 }
@@ -329,9 +330,9 @@ bool us_example_reactor_handler_quitter_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     /* wait for the letter Q, then signal a quit flag */
-    while ( us_queue_can_read_byte ( &self->m_incoming_queue ) )
+    while ( us_buffer_can_read_byte ( &self->m_incoming_queue ) )
     {
-        char c = ( char ) us_queue_read_byte ( &self->m_incoming_queue );
+        char c = ( char ) us_buffer_read_byte ( &self->m_incoming_queue );
         if ( c == 'Q' )
         {
             global_quit = true;
@@ -403,6 +404,10 @@ int main ( int argc, char **argv )
 {
     us_malloc_allocator_t allocator;
     bool r;
+#if US_ENABLE_LOGGING
+    us_logger_stdio_start ( stdout, stderr );
+#endif
+    us_log_set_level ( US_LOG_LEVEL_TRACE );
     us_malloc_allocator_init( &allocator );
     r = us_example_reactor( &allocator.m_base );
     us_malloc_allocator_destroy( &allocator.m_base );

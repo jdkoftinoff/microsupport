@@ -132,7 +132,10 @@ extern "C"
      @param buffer pointer to buffer to parse
      @returns int count of packets parsed
      */
-#  define us_slip_decoder_parse_buffer( self, buffer ) us_slip_decoder_parse( (self), (buffer)->m_buffer, (buffer)->m_cur_length )
+    int us_slip_decoder_parse_buffer (
+        us_slip_decoder_t *self,
+        us_buffer_t *buffer
+    );
 
     /** Encode a complete packet from src_buffer into
      dest_buffer with slip packet framing. Does not clear the
