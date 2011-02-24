@@ -241,6 +241,10 @@ void us_allocator_heap_internal_free ( us_allocator_heap_t *self, void *ptr )
             self->m_current_allocation_count -= sz;
             block->m_size = -sz;
         }
+        else
+        {
+            us_log_error( "attempt to double free a memory heap block" );
+        }
         /* call pack() to pack it and any free blocks before and after it */
         us_allocator_heap_pack ( self, block );
     }
