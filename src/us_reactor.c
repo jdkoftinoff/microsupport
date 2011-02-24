@@ -667,11 +667,6 @@ bool us_reactor_handler_tcp_init (
             r=false;
         }
     }
-    if( !r )
-    {
-        us_log_error( "destroying failed tcp handler" );
-        self->m_base.destroy ( &self->m_base );
-    }
     return r;
 }
 
@@ -969,8 +964,8 @@ bool us_reactor_handler_tcp_client_init (
        );
     if( r )
     {
-        self->m_client_host = client_host;
-        self->m_client_port = client_port;
+        self->m_client_host = us_strdup( allocator, client_host );
+        self->m_client_port = us_strdup( allocator, client_port );
         self->m_is_connected = false;
         if( keep_open )
         {
@@ -990,10 +985,13 @@ bool us_reactor_handler_tcp_client_init (
 }
 
 void us_reactor_handler_tcp_client_destroy (
-    us_reactor_handler_t *self
+    us_reactor_handler_t *self_
 )
 {
-    us_reactor_handler_tcp_destroy( self );
+    us_reactor_handler_tcp_client_t *self = (us_reactor_handler_tcp_client_t *)self_;
+    us_delete( self->m_base.m_base.m_allocator, self->m_client_host );
+    us_delete( self->m_base.m_base.m_allocator, self->m_client_port );
+    us_reactor_handler_tcp_destroy( self_ );
 }
 
 bool us_reactor_handler_tcp_client_tick (
