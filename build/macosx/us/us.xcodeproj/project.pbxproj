@@ -101,6 +101,9 @@
 		BFF4CBCF11613BC5002C7012 /* us_testutil.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBBA11613BC5002C7012 /* us_testutil.c */; };
 		BFF4CBD011613BC5002C7012 /* us_time.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBBB11613BC5002C7012 /* us_time.c */; };
 		BFF4CBD111613BC5002C7012 /* us_world.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF4CBBC11613BC5002C7012 /* us_world.c */; };
+		BFF76533131A098400E69E2C /* us_osc_sender_tcp.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF76532131A098400E69E2C /* us_osc_sender_tcp.c */; };
+		BFF76536131A099400E69E2C /* us_osc_sender_udp.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF76534131A099400E69E2C /* us_osc_sender_udp.c */; };
+		BFF76537131A099400E69E2C /* us_osc_sender.c in Sources */ = {isa = PBXBuildFile; fileRef = BFF76535131A099400E69E2C /* us_osc_sender.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -258,6 +261,12 @@
 		BFF4CBBA11613BC5002C7012 /* us_testutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_testutil.c; path = ../../../src/us_testutil.c; sourceTree = SOURCE_ROOT; };
 		BFF4CBBB11613BC5002C7012 /* us_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_time.c; path = ../../../src/us_time.c; sourceTree = SOURCE_ROOT; };
 		BFF4CBBC11613BC5002C7012 /* us_world.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_world.c; path = ../../../src/us_world.c; sourceTree = SOURCE_ROOT; };
+		BFF7652E131A097200E69E2C /* us_osc_sender_tcp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_osc_sender_tcp.h; path = ../../../include/us_osc_sender_tcp.h; sourceTree = "<group>"; };
+		BFF7652F131A097200E69E2C /* us_osc_sender_udp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_osc_sender_udp.h; path = ../../../include/us_osc_sender_udp.h; sourceTree = "<group>"; };
+		BFF76530131A097200E69E2C /* us_osc_sender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_osc_sender.h; path = ../../../include/us_osc_sender.h; sourceTree = "<group>"; };
+		BFF76532131A098400E69E2C /* us_osc_sender_tcp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_osc_sender_tcp.c; path = ../../../src/us_osc_sender_tcp.c; sourceTree = "<group>"; };
+		BFF76534131A099400E69E2C /* us_osc_sender_udp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_osc_sender_udp.c; path = ../../../src/us_osc_sender_udp.c; sourceTree = "<group>"; };
+		BFF76535131A099400E69E2C /* us_osc_sender.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_osc_sender.c; path = ../../../src/us_osc_sender.c; sourceTree = "<group>"; };
 		D2AAC046055464E500DB518D /* libus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libus.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -289,6 +298,9 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				BFF76534131A099400E69E2C /* us_osc_sender_udp.c */,
+				BFF76535131A099400E69E2C /* us_osc_sender.c */,
+				BFF76532131A098400E69E2C /* us_osc_sender_tcp.c */,
 				BFDE27F812FC6BAD0084842D /* us_http_client.c */,
 				BFDE27F912FC6BAD0084842D /* us_http_server.c */,
 				BFDE27FA12FC6BAD0084842D /* us_mdns_avahi.c */,
@@ -414,6 +426,9 @@
 		BFAA50BE1247C8E600FF1616 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				BFF7652E131A097200E69E2C /* us_osc_sender_tcp.h */,
+				BFF7652F131A097200E69E2C /* us_osc_sender_udp.h */,
+				BFF76530131A097200E69E2C /* us_osc_sender.h */,
 				BFDE27EE12FC6B710084842D /* us_http_client.h */,
 				BFDE27EF12FC6B710084842D /* us_http_server.h */,
 				BFDE27F012FC6B710084842D /* us_mdns_avahi.h */,
@@ -631,6 +646,9 @@
 				BFDE280912FC6BAD0084842D /* us_webapp_fs.c in Sources */,
 				BFDE280A12FC6BAD0084842D /* us_webapp_json.c in Sources */,
 				BFDE280B12FC6BAD0084842D /* us_webapp.c in Sources */,
+				BFF76533131A098400E69E2C /* us_osc_sender_tcp.c in Sources */,
+				BFF76536131A099400E69E2C /* us_osc_sender_udp.c in Sources */,
+				BFF76537131A099400E69E2C /* us_osc_sender.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,7 +663,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = us;
 			};
