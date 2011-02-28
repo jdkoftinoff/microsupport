@@ -61,7 +61,24 @@ bool us_osc_sender_can_send( us_osc_sender_t *self )
 
 bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address, const char *typetags, ... )
 {
-    /* TODO: make va_args form of us_osc_msg_form() and use it here with statically allocated allocators */
-    return false;
+    bool r=false;
+    us_osc_msg_t *msg;
+    us_simple_allocator_t tmp_allocator;
+    char buf[1024];
+    va_list ap;
+    us_simple_allocator_init( &tmp_allocator, buf, sizeof(buf) );
+    va_start( ap, typetags );
+    msg = us_osc_msg_vform( &tmp_allocator.m_base, address, typetags, ap );
+    if( msg )
+    {
+        r=self->send_msg( self, msg );
+        msg->destroy( msg );
+    }
+    else
+    {
+        us_log_error( "unable to form osc message" );
+    }
+    va_end( ap );
+    return r;
 }
 

@@ -65,12 +65,26 @@ us_osc_msg_form(
     ...
 )
 {
+    us_osc_msg_t *r=0;
+    va_list ap;
+    va_start( ap, typetags );
+    r=us_osc_msg_vform( allocator, address, typetags, ap );
+    va_end( ap );
+    return r;
+}
+
+us_osc_msg_t *
+us_osc_msg_vform(
+    us_allocator_t *allocator,
+    const char *address,
+    const char *typetags,
+    va_list ap
+)
+{
     us_osc_msg_t *r = 0;
     us_osc_msg_t *self;
-    va_list ap;
     const char *t=typetags;
     us_osc_msg_element_t *e;
-    va_start( ap, typetags );
     if ( *t==',' )
         ++t;
     self = us_osc_msg_create( allocator, address );
@@ -184,7 +198,6 @@ us_osc_msg_form(
             }
         }
     }
-    va_end( ap );
     return r;
 }
 

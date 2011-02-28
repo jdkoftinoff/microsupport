@@ -100,6 +100,14 @@ extern "C"
         ...
     );
 
+    us_osc_msg_t *
+    us_osc_msg_vform(
+        us_allocator_t *allocator,
+        const char *address,
+        const char *typetags,
+        va_list args
+    );
+
 
     us_osc_msg_element_t *
     us_osc_msg_append(
