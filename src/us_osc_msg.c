@@ -1407,8 +1407,10 @@ us_osc_parse(
 )
 {
     bool r=false;
+    int start_pos=buffer->m_next_out;
     *msg = 0;
     *bundle = 0;
+    
     if( us_osc_msg_is_msg(buffer) )
     {
         *msg = us_osc_msg_unflatten(allocator, buffer);
@@ -1421,6 +1423,12 @@ us_osc_parse(
         if( *bundle )
             r=true;
     }
+    if( !r )
+    {
+        us_log_error( "Error parsing OSC message" );
+        /* rewind the buffer */
+        buffer->m_next_out = start_pos;
+   }
     return r;
 }
 
