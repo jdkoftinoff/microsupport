@@ -197,7 +197,8 @@ extern "C"
     us_osc_msg_bundle_t *
     us_osc_msg_bundle_unflatten(
         us_allocator_t *allocator,
-        us_buffer_t *buf
+        us_buffer_t *buf,
+        int32_t bundle_size
     );
 
     /*@}*/
@@ -807,7 +808,8 @@ extern "C"
         us_allocator_t *allocator,
         us_osc_msg_t **msg,
         us_osc_msg_bundle_t **bundle,
-        us_buffer_t *buffer
+        us_buffer_t *buffer,
+        int32_t packet_size
     );
 
     /*@}*/

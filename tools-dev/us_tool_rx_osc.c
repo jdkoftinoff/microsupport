@@ -4,6 +4,8 @@
 #include "us_net.h"
 #include "us_reactor.h"
 #include "us_osc_msg.h"
+#include "us_osc_msg_print.h"
+#include "us_buffer_print.h"
 
 /**
  \addtogroup us_tool_rx_osc
@@ -20,7 +22,7 @@ void us_tool_rx_osc_udp_packet_received(
     bool r=false;
     us_osc_msg_t *msg;
     us_osc_msg_bundle_t *bundle;
-    r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf);
+    r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf, us_buffer_readable_count(buf));
     if( r )
     {
         if( msg )
@@ -75,81 +77,56 @@ bool us_tool_rx_osc_tcp_handler_readable (
     {
         if( self->m_in_header  )
         {
-            if( us_buffer_readable_count( incoming )>=4 )
+            if( us_buffer_read_int32( incoming, (int32_t*)&self->m_todo_count ) )
             {
-                self->m_todo_count =
-                    (((int32_t)us_buffer_read_byte( incoming )) << 24) +
-                    (((int32_t)us_buffer_read_byte( incoming )) << 16) +
-                    (((int32_t)us_buffer_read_byte( incoming )) << 8)+
-                    (((int32_t)us_buffer_read_byte( incoming )) << 0);
                 self->m_in_header = false;
                 us_log_debug( "got osc length field: %d", self->m_todo_count );
             }
-            if( self->m_in_header == true )
+            else
             {
                 done=true;
             }
         }
         if( !self->m_in_header )
         {
-            if( us_buffer_readable_count( incoming )>=self->m_todo_count )
+            int32_t readable = us_buffer_readable_count(incoming);
+            /* we are expecting todo_count data. Wait until queue contains it all */
+            if( readable>=self->m_todo_count )
             {
-                uint8_t flattened[4096];
-                int p=0;
-                while ( us_buffer_can_read_byte ( incoming ) )
+                us_osc_msg_t *msg=0;
+                us_osc_msg_bundle_t *bundle=0;
+                if( us_osc_parse(self->m_base.m_base.m_allocator, &msg, &bundle, incoming, self->m_todo_count) )
                 {
-                    if( p<sizeof(flattened) )
+                    /* Now that we successfully got an osc message, it is safe to go back into header mode */
+                    if( msg )
                     {
-                        flattened[p] = us_buffer_read_byte(incoming);
+                        us_log_debug( "parsed osc message" );
+                        us_osc_msg_print( msg, us_stdout );
+                        msg->destroy( msg );
                     }
-                    if( ++p == self->m_todo_count )
+                    if( bundle )
                     {
-                        bool r;
-                        us_buffer_t buf;
-                        us_osc_msg_t *msg;
-                        us_osc_msg_bundle_t *bundle;
-                        us_buffer_init(&buf, 0, flattened, sizeof(flattened));
-                        buf.m_next_in = p;
-                        buf.m_next_out = 0;
-                        us_log_debug( "pulled in raw osc msg of length %d", p );
-                        r=us_osc_parse(self->m_base.m_base.m_allocator, &msg, &bundle, &buf);
-                        if( !r )
-                        {
-                            us_log_error( "unable to parse osc message" );
-                            break;
-                        }
-                        else
-                        {
-                            if( msg )
-                            {
-                                us_log_debug( "parsed osc msg" );
-                                msg->print( msg, us_stdout );
-                                us_stdout->printf( us_stdout, "\n" );
-                                if( self->received_osc )
-                                {
-                                    self->received_osc( self, msg );
-                                }
-                                msg->destroy( msg );
-                            }
-                            if( bundle )
-                            {
-                                us_log_debug( "parsed osc bundle" );
-                                bundle->print( bundle, us_stdout );
-                                us_stdout->printf( us_stdout, "\n" );
-                                if( self->received_osc_bundle )
-                                {
-                                    self->received_osc_bundle( self, bundle );
-                                }
-                                bundle->destroy( bundle );
-                            }
-                            self->m_in_header = true;
-                        }
+                        us_log_debug( "parsed osc bundle" );
+                        us_osc_msg_bundle_print( bundle, us_stdout );
+                        bundle->destroy( bundle );
                     }
+                    self->m_in_header = true;
                 }
-                if( self->m_in_header == false )
+                else
                 {
-                    done=true;
+                    if( us_log_level>=US_LOG_LEVEL_DEBUG )
+                    {
+                        us_buffer_print( incoming, us_stdout );
+                    }
+                    us_log_error( "unable to parse osc message, closing socket" );
+                    self->m_in_header = true;
+                    self->m_base.close( &self->m_base );
+                    return false;
                 }
+            }
+            else
+            {
+                done=true;
             }
         }
     }

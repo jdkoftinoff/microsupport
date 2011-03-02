@@ -330,17 +330,20 @@ us_osc_msg_bundle_flatten(
 us_osc_msg_bundle_t *
 us_osc_msg_bundle_unflatten(
     us_allocator_t *allocator,
-    us_buffer_t *buf
+    us_buffer_t *buf,
+    int32_t bundle_size
 )
 {
+    int32_t todo=bundle_size;
     us_osc_msg_bundle_t *result = 0;
     us_osc_msg_bundle_t *bundle = 0;
     us_log_tracepoint();
-    if ( us_osc_msg_is_msg_bundle(buf) )
+    if ( us_osc_msg_is_msg_bundle(buf) && us_buffer_readable_count( buf )>=todo )
     {
         uint32_t timetag_high;
         uint32_t timetag_low;
         us_buffer_advance(buf,8);
+        todo-=8;
         if ( us_buffer_read_uint64(
                     buf,
                     &timetag_high,
@@ -348,6 +351,7 @@ us_osc_msg_bundle_unflatten(
                 ) )
         {
             us_osc_msg_t *msg = 0;
+            todo-=8;
             bundle = us_osc_msg_bundle_create(
                          allocator,
                          timetag_high,
@@ -358,7 +362,7 @@ us_osc_msg_bundle_unflatten(
                 us_log_error( "Creating osc bundle" );
                 return 0;
             }
-            while ( us_buffer_can_read_byte(buf) )
+            while ( todo>0 )
             {
                 bool r = false;
                 int32_t msg_size = 0;
@@ -383,6 +387,7 @@ us_osc_msg_bundle_unflatten(
                     us_log_error( "OSC message size %d >1024", msg_size );
                     return 0;
                 }
+                todo -=4;
                 /* try unflatten message */
                 msg = us_osc_msg_unflatten(
                           allocator,
@@ -394,6 +399,7 @@ us_osc_msg_bundle_unflatten(
                     us_log_error( "unflattening osc message" );
                     return 0;
                 }
+                todo-=msg_size;
                 /* append msg to bundle or else fail */
                 if ( us_osc_msg_bundle_append(
                             bundle,
@@ -1403,14 +1409,14 @@ us_osc_parse(
     us_allocator_t *allocator,
     us_osc_msg_t **msg,
     us_osc_msg_bundle_t **bundle,
-    us_buffer_t *buffer
+    us_buffer_t *buffer,
+    int32_t packet_size
 )
 {
     bool r=false;
     int start_pos=buffer->m_next_out;
     *msg = 0;
     *bundle = 0;
-    
     if( us_osc_msg_is_msg(buffer) )
     {
         *msg = us_osc_msg_unflatten(allocator, buffer);
@@ -1419,7 +1425,7 @@ us_osc_parse(
     }
     else if( us_osc_msg_is_msg_bundle(buffer) )
     {
-        *bundle = us_osc_msg_bundle_unflatten(allocator, buffer);
+        *bundle = us_osc_msg_bundle_unflatten(allocator, buffer, packet_size);
         if( *bundle )
             r=true;
     }
@@ -1428,7 +1434,7 @@ us_osc_parse(
         us_log_error( "Error parsing OSC message" );
         /* rewind the buffer */
         buffer->m_next_out = start_pos;
-   }
+    }
     return r;
 }
 
