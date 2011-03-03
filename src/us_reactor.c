@@ -32,10 +32,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_logger.h"
 
-#if 0
+#if defined(US_REACTOR_DEBUG)
+#define us_reactor_log_debug us_log_debug
 #define US_REACTOR_TCP_TRACE_TX
 #define US_REACTOR_TCP_TRACE_RX
+#else
+#define us_reactor_log_debug(...) do { } while(0)
 #endif
+
 
 bool us_reactor_handler_init (
     us_reactor_handler_t *self,
@@ -137,7 +141,7 @@ void us_reactor_collect_finished( us_reactor_t *self )
         if ( ( *item )->m_finished == true || (*item)->m_fd==-1 )
         {
             us_reactor_handler_t *next = ( *item )->m_next;
-            us_log_debug( "reactor item %p finished", (void *)*item );
+            us_reactor_log_debug( "reactor item %p finished", (void *)*item );
             self->remove_item( self, *item );
             *item = next;
         }
@@ -166,12 +170,12 @@ void us_reactor_fill_poll( us_reactor_t *self )
             p->fd = item->m_fd;
             if ( item->m_wake_on_readable && item->readable != 0 )
             {
-                us_log_debug( "item %p wor fd=%d", (void *)item, item->m_fd );
+                us_reactor_log_debug( "item %p wor fd=%d", (void *)item, item->m_fd );
                 p->events |= POLLIN;
             }
             if ( item->m_wake_on_writable && item->writable != 0 )
             {
-                us_log_debug( "item %p wow fd=%d", (void *)item, item->m_fd );
+                us_reactor_log_debug( "item %p wow fd=%d", (void *)item, item->m_fd );
                 p->events |= POLLOUT;
             }
         }
@@ -195,7 +199,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         if ( n < 0 && errno!=EINTR )
         {
             /* error doing poll, stop loop */
-            us_log_debug( "error doing poll, errno=%d", errno );
+            us_reactor_log_debug( "error doing poll, errno=%d", errno );
             r = false;
         }
         if ( n > 0 )
@@ -214,22 +218,22 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                 }
                 if ( item->m_wake_on_readable && ( p->revents & POLLIN ) )
                 {
-                    us_log_debug( "item %p fd %d is readable", item, item->m_fd );
+                    us_reactor_log_debug( "item %p fd %d is readable", item, item->m_fd );
                     item->readable ( item );
                 }
                 if ( item->m_wake_on_writable && ( p->revents & POLLOUT ) )
                 {
-                    us_log_debug( "item %p fd %d is writable", item, item->m_fd );
+                    us_reactor_log_debug( "item %p fd %d is writable", item, item->m_fd );
                     item->writable ( item );
                 }
                 if( (p->revents & POLLHUP) )
                 {
-                    us_log_debug("poll item %p fd %d got HUP: %d", (void *)item, item->m_fd, p->revents );
+                    us_reactor_log_debug("poll item %p fd %d got HUP: %d", (void *)item, item->m_fd, p->revents );
                     us_reactor_handler_finish( item );
                 }
                 if( (p->revents & POLLERR) )
                 {
-                    us_log_debug("poll item %p fd %d got ERR: %d", (void *)item, item->m_fd, p->revents );
+                    us_reactor_log_debug("poll item %p fd %d got ERR: %d", (void *)item, item->m_fd, p->revents );
                     us_reactor_handler_finish( item );
                 }
                 if( (p->revents & POLLNVAL) )
@@ -352,7 +356,7 @@ bool us_reactor_remove_item (
 {
     bool r = false;
     us_reactor_handler_t **node = &self->m_handlers;
-    us_log_debug( "removing reactor item %p fd %d finished %d", (void*)item, item->m_fd, item->m_finished );
+    us_reactor_log_debug( "removing reactor item %p fd %d finished %d", (void*)item, item->m_fd, item->m_finished );
     while ( *node )
     {
         if ( *node == item )
@@ -481,12 +485,12 @@ bool us_reactor_create_server (
                            );
                         if( e1==0 )
                         {
-                            us_log_debug( "Added listener on [%s]:%s", host_buf, port_buf );
+                            us_reactor_log_debug( "Added listener on [%s]:%s", host_buf, port_buf );
                         }
                         else
                         {
-                            us_log_debug( "unable to getnameinfo on succesful listening port: %s",
-                                          gai_strerror( e1 ) );
+                            us_reactor_log_debug( "unable to getnameinfo on succesful listening port: %s",
+                                                  gai_strerror( e1 ) );
                         }
                         added_count++;
                     }
@@ -733,10 +737,10 @@ bool us_reactor_handler_tcp_readable (
 #ifdef US_REACTOR_TCP_TRACE_RX
         {
             int i;
-            us_log_debug( "READ TCP DATA (len %d): ", len );
+            us_reactor_log_debug( "READ TCP DATA (len %d): ", len );
             for( i=0; i<len; i++ )
             {
-                us_log_debug( "%02x", self->m_xfer_buf[i] );
+                us_reactor_log_debug( "%02x", self->m_xfer_buf[i] );
             }
         }
 #endif
@@ -801,10 +805,10 @@ bool us_reactor_handler_tcp_writable (
 #ifdef US_REACTOR_TCP_TRACE_TX
         {
             int i;
-            us_log_debug( "WRITE TCP DATA (next_in=%d, next_out=%d) (len=%d): ", self->m_outgoing_queue.m_next_in, self->m_outgoing_queue.m_next_out, outgoing_len );
+            us_reactor_log_debug( "WRITE TCP DATA (next_in=%d, next_out=%d) (len=%d): ", self->m_outgoing_queue.m_next_in, self->m_outgoing_queue.m_next_out, outgoing_len );
             for( i=0; i<len; i++ )
             {
-                us_log_debug( "%02x ", outgoing[i] );
+                us_reactor_log_debug( "%02x ", outgoing[i] );
             }
         }
 #endif
@@ -816,7 +820,7 @@ bool us_reactor_handler_tcp_writable (
         if ( len > 0 )
         {
 #ifdef US_REACTOR_TCP_TRACE
-            us_log_debug( "WROTE (len=%d): ", len );
+            us_reactor_log_debug( "WROTE (len=%d): ", len );
 #endif
             us_buffer_skip ( &self->m_outgoing_queue, len );
             r = true;
@@ -1008,16 +1012,16 @@ bool us_reactor_handler_tcp_client_tick (
         sleep(1);
 #endif
         self->m_try_once = false;
-        us_log_debug( "tcp client connecting '[%s]:%s'", self->m_client_host, self->m_client_port );
+        us_reactor_log_debug( "tcp client connecting '[%s]:%s'", self->m_client_host, self->m_client_port );
         self_->m_base.m_fd = us_reactor_tcp_blocking_connect( self->m_client_host, self->m_client_port );
         if( self_->m_base.m_fd >=0 )
         {
-            us_log_debug( "tcp client connected  '[%s]:%s'", self->m_client_host, self->m_client_port );
+            us_reactor_log_debug( "tcp client connected  '[%s]:%s'", self->m_client_host, self->m_client_port );
             self->m_is_connected=true;
         }
         else
         {
-            us_log_debug( "tcp client connection '[%s]:%s' failed: %s", self->m_client_host, self->m_client_port, strerror(errno) );
+            us_reactor_log_debug( "tcp client connection '[%s]:%s' failed: %s", self->m_client_host, self->m_client_port, strerror(errno) );
         }
     }
     return true;
@@ -1032,12 +1036,12 @@ void us_reactor_handler_tcp_client_closed (
     self->m_is_connected=false;
     if( self->m_keep_open )
     {
-        us_log_debug( "tcp client connection '[%s]:%s' was closed, will re-connect", self->m_client_host, self->m_client_port );
+        us_reactor_log_debug( "tcp client connection '[%s]:%s' was closed, will re-connect", self->m_client_host, self->m_client_port );
         self->m_base.m_base.m_finished=false;
     }
     else
     {
-        us_log_debug( "tcp client connection '[%s]:%s' was closed, will NOT re-connect", self->m_client_host, self->m_client_port );
+        us_reactor_log_debug( "tcp client connection '[%s]:%s' was closed, will NOT re-connect", self->m_client_host, self->m_client_port );
     }
 }
 
