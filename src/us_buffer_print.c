@@ -55,7 +55,7 @@ us_buffer_print (
             int32_t i;
             for ( i = 0; i < len; ++i )
             {
-                r &= printer->printf ( printer, "%02x ", self->m_buffer[ i ] );
+                r &= printer->printf ( printer, "%02x ", us_buffer_peek( self, i ) );
                 if ( !r )
                     break;
             }
@@ -88,7 +88,7 @@ us_buffer_print_string (
             int32_t i;
             for ( i = 0; i < len; ++i )
             {
-                r &= printer->printf ( printer, "%c", self->m_buffer[ i ] );
+                r &= printer->printf ( printer, "%c", us_buffer_peek(self,i) );
                 if ( !r )
                     break;
             }
