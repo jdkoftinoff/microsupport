@@ -33,12 +33,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_logger.h"
 
 #if defined(US_REACTOR_DEBUG)
-#define us_reactor_log_debug us_log_debug
+#define us_reactor_log_debug(fmt,...) us_log_debug( "us_reactor:" # fmt, ##__VA_ARGS__ )
+#define us_reactor_log_trace(fmt,...) us_log_trace( "us_reactor:" # fmt, ##__VA_ARGS__ )
+#define us_reactor_log_tracepoint() us_log_tracepoint()
 #define US_REACTOR_TCP_TRACE_TX
 #define US_REACTOR_TCP_TRACE_RX
 #else
 #define us_reactor_log_debug(...) do { } while(0)
+#define us_reactor_log_trace(...) do { } while(0)
+#define us_reactor_log_tracepoint(...) do { } while(0)
 #endif
+
+#define us_reactor_log_error(fmt,...) us_log_error( "us_reactor:" # fmt, ##__VA_ARGS__ )
 
 
 bool us_reactor_handler_init (
@@ -213,7 +219,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                 struct pollfd *p = &self->m_poll_handlers[n];
                 if( p->fd != item->m_fd )
                 {
-                    us_log_error("item %p fd %d != p->fd", (void*)item, item->m_fd, p->fd );
+                    us_reactor_log_error("item %p fd %d != p->fd", (void*)item, item->m_fd, p->fd );
                     abort();
                 }
                 if ( item->m_wake_on_readable && ( p->revents & POLLIN ) )
@@ -238,7 +244,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                 }
                 if( (p->revents & POLLNVAL) )
                 {
-                    us_log_error("poll item %p fd %d got NVAL: %d", (void *)item, item->m_fd, p->revents );
+                    us_reactor_log_error("poll item %p fd %d got NVAL: %d", (void *)item, item->m_fd, p->revents );
                     us_reactor_handler_finish( item );
                 }
             }
@@ -445,7 +451,7 @@ bool us_reactor_create_server (
             while ( fd==-1 && errno==EINTR );
             if ( fd == -1 )
             {
-                us_log_error( "socket: %s\n", strerror ( errno ) );
+                us_reactor_log_error( "socket: %s\n", strerror ( errno ) );
                 freeaddrinfo ( ai );
                 return false;
             }
@@ -456,7 +462,7 @@ bool us_reactor_create_server (
                 item = server_handler_create(allocator);
                 if ( !item )
                 {
-                    us_log_error( "item create failed" );
+                    us_reactor_log_error( "item create failed" );
                     freeaddrinfo ( ai );
                     return false;
                 }
@@ -464,7 +470,7 @@ bool us_reactor_create_server (
                 {
                     if ( listen ( fd, SOMAXCONN ) != 0 )
                     {
-                        us_log_error( "listen: %s", strerror ( errno ) );
+                        us_reactor_log_error( "listen: %s", strerror ( errno ) );
                         freeaddrinfo ( ai );
                         return false;
                     }
@@ -496,14 +502,14 @@ bool us_reactor_create_server (
                     }
                     else
                     {
-                        us_log_error( "unable to add item to reactor" );
+                        us_reactor_log_error( "unable to add item to reactor" );
                         freeaddrinfo ( ai );
                         return false;
                     }
                 }
                 else
                 {
-                    us_log_error( "unable to init server item" );
+                    us_reactor_log_error( "unable to init server item" );
                     freeaddrinfo ( ai );
                     return false;
                 }
@@ -512,7 +518,7 @@ bool us_reactor_create_server (
             {
                 if ( errno != EADDRINUSE )
                 {
-                    us_log_error( "bind: %s", strerror ( errno ) );
+                    us_reactor_log_error( "bind: %s", strerror ( errno ) );
                     freeaddrinfo ( ai );
                     return false;
                 }
@@ -525,7 +531,7 @@ bool us_reactor_create_server (
     }
     else
     {
-        us_log_error( "getaddrinfo: %s", gai_strerror ( e ) );
+        us_reactor_log_error( "getaddrinfo: %s", gai_strerror ( e ) );
         return false;
     }
     if ( added_count > 0 )
@@ -603,7 +609,7 @@ bool us_reactor_handler_tcp_server_readable (
         if( !client_item )
         {
             /* no client item, therefore fd must close */
-            us_log_error( "accepted incoming socket %d but no client created, closing", accepted_fd );
+            us_reactor_log_error( "accepted incoming socket %d but no client created, closing", accepted_fd );
             closesocket( accepted_fd );
         }
     }
@@ -651,7 +657,7 @@ bool us_reactor_handler_tcp_init (
     }
     else
     {
-        us_log_error( "initializing tcp reactor handler failed" );
+        us_reactor_log_error( "initializing tcp reactor handler failed" );
     }
     if ( r )
     {
@@ -663,7 +669,7 @@ bool us_reactor_handler_tcp_init (
         }
         else
         {
-            us_log_error( "allocation of tcp buffers failed" );
+            us_reactor_log_error( "allocation of tcp buffers failed" );
             us_delete( allocator, in_buf );
             us_delete( allocator, out_buf );
             us_delete( allocator, self->m_xfer_buf );
@@ -694,7 +700,7 @@ bool us_reactor_handler_tcp_tick (
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     int32_t incoming_count = us_buffer_writable_count ( &self->m_incoming_queue );
     bool outgoing_available = us_buffer_can_read_byte ( &self->m_outgoing_queue );
-    us_log_tracepoint();
+    us_reactor_log_tracepoint();
     /* If we have space in our xfer buf, wake up if the socket is readable */
     if ( incoming_count >= self->m_xfer_buf_size )
     {
@@ -716,7 +722,7 @@ bool us_reactor_handler_tcp_tick (
     }
     if ( self->tick )
         r = self->tick ( self );
-    us_log_trace( "fd %d WOR: %d WOW: %d", self->m_base.m_fd, self->m_base.m_wake_on_readable, self->m_base.m_wake_on_writable );
+    us_reactor_log_trace( "fd %d WOR: %d WOW: %d", self->m_base.m_fd, self->m_base.m_wake_on_readable, self->m_base.m_wake_on_writable );
     return r;
 }
 
@@ -726,7 +732,7 @@ bool us_reactor_handler_tcp_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     int len;
-    us_log_tracepoint();
+    us_reactor_log_tracepoint();
     do
     {
         len = recv ( self->m_base.m_fd, self->m_xfer_buf, self->m_xfer_buf_size, 0 );
@@ -773,7 +779,7 @@ void us_reactor_handler_tcp_close(
 )
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-    us_log_tracepoint();
+    us_reactor_log_tracepoint();
     if( !self->m_base.m_finished )
     {
         if( self->closed )
@@ -791,7 +797,7 @@ bool us_reactor_handler_tcp_writable (
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r = false;
     int len;
-    us_log_tracepoint();
+    us_reactor_log_tracepoint();
     len = us_buffer_readable_count ( &self->m_outgoing_queue );
     if( len==0 && self->writable )
     {
@@ -858,7 +864,7 @@ int us_reactor_tcp_blocking_connect (
             fd = socket ( cur_addr->ai_family, cur_addr->ai_socktype, cur_addr->ai_protocol );
             if ( fd == -1 )
             {
-                us_log_error( "socket: %s\n", strerror ( errno ) );
+                us_reactor_log_error( "socket: %s\n", strerror ( errno ) );
                 break;
             }
             e = connect( fd, cur_addr->ai_addr, cur_addr->ai_addrlen );
@@ -874,7 +880,7 @@ int us_reactor_tcp_blocking_connect (
     }
     else
     {
-        us_log_error( "getaddrinfo: %s", gai_strerror ( e ) );
+        us_reactor_log_error( "getaddrinfo: %s", gai_strerror ( e ) );
     }
     return fd;
 }

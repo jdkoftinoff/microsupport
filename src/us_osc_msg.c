@@ -30,8 +30,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-
+#define us_osc_log_error( fmt, ... ) us_log_error( "us_osc_msg: " # fmt, ##__VA_ARGS__ )
+#define us_osc_log_debug( fmt, ... ) us_log_debug( "us_osc_msg: " # fmt, ##__VA_ARGS__ )
 
 bool
 us_osc_msg_is_msg_bundle(
@@ -359,7 +359,7 @@ us_osc_msg_bundle_unflatten(
                      );
             if( !bundle )
             {
-                us_log_error( "Creating osc bundle" );
+                us_osc_log_error( "Creating osc bundle" );
                 return 0;
             }
             while ( todo>0 )
@@ -374,7 +374,7 @@ us_osc_msg_bundle_unflatten(
                 /* failure to read message length means fail */
                 if ( r==false )
                 {
-                    us_log_error( "reading message length" );
+                    us_osc_log_error( "reading message length" );
                     return 0;
                 }
                 /* message length of 0 means no more messages for this bundle */
@@ -384,7 +384,7 @@ us_osc_msg_bundle_unflatten(
                 }
                 if( msg_size>1024 )
                 {
-                    us_log_error( "OSC message size %d >1024", msg_size );
+                    us_osc_log_error( "OSC message size %d >1024", msg_size );
                     return 0;
                 }
                 todo -=4;
@@ -396,7 +396,7 @@ us_osc_msg_bundle_unflatten(
                 /* fail if unflattening message failed */
                 if ( !msg )
                 {
-                    us_log_error( "unflattening osc message" );
+                    us_osc_log_error( "unflattening osc message" );
                     return 0;
                 }
                 todo-=msg_size;
@@ -406,7 +406,7 @@ us_osc_msg_bundle_unflatten(
                             msg
                         )==0 )
                 {
-                    us_log_error( "appending osc message" );
+                    us_osc_log_error( "appending osc message" );
                     return 0;
                 }
             }
@@ -490,13 +490,13 @@ us_osc_msg_unflatten(
                     /* Check for error unflattening element */
                     if ( !e )
                     {
-                        us_log_error( "error unflatten element type '%c'", *cur_type );
+                        us_osc_log_error( "error unflatten element type '%c'", *cur_type );
                         return 0;
                     }
                     /* Check for error appending element to message */
                     if ( !us_osc_msg_append(msg, e ) )
                     {
-                        us_log_error( "error appending osc element" );
+                        us_osc_log_error( "error appending osc element" );
                         return 0;
                     }
                     /* go to next element type */
@@ -505,7 +505,23 @@ us_osc_msg_unflatten(
                 /* Success Parsing Message */
                 result = msg;
             }
+            else
+            {
+                us_osc_log_error( "unable to create msg" );
+            }
         }
+        else
+        {
+            us_osc_log_error( "unable to read typetag string" );
+        }
+    }
+    else
+    {
+        us_osc_log_error( "unable to read address" );
+    }
+    if( result==false )
+    {
+        abort();
     }
     return result;
 }
@@ -1421,17 +1437,28 @@ us_osc_parse(
     {
         *msg = us_osc_msg_unflatten(allocator, buffer);
         if( *msg )
+        {
             r=true;
+        }
+        else
+        {
+            us_osc_log_error( "Error parsing osc message" );
+        }
     }
     else if( us_osc_msg_is_msg_bundle(buffer) )
     {
         *bundle = us_osc_msg_bundle_unflatten(allocator, buffer, packet_size);
         if( *bundle )
+        {
             r=true;
+        }
+        else
+        {
+            us_osc_log_error( "Error parsing osc bundle" );
+        }
     }
     if( !r )
     {
-        us_log_error( "Error parsing OSC message" );
         /* rewind the buffer */
         buffer->m_next_out = start_pos;
     }
