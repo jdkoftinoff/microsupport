@@ -33,8 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_logger.h"
 
 #if defined(US_REACTOR_DEBUG)
-#define us_reactor_log_debug(fmt,...) us_log_debug( "us_reactor:" # fmt, ##__VA_ARGS__ )
-#define us_reactor_log_trace(fmt,...) us_log_trace( "us_reactor:" # fmt, ##__VA_ARGS__ )
+#define us_reactor_log_debug us_log_debug
+#define us_reactor_log_trace us_log_trace
 #define us_reactor_log_tracepoint() us_log_tracepoint()
 #define US_REACTOR_TCP_TRACE_TX
 #define US_REACTOR_TCP_TRACE_RX
@@ -44,7 +44,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define us_reactor_log_tracepoint(...) do { } while(0)
 #endif
 
-#define us_reactor_log_error(fmt,...) us_log_error( "us_reactor:" # fmt, ##__VA_ARGS__ )
+#define us_reactor_log_error us_log_error
 
 
 bool us_reactor_handler_init (

@@ -30,8 +30,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define us_osc_log_error( fmt, ... ) us_log_error( "us_osc_msg: " # fmt, ##__VA_ARGS__ )
-#define us_osc_log_debug( fmt, ... ) us_log_debug( "us_osc_msg: " # fmt, ##__VA_ARGS__ )
+#define us_osc_log_error us_log_error
+#define us_osc_log_debug us_log_debug
 
 bool
 us_osc_msg_is_msg_bundle(
