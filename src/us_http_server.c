@@ -55,8 +55,7 @@ bool us_http_server_handler_init(
             allocator,
             fd,
             extra,
-            max_response_buffer_size,
-            4096
+            max_response_buffer_size
         );
     self->m_base.m_base.destroy = us_http_server_handler_destroy;
     if( r )

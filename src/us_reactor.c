@@ -32,12 +32,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_logger.h"
 
+/* #define US_REACTOR_DEBUG */
+
 #if defined(US_REACTOR_DEBUG)
 #define us_reactor_log_debug us_log_debug
 #define us_reactor_log_trace us_log_trace
 #define us_reactor_log_tracepoint() us_log_tracepoint()
-#define US_REACTOR_TCP_TRACE_TX
-#define US_REACTOR_TCP_TRACE_RX
+//#define US_REACTOR_TCP_TRACE_TX
+//#define US_REACTOR_TCP_TRACE_RX
 #else
 #define us_reactor_log_debug(...) do { } while(0)
 #define us_reactor_log_trace(...) do { } while(0)
@@ -386,7 +388,6 @@ bool us_reactor_create_tcp_client (
     us_allocator_t *allocator,
     void *extra,
     int queue_buf_size,
-    int xfer_buf_size,
     const char *server_host,
     const char *server_port,
     bool keep_open,
@@ -398,7 +399,7 @@ bool us_reactor_create_tcp_client (
     us_reactor_handler_tcp_client_t *handler = (us_reactor_handler_tcp_client_t *)client_handler_create(allocator);
     if( handler )
     {
-        r=client_handler_init( &handler->m_base.m_base, allocator, -1, extra, queue_buf_size, xfer_buf_size, server_host, server_port, keep_open );
+        r=client_handler_init( &handler->m_base.m_base, allocator, -1, extra, queue_buf_size, server_host, server_port, keep_open );
         if( r )
         {
             r=self->add_item( self, &handler->m_base.m_base );
@@ -627,8 +628,7 @@ bool us_reactor_handler_tcp_init (
     us_allocator_t *allocator,
     int fd,
     void *extra,
-    int queue_buf_size,
-    int xfer_buf_size
+    int queue_buf_size
 )
 {
     bool r = false;
@@ -643,7 +643,6 @@ bool us_reactor_handler_tcp_init (
         self->m_base.readable = us_reactor_handler_tcp_readable;
         self->m_base.writable = us_reactor_handler_tcp_writable;
         self->m_base.m_wake_on_readable = true;
-        self->m_xfer_buf_size = xfer_buf_size;
         self->close = us_reactor_handler_tcp_close;
         self->connected = 0;
         self->readable = 0;
@@ -653,7 +652,6 @@ bool us_reactor_handler_tcp_init (
         self->closed = 0;
         in_buf = us_new_array( allocator, uint8_t, queue_buf_size );
         out_buf = us_new_array( allocator, uint8_t, queue_buf_size );
-        self->m_xfer_buf = us_new_array( allocator, char, xfer_buf_size );
     }
     else
     {
@@ -661,7 +659,7 @@ bool us_reactor_handler_tcp_init (
     }
     if ( r )
     {
-        if( in_buf != NULL && out_buf != NULL && self->m_xfer_buf != NULL )
+        if( in_buf != NULL && out_buf != NULL )
         {
             us_buffer_init ( &self->m_incoming_queue, 0, in_buf, queue_buf_size );
             us_buffer_init ( &self->m_outgoing_queue, 0, out_buf, queue_buf_size );
@@ -672,8 +670,6 @@ bool us_reactor_handler_tcp_init (
             us_reactor_log_error( "allocation of tcp buffers failed" );
             us_delete( allocator, in_buf );
             us_delete( allocator, out_buf );
-            us_delete( allocator, self->m_xfer_buf );
-            self->m_xfer_buf = 0;
             r=false;
         }
     }
@@ -688,7 +684,6 @@ void us_reactor_handler_tcp_destroy (
     self->close( self );
     us_delete( self->m_base.m_allocator, self->m_incoming_queue.m_buffer );
     us_delete( self->m_base.m_allocator, self->m_outgoing_queue.m_buffer );
-    us_delete( self->m_base.m_allocator, self->m_xfer_buf );
     us_reactor_handler_destroy ( &self->m_base );
 }
 
@@ -698,11 +693,12 @@ bool us_reactor_handler_tcp_tick (
 {
     bool r = true;
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-    int32_t incoming_count = us_buffer_writable_count ( &self->m_incoming_queue );
+    int32_t incoming_count = us_buffer_contig_writable_count ( &self->m_incoming_queue );
     bool outgoing_available = us_buffer_can_read_byte ( &self->m_outgoing_queue );
     us_reactor_log_tracepoint();
-    /* If we have space in our xfer buf, wake up if the socket is readable */
-    if ( incoming_count >= self->m_xfer_buf_size )
+    /* If we have space in our incoming queue, wake up when the socket is readable */
+
+    if ( incoming_count >0 )
     {
         self->m_base.m_wake_on_readable = true;
     }
@@ -732,25 +728,29 @@ bool us_reactor_handler_tcp_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     int len;
+    int max_len = us_buffer_contig_writable_count( &self->m_incoming_queue );
+    void *p = us_buffer_contig_write_ptr( &self->m_incoming_queue );
     us_reactor_log_tracepoint();
+    if( max_len==0 )
+    {
+        us_log_error( "logic error: contig_writable is 0 but socket is readable" );
+        return false;
+    }
+
     do
     {
-        len = recv ( self->m_base.m_fd, self->m_xfer_buf, self->m_xfer_buf_size, 0 );
+        len = recv ( self->m_base.m_fd, p, max_len, 0 );
     }
     while( len<0 && errno==EINTR );
     if ( len > 0 )
     {
-#ifdef US_REACTOR_TCP_TRACE_RX
-        {
-            int i;
-            us_reactor_log_debug( "READ TCP DATA (len %d): ", len );
-            for( i=0; i<len; i++ )
-            {
-                us_reactor_log_debug( "%02x", self->m_xfer_buf[i] );
-            }
-        }
-#endif
-        us_buffer_write ( &self->m_incoming_queue, ( uint8_t* ) self->m_xfer_buf, len );
+        us_buffer_contig_written( &self->m_incoming_queue,len );
+        us_reactor_log_debug( "socket %d read %d bytes, next_in=%d, next_out=%d",
+                self->m_base.m_fd,
+                len,
+                self->m_incoming_queue.m_next_in,
+                self->m_incoming_queue.m_next_out
+                );
         self->m_base.m_wake_on_readable = true;
         if ( self->readable )
         {
@@ -808,16 +808,6 @@ bool us_reactor_handler_tcp_writable (
     {
         const uint8_t *outgoing = us_buffer_contig_read_ptr ( &self->m_outgoing_queue );
         int outgoing_len = us_buffer_contig_readable_count ( &self->m_outgoing_queue );
-#ifdef US_REACTOR_TCP_TRACE_TX
-        {
-            int i;
-            us_reactor_log_debug( "WRITE TCP DATA (next_in=%d, next_out=%d) (len=%d): ", self->m_outgoing_queue.m_next_in, self->m_outgoing_queue.m_next_out, outgoing_len );
-            for( i=0; i<len; i++ )
-            {
-                us_reactor_log_debug( "%02x ", outgoing[i] );
-            }
-        }
-#endif
         do
         {
             len = send ( self->m_base.m_fd, (const char *)outgoing, outgoing_len, 0 );
@@ -956,7 +946,6 @@ bool us_reactor_handler_tcp_client_init (
     int fd,
     void *extra,
     int queue_buf_size,
-    int xfer_buf_size,
     const char *client_host,
     const char *client_port,
     bool keep_open
@@ -969,8 +958,7 @@ bool us_reactor_handler_tcp_client_init (
            allocator,
            fd,
            extra,
-           queue_buf_size,
-           xfer_buf_size
+           queue_buf_size
        );
     if( r )
     {

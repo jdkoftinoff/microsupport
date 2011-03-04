@@ -180,7 +180,6 @@ extern "C"
         int fd,
         void *extra,
         int queue_buf_size,
-        int xfer_buf_size,
         const char *client_host,
         const char *client_port,
         bool keep_open
@@ -191,7 +190,6 @@ extern "C"
         us_allocator_t *allocator,
         void *extra,
         int queue_buf_size,
-        int xfer_buf_size,
         const char *server_host,
         const char *server_port,
         bool keep_open,
@@ -275,8 +273,6 @@ extern "C"
     typedef struct us_reactor_handler_tcp_s
     {
         us_reactor_handler_t m_base;
-        int m_xfer_buf_size;
-        char *m_xfer_buf;
         us_buffer_t m_outgoing_queue;
         us_buffer_t m_incoming_queue;
 
@@ -314,8 +310,7 @@ extern "C"
         us_allocator_t *allocator,
         int fd,
         void *extra,
-        int queue_buf_size,
-        int xfer_buf_size
+        int queue_buf_size
     );
 
     void us_reactor_handler_tcp_destroy (
@@ -363,7 +358,6 @@ extern "C"
         int fd,
         void *extra,
         int queue_buf_size,
-        int xfer_buf_size,
         const char *client_host,
         const char *client_port,
         bool keep_open

@@ -58,7 +58,6 @@ bool us_example_reactor_handler_http_init (
     int fd,
     void *extra,
     int queue_buf_size,
-    int xfer_buf_size,
     const char *server_host,
     const char *server_port,
     bool keep_open
@@ -126,14 +125,13 @@ bool us_example_reactor_handler_http_init (
     int fd,
     void *extra,
     int queue_buf_size,
-    int xfer_buf_size,
     const char *server_host,
     const char *server_port,
     bool keep_open
 )
 {
     us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
-    bool r = us_reactor_handler_tcp_client_init(self_, allocator, fd, extra, queue_buf_size, xfer_buf_size, server_host, server_port, keep_open);
+    bool r = us_reactor_handler_tcp_client_init(self_, allocator, fd, extra, queue_buf_size, server_host, server_port, keep_open);
     if( r )
     {
         static const char *req = "GET / HTTP/1.0\r\nHost: "US_EXAMPLE_HTTP_HOST"\r\n\r\n";
@@ -218,8 +216,7 @@ bool us_example_reactor_handler_echo_init (
             allocator,
             fd,
             extra,
-            16384,
-            2048
+            16384
         );
     self->readable = us_example_reactor_handler_echo_readable;
     self->tick = 0;
@@ -283,9 +280,8 @@ bool us_example_reactor_handler_quitter_init (
             allocator,
             fd,
             extra,
-            2048,
-            2048
-        );
+            2048        
+            );
     self->readable = us_example_reactor_handler_quitter_readable;
     self->tick = 0;
     return r;
@@ -358,7 +354,6 @@ bool us_example_reactor ( us_allocator_t *allocator )
                 allocator,
                 (void *)stdout,
                 4096,
-                2048,
                 US_EXAMPLE_HTTP_HOST, "80", false,
                 us_example_reactor_handler_http_create,
                 us_example_reactor_handler_http_init

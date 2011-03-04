@@ -134,10 +134,10 @@ extern "C"
      */
     static inline int us_buffer_contig_readable_count ( const us_buffer_t *self )
     {
-        if ( self->m_next_in < self->m_next_out )
-            return ( self->m_max_length - self->m_next_out ) % self->m_max_length;
-        else
-            return ( self->m_next_in - self->m_next_out ) % self->m_max_length;
+        int cnt = us_buffer_readable_count(self);
+        if( self->m_next_in < self->m_next_out )
+            cnt = self->m_max_length-self->m_next_out;
+        return cnt;
     }
 
     static inline const uint8_t *us_buffer_contig_read_ptr ( const us_buffer_t *self )
@@ -273,10 +273,15 @@ extern "C"
      */
     static inline int us_buffer_contig_writable_count ( const us_buffer_t *self )
     {
-        if ( self->m_next_out >= self->m_next_in )
-            return ( ( self->m_max_length - self->m_next_in ) - 1  + self->m_max_length) % ( self->m_max_length );
-        else
-            return ( ( self->m_next_out - self->m_next_in ) - 1  + self->m_max_length) % ( self->m_max_length );
+        int cnt = us_buffer_writable_count(self);
+        if( self->m_next_out <= self->m_next_in )
+            cnt=self->m_max_length-self->m_next_in;
+        return cnt;
+    }
+
+    static inline void us_buffer_contig_written( us_buffer_t *self, int len )
+    {
+        self->m_next_in=(self->m_next_in+len) % self->m_max_length;
     }
 
 
