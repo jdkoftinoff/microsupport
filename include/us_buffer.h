@@ -275,7 +275,11 @@ extern "C"
     {
         int cnt = us_buffer_writable_count(self);
         if( self->m_next_out <= self->m_next_in )
-            cnt=self->m_max_length-self->m_next_in-1; /* max length is not storable, next_in would wrap with next_out */
+        {
+            cnt=self->m_max_length-self->m_next_in; /* max length is not storable, next_in would wrap with next_out */
+            if( self->m_next_out==0 )
+                cnt--;
+        }
         return cnt;
     }
 
