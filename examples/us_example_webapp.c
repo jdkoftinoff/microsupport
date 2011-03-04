@@ -145,7 +145,7 @@ bool us_example_quitter_init (
             fd,
             extra,
             1024
-            );
+        );
     self->readable = us_example_quitter_readable;
     self->tick = 0;
     return r;

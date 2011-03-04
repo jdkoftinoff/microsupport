@@ -697,7 +697,6 @@ bool us_reactor_handler_tcp_tick (
     bool outgoing_available = us_buffer_can_read_byte ( &self->m_outgoing_queue );
     us_reactor_log_tracepoint();
     /* If we have space in our incoming queue, wake up when the socket is readable */
-
     if ( incoming_count >0 )
     {
         self->m_base.m_wake_on_readable = true;
@@ -736,7 +735,6 @@ bool us_reactor_handler_tcp_readable (
         us_log_error( "logic error: contig_writable is 0 but socket is readable" );
         return false;
     }
-
     do
     {
         len = recv ( self->m_base.m_fd, p, max_len, 0 );
@@ -746,11 +744,11 @@ bool us_reactor_handler_tcp_readable (
     {
         us_buffer_contig_written( &self->m_incoming_queue,len );
         us_reactor_log_debug( "socket %d read %d bytes, next_in=%d, next_out=%d",
-                self->m_base.m_fd,
-                len,
-                self->m_incoming_queue.m_next_in,
-                self->m_incoming_queue.m_next_out
-                );
+                              self->m_base.m_fd,
+                              len,
+                              self->m_incoming_queue.m_next_in,
+                              self->m_incoming_queue.m_next_out
+                            );
         self->m_base.m_wake_on_readable = true;
         if ( self->readable )
         {

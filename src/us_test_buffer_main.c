@@ -82,10 +82,8 @@ static bool us_validate_buffer (
     {
         us_log_error ( "Expected writable count: %d got: %d", expected_writable_count, got_writable_count );
     }
-   
     us_log_debug( "Contig writable count is %d", contig_writable );
     us_log_error( "Contig readable count is %d", contig_readable );
-
     us_log_debug ( "buffer next_in=%d, next_out=%d", buffer.m_next_in, buffer.m_next_out );
     return r;
 }
@@ -183,90 +181,89 @@ static bool us_test_buffer ( void )
         int j;
         for( j=0; j<big_loop; ++j )
         {
-        for( i=0; i<repeat_count; ++i )
-        {
-            bool r1=false;
-            if ( us_buffer_append_rounded_string ( buf, "Rounded String" ) )
+            for( i=0; i<repeat_count; ++i )
             {
-                if ( us_buffer_append_int32 ( buf, 0x12345678 ) )
+                bool r1=false;
+                if ( us_buffer_append_rounded_string ( buf, "Rounded String" ) )
                 {
-                    if ( us_buffer_append_uint64 ( buf, 0x89abcdef, 0x01234567 ) )
+                    if ( us_buffer_append_int32 ( buf, 0x12345678 ) )
                     {
-                        r1 = true;
+                        if ( us_buffer_append_uint64 ( buf, 0x89abcdef, 0x01234567 ) )
+                        {
+                            r1 = true;
+                        }
                     }
                 }
-            }
-            if( !r1 )
-            {
-                us_log_error( "unable to append items" );
-            }
-            r&=r1;
-            if( !r )
-                break;
-        }
-        for( i=0; i<repeat_count; ++i )
-        {
-            bool r1=false;
-            {
-                char rs[128];
-                if( us_buffer_read_rounded_string( buf, rs, sizeof(rs) ) )
+                if( !r1 )
                 {
-                    if( strcmp(rs,"Rounded String")==0 )
+                    us_log_error( "unable to append items" );
+                }
+                r&=r1;
+                if( !r )
+                    break;
+            }
+            for( i=0; i<repeat_count; ++i )
+            {
+                bool r1=false;
+                {
+                    char rs[128];
+                    if( us_buffer_read_rounded_string( buf, rs, sizeof(rs) ) )
                     {
-                        int32_t v;
-                        if( us_buffer_read_int32( buf, &v ) )
+                        if( strcmp(rs,"Rounded String")==0 )
                         {
-                            if( v==0x12345678 )
+                            int32_t v;
+                            if( us_buffer_read_int32( buf, &v ) )
                             {
-                                uint32_t a,b;
-                                if( us_buffer_read_uint64( buf, &a, &b ) )
+                                if( v==0x12345678 )
                                 {
-                                    if( a==0x89abcdef && b==0x01234567 )
+                                    uint32_t a,b;
+                                    if( us_buffer_read_uint64( buf, &a, &b ) )
                                     {
-                                        r1=true;
+                                        if( a==0x89abcdef && b==0x01234567 )
+                                        {
+                                            r1=true;
+                                        }
+                                        else
+                                        {
+                                            us_log_error( "unable to validate uint64" );
+                                        }
                                     }
                                     else
                                     {
-                                        us_log_error( "unable to validate uint64" );
+                                        us_log_error( "unable to read uint64" );
                                     }
                                 }
                                 else
                                 {
-                                    us_log_error( "unable to read uint64" );
+                                    us_log_error( "unable to validate int32" );
                                 }
                             }
                             else
                             {
-                                us_log_error( "unable to validate int32" );
+                                us_log_error( "unable to read int32" );
                             }
                         }
                         else
                         {
-                            us_log_error( "unable to read int32" );
+                            us_log_error( "unable to validate rounded string" );
                         }
                     }
                     else
                     {
-                        us_log_error( "unable to validate rounded string" );
+                        us_log_error( "unable to read rounded string" );
                     }
                 }
-                else
+                r&=r1;
+                if( !r )
                 {
-                    us_log_error( "unable to read rounded string" );
+#if US_ENABLE_PRINTING
+                    us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of test buffer:\n" );
+                    us_buffer_print ( buf, us_testutil_printer_stdout );
+                    us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
+#endif
+                    break;
                 }
             }
-
-            r&=r1;
-            if( !r )
-            {
-#if US_ENABLE_PRINTING
-                us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of test buffer:\n" );
-                us_buffer_print ( buf, us_testutil_printer_stdout );
-                us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "\n" );
-#endif
-                break;
-            }
-        }
         }
     }
     else

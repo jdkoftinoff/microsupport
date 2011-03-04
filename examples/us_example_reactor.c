@@ -280,8 +280,8 @@ bool us_example_reactor_handler_quitter_init (
             allocator,
             fd,
             extra,
-            2048        
-            );
+            2048
+        );
     self->readable = us_example_reactor_handler_quitter_readable;
     self->tick = 0;
     return r;
