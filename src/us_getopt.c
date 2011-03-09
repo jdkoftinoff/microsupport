@@ -382,18 +382,20 @@ static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_l
 {
     if( cur->m_next )
     {
-		us_getopt_option_t *option;
-		option=(us_getopt_option_t *)cur->m_options;
-		while( option && option->m_name )
-		{
-			if( option->m_value_type && option->m_value_type==US_GETOPT_STRING && option->m_current_value )
-			{
-				us_delete( allocator, option->m_current_value );
-			}
-			option++;
-		}
+        us_getopt_option_t *option;
+        option=(us_getopt_option_t *)cur->m_options;
+        while( option && option->m_name )
+        {
+            if( option->m_value_type && option->m_value_type==US_GETOPT_STRING && option->m_current_value )
+            {
+                char **pp = (char **)option->m_current_value;
+                us_delete( allocator, *pp );
+                *pp=0;
+            }
+            option++;
+        }
         us_getopt_option_list_destroy( self, cur->m_next, allocator );
-		cur->m_next = 0;
+        cur->m_next = 0;
     }
     us_delete( self->m_allocator, cur );
 }
