@@ -168,7 +168,7 @@ bool us_getopt_string_for_value(
     return r;
 }
 
-bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *default_value )
+bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_type_t type, const void *default_value )
 {
     bool r=true;
     if( default_value )
@@ -207,7 +207,7 @@ bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *defau
             break;
 #endif
         case US_GETOPT_STRING:
-            *(char **)value = strdup( (const char *)default_value );
+            *(char **)value = us_strdup( allocator, (const char *)default_value );
             break;
         default:
             break;
@@ -378,12 +378,22 @@ bool us_getopt_init( us_getopt_t *self, us_allocator_t *allocator )
     return true;
 }
 
-static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_list_t *cur )
+static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_list_t *cur, us_allocator_t *allocator )
 {
     if( cur->m_next )
     {
-        us_getopt_option_list_destroy( self, cur->m_next );
-        cur->m_next = 0;
+		us_getopt_option_t *option;
+		option=(us_getopt_option_t *)cur->m_options;
+		while( option && option->m_name )
+		{
+			if( option->m_value_type && option->m_value_type==US_GETOPT_STRING && option->m_current_value )
+			{
+				us_delete( allocator, option->m_current_value );
+			}
+			option++;
+		}
+        us_getopt_option_list_destroy( self, cur->m_next, allocator );
+		cur->m_next = 0;
     }
     us_delete( self->m_allocator, cur );
 }
@@ -393,7 +403,7 @@ void us_getopt_destroy( us_getopt_t *self )
     us_getopt_option_list_t *cur = self->m_option_lists;
     if( cur )
     {
-        us_getopt_option_list_destroy( self, cur );
+        us_getopt_option_list_destroy( self, cur, self->m_allocator );
     }
     self->m_option_lists = 0;
 }
@@ -433,7 +443,7 @@ bool us_getopt_fill_defaults( us_getopt_t *self )
         const us_getopt_option_t *opt = list->m_options;
         while( opt && r && opt->m_name!=0 )
         {
-            us_getopt_copy_value( opt->m_current_value, opt->m_value_type, opt->m_default_value );
+            us_getopt_copy_value( self->m_allocator, opt->m_current_value, opt->m_value_type, opt->m_default_value );
             opt++;
         }
         list=list->m_next;

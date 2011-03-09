@@ -81,7 +81,7 @@ extern "C"
         int str_len
     );
 
-    bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *default_value );
+    bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_type_t type, const void *default_value );
 
     typedef struct us_getopt_option_s
     {
