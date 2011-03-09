@@ -7,23 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF0FA21811615903004D450A /* libus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0FA215116158E4004D450A /* libus.a */; };
 		BF0FA21B11615916004D450A /* us_test_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0FA21A11615916004D450A /* us_test_buffer.c */; };
+		BF4B598913222A8700FD1484 /* libus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFC6A54F1321422D00DE6609 /* libus.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		BF0FA214116158E4004D450A /* PBXContainerItemProxy */ = {
+		BFC6A54E1321422D00DE6609 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA210116158E4004D450A /* us.xcodeproj */;
+			containerPortal = BFC6A5491321422C00DE6609 /* us.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D2AAC046055464E500DB518D /* libus.a */;
-			remoteInfo = us;
-		};
-		BF0FA216116158F2004D450A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BF0FA210116158E4004D450A /* us.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D2AAC045055464E500DB518D /* us */;
+			remoteGlobalIDString = D2AAC046055464E500DB518D;
 			remoteInfo = us;
 		};
 /* End PBXContainerItemProxy section */
@@ -42,8 +35,8 @@
 
 /* Begin PBXFileReference section */
 		8DD76FB20486AB0100D96B5E /* us_test_buffer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = us_test_buffer; sourceTree = BUILT_PRODUCTS_DIR; };
-		BF0FA210116158E4004D450A /* us.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us.xcodeproj; path = ../us/us.xcodeproj; sourceTree = SOURCE_ROOT; };
 		BF0FA21A11615916004D450A /* us_test_buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_buffer.c; path = ../../../tests/us_test_buffer.c; sourceTree = SOURCE_ROOT; };
+		BFC6A5491321422C00DE6609 /* us.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us.xcodeproj; path = ../us/us.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF0FA21811615903004D450A /* libus.a in Frameworks */,
+				BF4B598913222A8700FD1484 /* libus.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,7 +54,7 @@
 		08FB7794FE84155DC02AAC07 /* us_test_buffer */ = {
 			isa = PBXGroup;
 			children = (
-				BF0FA210116158E4004D450A /* us.xcodeproj */,
+				BFC6A5491321422C00DE6609 /* us.xcodeproj */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6A0FF2B0290797F04C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
@@ -85,10 +78,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BF0FA211116158E4004D450A /* Products */ = {
+		BFC6A54A1321422C00DE6609 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BF0FA215116158E4004D450A /* libus.a */,
+				BFC6A54F1321422D00DE6609 /* libus.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,7 +107,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				BF0FA217116158F2004D450A /* PBXTargetDependency */,
 			);
 			name = us_test_buffer;
 			productInstallPath = "$(HOME)/bin";
@@ -129,13 +121,17 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "us_test_buffer" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* us_test_buffer */;
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = BF0FA211116158E4004D450A /* Products */;
-					ProjectRef = BF0FA210116158E4004D450A /* us.xcodeproj */;
+					ProductGroup = BFC6A54A1321422C00DE6609 /* Products */;
+					ProjectRef = BFC6A5491321422C00DE6609 /* us.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -146,11 +142,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		BF0FA215116158E4004D450A /* libus.a */ = {
+		BFC6A54F1321422D00DE6609 /* libus.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libus.a;
-			remoteRef = BF0FA214116158E4004D450A /* PBXContainerItemProxy */;
+			remoteRef = BFC6A54E1321422D00DE6609 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -165,14 +161,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		BF0FA217116158F2004D450A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = us;
-			targetProxy = BF0FA216116158F2004D450A /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB928608733DD80010E9CD /* Debug */ = {
