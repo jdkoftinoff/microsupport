@@ -69,7 +69,7 @@ void us_allocator_heap_validate_block( us_allocator_heap_block_t *block )
             us_log_error( "block->m_magic is bad" );
             abort();
         }
-        if((uint64_t)block->m_next < 0x1000 && (uint64_t)block->m_next !=0 ) 
+        if((uint64_t)block->m_next < 0x1000 && (uint64_t)block->m_next !=0 )
         {
             us_log_error( "block->m_next is bad" );
             abort();
@@ -93,8 +93,8 @@ bool us_allocator_heap_internal_init( us_allocator_heap_t *self )
     self->m_first->m_magic = US_HEAP_MAGIC;
     self->m_first->m_next = 0;
     self->m_first->m_prev = 0;
-    self->m_first->m_size = - ( (ssize_t *) ( self->m_size )
-                                - (ssize_t *)( us_allocator_rounded_block_size ) ); /* negative size means empty */
+    self->m_first->m_size = - ( self->m_size
+                                - us_allocator_rounded_block_size ); /* negative size means empty */
     /* the first empty block is also our last free block */
     self->m_last_free = self->m_first;
     return true;
@@ -131,8 +131,8 @@ void * us_allocator_heap_alloc( us_allocator_t *self_, int32_t length, int32_t c
     do
     {
         p = us_allocator_heap_internal_alloc( self, us_round_size( length*count ), cur_try, &cur_try );
-    } while( p==0 && cur_try!=0 );
-
+    }
+    while( p==0 && cur_try!=0 );
     return p;
 }
 
@@ -216,7 +216,7 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size,
                         >= size )
                 {
                     /* found a free memory block big enough! */
-                    usable = cur; 
+                    usable = cur;
                     break;
                 }
                 cur = cur->m_next;
@@ -248,12 +248,12 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size,
             usable->m_size = (ssize_t) ( size );
             self->m_current_allocation_count -= ( orig_size - size );
             /* calculate the position of the next block */
-            usable->m_next = ( us_allocator_heap_block_t * ) ( (char * )( usable )
-                                                + size + us_allocator_rounded_block_size );
+            usable->m_next = ( us_allocator_heap_block_t * ) ( (unsigned long long)( usable )
+                             + size + us_allocator_rounded_block_size );
             /* put the links in properly */
             usable->m_next->m_next = orig_next;
             usable->m_next->m_prev = usable;
-            usable->m_magic = US_HEAP_MAGIC;
+            usable->m_next->m_magic = US_HEAP_MAGIC;
             if ( orig_next )
                 orig_next->m_prev = usable->m_next;
             /* figure out how big the left over block is */
@@ -261,12 +261,11 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size,
                                          - (ssize_t) ( size )
                                          - (ssize_t) ( us_allocator_rounded_block_size ) );
             us_allocator_heap_validate_block( usable->m_next );
-            
             self->m_last_free = usable->m_next;
             us_allocator_heap_validate_block( usable );
             us_allocator_heap_validate_block( usable->m_next );
             us_allocator_heap_validate_block( usable->m_prev );
-            ptr = (void * ) ( (char *) ( usable )
+            ptr = (void * ) ( (unsigned long long) ( usable )
                               + us_allocator_rounded_block_size );
             /* return the data section of the block to the caller */
         }
@@ -275,7 +274,6 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size,
     {
         *end_point = usable->m_next;
     }
-
     return ptr;
 }
 
@@ -291,8 +289,7 @@ void us_allocator_heap_internal_free ( us_allocator_heap_t *self, void *ptr )
            to get the MemBlock header address
         */
         us_allocator_heap_block_t *block =
-            (us_allocator_heap_block_t *) ( ( char * ) ( ptr )
-                                            - us_allocator_rounded_block_size );
+            (us_allocator_heap_block_t *) ( ((unsigned long long) ptr) - us_allocator_rounded_block_size );
         if( block->m_magic != US_HEAP_MAGIC )
         {
             us_log_error( "bad magic" );
@@ -371,7 +368,6 @@ void us_allocator_heap_pack ( us_allocator_heap_t *self, us_allocator_heap_block
             us_allocator_heap_validate_block( first );
             us_allocator_heap_validate_block( first->m_next );
             us_allocator_heap_validate_block( last->m_prev );
-
         }
     }
 }
