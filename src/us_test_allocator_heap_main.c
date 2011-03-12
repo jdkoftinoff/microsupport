@@ -1,3 +1,4 @@
+#include <limits.h>
 #include "us_world.h"
 
 #include "us_logger_printer.h"
