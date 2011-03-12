@@ -265,10 +265,10 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size,
             us_allocator_heap_validate_block( usable );
             us_allocator_heap_validate_block( usable->m_next );
             us_allocator_heap_validate_block( usable->m_prev );
-            ptr = (void * ) ( (unsigned long long) ( usable )
-                              + us_allocator_rounded_block_size );
-            /* return the data section of the block to the caller */
         }
+        ptr = (void * ) ( (unsigned long long) ( usable )
+                          + us_allocator_rounded_block_size );
+        /* return the data section of the block to the caller */
     }
     else
     {
