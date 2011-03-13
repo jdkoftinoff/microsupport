@@ -64,7 +64,7 @@ void us_allocator_heap_validate_block( us_allocator_heap_block_t *block )
     }
     if( block )
     {
-        if( block->m_size>0 && block->m_magic != US_HEAP_MAGIC )
+        if( block->m_magic != US_HEAP_MAGIC )
         {
             us_log_error( "block->m_magic is bad" );
             abort();
@@ -77,6 +77,16 @@ void us_allocator_heap_validate_block( us_allocator_heap_block_t *block )
         if( (uint64_t)block->m_prev < 0x1000 && (uint64_t)block->m_prev !=0 )
         {
             us_log_error( "block->m_prev is bad" );
+            abort();
+        }
+        if( ((uint64_t)block->m_prev !=0) && (block->m_prev->m_next!=block) )
+        {
+            us_log_error( "block->m_prev->m_next is bad" );
+            abort();
+        }
+        if( ((uint64_t)block->m_next !=0) && (block->m_next->m_prev!=block) )
+        {
+            us_log_error( "block->m_next->m_prev is bad" );
             abort();
         }
     }
@@ -124,16 +134,9 @@ void us_allocator_heap_destroy( us_allocator_t *self_ )
 
 void * us_allocator_heap_alloc( us_allocator_t *self_, int32_t length, int32_t count )
 {
-    void *p;
     us_allocator_heap_t *self = (us_allocator_heap_t *)self_;
-    us_allocator_heap_block_t *cur_try = 0;
     us_allocator_heap_validate( self );
-    do
-    {
-        p = us_allocator_heap_internal_alloc( self, us_round_size( length*count ), cur_try, &cur_try );
-    }
-    while( p==0 && cur_try!=0 );
-    return p;
+    return( us_allocator_heap_internal_alloc( self, us_round_size( length*count ) ));
 }
 
 void * us_allocator_heap_realloc(
@@ -166,14 +169,12 @@ void us_allocator_heap_reset( us_allocator_heap_t *self )
     us_allocator_heap_internal_init( self );
 }
 
-/**< try allocate an arbitrary buffer */
-void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size, us_allocator_heap_block_t *start_point, us_allocator_heap_block_t **end_point )
+void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size )
 {
-    us_allocator_heap_block_t *cur = start_point;
+    us_allocator_heap_block_t *cur = self->m_last_free;
     us_allocator_heap_block_t *usable = 0;
     void *ptr = 0;
     /* find a free memory block that is big enough */
-    us_allocator_heap_validate( self );
     if ( !cur )
     {
         cur = self->m_first;
@@ -197,7 +198,7 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size,
     }
     while ( cur != NULL );
     /* if cur is NULL, we couldn't find ANY free blocks big enough */
-    if ( usable == NULL )
+    if ( cur == NULL )
     {
         /* We need to pack all free memory. Iterate through all blocks and call pack() on them. */
         cur = self->m_first;
@@ -223,10 +224,9 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size,
             }
             while ( cur != NULL );
         }
-        else
+        if( cur == NULL )
         {
-            /* no memory! return 0 */
-            return 0;
+            return 0; /* no memory! return 0 */
         }
     }
     /*
@@ -235,45 +235,38 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size,
        Only split the block if the block is more than128 bytes larger
        than the requested amount
     */
-    if( usable )
+    usable->m_size = -usable->m_size; /* mark the block as not free. */
+    self->m_current_allocation_count += usable->m_size;
+    if ( (size_t) ( usable->m_size ) > ( size + 128 ) )
     {
-        usable->m_size = -usable->m_size; /* mark the block as not free. */
-        self->m_current_allocation_count += usable->m_size;
-        if ( (size_t) ( usable->m_size ) > ( size + 128 ) )
-        {
-            /* yes, we should split the block into two free blocks */
-            size_t orig_size = usable->m_size;
-            us_allocator_heap_block_t *orig_next = usable->m_next;
-            /* Make the block perfectly sized */
-            usable->m_size = (ssize_t) ( size );
-            self->m_current_allocation_count -= ( orig_size - size );
-            /* calculate the position of the next block */
-            usable->m_next = ( us_allocator_heap_block_t * ) ( (unsigned long long)( usable )
-                             + size + us_allocator_rounded_block_size );
-            /* put the links in properly */
-            usable->m_next->m_next = orig_next;
-            usable->m_next->m_prev = usable;
-            usable->m_next->m_magic = US_HEAP_MAGIC;
-            if ( orig_next )
-                orig_next->m_prev = usable->m_next;
-            /* figure out how big the left over block is */
-            usable->m_next->m_size = - ( (ssize_t) ( orig_size )
-                                         - (ssize_t) ( size )
-                                         - (ssize_t) ( us_allocator_rounded_block_size ) );
-            us_allocator_heap_validate_block( usable->m_next );
-            self->m_last_free = usable->m_next;
-            us_allocator_heap_validate_block( usable );
-            us_allocator_heap_validate_block( usable->m_next );
-            us_allocator_heap_validate_block( usable->m_prev );
-        }
-        ptr = (void * ) ( (unsigned long long) ( usable )
-                          + us_allocator_rounded_block_size );
-        /* return the data section of the block to the caller */
+        /* yes, we should split the block into two free blocks */
+        size_t orig_size = usable->m_size;
+        us_allocator_heap_block_t *orig_next = usable->m_next;
+        /* Make the block perfectly sized */
+        usable->m_size = (ssize_t) ( size );
+        self->m_current_allocation_count -= ( orig_size - size );
+        /* calculate the position of the next block */
+        usable->m_next
+        = ( us_allocator_heap_block_t * ) ( (unsigned long long)( usable )
+                                            + size + us_allocator_rounded_block_size );
+        /* put the links in properly */
+        usable->m_next->m_next = orig_next;
+        usable->m_next->m_prev = usable;
+        usable->m_next->m_magic = US_HEAP_MAGIC;
+        if ( orig_next )
+            orig_next->m_prev = usable->m_next;
+        /* figure out how big the left over block is */
+        usable->m_next->m_size = - ( (ssize_t) ( orig_size )
+                                     - (ssize_t) ( size )
+                                     - (ssize_t) ( us_allocator_rounded_block_size ) );
+        self->m_last_free = usable->m_next;
+        us_allocator_heap_validate_block( usable );
+        us_allocator_heap_validate_block( usable->m_next );
+        us_allocator_heap_validate_block( usable->m_prev );
     }
-    else
-    {
-        *end_point = usable->m_next;
-    }
+    ptr = (void * ) ( (unsigned long long) ( usable )
+                      + us_allocator_rounded_block_size );
+    /* return the data section of the block to the caller */
     return ptr;
 }
 
@@ -362,12 +355,11 @@ void us_allocator_heap_pack ( us_allocator_heap_t *self, us_allocator_heap_block
             first->m_next = last->m_next;
             if ( last->m_next != NULL )
             {
-                last->m_next->m_prev = self->m_first;
+                last->m_next->m_prev = first;
             }
-            us_allocator_heap_validate_block( last );
             us_allocator_heap_validate_block( first );
             us_allocator_heap_validate_block( first->m_next );
-            us_allocator_heap_validate_block( last->m_prev );
+            us_allocator_heap_validate_block( first->m_prev );
         }
     }
 }

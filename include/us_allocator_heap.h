@@ -102,7 +102,7 @@ extern "C"
     void us_allocator_heap_reset( us_allocator_heap_t *self );
 
     /**< try allocate an arbitrary buffer */
-    void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size, us_allocator_heap_block_t *start_point, us_allocator_heap_block_t **end_point  );
+    void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size );
 
     void us_allocator_heap_internal_free ( us_allocator_heap_t *self, void *ptr );
 
