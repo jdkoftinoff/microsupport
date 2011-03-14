@@ -667,7 +667,7 @@ bool us_reactor_handler_tcp_init (
         }
         else
         {
-            us_reactor_log_error( "allocation of tcp buffers failed" );
+            us_reactor_log_error( "allocation of tcp buffers failed (%d)", queue_buf_size );
             us_delete( allocator, in_buf );
             us_delete( allocator, out_buf );
             r=false;
