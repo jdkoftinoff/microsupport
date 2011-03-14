@@ -1,4 +1,3 @@
-#include <limits.h>
 #include "us_world.h"
 
 #include "us_logger_printer.h"
@@ -7,6 +6,8 @@
 
 
 #include "us_testutil.h"
+
+#include <limits.h>
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
