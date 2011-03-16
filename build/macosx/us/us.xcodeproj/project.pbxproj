@@ -20,6 +20,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		BF1827E3133129660004F577 /* us_test_allocator_heap_main.c in Sources */ = {isa = PBXBuildFile; fileRef = BF1827DF133129660004F577 /* us_test_allocator_heap_main.c */; };
+		BF1827E4133129660004F577 /* us_test_osc_dispatch_main.c in Sources */ = {isa = PBXBuildFile; fileRef = BF1827E0133129660004F577 /* us_test_osc_dispatch_main.c */; };
 		BF2050A2128122B400D65536 /* us_osc_io.c in Sources */ = {isa = PBXBuildFile; fileRef = BF2050A1128122B400D65536 /* us_osc_io.c */; };
 		BF4F331F129742C900A25621 /* us_allocator_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = BF4F331E129742C900A25621 /* us_allocator_heap.c */; };
 		BF4F33301297478400A25621 /* us_getopt.c in Sources */ = {isa = PBXBuildFile; fileRef = BF4F332E1297478400A25621 /* us_getopt.c */; };
@@ -108,6 +110,10 @@
 
 /* Begin PBXFileReference section */
 		BF07BBAD127A3A3A00AFCB44 /* us_tool_send_osc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_tool_send_osc.c; path = "../../../tools-dev/us_tool_send_osc.c"; sourceTree = SOURCE_ROOT; };
+		BF1827DD133129040004F577 /* us_test_allocator_heap_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_test_allocator_heap_main.h; path = ../../../include/us_test_allocator_heap_main.h; sourceTree = "<group>"; };
+		BF1827DE133129040004F577 /* us_test_osc_dispatch_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_test_osc_dispatch_main.h; path = ../../../include/us_test_osc_dispatch_main.h; sourceTree = "<group>"; };
+		BF1827DF133129660004F577 /* us_test_allocator_heap_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_allocator_heap_main.c; path = ../../../src/us_test_allocator_heap_main.c; sourceTree = "<group>"; };
+		BF1827E0133129660004F577 /* us_test_osc_dispatch_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_osc_dispatch_main.c; path = ../../../src/us_test_osc_dispatch_main.c; sourceTree = "<group>"; };
 		BF2050A1128122B400D65536 /* us_osc_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_osc_io.c; path = ../../../src/us_osc_io.c; sourceTree = SOURCE_ROOT; };
 		BF2050AD128122C700D65536 /* us_osc_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = us_osc_io.h; path = ../../../include/us_osc_io.h; sourceTree = SOURCE_ROOT; };
 		BF2050AE1281232C00D65536 /* us_tool_rx_osc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_tool_rx_osc.c; path = "../../../tools-dev/us_tool_rx_osc.c"; sourceTree = SOURCE_ROOT; };
@@ -131,9 +137,6 @@
 		BF79D91D1247F254007595DB /* us_example_mudp_tx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_mudp_tx.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_mudp_tx.c; sourceTree = "<absolute>"; };
 		BF79D91E1247F254007595DB /* us_example_reactor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_example_reactor.c; path = /Users/jeffk/src/github/microsupport/examples/us_example_reactor.c; sourceTree = "<absolute>"; };
 		BF79D9201247F275007595DB /* us_tool_create_trie.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_tool_create_trie.c; path = "/Users/jeffk/src/github/microsupport/tools-dev/us_tool_create_trie.c"; sourceTree = "<absolute>"; };
-		BF79D9211247F575007595DB /* us_osc_dispatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_osc_dispatch.h; path = /Users/jeffk/src/github/microsupport/include/us_osc_dispatch.h; sourceTree = "<absolute>"; };
-		BF79D9221247F575007595DB /* us_test_osc_dispatch_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_test_osc_dispatch_main.h; path = /Users/jeffk/src/github/microsupport/include/us_test_osc_dispatch_main.h; sourceTree = "<absolute>"; };
-		BF79D9231247F598007595DB /* us_test_osc_dispatch_main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_osc_dispatch_main.c; path = /Users/jeffk/src/github/microsupport/src/us_test_osc_dispatch_main.c; sourceTree = "<absolute>"; };
 		BF79D9251247F5C8007595DB /* us_test_allocator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_allocator.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_allocator.c; sourceTree = "<absolute>"; };
 		BF79D9261247F5C8007595DB /* us_test_buffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_buffer.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_buffer.c; sourceTree = "<absolute>"; };
 		BF79D9271247F5C8007595DB /* us_test_http.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = us_test_http.c; path = /Users/jeffk/src/github/microsupport/tests/us_test_http.c; sourceTree = "<absolute>"; };
@@ -298,6 +301,8 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				BF1827DF133129660004F577 /* us_test_allocator_heap_main.c */,
+				BF1827E0133129660004F577 /* us_test_osc_dispatch_main.c */,
 				BFF76534131A099400E69E2C /* us_osc_sender_udp.c */,
 				BFF76535131A099400E69E2C /* us_osc_sender.c */,
 				BFF76532131A098400E69E2C /* us_osc_sender_tcp.c */,
@@ -316,7 +321,6 @@
 				BF4F331E129742C900A25621 /* us_allocator_heap.c */,
 				BF2050A1128122B400D65536 /* us_osc_io.c */,
 				BF520639127606BD00332429 /* us_osc_test_osc_io.c */,
-				BF79D9231247F598007595DB /* us_test_osc_dispatch_main.c */,
 				BFAA50D81247C92F00FF1616 /* us_line_parse.c */,
 				BFAA50D91247C92F00FF1616 /* us_midi.c */,
 				BFAA50DA1247C92F00FF1616 /* us_osc_dispatch.c */,
@@ -426,6 +430,8 @@
 		BFAA50BE1247C8E600FF1616 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				BF1827DD133129040004F577 /* us_test_allocator_heap_main.h */,
+				BF1827DE133129040004F577 /* us_test_osc_dispatch_main.h */,
 				BFF7652E131A097200E69E2C /* us_osc_sender_tcp.h */,
 				BFF7652F131A097200E69E2C /* us_osc_sender_udp.h */,
 				BFF76530131A097200E69E2C /* us_osc_sender.h */,
@@ -444,8 +450,6 @@
 				BF4F331D129742B200A25621 /* us_allocator_heap.h */,
 				BF2050AD128122C700D65536 /* us_osc_io.h */,
 				BF520637127606A300332429 /* us_test_osc_io_main.h */,
-				BF79D9211247F575007595DB /* us_osc_dispatch.h */,
-				BF79D9221247F575007595DB /* us_test_osc_dispatch_main.h */,
 				BFAA50C31247C91300FF1616 /* us_line_parse.h */,
 				BFAA50C41247C91300FF1616 /* us_midi.h */,
 				BFAA50C51247C91300FF1616 /* us_osc_dispatch.h */,
@@ -649,6 +653,8 @@
 				BFF76533131A098400E69E2C /* us_osc_sender_tcp.c in Sources */,
 				BFF76536131A099400E69E2C /* us_osc_sender_udp.c in Sources */,
 				BFF76537131A099400E69E2C /* us_osc_sender.c in Sources */,
+				BF1827E3133129660004F577 /* us_test_allocator_heap_main.c in Sources */,
+				BF1827E4133129660004F577 /* us_test_osc_dispatch_main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
