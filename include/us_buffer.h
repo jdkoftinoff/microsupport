@@ -562,12 +562,30 @@ extern "C"
         us_buffer_t *self,
         int32_t value
     );
-
+    
+    static inline bool
+    us_buffer_append_uint32 (
+                            us_buffer_t *self,
+                            uint32_t value
+                            )
+    {
+        return us_buffer_append_int32(self,(int32_t)value);
+    }
+    
     bool
     us_buffer_read_int32 (
+                          us_buffer_t *self,
+                          int32_t *value_ptr
+                          );
+
+    static inline bool
+    us_buffer_read_uint32 (
         us_buffer_t *self,
-        int32_t *value_ptr
-    );
+        uint32_t *value_ptr
+    )
+    {
+        return us_buffer_read_int32( self, (int32_t *)value_ptr );
+    }
 
     bool
     us_buffer_append_uint64 (
