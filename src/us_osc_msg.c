@@ -509,6 +509,7 @@ void us_osc_msg_destroy( us_osc_msg_t *self )
         while( cur )
         {
             cur->destroy( cur, self->m_allocator );
+            cur=cur->m_next;
         }
     }
 }
