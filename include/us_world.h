@@ -145,6 +145,7 @@ typedef unsigned char uint8_t;
 # include <net/if.h>
 #endif
 
+#include <limits.h>
 #include <assert.h>
 #include <ctype.h>
 #include <float.h>
