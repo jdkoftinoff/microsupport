@@ -7,6 +7,8 @@
 
 #include "us_testutil.h"
 
+#include <limits.h>
+
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
