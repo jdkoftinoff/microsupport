@@ -57,22 +57,6 @@ us_osc_msg_is_msg(
 }
 
 
-bool
-us_osc_msg_is_msg_code(
-                  const us_buffer_t *buffer
-                  )
-{
-    bool r=false;
-    uint8_t first_byte = us_buffer_peek(buffer,0);
-    if( us_buffer_readable_count(buffer)>8 
-       && (first_byte&0x80)==0x80 )
-    {
-        r=true;
-    }
-    return r;
-}
-
-
 us_osc_msg_t *
 us_osc_msg_form(
     us_allocator_t *allocator,
@@ -347,8 +331,7 @@ us_osc_msg_bundle_t *
 us_osc_msg_bundle_unflatten(
     us_allocator_t *allocator,
     us_buffer_t *buf,
-    int32_t bundle_size,
-    us_osc_msg_addrcode_typetag_map_proc addrmapper
+    int32_t bundle_size
 )
 {
     int32_t todo=bundle_size;
@@ -408,8 +391,7 @@ us_osc_msg_bundle_unflatten(
                 /* try unflatten message */
                 msg = us_osc_msg_unflatten(
                           allocator,
-                          buf,
-                          0
+                          buf
                       );
                 /* fail if unflattening message failed */
                 if ( !msg )
@@ -468,158 +450,78 @@ us_osc_msg_create(
     return r;
 }
 
-us_osc_msg_t *
-us_osc_msg_create_code(
-                  us_allocator_t *allocator,
-                  uint32_t address_code
-                  )
-{
-    us_osc_msg_t * r = 0;
-    us_osc_msg_t * self = 0;
-    self = us_new(allocator, us_osc_msg_t );
-    if (self )
-    {
-        self->m_allocator = allocator;
-        self->m_address = 0;
-        self->m_address_code = address_code;
-        self->destroy = us_osc_msg_destroy;
-        self->append = us_osc_msg_append;
-        self->flatten = us_osc_msg_flatten;
-#if US_ENABLE_PRINTING
-        self->print = us_osc_msg_print;
-#endif
-        self->m_first_element = 0;
-        self->m_last_element = 0;
-        self->m_next = 0;
-        r = self;
-    }
-    return r;
-}
-
 
 void us_osc_msg_destroy( us_osc_msg_t *self )
 {
-    if ( self->m_allocator && self->m_address )
-    {        
-        self->m_allocator->free( self->m_allocator, self->m_address );        
-    }
-    if( self->m_allocator )
+    if ( self->m_allocator )
     {
-        us_osc_msg_element_t *cur = self->m_first_element;
-        while( cur )
-        {
-            cur->destroy( cur, self->m_allocator );
-            cur=cur->m_next;
-        }
+        self->m_allocator->free( self->m_allocator, self->m_address );
     }
 }
 
 us_osc_msg_t *
 us_osc_msg_unflatten(
     us_allocator_t *allocator,
-    us_buffer_t *buf,
-    us_osc_msg_addrcode_typetag_map_proc addrcode_mapper
+    us_buffer_t *buf
 )
 {
     us_osc_msg_t *result = 0;
     us_osc_msg_t *msg = 0;
     char addr[US_OSC_MSG_MAX_ADDRESS_LENGTH];
-    uint32_t addrcode=0;
-    char types_buf[US_OSC_MSG_MAX_TYPETAGS];
-    const char *types=types_buf;
-    bool is_msg_code=false;
-    bool got_address=false;
-    bool got_typetags=false;
-    
-    /* find out if the message buffer has a coded address */
-    is_msg_code = us_osc_msg_is_msg_code(buf);
-    if( is_msg_code )
+    char types[US_OSC_MSG_MAX_TYPETAGS];
+    if ( us_buffer_read_rounded_string(buf, addr, sizeof(addr)) )
     {
-        /* Yes, read it */
-        got_address=us_buffer_read_uint32(buf, &addrcode);
-        if( got_address )
+        if ( us_buffer_read_rounded_string( buf, types, sizeof(types) ) )
         {
-            /* does the address code say that there is a typetag string? */
-            got_typetags = us_osc_msg_address_has_typetags(addrcode);
-            if( !got_typetags )
+            char *cur_type = &types[0];
+            msg = us_osc_msg_create(allocator, addr );
+            if ( msg )
             {
-                /* nope, then we need an addrcode_mapper to decide what typetags to expect */
-                if( addrcode_mapper )
+                if( *cur_type==',' ) /* ',' prefix of typetags is actually optional */
+                    cur_type++;
+                while ( *cur_type )
                 {
-                    const char *fixed_typetags = addrcode_mapper( addrcode );
-                    if( fixed_typetags!=0 )
+                    us_osc_msg_element_t *e;
+                    e = us_osc_msg_element_unflatten(
+                            allocator,
+                            buf,
+                            *cur_type
+                        );
+                    /* Check for error unflattening element */
+                    if ( !e )
                     {
-                        /* we have a valid typetags */
-                        types=fixed_typetags;
+                        us_osc_log_error( "error unflatten element type '%c'", *cur_type );
+                        return 0;
                     }
-                    else
+                    /* Check for error appending element to message */
+                    if ( !us_osc_msg_append(msg, e ) )
                     {
-                        us_osc_log_debug( "unknown typetags for addrcode 0x%08lx", (long)addrcode );
+                        us_osc_log_error( "error appending osc element" );
+                        return 0;
                     }
+                    /* go to next element type */
+                    cur_type++;
                 }
-                else
-                {
-                    us_log_debug( "unknown typetags and no addrcode mapper for addrcode 0x%08lx", (long)addrcode );
-                }
+                /* Success Parsing Message */
+                result = msg;
+            }
+            else
+            {
+                us_osc_log_error( "unable to create msg" );
             }
         }
         else
         {
-            us_log_debug( "could not read addrcode from osc msg with addrcode" );
+            us_osc_log_error( "unable to read typetag string" );
         }
     }
     else
     {
-        /* this is an ascii/utf8 address, read it */
-        got_address = us_buffer_read_rounded_string(buf, addr, sizeof(addr) );
-        if( got_address )
-        {
-            /* got it, so now read the typetag string */
-            got_typetags = us_buffer_read_rounded_string(buf,types_buf,sizeof(types_buf) );
-        }
+        us_osc_log_error( "unable to read address" );
     }
-    
-    if ( got_address && got_typetags )
+    if( result==false )
     {
-        const char *cur_type = &types[0];
-        if( is_msg_code )
-            msg=us_osc_msg_create_code(allocator, addrcode);
-        else
-            msg=us_osc_msg_create(allocator,addr);
-        if ( msg )
-        {
-            if( *cur_type==',' ) /* ',' prefix of typetags is actually optional */
-                cur_type++;
-            while ( *cur_type )
-            {
-                us_osc_msg_element_t *e;
-                e = us_osc_msg_element_unflatten(
-                        allocator,
-                        buf,
-                        *cur_type
-                    );
-                /* Check for error unflattening element */
-                if ( !e )
-                {
-                    us_osc_log_error( "error unflatten element type '%c'", *cur_type );
-                    return 0;
-                }
-                /* Check for error appending element to message */
-                if ( !us_osc_msg_append(msg, e ) )
-                {
-                    us_osc_log_error( "error appending osc element" );
-                    return 0;
-                }
-                /* go to next element type */
-                cur_type++;
-            }
-            /* Success Parsing Message */
-            result = msg;
-        }
-        else
-        {
-            us_osc_log_error( "unable to create msg" );
-        }
+        abort();
     }
     return result;
 }
@@ -693,7 +595,6 @@ us_osc_msg_element_init(
     int code
 )
 {
-    self->destroy = us_osc_msg_element_destroy;
 #if US_ENABLE_PRINTING
     self->print = us_osc_msg_element_print;
 #endif
@@ -702,19 +603,6 @@ us_osc_msg_element_init(
     self->m_next = 0;
     return self;
 }
-
-void
-us_osc_msg_element_destroy(
-                           us_osc_msg_element_t *self,
-                           us_allocator_t *allocator
-                           )
-{
-    if( allocator )
-    {
-        us_delete( allocator, self );
-    }
-}
-
 
 bool
 us_osc_msg_element_flatten(
@@ -837,7 +725,6 @@ us_osc_msg_element_s_create(
         int32_t len = (int32_t)strlen(value);
         int32_t rounded_size = us_round_size(len+1);
         us_osc_msg_element_init(&self->m_base, 's');
-        self->m_base.destroy = us_osc_msg_element_s_destroy;
 #if US_ENABLE_PRINTING
         self->m_base.print = us_osc_msg_element_s_print;
 #endif
@@ -860,21 +747,6 @@ us_osc_msg_element_s_create(
     }
     return r;
 }
-
-void
-us_osc_msg_element_s_destroy(
-                           us_osc_msg_element_t *self_,
-                           us_allocator_t *allocator
-                           )
-{
-    us_osc_msg_element_s_t *self = (us_osc_msg_element_s_t *)self_;
-    if( allocator )
-    {
-        us_delete( allocator, self->m_value );
-    }
-    us_osc_msg_element_destroy(self_, allocator);
-}
-
 
 bool
 us_osc_msg_element_s_flatten(
@@ -1102,7 +974,6 @@ us_osc_msg_element_b_create(
     {
         int32_t rounded_length = us_round_size(length);
         us_osc_msg_element_init(&self->m_base, 'b');
-        self->m_base.destroy = us_osc_msg_element_b_destroy;
 #if US_ENABLE_PRINTING
         self->m_base.print = us_osc_msg_element_b_print;
 #endif
@@ -1123,20 +994,6 @@ us_osc_msg_element_b_create(
         }
     }
     return r;
-}
-
-void
-us_osc_msg_element_b_destroy(
-                             us_osc_msg_element_t *self_,
-                             us_allocator_t *allocator
-                             )
-{
-    us_osc_msg_element_b_t *self = (us_osc_msg_element_b_t *)self_;
-    if( allocator )
-    {
-        us_delete( allocator, self->m_data );
-    }
-    us_osc_msg_element_destroy(self_, allocator);
 }
 
 bool
@@ -1569,8 +1426,7 @@ us_osc_parse(
     us_osc_msg_t **msg,
     us_osc_msg_bundle_t **bundle,
     us_buffer_t *buffer,
-    int32_t packet_size,
-    us_osc_msg_addrcode_typetag_map_proc addrmapper
+    int32_t packet_size
 )
 {
     bool r=false;
@@ -1579,7 +1435,7 @@ us_osc_parse(
     *bundle = 0;
     if( us_osc_msg_is_msg(buffer) )
     {
-        *msg = us_osc_msg_unflatten(allocator, buffer, addrmapper);
+        *msg = us_osc_msg_unflatten(allocator, buffer);
         if( *msg )
         {
             r=true;
@@ -1591,7 +1447,7 @@ us_osc_parse(
     }
     else if( us_osc_msg_is_msg_bundle(buffer) )
     {
-        *bundle = us_osc_msg_bundle_unflatten(allocator, buffer, packet_size, addrmapper);
+        *bundle = us_osc_msg_bundle_unflatten(allocator, buffer, packet_size);
         if( *bundle )
         {
             r=true;
