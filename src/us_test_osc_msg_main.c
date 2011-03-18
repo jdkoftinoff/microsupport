@@ -76,7 +76,7 @@ test_unflatten(
     {
         us_osc_msg_bundle_t *bundle;
         us_log_info( "unflattening bundle" );
-        bundle = us_osc_msg_bundle_unflatten(allocator,buffer,us_buffer_readable_count(buffer), 0);
+        bundle = us_osc_msg_bundle_unflatten(allocator,buffer,us_buffer_readable_count(buffer));
         if ( bundle )
         {
             r=true;
@@ -106,7 +106,7 @@ test_unflatten(
     {
         us_osc_msg_t *msg;
         us_log_info( "unflattening message" );
-        msg = us_osc_msg_unflatten( allocator, buffer, 0 );
+        msg = us_osc_msg_unflatten( allocator, buffer );
         if ( msg )
         {
             r=true;
@@ -166,8 +166,9 @@ static bool do_test_osc_msg(
     msg = us_osc_msg_form(
               allocator,
               "/out/1/gain/db",
-              ",f",
-              20.0f
+              ",fs",
+              20.0f,
+              "some string"
           );
 #endif
     if ( msg )
@@ -217,8 +218,9 @@ static bool do_test_osc_msg_bundle(
         us_osc_msg_form(
             allocator,
             "/in/1/level/db",
-            ",f",
-            -10.0f
+            ",fs",
+            -10.0f,
+            "some string"
         )
     );
     bundle->append(
@@ -226,8 +228,9 @@ static bool do_test_osc_msg_bundle(
         us_osc_msg_form(
             allocator,
             "/out/1/level/db",
-            ",f",
-            40.0
+            ",fs",
+            40.0,
+            "another string"
         )
     );
     if ( bundle )
