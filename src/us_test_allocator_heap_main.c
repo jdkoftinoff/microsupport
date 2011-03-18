@@ -1,4 +1,3 @@
-#include <limits.h>
 #include "us_world.h"
 
 #include "us_logger_printer.h"
@@ -7,6 +6,8 @@
 
 
 #include "us_testutil.h"
+
+#include <limits.h>
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -150,7 +151,7 @@ bool us_test_allocator_heap_stress( us_allocator_heap_t *allocator )
 int us_test_allocator_heap_main ( int argc, char **argv )
 {
     int i,j;
-    int r = 1;
+    bool r = true;
     static uint32_t raw_memory[0x8000];
     us_allocator_heap_t heap;
     if ( us_testutil_start ( 2048, 2048, argc, argv ) )
@@ -162,7 +163,7 @@ int us_test_allocator_heap_main ( int argc, char **argv )
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
 #if 1
         j=0;
-        while(j<3000)
+        while(j<1)
         {
             for(i=0; i<sizeof(raw_memory)/sizeof(raw_memory[0]); i++)
             {
@@ -223,7 +224,7 @@ int us_test_allocator_heap_main ( int argc, char **argv )
         us_logger_finish();
         us_testutil_finish();
     }
-    return r;
+    return r ? 0:1;
 }
 
 /*@}*/

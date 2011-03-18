@@ -59,13 +59,13 @@ us_osc_msg_is_msg(
 
 bool
 us_osc_msg_is_msg_code(
-                  const us_buffer_t *buffer
-                  )
+    const us_buffer_t *buffer
+)
 {
     bool r=false;
     uint8_t first_byte = us_buffer_peek(buffer,0);
-    if( us_buffer_readable_count(buffer)>8 
-       && (first_byte&0x80)==0x80 )
+    if( us_buffer_readable_count(buffer)>8
+            && (first_byte&0x80)==0x80 )
     {
         r=true;
     }
@@ -470,9 +470,9 @@ us_osc_msg_create(
 
 us_osc_msg_t *
 us_osc_msg_create_code(
-                  us_allocator_t *allocator,
-                  uint32_t address_code
-                  )
+    us_allocator_t *allocator,
+    uint32_t address_code
+)
 {
     us_osc_msg_t * r = 0;
     us_osc_msg_t * self = 0;
@@ -500,8 +500,8 @@ us_osc_msg_create_code(
 void us_osc_msg_destroy( us_osc_msg_t *self )
 {
     if ( self->m_allocator && self->m_address )
-    {        
-        self->m_allocator->free( self->m_allocator, self->m_address );        
+    {
+        self->m_allocator->free( self->m_allocator, self->m_address );
     }
     if( self->m_allocator )
     {
@@ -530,7 +530,6 @@ us_osc_msg_unflatten(
     bool is_msg_code=false;
     bool got_address=false;
     bool got_typetags=false;
-    
     /* find out if the message buffer has a coded address */
     is_msg_code = us_osc_msg_is_msg_code(buf);
     if( is_msg_code )
@@ -578,7 +577,6 @@ us_osc_msg_unflatten(
             got_typetags = us_buffer_read_rounded_string(buf,types_buf,sizeof(types_buf) );
         }
     }
-    
     if ( got_address && got_typetags )
     {
         const char *cur_type = &types[0];
@@ -662,17 +660,27 @@ us_osc_msg_flatten(
     char typetag[128] = ",";
     char *typetag_pos = &typetag[1];
     // append address
-    r &= us_buffer_append_rounded_string( buf, self->m_address );
-    // create type tag string
-    cur = self->m_first_element;
-    while (cur && r)
+    if( self->m_address )
     {
-        *typetag_pos = cur->m_code;
-        typetag_pos++;
-        cur = cur->m_next;
+        r &= us_buffer_append_rounded_string( buf, self->m_address );
     }
-    *typetag_pos = '\0';
-    r &= us_buffer_append_rounded_string( buf, typetag );
+    else
+    {
+        r &= us_buffer_append_uint32( buf, self->m_address_code );
+    }
+    // create type tag string
+    if( self->m_address || (self->m_address_code & 0x40000000 ) )
+    {
+        cur = self->m_first_element;
+        while (cur && r)
+        {
+            *typetag_pos = cur->m_code;
+            typetag_pos++;
+            cur = cur->m_next;
+        }
+        *typetag_pos = '\0';
+        r &= us_buffer_append_rounded_string( buf, typetag );
+    }
     // iterate through elements and flatten them
     cur = self->m_first_element;
     while (cur && r)
@@ -705,9 +713,9 @@ us_osc_msg_element_init(
 
 void
 us_osc_msg_element_destroy(
-                           us_osc_msg_element_t *self,
-                           us_allocator_t *allocator
-                           )
+    us_osc_msg_element_t *self,
+    us_allocator_t *allocator
+)
 {
     if( allocator )
     {
@@ -863,9 +871,9 @@ us_osc_msg_element_s_create(
 
 void
 us_osc_msg_element_s_destroy(
-                           us_osc_msg_element_t *self_,
-                           us_allocator_t *allocator
-                           )
+    us_osc_msg_element_t *self_,
+    us_allocator_t *allocator
+)
 {
     us_osc_msg_element_s_t *self = (us_osc_msg_element_s_t *)self_;
     if( allocator )
@@ -1127,9 +1135,9 @@ us_osc_msg_element_b_create(
 
 void
 us_osc_msg_element_b_destroy(
-                             us_osc_msg_element_t *self_,
-                             us_allocator_t *allocator
-                             )
+    us_osc_msg_element_t *self_,
+    us_allocator_t *allocator
+)
 {
     us_osc_msg_element_b_t *self = (us_osc_msg_element_b_t *)self_;
     if( allocator )
