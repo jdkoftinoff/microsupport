@@ -102,9 +102,11 @@ void us_logger_stdio_finish ( void )
 
 void us_log_error_stdio ( const char *fmt, ... )
 {
+    struct timeval tv;
     va_list ap;
     va_start ( ap, fmt );
-    US_DEFAULT_FPRINTF ( stderr, "ERROR:\t" );
+    us_gettimeofday( &tv );
+    US_DEFAULT_FPRINTF ( stderr, "ERROR (@%ld.%ld):\t", (long)tv.tv_sec, (long)tv.tv_usec );
     US_DEFAULT_VFPRINTF ( stderr, fmt, ap );
     US_DEFAULT_FPRINTF ( stderr, "\n" );
     va_end ( ap );
@@ -113,9 +115,11 @@ void us_log_error_stdio ( const char *fmt, ... )
 
 void us_log_warn_stdio ( const char *fmt, ... )
 {
+    struct timeval tv;
     va_list ap;
     va_start ( ap, fmt );
-    US_DEFAULT_FPRINTF ( stderr, "WARNING:\t" );
+    us_gettimeofday( &tv );
+    US_DEFAULT_FPRINTF ( stderr, "WARNING (@%ld.%ld):\t", (long)tv.tv_sec, (long)tv.tv_usec );
     US_DEFAULT_VFPRINTF ( stderr, fmt, ap );
     US_DEFAULT_FPRINTF ( stderr, "\n" );
     va_end ( ap );
@@ -124,9 +128,11 @@ void us_log_warn_stdio ( const char *fmt, ... )
 
 void us_log_info_stdio ( const char *fmt, ... )
 {
+    struct timeval tv;
     va_list ap;
     va_start ( ap, fmt );
-    US_DEFAULT_FPRINTF ( stdout, "INFO:\t" );
+    us_gettimeofday( &tv );
+    US_DEFAULT_FPRINTF ( stderr, "INFO (@%ld.%ld):\t", (long)tv.tv_sec, (long)tv.tv_usec );
     US_DEFAULT_VFPRINTF ( stdout, fmt, ap );
     US_DEFAULT_FPRINTF ( stdout, "\n" );
     va_end ( ap );
@@ -135,9 +141,11 @@ void us_log_info_stdio ( const char *fmt, ... )
 
 void us_log_debug_stdio ( const char *fmt, ... )
 {
+    struct timeval tv;
     va_list ap;
     va_start ( ap, fmt );
-    US_DEFAULT_FPRINTF ( stdout, "DEBUG:\t" );
+    us_gettimeofday( &tv );
+    US_DEFAULT_FPRINTF ( stderr, "DEBUG (@%ld.%ld):\t", (long)tv.tv_sec, (long)tv.tv_usec );
     US_DEFAULT_VFPRINTF ( stdout, fmt, ap );
     US_DEFAULT_FPRINTF ( stdout, "\n" );
     va_end ( ap );
@@ -146,9 +154,11 @@ void us_log_debug_stdio ( const char *fmt, ... )
 
 void us_log_trace_stdio ( const char *fmt, ... )
 {
+    struct timeval tv;
     va_list ap;
     va_start ( ap, fmt );
-    US_DEFAULT_FPRINTF ( stdout, "TRACE:\t" );
+    us_gettimeofday( &tv );
+    US_DEFAULT_FPRINTF ( stderr, "TRACE (@%ld.%ld):\t", (long)tv.tv_sec, (long)tv.tv_usec );
     US_DEFAULT_VFPRINTF ( stdout, fmt, ap );
     US_DEFAULT_FPRINTF ( stdout, "\n" );
     va_end ( ap );
