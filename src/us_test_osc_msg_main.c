@@ -76,7 +76,7 @@ test_unflatten(
     {
         us_osc_msg_bundle_t *bundle;
         us_log_info( "unflattening bundle" );
-        bundle = us_osc_msg_bundle_unflatten(allocator,buffer,us_buffer_readable_count(buffer));
+        bundle = us_osc_msg_bundle_unflatten(allocator,buffer,us_buffer_readable_count(buffer),0);
         if ( bundle )
         {
             r=true;
@@ -106,7 +106,7 @@ test_unflatten(
     {
         us_osc_msg_t *msg;
         us_log_info( "unflattening message" );
-        msg = us_osc_msg_unflatten( allocator, buffer );
+        msg = us_osc_msg_unflatten( allocator, buffer, 0);
         if ( msg )
         {
             r=true;
