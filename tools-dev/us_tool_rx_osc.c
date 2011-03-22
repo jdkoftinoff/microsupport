@@ -22,7 +22,7 @@ void us_tool_rx_osc_udp_packet_received(
     bool r=false;
     us_osc_msg_t *msg;
     us_osc_msg_bundle_t *bundle;
-    r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf, us_buffer_readable_count(buf));
+    r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf, us_buffer_readable_count(buf),0);
     if( r )
     {
         if( msg )
@@ -95,7 +95,7 @@ bool us_tool_rx_osc_tcp_handler_readable (
             {
                 us_osc_msg_t *msg=0;
                 us_osc_msg_bundle_t *bundle=0;
-                if( us_osc_parse(self->m_base.m_base.m_allocator, &msg, &bundle, incoming, self->m_todo_count) )
+                if( us_osc_parse(self->m_base.m_base.m_allocator, &msg, &bundle, incoming, self->m_todo_count,0) )
                 {
                     /* Now that we successfully got an osc message, it is safe to go back into header mode */
                     if( msg )
