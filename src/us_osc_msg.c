@@ -662,17 +662,27 @@ us_osc_msg_flatten(
     char typetag[128] = ",";
     char *typetag_pos = &typetag[1];
     // append address
-    r &= us_buffer_append_rounded_string( buf, self->m_address );
-    // create type tag string
-    cur = self->m_first_element;
-    while (cur && r)
+    if( self->m_address )
     {
-        *typetag_pos = cur->m_code;
-        typetag_pos++;
-        cur = cur->m_next;
+        r &= us_buffer_append_rounded_string( buf, self->m_address );
     }
-    *typetag_pos = '\0';
-    r &= us_buffer_append_rounded_string( buf, typetag );
+    else
+    {
+        r &= us_buffer_append_uint32( buf, self->m_address_code );
+    }
+    // create type tag string
+    if( self->m_address || (self->m_address_code & 0x40000000 ) )
+    {
+        cur = self->m_first_element;
+        while (cur && r)
+        {
+            *typetag_pos = cur->m_code;
+            typetag_pos++;
+            cur = cur->m_next;
+        }
+        *typetag_pos = '\0';
+        r &= us_buffer_append_rounded_string( buf, typetag );
+    }
     // iterate through elements and flatten them
     cur = self->m_first_element;
     while (cur && r)
