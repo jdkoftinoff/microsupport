@@ -38,8 +38,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define us_reactor_log_debug us_log_debug
 #define us_reactor_log_trace us_log_trace
 #define us_reactor_log_tracepoint() us_log_tracepoint()
-//#define US_REACTOR_TCP_TRACE_TX
-//#define US_REACTOR_TCP_TRACE_RX
+#define US_REACTOR_TCP_TRACE_TX
+#define US_REACTOR_TCP_TRACE_RX
 #else
 #define us_reactor_log_debug(...) do { } while(0)
 #define us_reactor_log_trace(...) do { } while(0)
@@ -258,6 +258,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             r = true;
         }
     }
+    us_reactor_collect_finished( self );
     return r;
 }
 #elif defined(US_REACTOR_USE_SELECT)
@@ -331,6 +332,7 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             r = true;
         }
     }
+    us_reactor_collect_finished( self );
     return r;
 }
 #endif
@@ -667,7 +669,7 @@ bool us_reactor_handler_tcp_init (
         }
         else
         {
-            us_reactor_log_error( "allocation of tcp buffers failed" );
+            us_reactor_log_error( "allocation of tcp buffers failed (%d)", queue_buf_size );
             us_delete( allocator, in_buf );
             us_delete( allocator, out_buf );
             r=false;
@@ -813,7 +815,7 @@ bool us_reactor_handler_tcp_writable (
         while( len<0 && errno==EINTR );
         if ( len > 0 )
         {
-#ifdef US_REACTOR_TCP_TRACE
+#ifdef US_REACTOR_TCP_TRACE_TX
             us_reactor_log_debug( "WROTE (len=%d): ", len );
 #endif
             us_buffer_skip ( &self->m_outgoing_queue, len );

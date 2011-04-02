@@ -168,7 +168,7 @@ bool us_getopt_string_for_value(
     return r;
 }
 
-bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *default_value )
+bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_type_t type, const void *default_value )
 {
     bool r=true;
     if( default_value )
@@ -207,7 +207,7 @@ bool us_getopt_copy_value( void *value, us_getopt_type_t type, const void *defau
             break;
 #endif
         case US_GETOPT_STRING:
-            *(char **)value = strdup( (const char *)default_value );
+            *(char **)value = us_strdup( allocator, (const char *)default_value );
             break;
         default:
             break;
@@ -317,6 +317,7 @@ bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len 
 }
 
 bool us_getopt_value_for_string(
+    us_allocator_t *allocator,
     us_getopt_type_t type,
     void *value,
     const char *str,
@@ -360,7 +361,8 @@ bool us_getopt_value_for_string(
         break;
 #endif
     case US_GETOPT_STRING:
-        *(char **)value = strdup( str );
+        us_delete( allocator, *(char **)value );
+        *(char **)value = us_strdup( allocator, str );
         break;
     default:
         break;
@@ -378,11 +380,23 @@ bool us_getopt_init( us_getopt_t *self, us_allocator_t *allocator )
     return true;
 }
 
-static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_list_t *cur )
+static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_list_t *cur, us_allocator_t *allocator )
 {
+    us_getopt_option_t *option;
+    option=(us_getopt_option_t *)cur->m_options;
+    while( option && option->m_name )
+    {
+        if( option->m_value_type && option->m_value_type==US_GETOPT_STRING && option->m_current_value )
+        {
+            char **pp = (char **)option->m_current_value;
+            us_delete( allocator, *pp );
+            *pp=0;
+        }
+        option++;
+    }
     if( cur->m_next )
     {
-        us_getopt_option_list_destroy( self, cur->m_next );
+        us_getopt_option_list_destroy( self, cur->m_next, allocator );
         cur->m_next = 0;
     }
     us_delete( self->m_allocator, cur );
@@ -393,7 +407,7 @@ void us_getopt_destroy( us_getopt_t *self )
     us_getopt_option_list_t *cur = self->m_option_lists;
     if( cur )
     {
-        us_getopt_option_list_destroy( self, cur );
+        us_getopt_option_list_destroy( self, cur, self->m_allocator );
     }
     self->m_option_lists = 0;
 }
@@ -433,7 +447,7 @@ bool us_getopt_fill_defaults( us_getopt_t *self )
         const us_getopt_option_t *opt = list->m_options;
         while( opt && r && opt->m_name!=0 )
         {
-            us_getopt_copy_value( opt->m_current_value, opt->m_value_type, opt->m_default_value );
+            us_getopt_copy_value( self->m_allocator, opt->m_current_value, opt->m_value_type, opt->m_default_value );
             opt++;
         }
         list=list->m_next;
@@ -499,7 +513,7 @@ bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, con
             {
                 if( strncmp( subname, opt->m_name, subname_len ) == 0 )
                 {
-                    r=us_getopt_value_for_string( opt->m_value_type, opt->m_current_value, value, value_len );
+                    r=us_getopt_value_for_string( self->m_allocator, opt->m_value_type, opt->m_current_value, value, value_len );
                     return r;
                 }
                 opt++;

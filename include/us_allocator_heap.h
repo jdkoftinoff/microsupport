@@ -45,6 +45,7 @@ extern "C"
     /**< Doubly linked list for a single free or allocated block */
     typedef struct us_allocator_heap_block_s
     {
+        uint32_t m_magic;
         /**< next block in line, or null */
         struct us_allocator_heap_block_s *m_next;
         /**< previous block in line, or null */
@@ -108,6 +109,8 @@ extern "C"
     void us_allocator_heap_pack ( us_allocator_heap_t *self, us_allocator_heap_block_t *block );
 
     void us_allocator_heap_report( us_allocator_heap_t *self );
+
+    void us_allocator_heap_validate( us_allocator_heap_t *self );
 
 #ifdef __cplusplus
 }
