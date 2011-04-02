@@ -267,24 +267,44 @@ int us_net_create_multicast_tx_udp_socket (
 )
 {
     int s = -1;
-#if 0
     int if_index = 0;
-    if ( interface_name && *interface_name != '\0' )
-        if_index = if_nametoindex ( interface_name );
-    /* TODO: use if_index to bind socket to transmit only on interface */
-#endif
     if ( !localaddr )
     {
         if ( multicastgroup->ai_family == PF_INET6 )
+        {
             localaddr = us_net_get_addrinfo ( "0::0", 0, SOCK_DGRAM, false );
+        }
         else
+        {
             localaddr = us_net_get_addrinfo ( "0.0.0.0", 0, SOCK_DGRAM, false );
+        }
     }
     s = socket ( localaddr->ai_family, localaddr->ai_socktype, localaddr->ai_protocol );
     if ( s < 0 )
     {
         us_log_error ( "socket: %s", strerror(errno) );
         return -1;
+    }
+    if ( multicastgroup->ai_family == PF_INET6 )
+    {
+        if ( interface_name && *interface_name != '\0' )
+        {
+            if_index = if_nametoindex ( interface_name );
+            if(  if_index==0 )
+            {
+                us_log_error( "socket: %s interface_name %s unknown", s, interface_name );
+                closesocket(s);
+                return -1;
+            }
+
+            if (setsockopt(s, IPPROTO_IPV6, IPV6_MULTICAST_IF, &if_index,
+                          sizeof(if_index)) < 0)
+            {
+                us_log_error( "socket: %s unable to IPV6_MULTICAST_IF for multicast via interface %s (%d)", s, interface_name, if_index );
+                closesocket(s);
+                return -1;
+            }
+        }
     }
     if ( localaddr->ai_family == PF_INET )
     {
