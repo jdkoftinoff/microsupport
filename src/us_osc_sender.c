@@ -36,6 +36,7 @@ us_osc_sender_t *us_osc_sender_create( void )
 
 bool us_osc_sender_init( us_osc_sender_t *self, void *extra )
 {
+    self->destroy = us_osc_sender_destroy;
     self->can_send = us_osc_sender_can_send;
     self->send_msg = us_osc_sender_send_msg;
     self->form_and_send_msg = us_osc_sender_form_and_send_msg;
