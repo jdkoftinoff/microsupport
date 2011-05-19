@@ -41,7 +41,7 @@ bool us_osc_sender_udp_init(
     self->m_base.can_send = us_osc_sender_udp_can_send;
     self->m_base.send_msg = us_osc_sender_udp_send_msg;
     self->m_base.form_and_send_msg = us_osc_sender_form_and_send_msg;
-    self->m_fd = us_net_create_udp_socket( bind_addr, bind_addr != 0 ? true : false );
+    self->m_fd = us_net_create_udp_socket( bind_addr, false );
     self->m_bind_addr = bind_addr;
     self->m_dest_addr = dest_addr;
     return self->m_fd>=0;
