@@ -296,9 +296,8 @@ int us_net_create_multicast_tx_udp_socket (
                 closesocket(s);
                 return -1;
             }
-
             if (setsockopt(s, IPPROTO_IPV6, IPV6_MULTICAST_IF, &if_index,
-                          sizeof(if_index)) < 0)
+                           sizeof(if_index)) < 0)
             {
                 us_log_error( "socket: %s unable to IPV6_MULTICAST_IF for multicast via interface %s (%d)", s, interface_name, if_index );
                 closesocket(s);

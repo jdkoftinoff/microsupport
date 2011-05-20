@@ -41,6 +41,9 @@ extern "C"
 
     typedef struct us_osc_sender_s
     {
+        void (*destroy)(
+            struct us_osc_sender_s *self
+        );
         bool (*can_send)(
             struct us_osc_sender_s *self
         );
@@ -57,6 +60,10 @@ extern "C"
     } us_osc_sender_t;
 
     us_osc_sender_t *us_osc_sender_create( void );
+
+    void us_osc_sender_destroy(
+        us_osc_sender_t *self
+    );
 
     bool us_osc_sender_send_msg(
         us_osc_sender_t *self,
