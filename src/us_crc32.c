@@ -80,7 +80,7 @@ uint32_t us_crc32(
     size_t i;
     /** accumulate crc32 for buffer **/
     crc32 = state_value ^ 0xFFFFFFFF;
-    buf = (uint8_t*) buf;
+    byte_buf = (uint8_t*) buf;
     for (i=0; i < len; i++)
     {
         crc32 = (crc32 >> 8) ^ crc_table[ (crc32 ^ byte_buf[i]) & 0xFF ];
