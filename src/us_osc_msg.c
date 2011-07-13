@@ -1115,6 +1115,7 @@ us_osc_msg_element_b_create(
         self->m_base.print = us_osc_msg_element_b_print;
 #endif
         self->m_base.flatten = us_osc_msg_element_b_flatten;
+        self->m_length = length;
         self->m_data = allocator->alloc(allocator, rounded_length,1 );
         if (self->m_data)
         {
