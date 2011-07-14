@@ -1158,8 +1158,9 @@ us_osc_msg_element_b_flatten(
     bool r = true;
     us_osc_msg_element_b_t *self = (us_osc_msg_element_b_t *) self_;
     int32_t start_length = us_buffer_readable_count(buf);
+    r&=us_buffer_append_rounded_data(buf, &self->m_length, sizeof(int32_t));
     r&=us_buffer_append_rounded_data(buf, self->m_data, self->m_length);
-    if ( total_length )
+    if (r && total_length )
     {
         *total_length = us_buffer_readable_count(buf)-start_length;
     }
@@ -1175,9 +1176,11 @@ us_osc_msg_element_b_unflatten(
     us_osc_msg_element_t *result = 0;
     uint8_t data[1024];
     int32_t data_length = 0;
-    if ( us_buffer_read_rounded_data(buf, data, sizeof(data), &data_length ) )
-    {
-        result = us_osc_msg_element_b_create(allocator, data, data_length);
+    if ( us_buffer_read_int32(buf,&data_length) ) {
+        if ( us_buffer_read_rounded_data(buf, data, data_length, &data_length ) )
+        {
+            result = us_osc_msg_element_b_create(allocator, data, data_length);
+        }
     }
     return result;
 }
