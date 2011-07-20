@@ -1,6 +1,7 @@
 #include "us_world.h"
 #include "us_osc_sender_udp.h"
 #include "us_net.h"
+#include "us_crc32.h"
 
 
 /*
@@ -53,18 +54,22 @@ void us_osc_sender_udp_destroy( us_osc_sender_t *self_)
     closesocket( self->m_fd );
 }
 
+#define CRC_SIZE 4
 bool us_osc_sender_udp_send_msg( us_osc_sender_t *self_,  const us_osc_msg_t *msg )
 {
     us_osc_sender_udp_t *self = (us_osc_sender_udp_t *)self_;
     bool r;
     char data[1024];
     us_buffer_t buf;
-    us_buffer_init( &buf, 0, data, sizeof(data) );
+    us_buffer_init( &buf, 0, data+CRC_SIZE , sizeof(data)-CRC_SIZE );
     r = msg->flatten( msg, &buf, 0 );
     if( r )
     {
         ssize_t len = us_buffer_readable_count( &buf );
         ssize_t sent;
+
+        *((uint32_t *)&data[0])=us_crc32(0,&data[CRC_SIZE],len);
+        len+=CRC_SIZE;
         sent = sendto( self->m_fd, data, len, 0, self->m_dest_addr->ai_addr, self->m_dest_addr->ai_addrlen );
         if( sent!=len )
         {
