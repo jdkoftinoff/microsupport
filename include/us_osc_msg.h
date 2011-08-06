@@ -40,7 +40,7 @@ extern "C"
 #endif
 
 #define US_OSC_MSG_MAX_ADDRESS_LENGTH (256)
-#define US_OSC_MSG_MAX_TYPETAGS (32)
+#define US_OSC_MSG_MAX_TYPETAGS (128)
 
     /**
      \addtogroup us_osc_msg OSC Message and Bundle Objects
