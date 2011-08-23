@@ -132,7 +132,7 @@ bool us_example_reactor_handler_http_init (
 {
     us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
     bool r = us_reactor_handler_tcp_client_init(self_, allocator, fd, extra, queue_buf_size, server_host, server_port, keep_open);
-    if( r )
+    if ( r )
     {
         static const char *req = "GET / HTTP/1.0\r\nHost: "US_EXAMPLE_HTTP_HOST"\r\n\r\n";
         self->readable = us_example_reactor_handler_http_readable;

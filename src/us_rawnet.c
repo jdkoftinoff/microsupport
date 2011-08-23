@@ -41,21 +41,21 @@ int us_rawnet_socket( uint16_t ethertype, uint8_t my_mac[6], int *interface_id, 
     int i;
     struct ifreq ifr;
     int fd=socket(AF_PACKET,SOCK_RAW,htons(ethertype) );
-    if( fd<0 )
+    if ( fd<0 )
         return -1;
     strncpy(ifr.ifr_name,interface_name, sizeof(ifr.ifr_name)-1 );
-    if( ioctl(fd ,SIOCGIFINDEX,&ifr)<0 )
+    if ( ioctl(fd ,SIOCGIFINDEX,&ifr)<0 )
     {
         close( fd );
         return -1;
     }
     *interface_id = ifr.ifr_ifindex;
-    if( ioctl(fd ,SIOCGIFHWADDR,&ifr)<0 )
+    if ( ioctl(fd ,SIOCGIFHWADDR,&ifr)<0 )
     {
         close(fd);
         return -1;
     }
-    for( i=0; i<6; ++i )
+    for ( i=0; i<6; ++i )
     {
         my_mac[i] = (uint8_t)ifr.ifr_hwaddr.sa_data[i];
     }

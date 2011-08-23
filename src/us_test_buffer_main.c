@@ -179,9 +179,9 @@ static bool us_test_buffer ( void )
     {
         int i;
         int j;
-        for( j=0; j<big_loop; ++j )
+        for ( j=0; j<big_loop; ++j )
         {
-            for( i=0; i<repeat_count; ++i )
+            for ( i=0; i<repeat_count; ++i )
             {
                 bool r1=false;
                 if ( us_buffer_append_rounded_string ( buf, "Rounded String" ) )
@@ -194,32 +194,32 @@ static bool us_test_buffer ( void )
                         }
                     }
                 }
-                if( !r1 )
+                if ( !r1 )
                 {
                     us_log_error( "unable to append items" );
                 }
                 r&=r1;
-                if( !r )
+                if ( !r )
                     break;
             }
-            for( i=0; i<repeat_count; ++i )
+            for ( i=0; i<repeat_count; ++i )
             {
                 bool r1=false;
                 {
                     char rs[128];
-                    if( us_buffer_read_rounded_string( buf, rs, sizeof(rs) ) )
+                    if ( us_buffer_read_rounded_string( buf, rs, sizeof(rs) ) )
                     {
-                        if( strcmp(rs,"Rounded String")==0 )
+                        if ( strcmp(rs,"Rounded String")==0 )
                         {
                             int32_t v;
-                            if( us_buffer_read_int32( buf, &v ) )
+                            if ( us_buffer_read_int32( buf, &v ) )
                             {
-                                if( v==0x12345678 )
+                                if ( v==0x12345678 )
                                 {
                                     uint32_t a,b;
-                                    if( us_buffer_read_uint64( buf, &a, &b ) )
+                                    if ( us_buffer_read_uint64( buf, &a, &b ) )
                                     {
-                                        if( a==0x89abcdef && b==0x01234567 )
+                                        if ( a==0x89abcdef && b==0x01234567 )
                                         {
                                             r1=true;
                                         }
@@ -254,7 +254,7 @@ static bool us_test_buffer ( void )
                     }
                 }
                 r&=r1;
-                if( !r )
+                if ( !r )
                 {
 #if US_ENABLE_PRINTING
                     us_testutil_printer_stdout->printf ( us_testutil_printer_stdout, "contents of test buffer:\n" );

@@ -88,7 +88,7 @@ us_reactor_handler_t * us_reactor_handler_create ( us_allocator_t *allocator )
 
 void us_reactor_handler_destroy ( us_reactor_handler_t *self )
 {
-    if( self->m_fd!=-1 )
+    if ( self->m_fd!=-1 )
     {
         closesocket( self->m_fd );
     }
@@ -169,7 +169,7 @@ void us_reactor_fill_poll( us_reactor_t *self )
     item = self->m_handlers;
     while ( item )
     {
-        if( item->m_fd!=-1 && !item->m_finished )
+        if ( item->m_fd!=-1 && !item->m_finished )
         {
             struct pollfd *p;
             p = &self->m_poll_handlers[n++];
@@ -216,10 +216,10 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             us_reactor_handler_t *item = self->m_handlers;
             int n;
             int num=self->m_num_handlers;
-            for( n=0; n<num; ++n, item=item->m_next )
+            for ( n=0; n<num; ++n, item=item->m_next )
             {
                 struct pollfd *p = &self->m_poll_handlers[n];
-                if( p->fd != item->m_fd )
+                if ( p->fd != item->m_fd )
                 {
                     us_reactor_log_error("item %p fd %d != p->fd", (void*)item, item->m_fd, p->fd );
                     abort();
@@ -234,17 +234,17 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
                     us_reactor_log_debug( "item %p fd %d is writable", item, item->m_fd );
                     item->writable ( item );
                 }
-                if( (p->revents & POLLHUP) )
+                if ( (p->revents & POLLHUP) )
                 {
                     us_reactor_log_debug("poll item %p fd %d got HUP: %d", (void *)item, item->m_fd, p->revents );
                     us_reactor_handler_finish( item );
                 }
-                if( (p->revents & POLLERR) )
+                if ( (p->revents & POLLERR) )
                 {
                     us_reactor_log_debug("poll item %p fd %d got ERR: %d", (void *)item, item->m_fd, p->revents );
                     us_reactor_handler_finish( item );
                 }
-                if( (p->revents & POLLNVAL) )
+                if ( (p->revents & POLLNVAL) )
                 {
                     us_reactor_log_error("poll item %p fd %d got NVAL: %d", (void *)item, item->m_fd, p->revents );
                     us_reactor_handler_finish( item );
@@ -279,18 +279,18 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
         FD_ZERO( &self->m_write_fds );
         while ( item )
         {
-            if( item->m_fd!=-1 && !item->m_finished )
+            if ( item->m_fd!=-1 && !item->m_finished )
             {
                 if ( item->m_wake_on_readable && item->readable != 0 )
                 {
                     FD_SET( item->m_fd, &self->m_read_fds );
-                    if( item->m_fd > max_fd )
+                    if ( item->m_fd > max_fd )
                         max_fd = item->m_fd;
                 }
                 if ( item->m_wake_on_writable && item->writable != 0 )
                 {
                     FD_SET( item->m_fd, &self->m_write_fds );
-                    if( item->m_fd > max_fd )
+                    if ( item->m_fd > max_fd )
                         max_fd = item->m_fd;
                 }
             }
@@ -312,12 +312,12 @@ bool us_reactor_poll ( us_reactor_t *self, int timeout )
             us_reactor_handler_t *item = self->m_handlers;
             while ( item )
             {
-                if( item->m_fd!=-1 && !item->m_finished)
+                if ( item->m_fd!=-1 && !item->m_finished)
                 {
                     if ( item->m_wake_on_readable && FD_ISSET( item->m_fd, &self->m_read_fds ) )
                         item->readable ( item );
                 }
-                if( item->m_fd!=-1 && !item->m_finished)
+                if ( item->m_fd!=-1 && !item->m_finished)
                 {
                     if ( item->m_wake_on_writable && FD_ISSET( item->m_fd, &self->m_write_fds ) )
                         item->writable ( item );
@@ -399,10 +399,10 @@ bool us_reactor_create_tcp_client (
 {
     bool r=false;
     us_reactor_handler_tcp_client_t *handler = (us_reactor_handler_tcp_client_t *)client_handler_create(allocator);
-    if( handler )
+    if ( handler )
     {
         r=client_handler_init( &handler->m_base.m_base, allocator, -1, extra, queue_buf_size, server_host, server_port, keep_open );
-        if( r )
+        if ( r )
         {
             r=self->add_item( self, &handler->m_base.m_base );
         }
@@ -435,9 +435,9 @@ bool us_reactor_create_server (
     hints.ai_flags = AI_PASSIVE;
 #endif
     hints.ai_socktype = ai_socktype;
-    if( server_host!=0 && *server_host=='\0' )
+    if ( server_host!=0 && *server_host=='\0' )
         server_host=0;
-    if( server_port!=0 && *server_port=='\0' )
+    if ( server_port!=0 && *server_port=='\0' )
         server_port=0;
     e = getaddrinfo ( server_host, server_port, &hints, &ai );
     if ( e == 0 )
@@ -469,7 +469,7 @@ bool us_reactor_create_server (
                     freeaddrinfo ( ai );
                     return false;
                 }
-                if( ai_socktype==SOCK_STREAM )
+                if ( ai_socktype==SOCK_STREAM )
                 {
                     if ( listen ( fd, SOMAXCONN ) != 0 )
                     {
@@ -492,7 +492,7 @@ bool us_reactor_create_server (
                                port_buf, sizeof( port_buf),
                                NI_NUMERICHOST | NI_NUMERICSERV
                            );
-                        if( e1==0 )
+                        if ( e1==0 )
                         {
                             us_reactor_log_debug( "Added listener on [%s]:%s", host_buf, port_buf );
                         }
@@ -588,7 +588,7 @@ bool us_reactor_handler_tcp_server_readable (
     {
         accepted_fd = accept ( self->m_base.m_fd, ( struct sockaddr * ) &rem, &remlen );
     }
-    while( accepted_fd==-1 && errno == EINTR );
+    while ( accepted_fd==-1 && errno == EINTR );
     if ( accepted_fd != -1 )
     {
         us_reactor_handler_t *client_item = self->client_handler_create(self->m_base.m_allocator);
@@ -605,11 +605,11 @@ bool us_reactor_handler_tcp_server_readable (
         {
             r = self->m_base.m_reactor->add_item ( self->m_base.m_reactor, client_item );
         }
-        if( !r && client_item )
+        if ( !r && client_item )
         {
             client_item->destroy( client_item );
         }
-        if( !client_item )
+        if ( !client_item )
         {
             /* no client item, therefore fd must close */
             us_reactor_log_error( "accepted incoming socket %d but no client created, closing", accepted_fd );
@@ -661,7 +661,7 @@ bool us_reactor_handler_tcp_init (
     }
     if ( r )
     {
-        if( in_buf != NULL && out_buf != NULL )
+        if ( in_buf != NULL && out_buf != NULL )
         {
             us_buffer_init ( &self->m_incoming_queue, 0, in_buf, queue_buf_size );
             us_buffer_init ( &self->m_outgoing_queue, 0, out_buf, queue_buf_size );
@@ -732,7 +732,7 @@ bool us_reactor_handler_tcp_readable (
     int max_len = us_buffer_contig_writable_count( &self->m_incoming_queue );
     void *p = us_buffer_contig_write_ptr( &self->m_incoming_queue );
     us_reactor_log_tracepoint();
-    if( max_len==0 )
+    if ( max_len==0 )
     {
         us_log_error( "logic error: contig_writable is 0 but socket is readable" );
         return false;
@@ -741,7 +741,7 @@ bool us_reactor_handler_tcp_readable (
     {
         len = recv ( self->m_base.m_fd, p, max_len, 0 );
     }
-    while( len<0 && errno==EINTR );
+    while ( len<0 && errno==EINTR );
     if ( len > 0 )
     {
         us_buffer_contig_written( &self->m_incoming_queue,len );
@@ -759,9 +759,9 @@ bool us_reactor_handler_tcp_readable (
     }
     else
     {
-        if( self->incoming_eof )
+        if ( self->incoming_eof )
         {
-            if( !self->incoming_eof( self ) )
+            if ( !self->incoming_eof( self ) )
             {
                 self->close(self);
             }
@@ -780,9 +780,9 @@ void us_reactor_handler_tcp_close(
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     us_reactor_log_tracepoint();
-    if( !self->m_base.m_finished )
+    if ( !self->m_base.m_finished )
     {
-        if( self->closed )
+        if ( self->closed )
         {
             self->closed( self );
         }
@@ -799,7 +799,7 @@ bool us_reactor_handler_tcp_writable (
     int len;
     us_reactor_log_tracepoint();
     len = us_buffer_readable_count ( &self->m_outgoing_queue );
-    if( len==0 && self->writable )
+    if ( len==0 && self->writable )
     {
         self->writable( self );
         len = us_buffer_readable_count ( &self->m_outgoing_queue );
@@ -812,7 +812,7 @@ bool us_reactor_handler_tcp_writable (
         {
             len = send ( self->m_base.m_fd, (const char *)outgoing, outgoing_len, 0 );
         }
-        while( len<0 && errno==EINTR );
+        while ( len<0 && errno==EINTR );
         if ( len > 0 )
         {
 #ifdef US_REACTOR_TCP_TRACE_TX
@@ -858,7 +858,7 @@ int us_reactor_tcp_blocking_connect (
                 break;
             }
             e = connect( fd, cur_addr->ai_addr, cur_addr->ai_addrlen );
-            if( e==0 )
+            if ( e==0 )
             {
                 break;
             }
@@ -885,12 +885,12 @@ bool us_reactor_handler_udp_init ( us_reactor_handler_t *self_, us_allocator_t *
     bool r=false;
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
     r = us_reactor_handler_init(self_, allocator, fd, extra);
-    if( r )
+    if ( r )
     {
         self_->destroy = us_reactor_handler_udp_destroy;
         self_->readable = us_reactor_handler_udp_readable;
         self->m_incoming_packet = us_buffer_create( allocator, max_udp_packet_size );
-        if( !self->m_incoming_packet )
+        if ( !self->m_incoming_packet )
         {
             r=false;
             self_->destroy( self_ );
@@ -902,7 +902,7 @@ bool us_reactor_handler_udp_init ( us_reactor_handler_t *self_, us_allocator_t *
 void us_reactor_handler_udp_destroy ( us_reactor_handler_t *self_ )
 {
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
-    if( self->m_incoming_packet )
+    if ( self->m_incoming_packet )
         self->m_incoming_packet->destroy( self->m_incoming_packet );
     us_reactor_handler_destroy(self_);
 }
@@ -922,11 +922,11 @@ bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
               (struct sockaddr *)&remote_addr,
               &remote_addrlen
           );
-    if( len>0 )
+    if ( len>0 )
     {
         self->m_incoming_packet->m_next_in = len;
         r=true;
-        if( self->packet_received )
+        if ( self->packet_received )
         {
             self->packet_received( self, self->m_incoming_packet, (struct sockaddr *)&remote_addr, remote_addrlen );
         }
@@ -960,12 +960,12 @@ bool us_reactor_handler_tcp_client_init (
            extra,
            queue_buf_size
        );
-    if( r )
+    if ( r )
     {
         self->m_client_host = us_strdup( allocator, client_host );
         self->m_client_port = us_strdup( allocator, client_port );
         self->m_is_connected = false;
-        if( keep_open )
+        if ( keep_open )
         {
             self->m_keep_open = true;
             self->m_try_once=false;
@@ -997,7 +997,7 @@ bool us_reactor_handler_tcp_client_tick (
 )
 {
     us_reactor_handler_tcp_client_t *self = (us_reactor_handler_tcp_client_t *)self_;
-    if( !self->m_is_connected && ( self->m_keep_open || self->m_try_once) )
+    if ( !self->m_is_connected && ( self->m_keep_open || self->m_try_once) )
     {
         /* TODO: Ideally make this non-blocking connect */
 #ifdef _WIN32
@@ -1008,7 +1008,7 @@ bool us_reactor_handler_tcp_client_tick (
         self->m_try_once = false;
         us_reactor_log_debug( "tcp client connecting '[%s]:%s'", self->m_client_host, self->m_client_port );
         self_->m_base.m_fd = us_reactor_tcp_blocking_connect( self->m_client_host, self->m_client_port );
-        if( self_->m_base.m_fd >=0 )
+        if ( self_->m_base.m_fd >=0 )
         {
             us_reactor_log_debug( "tcp client connected  '[%s]:%s'", self->m_client_host, self->m_client_port );
             self->m_is_connected=true;
@@ -1028,7 +1028,7 @@ void us_reactor_handler_tcp_client_closed (
 {
     us_reactor_handler_tcp_client_t *self = (us_reactor_handler_tcp_client_t *)self_;
     self->m_is_connected=false;
-    if( self->m_keep_open )
+    if ( self->m_keep_open )
     {
         us_reactor_log_debug( "tcp client connection '[%s]:%s' was closed, will re-connect", self->m_client_host, self->m_client_port );
         self->m_base.m_base.m_finished=false;

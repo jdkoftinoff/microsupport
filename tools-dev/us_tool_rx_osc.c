@@ -23,9 +23,9 @@ void us_tool_rx_osc_udp_packet_received(
     us_osc_msg_t *msg;
     us_osc_msg_bundle_t *bundle;
     r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf, us_buffer_readable_count(buf),0);
-    if( r )
+    if ( r )
     {
-        if( msg )
+        if ( msg )
         {
             us_log_debug( "parsed osc msg" );
             msg->print( msg, us_stdout );
@@ -33,7 +33,7 @@ void us_tool_rx_osc_udp_packet_received(
             //received_osc( self, msg );
             msg->destroy( msg );
         }
-        if( bundle )
+        if ( bundle )
         {
             us_log_debug("parsed osc bundle" );
             bundle->print( bundle, us_stdout );
@@ -48,7 +48,7 @@ bool us_tool_rx_osc_udp_init( us_reactor_handler_t *self_, us_allocator_t *alloc
 {
     bool r=true;
     r&=us_reactor_handler_udp_init(self_, allocator, fd, extra, 8192);
-    if( r )
+    if ( r )
     {
         us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
         self->packet_received = us_tool_rx_osc_udp_packet_received;
@@ -75,9 +75,9 @@ bool us_tool_rx_osc_tcp_handler_readable (
     us_buffer_t *incoming = &self->m_base.m_incoming_queue;
     while (!done && us_buffer_readable_count(incoming)>0 )
     {
-        if( self->m_in_header  )
+        if ( self->m_in_header  )
         {
-            if( us_buffer_read_int32( incoming, (int32_t*)&self->m_todo_count ) )
+            if ( us_buffer_read_int32( incoming, (int32_t*)&self->m_todo_count ) )
             {
                 self->m_in_header = false;
                 us_log_debug( "got osc length field: %d", self->m_todo_count );
@@ -87,24 +87,24 @@ bool us_tool_rx_osc_tcp_handler_readable (
                 done=true;
             }
         }
-        if( !self->m_in_header )
+        if ( !self->m_in_header )
         {
             int32_t readable = us_buffer_readable_count(incoming);
             /* we are expecting todo_count data. Wait until queue contains it all */
-            if( readable>=self->m_todo_count )
+            if ( readable>=self->m_todo_count )
             {
                 us_osc_msg_t *msg=0;
                 us_osc_msg_bundle_t *bundle=0;
-                if( us_osc_parse(self->m_base.m_base.m_allocator, &msg, &bundle, incoming, self->m_todo_count,0) )
+                if ( us_osc_parse(self->m_base.m_base.m_allocator, &msg, &bundle, incoming, self->m_todo_count,0) )
                 {
                     /* Now that we successfully got an osc message, it is safe to go back into header mode */
-                    if( msg )
+                    if ( msg )
                     {
                         us_log_debug( "parsed osc message" );
                         us_osc_msg_print( msg, us_stdout );
                         msg->destroy( msg );
                     }
-                    if( bundle )
+                    if ( bundle )
                     {
                         us_log_debug( "parsed osc bundle" );
                         us_osc_msg_bundle_print( bundle, us_stdout );
@@ -114,7 +114,7 @@ bool us_tool_rx_osc_tcp_handler_readable (
                 }
                 else
                 {
-                    if( us_log_level>=US_LOG_LEVEL_DEBUG )
+                    if ( us_log_level>=US_LOG_LEVEL_DEBUG )
                     {
                         us_buffer_print( incoming, us_stdout );
                     }
@@ -267,7 +267,7 @@ int main ( int argc, char **argv )
     us_platform_init_winsock ();
 # endif
     us_log_set_level ( US_LOG_LEVEL_DEBUG );
-    if( us_tool_rx_osc(&allocator.m_base, listen_host, listen_port) )
+    if ( us_tool_rx_osc(&allocator.m_base, listen_host, listen_port) )
     {
         r=0;
     }

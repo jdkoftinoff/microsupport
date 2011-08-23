@@ -37,7 +37,7 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
 {
     bool r=false;
     FILE *f = fopen( description->m_fname, "wt" );
-    if(f)
+    if (f)
     {
         const us_mdns_txt_record_t *curtxt = description->m_txt;
         fprintf( f,
@@ -52,7 +52,7 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
                  description->m_type,
                  description->m_port
                );
-        while( curtxt )
+        while ( curtxt )
         {
             fprintf( f, "   <txt-record>%s=%s</txt-record>\n", curtxt->m_key, curtxt->m_value );
             curtxt = curtxt->m_next;
@@ -62,18 +62,18 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
                  "</service-group>\n"
                );
         fflush(f);
-        if( !ferror(f) )
+        if ( !ferror(f) )
         {
             us_mdns_avahi_t *cur = us_mdns_avahi_service_list;
             description->m_next = 0;
-            if( cur==0 )
+            if ( cur==0 )
             {
                 us_mdns_avahi_service_list = description;
                 atexit( us_mdns_avahi_atexit );
             }
             else
             {
-                while( cur->m_next )
+                while ( cur->m_next )
                 {
                     cur=cur->m_next;
                 }
@@ -89,7 +89,7 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
 void us_mdns_avahi_atexit(void)
 {
     us_mdns_avahi_t *cur = us_mdns_avahi_service_list;
-    while( cur )
+    while ( cur )
     {
         unlink( cur->m_fname );
     }

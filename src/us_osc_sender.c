@@ -70,7 +70,7 @@ bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address
     us_simple_allocator_init( &tmp_allocator, buf, sizeof(buf) );
     va_start( ap, typetags );
     msg = us_osc_msg_vform( &tmp_allocator.m_base, address, typetags, ap );
-    if( msg )
+    if ( msg )
     {
         r=self->send_msg( self, msg );
         msg->destroy( msg );

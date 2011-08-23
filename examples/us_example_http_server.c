@@ -82,7 +82,7 @@ us_webapp_t *us_webapp_json_test_create(
 )
 {
     us_webapp_json_test_t *self = us_new(allocator,us_webapp_json_test_t);
-    if( self )
+    if ( self )
     {
         self->m_base.destroy = us_webapp_json_test_destroy;
         self->m_base.path_match = us_webapp_json_test_path_match;
@@ -102,7 +102,7 @@ void us_webapp_json_test_destroy(
 bool us_webapp_json_test_path_match(us_webapp_t *self_, const char *path )
 {
     static char p[] =  "/cgi-bin/json_test";
-    if( strncmp( path, p, sizeof(p) )==0 )
+    if ( strncmp( path, p, sizeof(p) )==0 )
         return true;
     else
         return false;
@@ -123,7 +123,7 @@ int us_webapp_json_test_dispatch(
     r&=us_buffer_append_string( response_content, json );
     r&=us_http_response_header_init_ok( response_header, 200, "application/json", us_buffer_readable_count( response_content ),true);
     r&=us_http_response_header_set_no_cache( response_header );
-    if( r )
+    if ( r )
         return response_header->m_code;
     else
         return 500;
@@ -174,11 +174,11 @@ bool us_example_http_server ( us_allocator_t *allocator )
     us_reactor_t reactor;
     us_webapp_director_init( &director, allocator );
     us_webapp_director_add_app(&director, us_webapp_json_test_create(allocator));
-    if( !us_webapp_director_add_app(&director,us_webapp_redirect_create(allocator,"/","/index.html",302)) )
+    if ( !us_webapp_director_add_app(&director,us_webapp_redirect_create(allocator,"/","/index.html",302)) )
     {
         return false;
     }
-    if( !us_webapp_director_add_app(&director,us_webapp_fs_create(allocator, 0, "/", "." )) )
+    if ( !us_webapp_director_add_app(&director,us_webapp_fs_create(allocator, 0, "/", "." )) )
     {
         return false;
     }

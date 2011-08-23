@@ -77,15 +77,15 @@ bool us_test_getopt( int argc, const char **argv )
 {
     bool r=false;
     us_allocator_t *allocator = us_testutil_sys_allocator;
-    if( us_getopt_init( &opt, allocator ) )
+    if ( us_getopt_init( &opt, allocator ) )
     {
         r=true;
         r&=us_getopt_add_list( &opt, log_options, "log", "Logging options" );
         r&=us_getopt_add_list( &opt, control_options, "control", "Control Options" );
         r&=us_getopt_fill_defaults( &opt );
-        if( r )
+        if ( r )
         {
-            if( !us_getopt_parse_args( &opt, argv+1 ) )
+            if ( !us_getopt_parse_args( &opt, argv+1 ) )
             {
                 us_getopt_print( &opt, us_testutil_printer_stdout );
             }

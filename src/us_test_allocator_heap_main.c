@@ -87,11 +87,11 @@ bool us_test_allocator_heap_stress( us_allocator_heap_t *allocator )
     void *allocations[MAX_ALLOCATIONS];
     int repeat_count=10000;
     int i;
-    for( i=0; i<MAX_ALLOCATIONS; ++i )
+    for ( i=0; i<MAX_ALLOCATIONS; ++i )
     {
         allocations[i] = 0;
     }
-    for( i=0; (i<repeat_count) && (i<min_repeat_count) ; ++i )
+    for ( i=0; (i<repeat_count) && (i<min_repeat_count) ; ++i )
     {
         bool alloc_or_free = rand() & 1;
         int item = rand() % MAX_ALLOCATIONS;
@@ -100,17 +100,17 @@ bool us_test_allocator_heap_stress( us_allocator_heap_t *allocator )
         saved_allocation_alloc_or_free[i]=alloc_or_free;
         saved_allocation_size[i]=sz;
         saved_repeat_count=i;
-        if( alloc_or_free )
+        if ( alloc_or_free )
         {
             int largest_free;
-            if( allocations[item] )
+            if ( allocations[item] )
             {
                 us_delete( &allocator->m_base, allocations[item] );
                 allocations[item]=0;
             }
             allocations[item] = allocator->m_base.alloc( &allocator->m_base, sz, 1 );
             largest_free =us_test_allocator_heap_get_largest_free_size( allocator );
-            if( allocations[item] == 0 && largest_free>sz )
+            if ( allocations[item] == 0 && largest_free>sz )
             {
                 us_log_error( "Tried to allocate %d bytes, failed, but largest free block was %d", sz, largest_free );
 #if 1
@@ -121,9 +121,9 @@ bool us_test_allocator_heap_stress( us_allocator_heap_t *allocator )
                 return(false);
 #endif
             }
-            else if(allocations[item] == 0)
+            else if (allocations[item] == 0)
             {
-                if( allocator->m_current_allocation_count < min_allocated)
+                if ( allocator->m_current_allocation_count < min_allocated)
                 {
                     min_allocated = allocator->m_current_allocation_count;
                     us_log_info( "Tried to allocate %d bytes, failed, largest free block was %d, new min %d", sz, largest_free, min_allocated );
@@ -133,14 +133,14 @@ bool us_test_allocator_heap_stress( us_allocator_heap_t *allocator )
         }
         else
         {
-            if( allocations[item] )
+            if ( allocations[item] )
             {
                 us_delete( &allocator->m_base, allocations[item] );
                 allocations[item]=0;
             }
         }
     }
-    for( i=0; i<MAX_ALLOCATIONS; ++i )
+    for ( i=0; i<MAX_ALLOCATIONS; ++i )
     {
         us_delete( &allocator->m_base, allocations[i] );
         allocations[i]=0;
@@ -163,18 +163,18 @@ int us_test_allocator_heap_main ( int argc, char **argv )
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
 #if 1
         j=0;
-        while(j<1)
+        while (j<1)
         {
-            for(i=0; i<sizeof(raw_memory)/sizeof(raw_memory[0]); i++)
+            for (i=0; i<sizeof(raw_memory)/sizeof(raw_memory[0]); i++)
             {
                 raw_memory[i]=0;
             }
-            if( us_allocator_heap_init_raw( &heap, &raw_memory[0], sizeof(raw_memory) ) )
+            if ( us_allocator_heap_init_raw( &heap, &raw_memory[0], sizeof(raw_memory) ) )
             {
                 r = us_test_allocator_heap_stress( &heap );
-                if(!r && (saved_repeat_count<min_repeat_count))
+                if (!r && (saved_repeat_count<min_repeat_count))
                 {
-                    for(i=0; i<=saved_repeat_count; i++)
+                    for (i=0; i<=saved_repeat_count; i++)
                     {
                         min_allocation_item[i]=saved_allocation_item[i];
                         min_allocation_size[i]=saved_allocation_size[i];
@@ -182,7 +182,7 @@ int us_test_allocator_heap_main ( int argc, char **argv )
                     }
                     min_repeat_count=saved_repeat_count;
                     us_log_info ( "new min (%d) after %d\n",min_repeat_count,j);
-                    if(min_repeat_count==0)
+                    if (min_repeat_count==0)
                     {
                         break;
                     }
@@ -195,22 +195,22 @@ int us_test_allocator_heap_main ( int argc, char **argv )
 //            us_log_info ( "item[%d],size=%d, %s\n", min_allocation_item[i],min_allocation_size[i],min_allocation_alloc_or_free[i]?"alloc":"free");
 //        }
 #else
-        if( us_allocator_heap_init_raw( &heap, &raw_memory[0], sizeof(raw_memory) ) )
+        if ( us_allocator_heap_init_raw( &heap, &raw_memory[0], sizeof(raw_memory) ) )
         {
             void * ptr1,*ptr2,*ptr3;
             ptr1=(void *)heap.m_base.alloc( &heap.m_base, 253, 1 );
             ptr2=(void *)heap.m_base.alloc( &heap.m_base, 181, 1 );
             us_delete( &heap.m_base, ptr1 );
             ptr3=(void *)heap.m_base.alloc( &heap.m_base, 175, 1 );
-            if(ptr1==0)
+            if (ptr1==0)
             {
                 us_log_error( "ptr1 failed\n");
             }
-            if(ptr2==0)
+            if (ptr2==0)
             {
                 us_log_error( "ptr2 failed\n");
             }
-            if(ptr3==0)
+            if (ptr3==0)
             {
                 us_log_error( "ptr3 failed\n");
             }

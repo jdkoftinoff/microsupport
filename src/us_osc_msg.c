@@ -49,7 +49,7 @@ us_osc_msg_is_msg(
 )
 {
     bool r=false;
-    if( us_buffer_readable_count(buffer)>8 && us_buffer_peek(buffer,0)=='/' )
+    if ( us_buffer_readable_count(buffer)>8 && us_buffer_peek(buffer,0)=='/' )
     {
         r=true;
     }
@@ -64,7 +64,7 @@ us_osc_msg_is_msg_code(
 {
     bool r=false;
     uint8_t first_byte = us_buffer_peek(buffer,0);
-    if( us_buffer_readable_count(buffer)>8
+    if ( us_buffer_readable_count(buffer)>8
             && (first_byte&0x80)==0x80 )
     {
         r=true;
@@ -250,7 +250,7 @@ us_osc_msg_bundle_destroy(
 )
 {
     us_osc_msg_t *msg = self->m_first_msg;
-    while( msg )
+    while ( msg )
     {
         us_osc_msg_t *next = msg->m_next;
         msg->destroy( msg );
@@ -374,7 +374,7 @@ us_osc_msg_bundle_unflatten(
                          timetag_high,
                          timetag_low
                      );
-            if( !bundle )
+            if ( !bundle )
             {
                 us_osc_log_error( "Creating osc bundle" );
                 return 0;
@@ -399,7 +399,7 @@ us_osc_msg_bundle_unflatten(
                 {
                     break;
                 }
-                if( msg_size>1024 )
+                if ( msg_size>1024 )
                 {
                     us_osc_log_error( "OSC message size %d >1024", msg_size );
                     return 0;
@@ -503,10 +503,10 @@ void us_osc_msg_destroy( us_osc_msg_t *self )
     {
         self->m_allocator->free( self->m_allocator, self->m_address );
     }
-    if( self->m_allocator )
+    if ( self->m_allocator )
     {
         us_osc_msg_element_t *cur = self->m_first_element;
-        while( cur )
+        while ( cur )
         {
             cur->destroy( cur, self->m_allocator );
             cur=cur->m_next;
@@ -532,21 +532,21 @@ us_osc_msg_unflatten(
     bool got_typetags=false;
     /* find out if the message buffer has a coded address */
     is_msg_code = us_osc_msg_is_msg_code(buf);
-    if( is_msg_code )
+    if ( is_msg_code )
     {
         /* Yes, read it */
         got_address=us_buffer_read_uint32(buf, &addrcode);
-        if( got_address )
+        if ( got_address )
         {
             /* does the address code say that there is a typetag string? */
             got_typetags = us_osc_msg_address_has_typetags(addrcode);
-            if( !got_typetags )
+            if ( !got_typetags )
             {
                 /* nope, then we need an addrcode_mapper to decide what typetags to expect */
-                if( addrcode_mapper )
+                if ( addrcode_mapper )
                 {
                     const char *fixed_typetags = addrcode_mapper( addrcode );
-                    if( fixed_typetags!=0 )
+                    if ( fixed_typetags!=0 )
                     {
                         /* we have a valid typetags */
                         types=fixed_typetags;
@@ -571,7 +571,7 @@ us_osc_msg_unflatten(
     {
         /* this is an ascii/utf8 address, read it */
         got_address = us_buffer_read_rounded_string(buf, addr, sizeof(addr) );
-        if( got_address )
+        if ( got_address )
         {
             /* got it, so now read the typetag string */
             got_typetags = us_buffer_read_rounded_string(buf,types_buf,sizeof(types_buf) );
@@ -580,13 +580,13 @@ us_osc_msg_unflatten(
     if ( got_address && got_typetags )
     {
         const char *cur_type = &types[0];
-        if( is_msg_code )
+        if ( is_msg_code )
             msg=us_osc_msg_create_code(allocator, addrcode);
         else
             msg=us_osc_msg_create(allocator,addr);
         if ( msg )
         {
-            if( *cur_type==',' ) /* ',' prefix of typetags is actually optional */
+            if ( *cur_type==',' ) /* ',' prefix of typetags is actually optional */
                 cur_type++;
             while ( *cur_type )
             {
@@ -660,7 +660,7 @@ us_osc_msg_flatten(
     char typetag[128] = ",";
     char *typetag_pos = &typetag[1];
     // append address
-    if( self->m_address )
+    if ( self->m_address )
     {
         r &= us_buffer_append_rounded_string( buf, self->m_address );
     }
@@ -669,7 +669,7 @@ us_osc_msg_flatten(
         r &= us_buffer_append_uint32( buf, self->m_address_code );
     }
     // create type tag string
-    if( self->m_address || (self->m_address_code & 0x40000000 ) )
+    if ( self->m_address || (self->m_address_code & 0x40000000 ) )
     {
         cur = self->m_first_element;
         while (cur && r)
@@ -717,7 +717,7 @@ us_osc_msg_element_destroy(
     us_allocator_t *allocator
 )
 {
-    if( allocator )
+    if ( allocator )
     {
         us_delete( allocator, self );
     }
@@ -876,7 +876,7 @@ us_osc_msg_element_s_destroy(
 )
 {
     us_osc_msg_element_s_t *self = (us_osc_msg_element_s_t *)self_;
-    if( allocator )
+    if ( allocator )
     {
         us_delete( allocator, self->m_value );
     }
@@ -1141,7 +1141,7 @@ us_osc_msg_element_b_destroy(
 )
 {
     us_osc_msg_element_b_t *self = (us_osc_msg_element_b_t *)self_;
-    if( allocator )
+    if ( allocator )
     {
         us_delete( allocator, self->m_data );
     }
@@ -1176,7 +1176,8 @@ us_osc_msg_element_b_unflatten(
     us_osc_msg_element_t *result = 0;
     uint8_t data[1024];
     int32_t data_length = 0;
-    if ( us_buffer_read_int32(buf,&data_length) ) {
+    if ( us_buffer_read_int32(buf,&data_length) )
+    {
         if ( us_buffer_read_rounded_data(buf, data, data_length, &data_length ) )
         {
             result = us_osc_msg_element_b_create(allocator, data, data_length);
@@ -1589,10 +1590,10 @@ us_osc_parse(
     int start_pos=buffer->m_next_out;
     *msg = 0;
     *bundle = 0;
-    if( us_osc_msg_is_msg(buffer) )
+    if ( us_osc_msg_is_msg(buffer) )
     {
         *msg = us_osc_msg_unflatten(allocator, buffer, addrmapper);
-        if( *msg )
+        if ( *msg )
         {
             r=true;
         }
@@ -1601,10 +1602,10 @@ us_osc_parse(
             us_osc_log_error( "Error parsing osc message" );
         }
     }
-    else if( us_osc_msg_is_msg_bundle(buffer) )
+    else if ( us_osc_msg_is_msg_bundle(buffer) )
     {
         *bundle = us_osc_msg_bundle_unflatten(allocator, buffer, packet_size, addrmapper);
-        if( *bundle )
+        if ( *bundle )
         {
             r=true;
         }
@@ -1613,7 +1614,7 @@ us_osc_parse(
             us_osc_log_error( "Error parsing osc bundle" );
         }
     }
-    if( !r )
+    if ( !r )
     {
         /* rewind the buffer */
         buffer->m_next_out = start_pos;

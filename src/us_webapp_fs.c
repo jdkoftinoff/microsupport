@@ -50,12 +50,12 @@ static const char * us_webapp_file_ext_mime_map_find( us_webapp_file_ext_mime_ma
     const char *content_type = "application/octet-stream";
     const char *last_dot = strrchr( path, '.' );
     const char *last_slash = strchr( path, '/' );
-    if( last_dot > last_slash )
+    if ( last_dot > last_slash )
     {
         us_webapp_file_ext_mime_map_t *cur=table;
-        while( cur && cur->m_extension && cur->m_mime_type )
+        while ( cur && cur->m_extension && cur->m_mime_type )
         {
-            if( strcmp( cur->m_extension, last_dot )==0 )
+            if ( strcmp( cur->m_extension, last_dot )==0 )
             {
                 content_type=cur->m_mime_type;
                 break;
@@ -76,15 +76,15 @@ us_webapp_t *us_webapp_fs_create(
 )
 {
     us_webapp_fs_t *self = us_new( allocator, us_webapp_fs_t );
-    if( self )
+    if ( self )
     {
-        if( !us_webapp_init( &self->m_base, allocator ) )
+        if ( !us_webapp_init( &self->m_base, allocator ) )
         {
             us_webapp_destroy(&self->m_base);
             self=0;
         }
     }
-    if( self )
+    if ( self )
     {
         self->m_base.destroy = us_webapp_fs_destroy;
         self->m_base.dispatch = us_webapp_fs_dispatch;
@@ -92,7 +92,7 @@ us_webapp_t *us_webapp_fs_create(
         self->m_web_path_prefix_len = strlen( web_path_prefix );
         self->m_filesystem_path = us_strdup( allocator, filesystem_path );
         self->m_web_path_prefix = us_strdup( allocator, web_path_prefix );
-        if( ext_map )
+        if ( ext_map )
         {
             self->m_ext_map = ext_map;
         }
@@ -100,7 +100,7 @@ us_webapp_t *us_webapp_fs_create(
         {
             self->m_ext_map = us_webapp_fs_default_ext_map;
         }
-        if( self->m_filesystem_path==0 || self->m_web_path_prefix==0 )
+        if ( self->m_filesystem_path==0 || self->m_web_path_prefix==0 )
         {
             self->m_base.destroy( &self->m_base );
             self=0;
@@ -125,7 +125,7 @@ bool us_webapp_fs_path_match(us_webapp_t *self_, const char *path )
 {
     bool r=false;
     us_webapp_fs_t *self = (us_webapp_fs_t *)self_;
-    if( strncmp( path, self->m_web_path_prefix, self->m_web_path_prefix_len )==0 )
+    if ( strncmp( path, self->m_web_path_prefix, self->m_web_path_prefix_len )==0 )
     {
         r=true;
     }
@@ -139,15 +139,15 @@ static bool us_webapp_fs_validate_path( const char *path )
     bool last_was_dot=false;
     int i;
     int len = strlen( path );
-    for( i=0; i<len; ++i )
+    for ( i=0; i<len; ++i )
     {
         char c= path[i];
-        if( c=='.' && last_was_dot )
+        if ( c=='.' && last_was_dot )
         {
             r=false;
             break;
         }
-        if( c=='.')
+        if ( c=='.')
         {
             last_was_dot=true;
         }
@@ -155,7 +155,7 @@ static bool us_webapp_fs_validate_path( const char *path )
         {
             last_was_dot=false;
         }
-        if( !isprint(c) || (c&0x80)!=0 )
+        if ( !isprint(c) || (c&0x80)!=0 )
         {
             r=false;
             break;
@@ -170,23 +170,23 @@ static bool us_webapp_fs_read_file( us_buffer_t *buf, const char *fs_path, const
     bool r=false;
     char full_path[4096];
     us_buffer_reset( buf );
-    if( us_strncpy( full_path, fs_path, sizeof(full_path) ) &&
+    if ( us_strncpy( full_path, fs_path, sizeof(full_path) ) &&
             us_strncat( full_path, file_path, sizeof(full_path) ) )
     {
         f=fopen( full_path, "rb" );
-        if( f )
+        if ( f )
         {
             int32_t file_len=0;
             fseek(f,0,SEEK_END);
             file_len = ftell(f);
-            if( file_len>=0 )
+            if ( file_len>=0 )
             {
                 fseek(f,0,SEEK_SET);
-                if( file_len<=buf->m_max_length )
+                if ( file_len<=buf->m_max_length )
                 {
-                    if( file_len>0 )
+                    if ( file_len>0 )
                     {
-                        if( fread( buf->m_buffer, file_len, 1, f)==1 )
+                        if ( fread( buf->m_buffer, file_len, 1, f)==1 )
                         {
                             buf->m_next_in = file_len;
                             r=true;
@@ -232,7 +232,7 @@ int us_webapp_fs_dispatch(
     const char *content_type = "application/octet-stream";
     (void)request_content;
     /* only try handle HEAD and GET requests */
-    if( !is_head && !is_get )
+    if ( !is_head && !is_get )
     {
         us_http_response_header_init_error( response_header, 404, 0, 0 );
         us_log_debug( "invalid request method '%s'' for fs path '%s'", request_header->m_method, request_header->m_path );
@@ -240,7 +240,7 @@ int us_webapp_fs_dispatch(
     }
     /* validate that the path only contains safe characters */
     r=us_webapp_fs_validate_path( request_header->m_path );
-    if( !r )
+    if ( !r )
     {
         us_http_response_header_init_error( response_header, 400, 0, 0 );
         us_log_debug( "invalid characters in path '%s'",request_header->m_path );
@@ -249,10 +249,10 @@ int us_webapp_fs_dispatch(
     /* path ends in / means readirect to index.html */
     {
         int len = strlen( request_header->m_path );
-        if( len>0 && request_header->m_path[len-1]=='/' )
+        if ( len>0 && request_header->m_path[len-1]=='/' )
         {
             char new_path[4096];
-            if(
+            if (
                 us_strncpy( new_path, request_header->m_path, sizeof(new_path)  ) &&
                 us_strncat( new_path, "index.html", sizeof( new_path) ) )
             {
@@ -262,7 +262,7 @@ int us_webapp_fs_dispatch(
             {
                 r=false;
             }
-            if( !r )
+            if ( !r )
             {
                 response_header->m_code=500;
             }
@@ -271,7 +271,7 @@ int us_webapp_fs_dispatch(
     }
     /* try open the file */
     r=us_webapp_fs_read_file( response_content, self->m_filesystem_path, request_header->m_path );
-    if( !r )
+    if ( !r )
     {
         us_http_response_header_init_error( response_header, 404, 0, 0 );
         us_log_debug( "unable to open file in '%s' for path '%s'",self->m_filesystem_path, request_header->m_path );
@@ -281,7 +281,7 @@ int us_webapp_fs_dispatch(
     r&=us_http_response_header_set_content_type ( response_header, content_type );
     r&=us_http_response_header_set_connection_close ( response_header );
     r&=us_http_response_header_set_content_length ( response_header, us_buffer_readable_count( response_content ) );
-    if( r )
+    if ( r )
     {
         response_header->m_code = 200;
     }

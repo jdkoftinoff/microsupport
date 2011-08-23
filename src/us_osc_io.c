@@ -26,7 +26,7 @@ bool us_osc_io_packet_init(
     self->m_allocator = allocator;
     self->m_incoming_buffer = us_buffer_create(allocator, max_buf_size);
     self->m_outgoing_buffer = us_buffer_create(allocator, max_buf_size);
-    if( !self->m_incoming_buffer || !self->m_outgoing_buffer )
+    if ( !self->m_incoming_buffer || !self->m_outgoing_buffer )
     {
         r=false;
     }

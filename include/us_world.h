@@ -174,16 +174,17 @@ typedef int bool_;
 #endif
 
 #ifdef __cplusplus
-extern "C"  {
+extern "C"
+{
 #endif
 
     static inline bool us_strncpy( char *dest, const char *src, int32_t dest_buf_size )
     {
         bool r=false;
-        if( dest && src && dest_buf_size>2 )
+        if ( dest && src && dest_buf_size>2 )
         {
             int src_len = strlen(src);
-            if( src_len<dest_buf_size-1)
+            if ( src_len<dest_buf_size-1)
             {
                 strncpy( dest, src, dest_buf_size-1 );
                 r=true;
@@ -195,11 +196,11 @@ extern "C"  {
     static inline bool us_strncat( char *dest, const char *src, int32_t dest_buf_size )
     {
         bool r=false;
-        if( dest && src && dest_buf_size>2 )
+        if ( dest && src && dest_buf_size>2 )
         {
             int src_len = strlen(src);
             int dest_len = strlen(dest);
-            if( (src_len+dest_len)<dest_buf_size-1)
+            if ( (src_len+dest_len)<dest_buf_size-1)
             {
                 strncat( dest, src, dest_buf_size-1 );
                 r=true;

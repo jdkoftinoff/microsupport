@@ -136,7 +136,7 @@ us_http_header_item_list_remove (
     {
         if ( i == item )
         {
-            if( prev )
+            if ( prev )
             {
                 prev->m_next = i->m_next;
             }
@@ -307,7 +307,7 @@ us_http_request_header_set_content_length (
 {
     bool r=true;
     char content_length_str[32];
-    if( content_length != -1 )
+    if ( content_length != -1 )
     {
         US_DEFAULT_SNPRINTF ( content_length_str, sizeof ( content_length_str ), "%ld", ( long ) content_length );
         if (!self->m_items->add ( self->m_items, "Content-Length", content_length_str ) )
@@ -328,7 +328,7 @@ us_http_request_header_get_content_length (
     int32_t content_length=default_length;
     us_http_header_item_t *content_length_item;
     content_length_item = self->m_items->find( self->m_items, "Content-Length" );
-    if( content_length_item )
+    if ( content_length_item )
     {
         content_length = strtol( content_length_item->m_value, 0, 10 );
     }
@@ -343,7 +343,7 @@ us_http_request_header_get_content_type (
     const char *content_type="";
     us_http_header_item_t *content_type_item;
     content_type_item = self->m_items->find( self->m_items, "Content-Type" );
-    if( content_type_item )
+    if ( content_type_item )
     {
         /* found it, extract the value as our todo count */
         content_type = content_type_item->m_value;
@@ -428,13 +428,13 @@ bool us_http_request_header_init_helper (
         self->m_version = us_strdup ( self->m_allocator, "HTTP/1.1" );
         if ( self->m_path && self->m_method && self->m_version )
         {
-            if( self->m_items->add ( self->m_items, "Host", host ) )
+            if ( self->m_items->add ( self->m_items, "Host", host ) )
             {
                 r=true;
-                if( content_type )
+                if ( content_type )
                 {
                     r&=us_http_request_header_set_content_type( self, content_type );
-                    if( content_length!=-1 )
+                    if ( content_length!=-1 )
                     {
                         r&=us_http_request_header_set_content_length( self, content_length );
                     }
@@ -533,7 +533,7 @@ us_http_response_header_set_content_length (
 {
     bool r=true;
     char content_length_str[32];
-    if( content_length != -1 )
+    if ( content_length != -1 )
     {
         US_DEFAULT_SNPRINTF ( content_length_str, sizeof ( content_length_str ), "%ld", ( long ) content_length );
         if (!self->m_items->add ( self->m_items, "Content-Length", content_length_str ) )
@@ -559,7 +559,7 @@ bool us_http_response_header_set_no_cache(
 )
 {
     bool r=false;
-    if( self->m_items->add(self->m_items,"Cache-Control", "no-cache, no-store, must-revalidate") &&
+    if ( self->m_items->add(self->m_items,"Cache-Control", "no-cache, no-store, must-revalidate") &&
             self->m_items->add(self->m_items,"Expires","0") &&
             self->m_items->add(self->m_items,"Pragma", "no-cache") )
     {
@@ -578,7 +578,7 @@ us_http_response_header_get_content_length (
     int32_t content_length=default_length;
     us_http_header_item_t *content_length_item;
     content_length_item = self->m_items->find( self->m_items, "Content-Length" );
-    if( content_length_item )
+    if ( content_length_item )
     {
         /* found it, extract the value as our todo count */
         content_length = strtol( content_length_item->m_value, 0, 10 );
@@ -594,7 +594,7 @@ us_http_response_header_get_content_type (
     const char *content_type="";
     us_http_header_item_t *content_type_item;
     content_type_item = self->m_items->find( self->m_items, "Content-Type" );
-    if( content_type_item )
+    if ( content_type_item )
     {
         /* found it, extract the value as our todo count */
         content_type = content_type_item->m_value;
@@ -613,12 +613,12 @@ bool us_http_response_header_init_ok (
 {
     bool r=true;
     self->m_code = http_ok_code;
-    if( content_type )
+    if ( content_type )
     {
         r&=us_http_response_header_set_content_type ( self, content_type );
         r&=us_http_response_header_set_content_length ( self, content_length );
     }
-    if( connection_close )
+    if ( connection_close )
     {
         r&=us_http_response_header_set_connection_close( self );
     }
@@ -635,7 +635,7 @@ bool us_http_response_header_init_error (
 {
     bool r=true;
     self->m_code = http_error_code;
-    if( content_type )
+    if ( content_type )
     {
         r&=us_http_response_header_set_content_type ( self, content_type );
         r&=us_http_response_header_set_content_length ( self, content_length );
@@ -769,7 +769,7 @@ bool us_http_response_header_parse (
                         if ( us_buffer_advance ( buf, 1 ) )
                         {
                             const char *p = us_buffer_read_ptr ( buf );
-                            if( *p=='\n' )
+                            if ( *p=='\n' )
                                 us_buffer_advance( buf,1 );
                             if ( us_http_header_item_list_parse ( self->m_items, buf ) )
                             {
@@ -780,9 +780,9 @@ bool us_http_response_header_parse (
                 }
             }
         }
-        if( !r )
+        if ( !r )
         {
-            if( self->m_items )
+            if ( self->m_items )
             {
                 self->m_items->destroy ( self->m_items );
                 self->m_items = 0;
@@ -837,7 +837,7 @@ us_http_request_header_parse (
                                 if ( us_buffer_advance ( buf, len + 1 ) )
                                 {
                                     const char *p = us_buffer_read_ptr ( buf );
-                                    if( *p=='\n' )
+                                    if ( *p=='\n' )
                                         us_buffer_advance( buf,1 );
                                     if ( us_http_header_item_list_parse ( self->m_items, buf ) )
                                     {
@@ -852,7 +852,7 @@ us_http_request_header_parse (
         }
         if ( !r )
         {
-            if( self->m_items )
+            if ( self->m_items )
             {
                 self->m_items->destroy( self->m_items );
                 self->m_items = 0;
@@ -904,7 +904,7 @@ us_http_header_item_list_parse (
             value_len = us_buffer_find_string_len ( buf, '\r', '\n' );
             us_buffer_advance ( buf, value_len + 1 );
             p=us_buffer_read_ptr ( buf );
-            if( *p=='\n' )
+            if ( *p=='\n' )
                 us_buffer_advance( buf,1 );
             if ( key && key_len > 0 && value && value_len > 0 )
             {

@@ -48,13 +48,13 @@ bool us_osc_sender_tcp_send_msg( us_osc_sender_t *self_,  const us_osc_msg_t *ms
     us_buffer_t buf;
     us_buffer_init( &buf, 0, data, sizeof(data) );
     r = msg->flatten( msg, &buf, 0 );
-    if( r )
+    if ( r )
     {
         int32_t len = us_buffer_readable_count( &buf );
         us_buffer_t *outgoing = &self->m_handler->m_outgoing_queue;
         us_buffer_append_int32( outgoing, len );
         us_buffer_write_buffer( outgoing, &buf );
-        if( !r )
+        if ( !r )
         {
             us_log_error( "unable to write osc byte to outgoing queue" );
         }
@@ -70,7 +70,7 @@ bool us_osc_sender_tcp_can_send( us_osc_sender_t *self_ )
 {
     us_osc_sender_tcp_t *self = (us_osc_sender_tcp_t *)self_;
     bool r;
-    if( us_buffer_writable_count( &self->m_handler->m_outgoing_queue )> self->m_max_size )
+    if ( us_buffer_writable_count( &self->m_handler->m_outgoing_queue )> self->m_max_size )
     {
         r=true;
     }

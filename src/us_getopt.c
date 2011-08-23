@@ -56,10 +56,10 @@ bool us_getopt_string_for_value(
 )
 {
     bool r=false;
-    if( value )
+    if ( value )
     {
         r=true;
-        switch( type )
+        switch ( type )
         {
         case US_GETOPT_NONE:
         {
@@ -73,7 +73,7 @@ bool us_getopt_string_for_value(
         }
         case US_GETOPT_CHAR:
         {
-            if( buf_len>2 )
+            if ( buf_len>2 )
             {
                 buf[0]=*(char *)value;
                 buf[1]='\0';
@@ -86,7 +86,7 @@ bool us_getopt_string_for_value(
         }
         case US_GETOPT_INT16:
         {
-            if( US_DEFAULT_SNPRINTF( buf, buf_len, "%hd", *(int16_t*)value ) > buf_len )
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%hd", *(int16_t*)value ) > buf_len )
             {
                 r=false;
             }
@@ -94,7 +94,7 @@ bool us_getopt_string_for_value(
         }
         case US_GETOPT_UINT16:
         {
-            if( US_DEFAULT_SNPRINTF( buf, buf_len, "%hu", *(uint16_t *)value ) > buf_len )
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%hu", *(uint16_t *)value ) > buf_len )
             {
                 r=false;
             }
@@ -102,7 +102,7 @@ bool us_getopt_string_for_value(
         }
         case US_GETOPT_INT32:
         {
-            if( US_DEFAULT_SNPRINTF( buf, buf_len, "%d", *(int32_t*)value ) > buf_len )
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%d", *(int32_t*)value ) > buf_len )
             {
                 r=false;
             }
@@ -110,7 +110,7 @@ bool us_getopt_string_for_value(
         }
         case US_GETOPT_UINT32:
         {
-            if( US_DEFAULT_SNPRINTF( buf, buf_len, "%u", *(uint32_t *)value ) > buf_len )
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%u", *(uint32_t *)value ) > buf_len )
             {
                 r=false;
             }
@@ -118,7 +118,7 @@ bool us_getopt_string_for_value(
         }
         case US_GETOPT_HEX16:
         {
-            if( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%04hx", *(uint16_t*)value ) > buf_len )
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%04hx", *(uint16_t*)value ) > buf_len )
             {
                 r=false;
             }
@@ -126,7 +126,7 @@ bool us_getopt_string_for_value(
         }
         case US_GETOPT_HEX32:
         {
-            if( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x", *(uint32_t*)value ) > buf_len )
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x", *(uint32_t*)value ) > buf_len )
             {
                 r=false;
             }
@@ -135,7 +135,7 @@ bool us_getopt_string_for_value(
 #if US_ENABLE_FLOAT
         case US_GETOPT_FLOAT:
         {
-            if( US_DEFAULT_SNPRINTF( buf, buf_len, "%f", *(float *)value ) > buf_len )
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%f", *(float *)value ) > buf_len )
             {
                 r=false;
             }
@@ -150,7 +150,7 @@ bool us_getopt_string_for_value(
 //            if( us_getopt_escape( tmp, sizeof(tmp)-1, (const char *)value, strlen((const char *)value ) ) )
             {
                 strcpy( tmp, (const char *)value );
-                if( strlen( tmp )< (size_t)(buf_len-1) )
+                if ( strlen( tmp )< (size_t)(buf_len-1) )
                 {
                     strncpy( buf, tmp, buf_len-1 );
                     r=true;
@@ -171,9 +171,9 @@ bool us_getopt_string_for_value(
 bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_type_t type, const void *default_value )
 {
     bool r=true;
-    if( default_value )
+    if ( default_value )
     {
-        switch( type )
+        switch ( type )
         {
         case US_GETOPT_NONE:
             break;
@@ -221,7 +221,7 @@ bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
 {
     /* TODO: escape individual chars */
     bool r=false;
-    if( dest_len>str_len+1 )
+    if ( dest_len>str_len+1 )
     {
         memcpy( dest, str, str_len+1 );
         dest[str_len+1] = '\0';
@@ -234,15 +234,15 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
 {
     const char *p;
     int r=-1;
-    if( str_len>0 )
+    if ( str_len>0 )
     {
         p=str;
-        if( *p=='\\' )
+        if ( *p=='\\' )
         {
-            if( str_len>1 )
+            if ( str_len>1 )
             {
                 p++;
-                switch( *p )
+                switch ( *p )
                 {
                 case '\\':
                     *dest='\\';
@@ -268,9 +268,9 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
                     *dest='\"';
                     r=2;
                 case 'x':
-                    if( str_len>3 )
+                    if ( str_len>3 )
                     {
-                        if( us_parse_hexoctet( (uint8_t *)dest, &p[1], 2, 0 ) )
+                        if ( us_parse_hexoctet( (uint8_t *)dest, &p[1], 2, 0 ) )
                         {
                             r=4;
                         }
@@ -280,9 +280,9 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
                 case '1':
                 case '2':
                 case '3':
-                    if( str_len>3 )
+                    if ( str_len>3 )
                     {
-                        if( isdigit( p[1]) && isdigit(p[2]))
+                        if ( isdigit( p[1]) && isdigit(p[2]))
                         {
                             *dest = ((p[0]-'0')<<6) + ((p[1]-'0')<<3) + ((p[2])-'0');
                             r=4;
@@ -307,7 +307,7 @@ bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len 
 {
     /* TODO: unescape individual chars */
     bool r=false;
-    if( dest_len>str_len+1 )
+    if ( dest_len>str_len+1 )
     {
         memcpy( dest, str, str_len+1 );
         dest[str_len+1] = '\0';
@@ -327,7 +327,7 @@ bool us_getopt_value_for_string(
     bool r=true;
     /* TODO: use str_len */
     (void)str_len;
-    switch( type )
+    switch ( type )
     {
     case US_GETOPT_NONE:
         break;
@@ -384,9 +384,9 @@ static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_l
 {
     us_getopt_option_t *option;
     option=(us_getopt_option_t *)cur->m_options;
-    while( option && option->m_name )
+    while ( option && option->m_name )
     {
-        if( option->m_value_type && option->m_value_type==US_GETOPT_STRING && option->m_current_value )
+        if ( option->m_value_type && option->m_value_type==US_GETOPT_STRING && option->m_current_value )
         {
             char **pp = (char **)option->m_current_value;
             us_delete( allocator, *pp );
@@ -394,7 +394,7 @@ static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_l
         }
         option++;
     }
-    if( cur->m_next )
+    if ( cur->m_next )
     {
         us_getopt_option_list_destroy( self, cur->m_next, allocator );
         cur->m_next = 0;
@@ -405,7 +405,7 @@ static void us_getopt_option_list_destroy( us_getopt_t *self, us_getopt_option_l
 void us_getopt_destroy( us_getopt_t *self )
 {
     us_getopt_option_list_t *cur = self->m_option_lists;
-    if( cur )
+    if ( cur )
     {
         us_getopt_option_list_destroy( self, cur, self->m_allocator );
     }
@@ -417,14 +417,14 @@ bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_t *options, c
     bool r=false;
     us_getopt_option_list_t *p = 0;
     p = us_new( self->m_allocator, us_getopt_option_list_t );
-    if( p )
+    if ( p )
     {
         p->m_options = options;
         p->m_next = 0;
         p->m_prefix = prefix;
         p->m_description = description;
         r=true;
-        if( self->m_last_option_list )
+        if ( self->m_last_option_list )
         {
             self->m_last_option_list->m_next = p;
             self->m_last_option_list = p;
@@ -442,10 +442,10 @@ bool us_getopt_fill_defaults( us_getopt_t *self )
 {
     bool r=true;
     us_getopt_option_list_t *list = self->m_option_lists;
-    while( list && r)
+    while ( list && r)
     {
         const us_getopt_option_t *opt = list->m_options;
-        while( opt && r && opt->m_name!=0 )
+        while ( opt && r && opt->m_name!=0 )
         {
             us_getopt_copy_value( self->m_allocator, opt->m_current_value, opt->m_value_type, opt->m_default_value );
             opt++;
@@ -459,18 +459,18 @@ bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
 {
     bool r=true;
     us_getopt_option_list_t *list = self->m_option_lists;
-    while( list && r)
+    while ( list && r)
     {
         const us_getopt_option_t *opt = list->m_options;
-        if( list->m_prefix )
+        if ( list->m_prefix )
         {
             r&=printer->printf( printer,"Option group '%s': %s\n", list->m_prefix, list->m_description );
         }
-        while( opt && r && opt->m_name!=0 )
+        while ( opt && r && opt->m_name!=0 )
         {
             char default_string[1024] = "";
             /* TODO: Form default_string */
-            if( !us_getopt_string_for_value( default_string, sizeof(default_string)-1, opt->m_value_type, opt->m_default_value ) )
+            if ( !us_getopt_string_for_value( default_string, sizeof(default_string)-1, opt->m_value_type, opt->m_default_value ) )
             {
                 default_string[0] = '\0';
             }
@@ -495,23 +495,23 @@ bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, con
 {
     bool r=false;
     us_getopt_option_list_t *list = self->m_option_lists;
-    while( list && !r)
+    while ( list && !r)
     {
         int prefix_len = 0;
         const char *subname = name;
         int subname_len=name_len;
-        if( list->m_prefix!=0 )
+        if ( list->m_prefix!=0 )
         {
             prefix_len = strlen( list->m_prefix );
             subname+=(prefix_len+1);
             subname_len-=(prefix_len+1);
         }
-        if( subname_len>0 && (prefix_len==0 || strncmp( name, list->m_prefix, prefix_len )==0 ) )
+        if ( subname_len>0 && (prefix_len==0 || strncmp( name, list->m_prefix, prefix_len )==0 ) )
         {
             const us_getopt_option_t *opt = list->m_options;
-            while( opt && opt->m_name!=0 )
+            while ( opt && opt->m_name!=0 )
             {
-                if( strncmp( subname, opt->m_name, subname_len ) == 0 )
+                if ( strncmp( subname, opt->m_name, subname_len ) == 0 )
                 {
                     r=us_getopt_value_for_string( self->m_allocator, opt->m_value_type, opt->m_current_value, value, value_len );
                     return r;
@@ -527,9 +527,9 @@ bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, con
 bool us_getopt_parse_args( us_getopt_t *self, const char **argv )
 {
     bool r=true;
-    while( *argv )
+    while ( *argv )
     {
-        if( (*argv)[0]=='-' && (*argv)[1]=='-' )
+        if ( (*argv)[0]=='-' && (*argv)[1]=='-' )
         {
             const char *pos_equals = strchr( *argv, '=' );
             const char *pos_name = (*argv)+2;

@@ -61,16 +61,16 @@ bool us_osc_sender_udp_send_msg( us_osc_sender_t *self_,  const us_osc_msg_t *ms
     us_buffer_t buf;
     us_buffer_init( &buf, 0, data, sizeof(data) );
     r = msg->flatten( msg, &buf, 0 );
-    if( r )
+    if ( r )
     {
         ssize_t len = us_buffer_readable_count( &buf );
         ssize_t sent;
         sent = sendto( self->m_fd, data, len, 0, self->m_dest_addr->ai_addr, self->m_dest_addr->ai_addrlen );
-        if( sent!=len )
+        if ( sent!=len )
         {
             r=false;
         }
-        if( !r )
+        if ( !r )
         {
             us_log_error( "unable to write osc message to UDP socket" );
         }

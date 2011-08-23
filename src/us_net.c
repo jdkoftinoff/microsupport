@@ -58,9 +58,9 @@ struct addrinfo *us_net_get_addrinfo (
     hints.ai_family = AF_UNSPEC;
     hints.ai_protocol = 0;
 
-    if( ip_addr!=0 && *ip_addr=='\0' )
+    if ( ip_addr!=0 && *ip_addr=='\0' )
         ip_addr=0;
-    if( ip_port!=0 && *ip_port=='\0' )
+    if ( ip_port!=0 && *ip_port=='\0' )
         ip_port=0;
 
     do
@@ -290,7 +290,7 @@ int us_net_create_multicast_tx_udp_socket (
         if ( interface_name && *interface_name != '\0' )
         {
             if_index = if_nametoindex ( interface_name );
-            if(  if_index==0 )
+            if (  if_index==0 )
             {
                 us_log_error( "socket: %s interface_name %s unknown", s, interface_name );
                 closesocket(s);
@@ -425,8 +425,8 @@ us_net_blocking_send(
         {
             cnt=send(sock, data, todo, 0);
         }
-        while(cnt<0 && errno==EINTR);
-        if( cnt<=0)
+        while (cnt<0 && errno==EINTR);
+        if ( cnt<=0)
             break;
         todo-=cnt;
         data+=cnt;
