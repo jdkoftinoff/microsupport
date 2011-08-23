@@ -56,18 +56,18 @@ bool us_buffer_read_string (
     {
         int i;
         int l=0;
-        if( cur_length>result_max_len-1 )
+        if ( cur_length>result_max_len-1 )
         {
             cur_length=result_max_len-1;
         }
-        for( i=0; i<cur_length; ++i )
+        for ( i=0; i<cur_length; ++i )
         {
             value_ptr[i] = us_buffer_peek( self, i );
             l++;
-            if( value_ptr[i]=='\0' )
+            if ( value_ptr[i]=='\0' )
                 break;
         }
-        if( l<=result_max_len )
+        if ( l<=result_max_len )
         {
             us_buffer_skip( self, l );
             value_ptr[ result_max_len -1 ] = '\0';
@@ -111,10 +111,12 @@ us_buffer_read_line (
 {
     bool r = false;
     int i = 0;
+    int p = 0;
     int cur_length = us_buffer_readable_count(self);
-    while ( i < result_max_len - 1 && i<cur_length )
+    while ( i < result_max_len - 1 && p<cur_length )
     {
         char c = us_buffer_read_byte(self);
+        p++;
         /* skip carriage returns */
         if ( c == '\r' )
             continue;
@@ -127,6 +129,38 @@ us_buffer_read_line (
             r = true;
             break;
         }
+    }
+    return r;
+}
+
+bool
+us_buffer_scan_line (
+    us_buffer_t *self,
+    char *value,
+    int32_t result_max_len
+)
+{
+    bool r = false;
+    int i = 0;
+    int p = 0;
+    int cur_length = us_buffer_readable_count(self);
+    while ( i < result_max_len - 1 && p<cur_length )
+    {
+        char c = us_buffer_peek(self,p++);
+        /* skip carriage returns */
+        if ( c == '\r' )
+            continue;
+        /* eol means we are done */
+        if ( c == '\n' )
+        {
+            value[i] = '\0';
+            r = true;
+            /* skip to end of line */
+            us_buffer_skip( self, p );
+            break;
+        }
+        /* all other characters get placed into value */
+        value[i++] = c;
     }
     return r;
 }
@@ -429,7 +463,7 @@ bool us_buffer_read_data (
         int i;
         if ( max_data_length > avail )
             max_data_length = avail;
-        for( i=0; i<max_data_length; ++i )
+        for ( i=0; i<max_data_length; ++i )
         {
             data[i] = us_buffer_read_byte( self );
         }
@@ -480,7 +514,7 @@ bool us_buffer_read_rounded_data (
         if ( max_data_length > avail )
             max_data_length = avail;
         max_data_length = us_round_size ( max_data_length );
-        for( i=0; i<max_data_length; ++i )
+        for ( i=0; i<max_data_length; ++i )
         {
             data[i] = us_buffer_read_byte(self);
         }

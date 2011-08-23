@@ -135,7 +135,7 @@ extern "C"
     static inline int us_buffer_contig_readable_count ( const us_buffer_t *self )
     {
         int cnt = us_buffer_readable_count(self);
-        if( self->m_next_in < self->m_next_out )
+        if ( self->m_next_in < self->m_next_out )
             cnt = self->m_max_length-self->m_next_out;
         return cnt;
     }
@@ -177,7 +177,7 @@ extern "C"
     us_buffer_read ( us_buffer_t *self, uint8_t *dest_data, int dest_data_cnt )
     {
         int i;
-        for( i=0; i<dest_data_cnt; ++i )
+        for ( i=0; i<dest_data_cnt; ++i )
         {
             dest_data[i] = us_buffer_read_byte( self );
         }
@@ -274,10 +274,10 @@ extern "C"
     static inline int us_buffer_contig_writable_count ( const us_buffer_t *self )
     {
         int cnt = us_buffer_writable_count(self);
-        if( self->m_next_out <= self->m_next_in )
+        if ( self->m_next_out <= self->m_next_in )
         {
             cnt=self->m_max_length-self->m_next_in; /* max length is not storable, next_in would wrap with next_out */
-            if( self->m_next_out==0 )
+            if ( self->m_next_out==0 )
                 cnt--;
         }
         return cnt;
@@ -319,7 +319,7 @@ extern "C"
     static inline void us_buffer_write ( us_buffer_t *self, const uint8_t *src_data, int src_data_cnt )
     {
         int i;
-        for( i=0; i<src_data_cnt; ++i )
+        for ( i=0; i<src_data_cnt; ++i )
         {
             us_buffer_write_byte( self, src_data[i] );
         }
@@ -334,11 +334,11 @@ extern "C"
     {
         bool r=false;
         int rc = us_buffer_readable_count(buf);
-        if( us_buffer_writable_count(self) >= rc )
+        if ( us_buffer_writable_count(self) >= rc )
         {
             int i;
             /* todo: this can be replaced with 1 or two memcpy() calls */
-            for( i=0; i<rc; ++i )
+            for ( i=0; i<rc; ++i )
             {
                 us_buffer_write_byte( self, us_buffer_peek(buf,i));
             }
@@ -417,13 +417,13 @@ extern "C"
     us_buffer_string_compare( const us_buffer_t *self, int start_pos, const char *string, int len )
     {
         bool r=false;
-        if( us_buffer_readable_count(self)>=len+start_pos )
+        if ( us_buffer_readable_count(self)>=len+start_pos )
         {
             int i;
             r=true;
-            for( i=0; i<len; ++i )
+            for ( i=0; i<len; ++i )
             {
-                if( us_buffer_peek( self, start_pos+i ) != (uint8_t)string[i] )
+                if ( us_buffer_peek( self, start_pos+i ) != (uint8_t)string[i] )
                 {
                     r=false;
                     break;
@@ -463,7 +463,7 @@ extern "C"
     {
         bool r=false;
         const uint8_t *data = (const uint8_t*)data_;
-        if( us_buffer_writable_count(self)>=data_length )
+        if ( us_buffer_writable_count(self)>=data_length )
         {
             us_buffer_write( self, data, data_length );
             r=true;
@@ -484,7 +484,7 @@ extern "C"
     )
     {
         bool r=false;
-        if( us_buffer_can_write_byte(self))
+        if ( us_buffer_can_write_byte(self))
         {
             uint8_t byte_value = ( uint8_t ) value;
             us_buffer_write_byte( self, byte_value );
@@ -526,6 +526,13 @@ extern "C"
 
     bool
     us_buffer_read_line (
+        us_buffer_t *self,
+        char *value,
+        int32_t result_max_len
+    );
+
+    bool
+    us_buffer_scan_line (
         us_buffer_t *self,
         char *value,
         int32_t result_max_len
