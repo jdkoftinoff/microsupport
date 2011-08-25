@@ -540,7 +540,12 @@ us_osc_msg_unflatten(
         {
             /* does the address code say that there is a typetag string? */
             got_typetags = us_osc_msg_address_has_typetags(addrcode);
-            if ( !got_typetags )
+            if ( got_typetags )
+            {
+                /* yes, read it */
+                got_typetags = us_buffer_read_rounded_string(buf,types_buf,sizeof(types_buf) );
+            }
+            else
             {
                 /* nope, then we need an addrcode_mapper to decide what typetags to expect */
                 if ( addrcode_mapper )
