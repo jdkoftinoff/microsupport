@@ -65,7 +65,7 @@ bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address
     bool r=false;
     us_osc_msg_t *msg;
     us_simple_allocator_t tmp_allocator;
-    char buf[1024];
+    char buf[2048];
     va_list ap;
     us_simple_allocator_init( &tmp_allocator, buf, sizeof(buf) );
     va_start( ap, typetags );
@@ -77,7 +77,7 @@ bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address
     }
     else
     {
-        us_log_error( "unable to form osc message" );
+        us_log_error( "unable to form osc message %s %s",address,typetags);
     }
     va_end( ap );
     return r;
