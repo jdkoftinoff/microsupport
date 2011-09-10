@@ -44,7 +44,7 @@ extern "C"
     /** \addtogroup us_net
      */
     /*@{*/
-#if defined(US_CONFIG_POSIX)
+#if defined(US_CONFIG_POSIX) || defined(US_CONFIG_WIN32)
     struct addrinfo *
     us_net_get_addrinfo (
         const char *ip_addr,

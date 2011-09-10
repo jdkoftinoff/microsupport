@@ -18,6 +18,7 @@
     <ClInclude Include="..\..\..\..\include\us_buffer.h" />
     <ClInclude Include="..\..\..\..\include\us_buffer_print.h" />
     <ClInclude Include="..\..\..\..\include\us_cgi.h" />
+    <ClInclude Include="..\..\..\..\include\us_crc32.h" />
     <ClInclude Include="..\..\..\..\include\us_getopt.h" />
     <ClInclude Include="..\..\..\..\include\us_http.h" />
     <ClInclude Include="..\..\..\..\include\us_http_client.h" />
@@ -32,20 +33,27 @@
     <ClInclude Include="..\..\..\..\include\us_logger_udp.h" />
     <ClInclude Include="..\..\..\..\include\us_mdns_avahi.h" />
     <ClInclude Include="..\..\..\..\include\us_midi.h" />
+    <ClInclude Include="..\..\..\..\include\us_mtc.h" />
+    <ClInclude Include="..\..\..\..\include\us_mtc_parser.h" />
     <ClInclude Include="..\..\..\..\include\us_net.h" />
     <ClInclude Include="..\..\..\..\include\us_options.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_dispatch.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_io.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_msg.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_msg_print.h" />
+    <ClInclude Include="..\..\..\..\include\us_osc_sender.h" />
+    <ClInclude Include="..\..\..\..\include\us_osc_sender_tcp.h" />
+    <ClInclude Include="..\..\..\..\include\us_osc_sender_udp.h" />
     <ClInclude Include="..\..\..\..\include\us_parse.h" />
     <ClInclude Include="..\..\..\..\include\us_platform.h" />
     <ClInclude Include="..\..\..\..\include\us_print.h" />
     <ClInclude Include="..\..\..\..\include\us_queue.h" />
+    <ClInclude Include="..\..\..\..\include\us_rawnet.h" />
     <ClInclude Include="..\..\..\..\include\us_reactor.h" />
     <ClInclude Include="..\..\..\..\include\us_serial.h" />
     <ClInclude Include="..\..\..\..\include\us_slip.h" />
     <ClInclude Include="..\..\..\..\include\us_testutil.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_allocator_heap_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_allocator_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_buffer_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_getopt_main.h" />
@@ -68,6 +76,7 @@
     <ClInclude Include="..\..\..\..\include\us_trie_dump.h" />
     <ClInclude Include="..\..\..\..\include\us_webapp.h" />
     <ClInclude Include="..\..\..\..\include\us_webapp_fs.h" />
+    <ClInclude Include="..\..\..\..\include\us_webapp_json.h" />
     <ClInclude Include="..\..\..\..\include\us_world.h" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +111,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_crc32.c" />
     <ClCompile Include="..\..\..\..\src\us_getopt.c" />
     <ClCompile Include="..\..\..\..\src\us_http.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -166,6 +176,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_mtc.c" />
+    <ClCompile Include="..\..\..\..\src\us_mtc_parser.c" />
     <ClCompile Include="..\..\..\..\src\us_net.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -191,6 +203,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_osc_sender.c" />
+    <ClCompile Include="..\..\..\..\src\us_osc_sender_tcp.c" />
+    <ClCompile Include="..\..\..\..\src\us_osc_sender_udp.c" />
     <ClCompile Include="..\..\..\..\src\us_osc_test_osc_io.c" />
     <ClCompile Include="..\..\..\..\src\us_parse.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -216,6 +231,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_rawnet.c" />
     <ClCompile Include="..\..\..\..\src\us_reactor.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -240,6 +256,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_allocator_heap_main.c" />
     <ClCompile Include="..\..\..\..\src\us_test_allocator_main.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -337,6 +354,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\us_webapp.c" />
     <ClCompile Include="..\..\..\..\src\us_webapp_fs.c" />
+    <ClCompile Include="..\..\..\..\src\us_webapp_json.c" />
     <ClCompile Include="..\..\..\..\src\us_world.c">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
