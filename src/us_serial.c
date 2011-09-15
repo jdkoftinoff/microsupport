@@ -48,8 +48,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
     while ( e < 0 && errno == EINTR );
     if ( e < 0 )
     {
-        perror ( "ioctl TCGETS failed" );
-        close ( fd );
+        us_log_error ( "ioctl TCGETS failed" );
         return false;
     }
     term.c_cc[VMIN] = 1;
@@ -70,8 +69,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
         requested_baud = ( uint32_t ) ( strtoul ( serial_options, 0, 10 ) );
         if ( requested_baud == 0 )
         {
-            fprintf ( stderr, "invalid baud rate" );
-            close ( fd );
+            us_log_error ( "invalid baud rate" );
             return false;
         }
         serial_fmt = strchr ( serial_options, ',' );
@@ -81,8 +79,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
         }
         if ( strlen ( serial_fmt ) != 5 )
         {
-            fprintf ( stderr, "invalid serial format: for example use 8N1,H or 8N1,N " );
-            close ( fd );
+            us_log_error ( "invalid serial format: for example use 8N1,H or 8N1,N " );
             return false;
         }
     }
@@ -129,8 +126,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
         break;
 #endif
     default:
-        fprintf ( stderr, "invalid baud rate: %d\n", requested_baud );
-        close ( fd );
+        us_log_error( "invalid baud rate: %d", requested_baud );
         return false;
         break;
     }
@@ -143,8 +139,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
         while ( e < 0 && errno == EINTR );
         if ( e < 0 )
         {
-            perror ( "cfsetspeed:" );
-            close ( fd );
+            us_log_error ( "error setting cfsetspeed" );
             return false;
         }
     }
@@ -160,8 +155,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
     }
     else
     {
-        fprintf ( stderr, "invalid bits: %c\n", serial_fmt[0] );
-        close ( fd );
+        us_log_error( "invalid bits: %c", serial_fmt[0] );
         return false;
     }
     if ( serial_fmt[1] == 'N' )
@@ -180,8 +174,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
     }
     else
     {
-        fprintf ( stderr, "invalid parity: %c\n", serial_fmt[1] );
-        close ( fd );
+        us_log_error( "invalid parity: %c", serial_fmt[1] );
         return false;
     }
     if ( serial_fmt[2] == '1' )
@@ -194,8 +187,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
     }
     else
     {
-        fprintf ( stderr, "invalid stop bits: %c\n", serial_fmt[2] );
-        close ( fd );
+        us_log_error( "invalid stop bits: %c", serial_fmt[2] );
         return false;
     }
     if ( serial_fmt[4] == 'H' )
@@ -217,8 +209,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
     while ( e < 0 && errno == EINTR );
     if ( e < 0 )
     {
-        perror ( "ioctl TCSETS failed" );
-        close ( fd );
+        us_log_error ( "ioctl TCSETS failed" );
         return false;
     }
     do
@@ -228,8 +219,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
     while ( e < 0 && errno == EINTR );
     if ( e < 0 )
     {
-        perror ( "fcntl F_SETFL O_NONBLOCK failed" );
-        close ( fd );
+        us_log_error( "fcntl F_SETFL O_NONBLOCK failed" );
         return false;
     }
     return true;
