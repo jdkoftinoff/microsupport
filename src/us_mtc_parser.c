@@ -5,12 +5,10 @@
 void us_mtc_parser_init ( us_mtc_parser_t *self )
 {
     int i;
-
     for ( i = 0; i < 8; ++i )
     {
         self->m_nibbles[i] = 0;
     }
-
     us_mtc_init ( &self->m_last_formed_time );
     self->m_seen_first = false;
     self->m_first_nibble = -1;
@@ -35,19 +33,16 @@ bool us_mtc_parser_handle_qf (
     /* update current nibble state */
     self->m_nibbles[nibble_num] = nibble_val;
     self->m_last_qf_microseconds = time_stamp;
-
     if ( nibble_num == 0 && !self->m_seen_first )
     {
         self->m_valid = false;
         self->m_seen_first = true;
     }
-
     /* is this a nibble 7? */
     if ( nibble_num == 7 && self->m_seen_first )
     {
         self->m_valid = true;
     }
-
     /* have we seen a nibble before ? */
     if ( self->m_last_nibble != -1 )
     {
@@ -80,7 +75,6 @@ bool us_mtc_parser_handle_qf (
             /* we dont know which way we are moving, if at all */
             self->m_forward = false;
             self->m_moving = false;
-
             /*
              * if this nibble is nibble 0, then
              * this nibble is now the first official
@@ -91,14 +85,12 @@ bool us_mtc_parser_handle_qf (
                 self->m_first_nibble = nibble_num;
                 self->m_seen_first = true;
             }
-
             /*
              * we have not seen the last nibble yet
              */
             self->m_last_nibble = -1;
         }
     }
-
     /* if the current time is valid now, then convert the nibbles to the time */
     self->m_last_nibble = nibble_num;
     self->m_last_formed_time.m_frame =
@@ -116,7 +108,6 @@ bool us_mtc_parser_handle_qf (
     /* if we have already formed a time, copy the time over.
     */
     self->m_valid = us_mtc_valid ( &self->m_last_formed_time );
-
     if ( t )
     {
         if ( self->m_valid )
@@ -129,7 +120,6 @@ bool us_mtc_parser_handle_qf (
             us_mtc_init ( t );
         }
     }
-
     /* return true only if qf==0 and time is valid */
     if ( self->m_moving
             && self->m_forward
@@ -138,7 +128,6 @@ bool us_mtc_parser_handle_qf (
     {
         return true;
     }
-
     if ( self->m_moving
             && !self->m_forward
             && self->m_last_nibble == 0
@@ -147,7 +136,6 @@ bool us_mtc_parser_handle_qf (
     {
         return true;
     }
-
     return false;
 }
 
@@ -175,7 +163,6 @@ bool us_mtc_parser_handle_full (
     self->m_moving = false;
     self->m_first_nibble = -1;
     self->m_last_nibble = -1;
-
     if ( self->m_valid )
     {
         /* copy the entire time to *t */
@@ -183,7 +170,6 @@ bool us_mtc_parser_handle_full (
         {
             *t = self->m_last_formed_time;
         }
-
         /* nibbelize the time */
         self->m_nibbles[0] = ( self->m_last_formed_time.m_frame >> 0 ) & 0xf;
         self->m_nibbles[1] = ( self->m_last_formed_time.m_frame >> 4 ) & 0xf;
@@ -194,7 +180,6 @@ bool us_mtc_parser_handle_full (
         self->m_nibbles[6] = ( self->m_last_formed_time.m_hour >> 0 ) & 0xf;
         self->m_nibbles[7] = ( ( self->m_last_formed_time.m_hour >> 4 ) & 0x1 ) | ( ( fmt << 1 ) & 0xE );
     }
-
     return self->m_valid;
 }
 
@@ -211,10 +196,8 @@ bool us_mtc_parser_handle_sysex (
     /* read the fields of the sysex and store into self */
     if ( sysex_len != 10 )
         return false;
-
     if ( sysex[0] != 0xf0 || sysex[9] != 0xf7 )
         return false;
-
     return us_mtc_parser_handle_full (
                self,
                t,
@@ -238,7 +221,6 @@ bool us_mtc_parser_poll (
     if ( self->m_valid )
     {
         uint32_t usec_since_last_qf = time_stamp - self->m_last_qf_microseconds;
-
         if ( usec_since_last_qf > 500000 ) /* TODO: Make this variable instead of half a second */
         {
             /* we lost sync! */
@@ -248,7 +230,6 @@ bool us_mtc_parser_poll (
             return true;  /* time code has changed! */
         }
     }
-
     return false;
 }
 

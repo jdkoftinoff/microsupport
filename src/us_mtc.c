@@ -58,7 +58,7 @@ const char *us_mtc_format_string[] =
     "30fps ND",
     "30fps D",
     "23.98fps ND",
-    "23.98fps F", 
+    "23.98fps F",
     "unknown"
 };
 
@@ -74,39 +74,30 @@ void us_mtc_init ( us_mtc_t *self )
 bool us_mtc_valid ( us_mtc_t *self )
 {
     uint8_t lim = us_mtc_max_frame[ self->m_fmt ];
-
     if ( self->m_frame >= lim )
         return false;
-
     if ( self->m_second >= 60 )
         return false;
-
     if ( self->m_minute >= 60 )
         return false;
-
     if ( self->m_hour >= 24 )
         return false;
-
     if ( us_mtc_is_drop[ self->m_fmt ] )
     {
         bool min_is_divisible_by_ten = false;
-
         if ( ( self->m_minute % 10 ) == 0 )
             min_is_divisible_by_ten = true;
-
         if ( self->m_frame < 2 && self->m_second == 0 && !min_is_divisible_by_ten )
         {
             return false;
         }
     }
-
     return true;
 }
 
 void us_mtc_increment ( us_mtc_t *self )
 {
     uint8_t lim = us_mtc_max_frame[ self->m_fmt ];
-
     if ( self->m_frame < lim - 1 )
     {
         self->m_frame++;
@@ -114,7 +105,6 @@ void us_mtc_increment ( us_mtc_t *self )
     else
     {
         self->m_frame = 0;
-
         if ( self->m_second < 60 - 1 )
         {
             self->m_second ++;
@@ -122,7 +112,6 @@ void us_mtc_increment ( us_mtc_t *self )
         else
         {
             self->m_second = 0;
-
             if ( self->m_minute < 60 - 1 )
             {
                 self->m_minute++;
@@ -130,7 +119,6 @@ void us_mtc_increment ( us_mtc_t *self )
             else
             {
                 self->m_minute = 0;
-
                 if ( self->m_hour < 24 - 1 )
                 {
                     self->m_hour++;
@@ -142,14 +130,11 @@ void us_mtc_increment ( us_mtc_t *self )
             }
         }
     }
-
     if ( us_mtc_is_drop[ self->m_fmt ] )
     {
         bool min_is_divisible_by_ten = false;
-
         if ( ( self->m_minute % 10 ) == 0 )
             min_is_divisible_by_ten = true;
-
         if ( self->m_frame == 0 && self->m_second == 0 && !min_is_divisible_by_ten )
         {
             self->m_frame = 2;
@@ -160,20 +145,16 @@ void us_mtc_increment ( us_mtc_t *self )
 void us_mtc_decrement ( us_mtc_t *self )
 {
     uint8_t lim = us_mtc_max_frame[ self->m_fmt ];
-
     if ( us_mtc_is_drop[ self->m_fmt ] )
     {
         bool min_is_divisible_by_ten = false;
-
         if ( ( self->m_minute % 10 ) == 0 )
             min_is_divisible_by_ten = true;
-
         if ( self->m_frame == 2 && self->m_second == 0 && !min_is_divisible_by_ten )
         {
             self->m_frame = 0;
         }
     }
-
     if ( self->m_frame > 0 )
     {
         self->m_frame--;
@@ -181,7 +162,6 @@ void us_mtc_decrement ( us_mtc_t *self )
     else
     {
         self->m_frame = lim - 1 ;
-
         if ( self->m_second > 0 )
         {
             self->m_second --;
@@ -189,7 +169,6 @@ void us_mtc_decrement ( us_mtc_t *self )
         else
         {
             self->m_second = 60 - 1;
-
             if ( self->m_minute > 0 )
             {
                 self->m_minute--;
@@ -197,7 +176,6 @@ void us_mtc_decrement ( us_mtc_t *self )
             else
             {
                 self->m_minute = 60 - 1;
-
                 if ( self->m_hour > 0 )
                 {
                     self->m_hour--;
@@ -218,16 +196,13 @@ bool us_mtc_print ( us_mtc_t *self, bool print_fmt, char *buf, size_t buf_len )
     const char *fmt_spacing = "";
     const char *fmt = "";
     char df_indicator = ':';
-
     if ( us_mtc_is_drop[ self->m_fmt ] )
         df_indicator = ';';
-
     if ( print_fmt )
     {
         fmt = us_mtc_format_string[ self->m_fmt ];
         fmt_spacing = " ";
     }
-
 #ifdef US_CONFIG_WIN32
     cnt = _snprintf_s ( buf, buf_len, _TRUNCATE, "%02d:%02d:%02d%c%02d%s%s",
                         ( int ) self->m_hour,
@@ -249,10 +224,8 @@ bool us_mtc_print ( us_mtc_t *self, bool print_fmt, char *buf, size_t buf_len )
                      fmt
                    );
 #endif
-
     if ( ( size_t ) cnt >= buf_len || cnt < 0 )
         r = false;
-
     return r;
 }
 
@@ -268,7 +241,6 @@ bool us_mtc_parse (
     bool is_drop = false;
     int cnt;
     cnt = sscanf ( ascii, "%2d:%2d:%2d:%2d", &h, &m, &s, &f );
-
     if ( cnt == 4 )
     {
         is_drop = false;
@@ -276,13 +248,11 @@ bool us_mtc_parse (
     else
     {
         cnt = sscanf ( ascii, "%2d:%2d:%2d;%2d", &h, &m, &s, &f );
-
         if ( cnt == 4 )
         {
             is_drop = true;
         }
     }
-
     if ( cnt == 4 )
     {
         self->m_hour = h;
@@ -290,13 +260,11 @@ bool us_mtc_parse (
         self->m_second = s;
         self->m_frame = f;
         self->m_fmt = fmt;
-
         if ( us_mtc_is_drop[fmt] == is_drop )
         {
             r = us_mtc_valid ( self );
         }
     }
-
     return r;
 }
 
@@ -316,7 +284,6 @@ int32_t us_mtc_get_total_frames ( us_mtc_t *self )
                        ( self->m_minute * 60 ) +
                        self->m_second )
                      * fps ) + self->m_frame;
-
     /* take into account dropped frames */
     if ( us_mtc_is_drop[ self->m_fmt ] )
     {
@@ -325,20 +292,17 @@ int32_t us_mtc_get_total_frames ( us_mtc_t *self )
         total_frames -= 2 * self->m_minute; /* 2 dropped frames per minute */
         total_frames += 2 * ( self->m_minute / 10 ); /* add the 2 back in when minutes / 10 */
     }
-
     return total_frames;
 }
 
 void us_mtc_set_total_frames ( us_mtc_t *self, int32_t total_frames )
 {
     uint8_t fps = us_mtc_max_frame[ self->m_fmt ];
-
     if ( us_mtc_is_drop[ self->m_fmt ] )
     {
         int32_t etf =  total_frames - ( 2 + ( ( total_frames / 17980 ) * 2 ) );
         total_frames += ( 2 * ( etf / 1798 ) ) - ( 2 * ( etf / 17980 ) );
     }
-
     self->m_frame = total_frames % fps;
     self->m_second = ( total_frames / fps ) % 60;
     self->m_minute = ( total_frames / ( fps * 60 ) ) % 60;
@@ -348,7 +312,6 @@ void us_mtc_set_total_frames ( us_mtc_t *self, int32_t total_frames )
 int us_mtc_extract_qf ( us_mtc_t *self, int qf )
 {
     int val;
-
     switch ( qf )
     {
     case 0:
@@ -380,7 +343,6 @@ int us_mtc_extract_qf ( us_mtc_t *self, int qf )
         val = 0;
         break;
     }
-
     return val;
 }
 
@@ -388,7 +350,6 @@ int us_mtc_extract_qf ( us_mtc_t *self, int qf )
 bool us_mtc_store_qf ( us_mtc_t *self, int qf, int qf_value )
 {
     bool r = true;
-
     switch ( qf )
     {
     case 0:
@@ -420,7 +381,6 @@ bool us_mtc_store_qf ( us_mtc_t *self, int qf, int qf_value )
         r = false;
         break;
     }
-
     return r;
 }
 
