@@ -47,6 +47,12 @@ extern "C"
 
 #define US_COUNTOF(x) (sizeof(x)/sizeof(x[0]))
 
+#ifdef US_UNUSED
+#elif defined(__GNUC__)
+# define US_UNUSED(x) US_UNUSED_ ## x __attribute__((unused))
+#else
+# define US_UNUSED(x) US_UNUSED_ ## x
+#endif
 
 #if US_ENABLE_BSD_SOCKETS && !defined(US_NO_DECLARE_CLOSESOCKET)
 # ifndef WIN32
