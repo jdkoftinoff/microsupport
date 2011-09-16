@@ -103,8 +103,8 @@ bool us_allocator_heap_internal_init( us_allocator_heap_t *self )
     self->m_first->m_magic = US_HEAP_MAGIC;
     self->m_first->m_next = 0;
     self->m_first->m_prev = 0;
-    self->m_first->m_size = - ( self->m_size
-                                - us_allocator_rounded_block_size ); /* negative size means empty */
+    self->m_first->m_size = (size_t)(- (ssize_t)( self->m_size
+                                - us_allocator_rounded_block_size )); /* negative size means empty */
     /* the first empty block is also our last free block */
     self->m_last_free = self->m_first;
     return true;

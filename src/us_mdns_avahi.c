@@ -29,7 +29,8 @@
 
 #include "us_mdns_avahi.h"
 
-#if US_ENABLE_STDIO
+
+#if US_ENABLE_STDIO && !defined(WIN32)
 
 static us_mdns_avahi_t *us_mdns_avahi_service_list=0;
 
@@ -91,7 +92,7 @@ void us_mdns_avahi_atexit(void)
     us_mdns_avahi_t *cur = us_mdns_avahi_service_list;
     while ( cur )
     {
-        unlink( cur->m_fname );
+       unlink( cur->m_fname );
     }
 }
 
