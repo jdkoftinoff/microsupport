@@ -203,7 +203,7 @@ bool us_mtc_print ( us_mtc_t *self, bool print_fmt, char *buf, size_t buf_len )
         fmt = us_mtc_format_string[ self->m_fmt ];
         fmt_spacing = " ";
     }
-#ifdef US_CONFIG_WIN32
+#if defined(_MSC_VER)
     cnt = _snprintf_s ( buf, buf_len, _TRUNCATE, "%02d:%02d:%02d%c%02d%s%s",
                         ( int ) self->m_hour,
                         ( int ) self->m_minute,
