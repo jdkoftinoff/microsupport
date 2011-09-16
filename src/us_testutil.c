@@ -58,7 +58,7 @@ us_simple_allocator_t us_testutil_session_allocator_impl;
 int32_t us_testutil_session_sys_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 
 bool us_testutil_start (
-    int32_t sys_allocator_size,
+    int32_t US_UNUSED(sys_allocator_size),
     int32_t session_allocator_size,
     int argc,
     char **argv

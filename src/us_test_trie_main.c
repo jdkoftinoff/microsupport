@@ -173,14 +173,14 @@ static us_test_trie_schema_entry_t us_test_trie_schema[] =
 };
 
 
-static bool device_name_read ( us_test_trie_schema_entry_t *self )
+static bool device_name_read ( us_test_trie_schema_entry_t *US_UNUSED(self) )
 {
     us_log_debug ( "%s: ", __FUNCTION__ );
     return true;
 }
 
 
-static bool device_name_write ( us_test_trie_schema_entry_t *self )
+static bool device_name_write ( us_test_trie_schema_entry_t *US_UNUSED(self) )
 {
     us_log_debug ( "%s: ", __FUNCTION__ );
     us_log_info ( "new system name: %s ", system_name );
@@ -188,21 +188,21 @@ static bool device_name_write ( us_test_trie_schema_entry_t *self )
 }
 
 
-static bool system_name_read ( us_test_trie_schema_entry_t *self )
+static bool system_name_read ( us_test_trie_schema_entry_t *US_UNUSED(self) )
 {
     us_log_debug ( "%s: ", __FUNCTION__ );
     return true;
 }
 
 
-static bool system_name_write ( us_test_trie_schema_entry_t *self )
+static bool system_name_write ( us_test_trie_schema_entry_t *US_UNUSED(self) )
 {
     us_log_debug ( "%s: ", __FUNCTION__ );
     us_log_info ( "new system name: %s ", device_name );
     return true;
 }
 
-static bool us_test_trie_schema_dispatch ( us_trie_t *trie, const char *address, const char *types, void *value1, void *value2 )
+static bool us_test_trie_schema_dispatch ( us_trie_t *trie, const char *address, const char *types, void *value1, void *US_UNUSED(value2) )
 {
     bool r = false;
     us_trie_node_flags_t flags;

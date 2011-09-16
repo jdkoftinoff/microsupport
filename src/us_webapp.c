@@ -39,22 +39,22 @@ bool us_webapp_init( us_webapp_t *self, us_allocator_t *allocator )
     return true;
 }
 
-void us_webapp_destroy( us_webapp_t *self )
+void us_webapp_destroy( us_webapp_t *US_UNUSED(self) )
 {
 }
 
-bool us_webapp_path_match(us_webapp_t *self, const char *path )
+bool us_webapp_path_match(us_webapp_t *US_UNUSED(self), const char *US_UNUSED(path) )
 {
     return true;
 }
 
 
 int us_webapp_dispatch(
-    us_webapp_t *self,
-    const us_http_request_header_t *request_header,
-    const us_buffer_t *request_content,
-    us_http_response_header_t *response_header,
-    us_buffer_t *response_content
+    us_webapp_t *US_UNUSED(self),
+    const us_http_request_header_t *US_UNUSED(request_header),
+    const us_buffer_t *US_UNUSED(request_content),
+    us_http_response_header_t *US_UNUSED(response_header),
+    us_buffer_t *US_UNUSED(response_content)
 )
 {
     return -1;
@@ -113,7 +113,7 @@ us_webapp_t *us_webapp_static_buffer_create_with_buffer(
 
 us_webapp_t *us_webapp_static_buffer_create_with_string(
     us_allocator_t *allocator,
-    const char *path,
+    const char *US_UNUSED(path),
     const char *content_type,
     const char *str
 )
@@ -176,8 +176,8 @@ bool us_webapp_static_buffer_path_match(us_webapp_t *self_, const char *path )
 
 int us_webapp_static_buffer_dispatch(
     us_webapp_t *self_,
-    const us_http_request_header_t *request_header,
-    const us_buffer_t *request_content,
+    const us_http_request_header_t *US_UNUSED(request_header),
+    const us_buffer_t *US_UNUSED(request_content),
     us_http_response_header_t *response_header,
     us_buffer_t *response_content
 )
@@ -261,10 +261,10 @@ bool us_webapp_redirect_path_match(us_webapp_t *self_, const char *path )
 
 int us_webapp_redirect_dispatch(
     us_webapp_t *self_,
-    const us_http_request_header_t *request_header,
-    const us_buffer_t *request_content,
+    const us_http_request_header_t *US_UNUSED(request_header),
+    const us_buffer_t *US_UNUSED(request_content),
     us_http_response_header_t *response_header,
-    us_buffer_t *response_content
+    us_buffer_t *US_UNUSED(response_content)
 )
 {
     us_webapp_redirect_t *self = (us_webapp_redirect_t *)self_;
@@ -303,13 +303,13 @@ void us_webapp_diag_destroy(
     us_webapp_destroy(self);
 }
 
-bool us_webapp_diag_path_match(us_webapp_t *self, const char *url )
+bool us_webapp_diag_path_match(us_webapp_t *US_UNUSED(self), const char *US_UNUSED(url) )
 {
     return true;
 }
 
 int us_webapp_diag_dispatch(
-    us_webapp_t *self,
+    us_webapp_t *US_UNUSED(self),
     const us_http_request_header_t *request_header,
     const us_buffer_t *request_content,
     us_http_response_header_t *response_header,

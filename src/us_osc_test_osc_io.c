@@ -49,9 +49,9 @@ do_test_osc_io(
 
 static bool
 do_test_osc_io(
-    us_allocator_t *allocator,
-    us_buffer_t *buffer,
-    us_print_t *printer
+    us_allocator_t *US_UNUSED(allocator),
+    us_buffer_t *US_UNUSED(buffer),
+    us_print_t *US_UNUSED(printer)
 )
 {
     /* TODO */

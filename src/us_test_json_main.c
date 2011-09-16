@@ -74,7 +74,7 @@ static bool us_test_json ( void )
             r=false;
         a1=us_json_append_object( j, "histogram" );
         us_json_set_array( a1, true );
-        for ( i=0; i<sizeof(histogram)/sizeof(histogram[0]); ++i )
+        for ( i=0; i<(int)(sizeof(histogram)/sizeof(histogram[0])); ++i )
         {
             if ( !us_json_append_int32_ptr( a1, 0, &histogram[i] ))
             {
@@ -88,7 +88,7 @@ static bool us_test_json ( void )
         strcpy( city, "Berkeley" );
         strcpy( country, "United States" );
         hitpoints = 999;
-        for ( i=0; i<sizeof(histogram)/sizeof(histogram[0]); ++i )
+        for ( i=0; i<(int)(sizeof(histogram)/sizeof(histogram[0])); ++i )
         {
             histogram[i] = i*i;
         }

@@ -348,7 +348,7 @@ us_osc_msg_bundle_unflatten(
     us_allocator_t *allocator,
     us_buffer_t *buf,
     int32_t bundle_size,
-    us_osc_msg_addrcode_typetag_map_proc addrmapper
+    us_osc_msg_addrcode_typetag_map_proc US_UNUSED(addrmapper)
 )
 {
     int32_t todo=bundle_size;

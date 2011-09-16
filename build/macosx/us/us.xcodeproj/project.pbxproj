@@ -421,8 +421,6 @@
 		BFAA50BE1247C8E600FF1616 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				BFCE66F9140FFD5A00AF7DE6 /* us_mtc_parser.h */,
-				BFCE66FA140FFD5A00AF7DE6 /* us_mtc.h */,
 				BF0D28D01386D3530053A342 /* us_allocator_heap.h */,
 				BF0D28D11386D3530053A342 /* us_allocator_print.h */,
 				BF0D28D21386D3530053A342 /* us_allocator.h */,
@@ -444,6 +442,8 @@
 				BF0D28E21386D3530053A342 /* us_logger.h */,
 				BF0D28E31386D3530053A342 /* us_mdns_avahi.h */,
 				BF0D28E41386D3530053A342 /* us_midi.h */,
+				BFCE66FA140FFD5A00AF7DE6 /* us_mtc.h */,
+				BFCE66F9140FFD5A00AF7DE6 /* us_mtc_parser.h */,
 				BF0D28E51386D3530053A342 /* us_net.h */,
 				BF0D28E61386D3530053A342 /* us_options.h */,
 				BF0D28E71386D3530053A342 /* us_osc_dispatch.h */,

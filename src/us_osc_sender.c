@@ -34,7 +34,7 @@ us_osc_sender_t *us_osc_sender_create( void )
     return calloc( sizeof( us_osc_sender_t), 1 );
 }
 
-bool us_osc_sender_init( us_osc_sender_t *self, void *extra )
+bool us_osc_sender_init( us_osc_sender_t *self, void *US_UNUSED(extra) )
 {
     self->destroy = us_osc_sender_destroy;
     self->can_send = us_osc_sender_can_send;
@@ -43,18 +43,18 @@ bool us_osc_sender_init( us_osc_sender_t *self, void *extra )
     return true;
 }
 
-void us_osc_sender_destroy( us_osc_sender_t *self )
+void us_osc_sender_destroy( us_osc_sender_t *US_UNUSED(self) )
 {
     /* nothing to do */
 }
 
-bool us_osc_sender_send_msg( us_osc_sender_t *self, const us_osc_msg_t *msg )
+bool us_osc_sender_send_msg( us_osc_sender_t *US_UNUSED(self), const us_osc_msg_t *US_UNUSED(msg) )
 {
     /* base class does nothing to send */
     return false;
 }
 
-bool us_osc_sender_can_send( us_osc_sender_t *self )
+bool us_osc_sender_can_send( us_osc_sender_t *US_UNUSED(self) )
 {
     /* base class can not send messages every */
     return false;

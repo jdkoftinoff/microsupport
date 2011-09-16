@@ -243,10 +243,10 @@ static bool us_test_osc_dispatch_test1(void)
 }
 
 static bool us_test_osc_dispatch_media_level(
-    struct us_osc_dispatch_s *self,
+    struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    void *extra
+    void *US_UNUSED(extra)
 )
 {
     us_testutil_printer_stdout->printf(
@@ -266,10 +266,10 @@ static bool us_test_osc_dispatch_media_level(
 }
 
 static bool us_test_osc_dispatch_media_pan(
-    struct us_osc_dispatch_s *self,
+    struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    void *extra
+    void *US_UNUSED(extra)
 )
 
 {
@@ -290,10 +290,10 @@ static bool us_test_osc_dispatch_media_pan(
 }
 
 static bool us_test_osc_dispatch_media_mute(
-    struct us_osc_dispatch_s *self,
+    struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    void *extra
+    void *US_UNUSED(extra)
 )
 {
     us_testutil_printer_stdout->printf(
@@ -313,10 +313,10 @@ static bool us_test_osc_dispatch_media_mute(
 }
 
 static bool us_test_osc_dispatch_media_invert(
-    struct us_osc_dispatch_s *self,
+    struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    void *extra
+    void *US_UNUSED(extra)
 )
 {
     us_testutil_printer_stdout->printf(
@@ -336,10 +336,10 @@ static bool us_test_osc_dispatch_media_invert(
 }
 
 static bool us_test_osc_dispatch_media_raw(
-    struct us_osc_dispatch_s *self,
+    struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    void *extra
+    void *US_UNUSED(extra)
 )
 {
     us_testutil_printer_stdout->printf(

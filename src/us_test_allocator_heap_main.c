@@ -165,7 +165,7 @@ int us_test_allocator_heap_main ( int argc, char **argv )
         j=0;
         while (j<1)
         {
-            for (i=0; i<sizeof(raw_memory)/sizeof(raw_memory[0]); i++)
+            for (i=0; i<(int)(sizeof(raw_memory)/sizeof(raw_memory[0])); i++)
             {
                 raw_memory[i]=0;
             }

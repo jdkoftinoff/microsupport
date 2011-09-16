@@ -73,7 +73,7 @@ static const us_getopt_option_t control_options[] =
 
 static us_getopt_t opt;
 
-bool us_test_getopt( int argc, const char **argv )
+bool us_test_getopt( int US_UNUSED(argc), const char **argv )
 {
     bool r=false;
     us_allocator_t *allocator = us_testutil_sys_allocator;
