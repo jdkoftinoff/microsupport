@@ -5,7 +5,7 @@
 
 TARGET=us_example_hex_udp_tx
 
-SOURCES += $$TOPDIR/examples/us_example_hex_udp_tx.c
+SOURCES += $$TOPDIR/examples/us_example_hex_udp_tx.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

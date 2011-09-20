@@ -5,7 +5,7 @@
 
 TARGET=us_example_json
 
-SOURCES += $$TOPDIR/examples/us_example_json.c
+SOURCES += $$TOPDIR/examples/us_example_json.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

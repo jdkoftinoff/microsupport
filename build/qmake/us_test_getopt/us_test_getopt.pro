@@ -5,7 +5,7 @@
 
 TARGET=us_test_getopt
 
-SOURCES += $$TOPDIR/tests/us_test_getopt.c
+SOURCES += $$TOPDIR/tests/us_test_getopt.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

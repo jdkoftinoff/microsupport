@@ -5,7 +5,7 @@
 
 TARGET=us_test_queue
 
-SOURCES += $$TOPDIR/tests/us_test_queue.c
+SOURCES += $$TOPDIR/tests/us_test_queue.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

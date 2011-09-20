@@ -5,7 +5,7 @@
 
 TARGET=us_test_trie
 
-SOURCES += $$TOPDIR/tests/us_test_trie.c
+SOURCES += $$TOPDIR/tests/us_test_trie.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

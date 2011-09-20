@@ -5,7 +5,7 @@
 
 TARGET=us_test_json
 
-SOURCES += $$TOPDIR/tests/us_test_json.c
+SOURCES += $$TOPDIR/tests/us_test_json.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

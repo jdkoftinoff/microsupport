@@ -5,7 +5,7 @@
 
 TARGET=us_test_midi
 
-SOURCES += $$TOPDIR/tests/us_test_midi.c
+SOURCES += $$TOPDIR/tests/us_test_midi.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

@@ -5,7 +5,7 @@
 
 TARGET=us_test_osc_io
 
-SOURCES += $$TOPDIR/tests/us_test_osc_io.c
+SOURCES += $$TOPDIR/tests/us_test_osc_io.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

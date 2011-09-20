@@ -5,7 +5,7 @@
 
 TARGET=us_test_slip
 
-SOURCES += $$TOPDIR/tests/us_test_slip.c
+SOURCES += $$TOPDIR/tests/us_test_slip.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

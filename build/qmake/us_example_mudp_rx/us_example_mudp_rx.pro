@@ -5,7 +5,7 @@
 
 TARGET=us_example_mudp_rx
 
-SOURCES += $$TOPDIR/examples/us_example_mudp_rx.c
+SOURCES += $$TOPDIR/examples/us_example_mudp_rx.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

@@ -5,7 +5,7 @@
 
 TARGET=us_test_allocator
 
-SOURCES += $$TOPDIR/tests/us_test_allocator.c
+SOURCES += $$TOPDIR/tests/us_test_allocator.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

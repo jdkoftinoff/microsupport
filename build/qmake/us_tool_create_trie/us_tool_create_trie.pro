@@ -5,7 +5,7 @@
 
 TARGET=us_tool_create_trie
 
-SOURCES += $$TOPDIR/tools-dev/us_tool_create_trie.c
+SOURCES += $$TOPDIR/tools-dev/us_tool_create_trie.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

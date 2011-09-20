@@ -5,7 +5,7 @@
 
 TARGET=us_test_osc_msg
 
-SOURCES += $$TOPDIR/tests/us_test_osc_msg.c
+SOURCES += $$TOPDIR/tests/us_test_osc_msg.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

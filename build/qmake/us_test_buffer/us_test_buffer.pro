@@ -5,7 +5,7 @@
 
 TARGET=us_test_buffer
 
-SOURCES += $$TOPDIR/tests/us_test_buffer.c
+SOURCES += $$TOPDIR/tests/us_test_buffer.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

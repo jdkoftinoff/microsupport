@@ -5,7 +5,7 @@
 
 TARGET=us_example_webapp
 
-SOURCES += $$TOPDIR/examples/us_example_webapp.c
+SOURCES += $$TOPDIR/examples/us_example_webapp.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

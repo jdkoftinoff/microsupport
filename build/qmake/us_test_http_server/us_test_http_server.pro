@@ -5,7 +5,7 @@
 
 TARGET=us_test_http_server
 
-SOURCES += $$TOPDIR/tests/us_test_http_server.c
+SOURCES += $$TOPDIR/tests/us_test_http_server.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

@@ -5,7 +5,7 @@
 
 TARGET=us_test_net
 
-SOURCES += $$TOPDIR/tests/us_test_net.c
+SOURCES += $$TOPDIR/tests/us_test_net.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

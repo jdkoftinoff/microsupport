@@ -5,7 +5,7 @@
 
 TARGET=us_example_reactor
 
-SOURCES += $$TOPDIR/examples/us_example_reactor.c
+SOURCES += $$TOPDIR/examples/us_example_reactor.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

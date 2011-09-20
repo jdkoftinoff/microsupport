@@ -5,7 +5,7 @@
 
 TARGET=us_test_osc_dispatch
 
-SOURCES += $$TOPDIR/tests/us_test_osc_dispatch.c
+SOURCES += $$TOPDIR/tests/us_test_osc_dispatch.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

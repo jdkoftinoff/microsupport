@@ -5,7 +5,7 @@
 
 TARGET=us_test_line_parse
 
-SOURCES += $$TOPDIR/tests/us_test_line_parse.c
+SOURCES += $$TOPDIR/tests/us_test_line_parse.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 

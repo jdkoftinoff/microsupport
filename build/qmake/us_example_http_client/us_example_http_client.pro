@@ -5,7 +5,7 @@
 
 TARGET=us_example_http_client
 
-SOURCES += $$TOPDIR/examples/us_example_http_client.c
+SOURCES += $$TOPDIR/examples/us_example_http_client.cpp
 
-HEADERS += $$TOPDIR/include/*.h
+HEADERS += $$TOPDIR/include/*.hpp
 
