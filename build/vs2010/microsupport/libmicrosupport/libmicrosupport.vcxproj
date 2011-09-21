@@ -206,7 +206,6 @@
     <ClCompile Include="..\..\..\..\src\us_osc_sender.c" />
     <ClCompile Include="..\..\..\..\src\us_osc_sender_tcp.c" />
     <ClCompile Include="..\..\..\..\src\us_osc_sender_udp.c" />
-    <ClCompile Include="..\..\..\..\src\us_osc_test_osc_io.c" />
     <ClCompile Include="..\..\..\..\src\us_parse.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -303,6 +302,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\us_test_osc_dispatch_main.c" />
+    <ClCompile Include="..\..\..\..\src\us_test_osc_io_main.c" />
     <ClCompile Include="..\..\..\..\src\us_test_osc_msg_main.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
