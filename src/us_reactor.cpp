@@ -739,7 +739,7 @@ bool us_reactor_handler_tcp_readable (
     }
     do
     {
-        len = recv ( self->m_base.m_fd, p, max_len, 0 );
+        len = recv ( self->m_base.m_fd, (char *)p, max_len, 0 );
     }
     while ( len<0 && errno==EINTR );
     if ( len > 0 )
@@ -917,7 +917,7 @@ bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
     us_buffer_reset( self->m_incoming_packet );
     len = recvfrom(
               self->m_base.m_fd,
-              self->m_incoming_packet->m_buffer,
+              (char *)self->m_incoming_packet->m_buffer,
               self->m_incoming_packet->m_max_length, 0,
               (struct sockaddr *)&remote_addr,
               &remote_addrlen

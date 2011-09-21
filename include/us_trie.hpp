@@ -89,7 +89,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static inline bool us_trie_node_is_end ( const us_trie_node_t *self )
     {
-        return ( self->m_flags & US_TRIE_NODE_END_BIT );
+        return ( self->m_flags & US_TRIE_NODE_END_BIT )!=0;
     }
 
 
