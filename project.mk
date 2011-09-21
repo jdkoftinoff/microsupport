@@ -11,12 +11,12 @@ PROJECT_IDENTIFIER=com.meyersound.microsupport
 TOP_LIB_DIRS+=.
 CONFIG_TOOLS+=
 PKGCONFIG_PACKAGES+=
-COMPILE_FLAGS+=-Wall -Wunused -Wmissing-declarations
+COMPILE_FLAGS+=-Wall -Wunused 
+#-Wmissing-declarations
 
 ENABLE_PRECOMPILED_HEADERS?=1
 PRECOMPILED_HEADER=$(TOP)/include/us_world.hpp
 
 STRIP=true
 
-CC=$(CPP)
 
