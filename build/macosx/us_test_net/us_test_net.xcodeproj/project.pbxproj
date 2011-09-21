@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BF0FA28F11615B0C004D450A /* libus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0FA28011615AD7004D450A /* libus.a */; };
-		BF0FA2A011615B6A004D450A /* us_test_net.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0FA29F11615B6A004D450A /* us_test_net.c */; };
+		BF7AB01A142992CA00488BED /* us_test_net.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF7AB019142992CA00488BED /* us_test_net.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +36,7 @@
 /* Begin PBXFileReference section */
 		8DD76FB20486AB0100D96B5E /* us_test_net */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = us_test_net; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF0FA27B11615AD7004D450A /* us.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us.xcodeproj; path = ../us/us.xcodeproj; sourceTree = SOURCE_ROOT; };
-		BF0FA29F11615B6A004D450A /* us_test_net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_net.c; path = ../../../tests/us_test_net.c; sourceTree = SOURCE_ROOT; };
+		BF7AB019142992CA00488BED /* us_test_net.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = us_test_net.cpp; path = ../../../tests/us_test_net.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,7 +65,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				BF0FA29F11615B6A004D450A /* us_test_net.c */,
+				BF7AB019142992CA00488BED /* us_test_net.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -119,9 +119,16 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0410;
+			};
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "us_test_net" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* us_test_net */;
 			projectDirPath = "";
 			projectReferences = (
@@ -152,7 +159,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF0FA2A011615B6A004D450A /* us_test_net.c in Sources */,
+				BF7AB01A142992CA00488BED /* us_test_net.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,7 +172,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
@@ -195,8 +201,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../../include;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -209,8 +214,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../../include;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

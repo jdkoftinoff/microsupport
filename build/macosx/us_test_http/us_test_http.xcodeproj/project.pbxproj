@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BF0FA28D11615AEF004D450A /* libus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0FA28C11615AE3004D450A /* libus.a */; };
-		BF0FA2A611615B8C004D450A /* us_test_http.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0FA2A511615B8C004D450A /* us_test_http.c */; };
+		BF7AB0231429935200488BED /* us_test_http.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF7AB0221429935200488BED /* us_test_http.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,7 +43,7 @@
 /* Begin PBXFileReference section */
 		8DD76FB20486AB0100D96B5E /* us_test_http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = us_test_http; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF0FA28711615AE3004D450A /* us.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = us.xcodeproj; path = ../us/us.xcodeproj; sourceTree = SOURCE_ROOT; };
-		BF0FA2A511615B8C004D450A /* us_test_http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_http.c; path = ../../../tests/us_test_http.c; sourceTree = SOURCE_ROOT; };
+		BF7AB0221429935200488BED /* us_test_http.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = us_test_http.cpp; path = ../../../tests/us_test_http.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +72,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				BF0FA2A511615B8C004D450A /* us_test_http.c */,
+				BF7AB0221429935200488BED /* us_test_http.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -127,6 +127,9 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0410;
+			};
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "us_test_http" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -167,7 +170,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF0FA2A611615B8C004D450A /* us_test_http.c in Sources */,
+				BF7AB0231429935200488BED /* us_test_http.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,7 +191,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
@@ -218,8 +220,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../../include;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -232,8 +233,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../../include;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
