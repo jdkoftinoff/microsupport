@@ -40,7 +40,7 @@ const uint8_t us_mtc_typecode[] =
 };
 
 /*! Map of MIDI type codes to rate codes */
-const uint8_t us_mtc_fmt_from_midi[] =
+const us_mtc_format_t us_mtc_fmt_from_midi[] =
 {
     US_MTC_RATE_24,
     US_MTC_RATE_25,

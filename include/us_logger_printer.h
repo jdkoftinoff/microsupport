@@ -31,16 +31,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #include "us_logger.h"
 #include "us_print.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /**
  \addtogroup us_logger Logger
  */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     bool us_logger_printer_start ( us_print_t *out_printer, us_print_t *err_printer );
     void us_logger_printer_finish ( void );
@@ -51,10 +50,10 @@ extern "C"
     void us_log_debug_printer ( const char *fmt, ... );
     void us_log_trace_printer ( const char *fmt, ... );
 
+
+/*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

@@ -30,16 +30,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_world.h"
 #include "us_logger.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /**
  \addtogroup us_logger Logger
  */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     extern bool us_logger_stdio_files;
     extern FILE *us_logger_stdio_out;
@@ -56,10 +55,10 @@ extern "C"
     void us_log_debug_stdio ( const char *fmt, ... );
     void us_log_trace_stdio ( const char *fmt, ... );
 
+
+/*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

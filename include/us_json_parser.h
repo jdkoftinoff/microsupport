@@ -29,10 +29,9 @@
 #include "us_allocator.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
+    
 
     /* Determine the integer type use to parse non-floating point numbers */
 #if __STDC_VERSION__ >= 199901L || HAVE_LONG_LONG == 1
@@ -161,11 +160,9 @@ extern "C"
     */
     extern int us_json_parser_is_legal_white_space_string ( const char* s );
 
-
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif
 

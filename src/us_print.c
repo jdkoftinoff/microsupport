@@ -202,7 +202,7 @@ us_printbuf_create (
     us_printbuf_t *self = us_new ( allocator, us_printbuf_t );
     if ( self )
     {
-        self->m_base.m_buffer = allocator->alloc ( allocator, memory_length, 1 );
+        self->m_base.m_buffer = (char *)allocator->alloc ( allocator, memory_length, 1 );
         self->m_base.m_base.destroy = us_printraw_destroy;
         self->m_base.m_base.printf = us_printraw_printf;
         self->m_base.m_base.vprintf = us_printraw_vprintf;

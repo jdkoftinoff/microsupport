@@ -31,16 +31,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #include "us_buffer.h"
 #include "us_print.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /**
  \addtogroup us_getopt program options handling
  */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     typedef enum
     {

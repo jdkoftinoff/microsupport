@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_buffer.h"
 #include "us_osc_msg.h"
 #include "us_osc_dispatch.h"
+#include "us_test_osc_dispatch_main.h"
 
 #if US_ENABLE_PRINTING
 #include "us_osc_msg_print.h"
@@ -358,7 +359,7 @@ static bool us_test_osc_dispatch_media_raw(
     return true;
 }
 
-int us_test_osc_dispatch_main(int argc, char **argv)
+int us_test_osc_dispatch_main(int argc, const char **argv)
 {
     bool r = true;
     r = us_testutil_start(81920, 8192, argc, argv);

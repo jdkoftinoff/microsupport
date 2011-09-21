@@ -35,10 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_print.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
+    
     bool us_trie_dump (
         us_trie_t *self,
         const char *prefix,
@@ -51,6 +50,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

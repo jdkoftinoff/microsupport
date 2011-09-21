@@ -174,10 +174,9 @@ typedef int bool_;
 #endif
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
+    
     static inline bool us_strncpy( char *dest, const char *src, int32_t dest_buf_size )
     {
         bool r=false;

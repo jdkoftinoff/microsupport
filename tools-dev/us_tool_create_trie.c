@@ -101,7 +101,7 @@ us_trie_dyn_t *us_tool_read_trie (
                 char *func_name = first_space + 1;
                 if ( first_space )
                     *first_space = '\0';
-                *cur_func = calloc ( sizeof ( func_name_list_t ), 1 );
+                *cur_func = (func_name_list_t *)calloc ( sizeof ( func_name_list_t ), 1 );
                 strcpy ( ( char * ) ( *cur_func )->func_name, func_name );
                 us_trie_add (
                     &trie->m_base,
@@ -226,7 +226,7 @@ bool us_tool_create_trie (
 }
 
 
-int main ( int argc, char **argv )
+int main ( int argc, const char **argv )
 {
     int r = 1;
     const char *prefix = "schema";

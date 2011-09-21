@@ -2,6 +2,7 @@
 #include "us_getopt.h"
 #include "us_logger_printer.h"
 #include "us_testutil.h"
+#include "us_test_getopt_main.h"
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -34,6 +35,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup us_test_getopt */
 /*@{*/
 
+bool us_test_getopt( int US_UNUSED(argc), const char **argv );
+
 static int16_t log_level_default=0;
 static int16_t log_level;
 
@@ -52,7 +55,7 @@ static const us_getopt_option_t log_options[]  =
     { "type", "Logger Type: 0=null, 1=stderr, 2=file, 3=udp", US_GETOPT_INT16, &log_type_default, &log_type },
     { "file", "Logger Filename", US_GETOPT_STRING, &log_filename_default, &log_filename },
     { "udp", "Logger Destination UDP address", US_GETOPT_STRING, &log_udp_default, &log_udp },
-    { 0, 0, 0, 0, 0 }
+    { 0, 0, US_GETOPT_NONE, 0, 0 }
 };
 
 
@@ -68,7 +71,7 @@ static const us_getopt_option_t control_options[] =
 {
     { "greeting", "Greeting style", US_GETOPT_STRING, &control_greeting_default, &control_greeting },
     { "name", "Target's name", US_GETOPT_STRING, &control_name_default, &control_name },
-    { 0, 0, 0, 0, 0 }
+    { 0, 0, US_GETOPT_NONE, 0, 0 }
 };
 
 static us_getopt_t opt;
@@ -101,7 +104,7 @@ bool us_test_getopt( int US_UNUSED(argc), const char **argv )
 int us_test_getopt_main ( int argc, const char **argv )
 {
     int r = 1;
-    if ( us_testutil_start ( 4096, 4096, argc, (char **)argv ) )
+    if ( us_testutil_start ( 4096, 4096, argc, argv ) )
     {
 #if US_ENABLE_LOGGING
         us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );

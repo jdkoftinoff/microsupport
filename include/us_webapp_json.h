@@ -8,11 +8,9 @@
 #include "us_json.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
-
+    
     int us_webapp_json_reply( us_http_response_header_t *header, us_buffer_t *buf, const us_json_t *m );
 
     typedef struct us_webapp_json_s
@@ -47,6 +45,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

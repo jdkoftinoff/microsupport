@@ -40,16 +40,16 @@
 /*@{*/
 
 
-bool us_example_http_client ( int argc, char **argv );
+bool us_example_http_client ( int argc, const char **argv );
 
-bool us_example_http_client ( int argc, char **argv )
+bool us_example_http_client ( int argc, const char **argv )
 {
     /* TODO: */
     bool r = false;
     return r;
 }
 
-int main ( int argc, char **argv )
+int main ( int argc, const char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

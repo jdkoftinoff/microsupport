@@ -36,11 +36,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_reactor.h"
 #include "us_logger.h"
 #include "us_http.h"
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
+    
 
 #define US_HTTP_SERVER_HANDLER_REQUEST_HEADER_SIZE (8192)
 #define US_HTTP_SERVER_HANDLER_RESPONSE_HEADER_SIZE (8192)
@@ -145,11 +144,9 @@ extern "C"
         us_reactor_handler_tcp_t *self
     );
 
-
 #ifdef __cplusplus
 }
 #endif
-
 
 
 #endif

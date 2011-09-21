@@ -449,7 +449,7 @@ us_osc_msg_create(
     {
         int32_t address_len = (int32_t)strlen(address);
         self->m_allocator = allocator;
-        self->m_address = allocator->alloc(allocator, address_len + 1, 1);
+        self->m_address = (char *)allocator->alloc(allocator, address_len + 1, 1);
         if (self->m_address)
         {
             strcpy(self->m_address, address);
@@ -856,7 +856,7 @@ us_osc_msg_element_s_create(
 #endif
         self->m_base.flatten = us_osc_msg_element_s_flatten;
         self->m_length = len;
-        self->m_value = allocator->alloc(allocator, rounded_size, 1);
+        self->m_value = (char *)allocator->alloc(allocator, rounded_size, 1);
         if (self->m_value)
         {
             int32_t i;
@@ -1121,7 +1121,7 @@ us_osc_msg_element_b_create(
 #endif
         self->m_base.flatten = us_osc_msg_element_b_flatten;
         self->m_length = length;
-        self->m_data = allocator->alloc(allocator, rounded_length,1 );
+        self->m_data = (uint8_t *)allocator->alloc(allocator, rounded_length,1 );
         if (self->m_data)
         {
             int32_t i;

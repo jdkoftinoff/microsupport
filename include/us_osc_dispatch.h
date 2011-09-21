@@ -34,10 +34,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_osc_msg.h"
 #include "us_trie.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
+    
     /** \addtogroup us_osc_dispatch OSC Message Dispatcher
      */
     /*@{*/
@@ -165,6 +164,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

@@ -31,11 +31,10 @@
 
 #include "us_world.h"
 #include "us_allocator.h"
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
+    
 
 #if US_ENABLE_STDIO
 
@@ -60,7 +59,6 @@ extern "C"
     void us_mdns_avahi_atexit(void);
 
 #endif
-
 #ifdef __cplusplus
 }
 #endif

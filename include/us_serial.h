@@ -32,12 +32,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef US_WORLD_H
 #include "us_world.h"
 #endif
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
+    
     /** \addtogroup us_serial
     */
     /*@{*/

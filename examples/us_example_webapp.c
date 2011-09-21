@@ -38,6 +38,8 @@
 
 bool global_quit = false;
 
+bool us_example_webapp ( us_allocator_t *allocator );
+
 bool us_example_http_server ( us_allocator_t *allocator );
 
 bool us_example_http_server_handler_init (
@@ -48,6 +50,13 @@ bool us_example_http_server_handler_init (
 );
 
 bool us_example_http_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
+
+bool us_example_reactor_quitter_server_init (
     us_reactor_handler_t *self,
     us_allocator_t *allocator,
     int fd,

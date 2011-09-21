@@ -29,16 +29,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-
+   
 /**
  \addtogroup us_platform  Platform Specific Configuration
  */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 #define US_GET_BYTE_3(v) (uint8_t)((( (v) & 0xff000000) >> 24)&0xff)
 #define US_GET_BYTE_2(v) (uint8_t)((( (v) & 0xff0000) >> 16)&0xff)
@@ -80,6 +76,10 @@ extern "C"
 #  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 # endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+ 
     struct timezone
     {
         int tz_minuteswest; /* minutes W of Greenwich */
@@ -101,15 +101,14 @@ extern "C"
 
     extern volatile char us_platform_sigterm_seen;
     extern volatile char us_platform_sigint_seen;
+#ifdef __cplusplus
+}
+#endif
 
 #if US_ENABLE_LWIP_STACK
 # include "lwip/opt.h"
 # include "lwip/arch.h"
 # include "lwip/api.h"
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 /*@}*/

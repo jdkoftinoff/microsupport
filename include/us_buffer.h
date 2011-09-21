@@ -33,15 +33,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_allocator.h"
 #include "us_print.h"
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
+
 /**
  \addtogroup us_buffer Memory Buffer
  */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     /** us_buffer_s
 
@@ -666,10 +668,10 @@ extern "C"
         int32_t *data_length
     );
 
-
 #ifdef __cplusplus
 }
 #endif
+
 
 /*@}*/
 

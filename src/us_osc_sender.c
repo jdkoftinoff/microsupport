@@ -31,7 +31,7 @@
 
 us_osc_sender_t *us_osc_sender_create( void )
 {
-    return calloc( sizeof( us_osc_sender_t), 1 );
+    return (us_osc_sender_t *)calloc( sizeof( us_osc_sender_t), 1 );
 }
 
 bool us_osc_sender_init( us_osc_sender_t *self, void *US_UNUSED(extra) )
@@ -59,6 +59,7 @@ bool us_osc_sender_can_send( us_osc_sender_t *US_UNUSED(self) )
     /* base class can not send messages every */
     return false;
 }
+
 
 bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address, const char *typetags, ... )
 {

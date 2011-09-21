@@ -32,10 +32,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
+    
     /** \defgroup poll_reactor reactor  */
 
     /** \ingroup poll_reactor */
@@ -377,7 +376,6 @@ extern "C"
 
 
     /*@}*/
-
 
 #ifdef __cplusplus
 }

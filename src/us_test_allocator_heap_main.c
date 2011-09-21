@@ -3,7 +3,7 @@
 #include "us_logger_printer.h"
 
 #include "us_allocator_heap.h"
-
+#include "us_test_allocator_heap_main.h"
 
 #include "us_testutil.h"
 
@@ -40,7 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup us_test_allocator_heap */
 /*@{*/
 
-int32_t us_test_allocator_heap_get_largest_free_size( us_allocator_heap_t *self )
+static int32_t us_test_allocator_heap_get_largest_free_size( us_allocator_heap_t *self )
 {
     uint32_t free_chunks = 0;
     uint32_t used_chunks = 0;
@@ -82,7 +82,7 @@ int min_repeat_count=INT_MAX;
 
 #define MAX_ALLOCATIONS (256)
 size_t min_allocated=INT_MAX;
-bool us_test_allocator_heap_stress( us_allocator_heap_t *allocator )
+static bool us_test_allocator_heap_stress( us_allocator_heap_t *allocator )
 {
     void *allocations[MAX_ALLOCATIONS];
     int repeat_count=10000;
@@ -148,7 +148,7 @@ bool us_test_allocator_heap_stress( us_allocator_heap_t *allocator )
     return true;
 }
 
-int us_test_allocator_heap_main ( int argc, char **argv )
+int us_test_allocator_heap_main ( int argc, const char **argv )
 {
     int i,j;
     bool r = true;

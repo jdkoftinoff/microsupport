@@ -30,16 +30,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_world.h"
 #include "us_logger.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /**
  \addtogroup us_logger Logger
  */
 /*@{*/
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 
 # ifndef US_LOGGER_UDP_DEFAULT_DEST_ADDR
@@ -75,9 +73,9 @@ extern "C"
 
 # endif
 
+/*@}*/
 #ifdef __cplusplus
 }
 #endif
-/*@}*/
 
 #endif

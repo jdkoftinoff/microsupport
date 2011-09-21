@@ -33,11 +33,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_http.h"
 #include "us_webapp.h"
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
+    
 
     typedef struct us_webapp_file_ext_mime_map_s
     {
@@ -81,8 +80,6 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
-
 
 #endif
 

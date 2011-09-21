@@ -31,11 +31,10 @@
 #ifndef US_WORLD_H
 #include "us_world.h"
 #endif
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
+    
 
     /** \addtogroup us_rawnet
      */
@@ -54,6 +53,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

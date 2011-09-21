@@ -45,7 +45,7 @@ static bool us_tool_send_osc(
     const char *dest_port,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 );
 
 
@@ -53,7 +53,7 @@ static us_osc_msg_t * us_tool_gen_osc(
     us_allocator_t *allocator,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 );
 
 static bool us_tool_gen_flattened_osc(
@@ -61,7 +61,7 @@ static bool us_tool_gen_flattened_osc(
     us_buffer_t *buffer,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 );
 
 static bool us_tool_send_osc_udp(
@@ -84,7 +84,7 @@ static us_osc_msg_t * us_tool_gen_osc(
     us_allocator_t *allocator,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 )
 {
     us_osc_msg_t *r = 0;
@@ -219,7 +219,7 @@ static bool us_tool_gen_flattened_osc(
     us_buffer_t *buffer,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 )
 {
     bool r=false;
@@ -338,11 +338,11 @@ static bool us_tool_send_osc(
     const char *dest_port,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 )
 {
     bool r=false;
-    char **v;
+    const char **v;
     const char *t=osc_typetags;
     us_allocator_t *allocator = us_testutil_sys_allocator;
     int sock_type=SOCK_DGRAM;
@@ -412,7 +412,7 @@ static bool us_tool_send_osc(
 }
 
 
-int main ( int argc, char **argv )
+int main ( int argc, const char **argv )
 {
     int r = 1;
     const char *protocol = "udp";
@@ -422,7 +422,7 @@ int main ( int argc, char **argv )
     const char *dest_port = "10000";
     const char *osc_address = "/osc/version";
     const char *osc_typetags = "";
-    char **osc_values = 0;
+    const char **osc_values = 0;
     if ( argc > 1 )
         protocol = argv[1];
     if ( argc > 2 )

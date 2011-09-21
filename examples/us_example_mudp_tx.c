@@ -94,7 +94,7 @@ bool us_example_mudp_tx (
 }
 
 
-int main ( int argc, char **argv )
+int main ( int argc, const char **argv )
 {
     int r = 1;
     if ( argc < 3 )

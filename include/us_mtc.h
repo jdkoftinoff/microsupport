@@ -1,10 +1,11 @@
 #ifndef US_MTC_H
 #define US_MTC_H
 
+#include "us_world.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
+    
 
     /** \addtogroup us_mtc
     */
@@ -27,7 +28,7 @@ extern "C"
     extern const bool us_mtc_is_drop[];
     extern const uint8_t us_mtc_typecode[];
     extern const char *us_mtc_format_string[];
-    extern const uint8_t us_mtc_fmt_from_midi[];
+    extern const us_mtc_format_t us_mtc_fmt_from_midi[];
 
     typedef struct us_mtc_s
     {
@@ -96,14 +97,14 @@ extern "C"
     int32_t us_mtc_get_total_frames ( us_mtc_t *self );
     void us_mtc_set_total_frames ( us_mtc_t *self, int32_t tf );
     int us_mtc_extract_qf ( us_mtc_t *self, int qf );
-    int us_mtc_store_qf ( us_mtc_t *self, int qf, int qf_value );
+    bool us_mtc_store_qf ( us_mtc_t *self, int qf, int qf_value );
 
 
     /*@}*/
 
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

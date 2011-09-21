@@ -7,6 +7,39 @@
 #include "us_osc_msg_print.h"
 #include "us_buffer_print.h"
 
+void us_tool_rx_osc_udp_packet_received(
+    us_reactor_handler_udp_t *self,
+    us_buffer_t *buf,
+    struct sockaddr *remote_addr,
+    socklen_t remote_addrlen
+);
+
+
+bool us_tool_rx_osc_udp_init( us_reactor_handler_t *self_, us_allocator_t *allocator, int fd, void *extra );
+
+bool us_tool_rx_osc_tcp_handler_readable (
+    us_reactor_handler_tcp_t *self_
+);
+
+us_reactor_handler_t *
+us_tool_rx_osc_tcp_handler_create ( us_allocator_t *allocator );
+
+bool us_tool_rx_osc_tcp_handler_init (
+    us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
+
+bool us_tool_rx_osc_tcp_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
+
+bool us_tool_rx_osc( us_allocator_t *allocator, const char *listen_host, const char *listen_port );
+
 /**
  \addtogroup us_tool_rx_osc
  @{
@@ -91,7 +124,7 @@ bool us_tool_rx_osc_tcp_handler_readable (
         {
             int32_t readable = us_buffer_readable_count(incoming);
             /* we are expecting todo_count data. Wait until queue contains it all */
-            if ( readable>=self->m_todo_count )
+            if ( (size_t)readable>=self->m_todo_count )
             {
                 us_osc_msg_t *msg=0;
                 us_osc_msg_bundle_t *bundle=0;
@@ -181,7 +214,7 @@ bool us_tool_rx_osc_tcp_server_init (
            );
 }
 
-static bool us_tool_rx_osc( us_allocator_t *allocator, const char *listen_host, const char *listen_port )
+bool us_tool_rx_osc( us_allocator_t *allocator, const char *listen_host, const char *listen_port )
 {
     bool r = false;
     us_reactor_t reactor;
@@ -226,7 +259,7 @@ static bool us_tool_rx_osc( us_allocator_t *allocator, const char *listen_host, 
     return r;
 }
 
-int main ( int argc, char **argv )
+int main ( int argc, const char **argv )
 {
     int r = 1;
     us_print_file_t us_stdout_printer;

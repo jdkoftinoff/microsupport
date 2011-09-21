@@ -36,17 +36,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_logger.h"
 #include "us_http.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-
-
-#ifdef __cplusplus
-}
-#endif
-
 
 
 #endif

@@ -31,12 +31,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #include "us_world.h"
-
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
+    
+
 
     /** \addtogroup queue
      */
@@ -198,6 +197,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

@@ -29,23 +29,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /**
  \addtogroup us_time Time Handling
  */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 
-
+/*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

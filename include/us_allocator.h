@@ -30,16 +30,15 @@
 
 #include "us_world.h"
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /**
    \addtogroup us_allocator Memory Allocator
 */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     /** us_new
 
@@ -240,10 +239,10 @@ extern "C"
 
     char * us_strndup ( struct us_allocator_s *allocator, const char *src, int chars_to_copy );
 
+/*@}*/
+
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

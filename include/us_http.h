@@ -35,10 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_buffer.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
+    
     typedef struct us_http_header_item_s
     {
         const char *m_key;
@@ -332,6 +331,13 @@ extern "C"
         bool connection_close
     );
 
+    bool us_http_response_header_create_ok (
+        us_http_response_header_t *self,
+        int32_t http_ok_code,
+        const char *content_type,
+        uint32_t content_length
+    );
+
     bool
     us_http_response_header_flatten (
         us_http_response_header_t *self,
@@ -373,10 +379,10 @@ extern "C"
     us_http_reason_phrase ( int code );
 
 
+
 #ifdef __cplusplus
 }
 #endif
-
 
 
 #endif

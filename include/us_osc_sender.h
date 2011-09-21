@@ -33,11 +33,10 @@
 #include "us_world.h"
 #include "us_osc_msg.h"
 #include "us_reactor.h"
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
+    
 
     typedef struct us_osc_sender_s
     {
@@ -60,26 +59,13 @@ extern "C"
     } us_osc_sender_t;
 
     us_osc_sender_t *us_osc_sender_create( void );
-
-    void us_osc_sender_destroy(
-        us_osc_sender_t *self
-    );
-
-    bool us_osc_sender_send_msg(
-        us_osc_sender_t *self,
-        const us_osc_msg_t *msg
-    );
-
-    bool us_osc_sender_can_send( us_osc_sender_t *self );
-    bool us_osc_sender_form_and_send_msg(
-        struct us_osc_sender_s *self,
-        const char *address,
-        const char *typetags,
-        ...
-    );
+    bool us_osc_sender_init( us_osc_sender_t *self, void *US_UNUSED(extra) );
+    void us_osc_sender_destroy( us_osc_sender_t *US_UNUSED(self) );
+    bool us_osc_sender_send_msg( us_osc_sender_t *US_UNUSED(self), const us_osc_msg_t *US_UNUSED(msg) );
+    bool us_osc_sender_can_send( us_osc_sender_t *US_UNUSED(self) );
+    bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address, const char *typetags, ... );
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

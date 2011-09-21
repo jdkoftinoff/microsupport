@@ -51,7 +51,7 @@ static bool us_test_trie_1 ( void )
                128,
                us_trie_basic_ignorer,
                us_trie_basic_ignorer,
-               us_trie_basic_ignorer,
+               us_trie_basic_db_skip,
                us_trie_basic_comparator
            );
     if ( trie )
@@ -239,7 +239,7 @@ static bool us_test_trie_schema_dispatch ( us_trie_t *trie, const char *address,
             {
                 if ( ( int ) strlen ( ( const char * ) value1 ) < ( int ) ( param->m_data_len - 1 ) )
                 {
-                    strcpy ( param->m_data, ( const char * ) value1 );
+                    strcpy ( (char *)param->m_data, ( const char * ) value1 );
                     if ( entry->write_proc )
                     {
                         r = entry->write_proc ( entry );
@@ -261,7 +261,7 @@ static bool us_test_trie_2 ( void )
                128,
                us_trie_basic_ignorer,
                us_trie_basic_ignorer,
-               us_trie_basic_ignorer,
+               us_trie_basic_db_skip,
                us_trie_basic_comparator
            );
     if ( trie )
@@ -281,8 +281,8 @@ static bool us_test_trie_2 ( void )
         }
         r = true;
         r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/name", "", 0, 0 );
-        r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/system", "s", "new system name", 0 );
-        r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/name", "s", "new device name", 0 );
+        r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/system", "s", (void *)"new system name", 0 );
+        r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/name", "s", (void *)"new device name", 0 );
         r &= us_test_trie_schema_dispatch ( &trie->m_base, "/device/system", "", 0, 0 );
         trie->destroy ( trie );
     }
@@ -290,7 +290,7 @@ static bool us_test_trie_2 ( void )
 }
 
 
-int us_test_trie_main ( int argc, char **argv )
+int us_test_trie_main ( int argc, const char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 8192, 8192, argc, argv ) )

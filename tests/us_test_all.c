@@ -12,7 +12,7 @@
 #include "us_test_trie_main.h"
 #include "us_test_osc_dispatch_main.h"
 
-int main(int argc, char * argv[])
+int main(int argc, const char * argv[])
 {
     int r=0;
     r += us_test_allocator_main(argc,argv);

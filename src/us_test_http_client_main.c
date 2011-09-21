@@ -3,6 +3,7 @@
 #include "us_buffer.h"
 #include "us_buffer_print.h"
 #include "us_http_client.h"
+#include "us_test_http_client_main.h"
 
 #include "us_logger_printer.h"
 
@@ -48,7 +49,7 @@ static bool us_test_http_client ( void )
     return r;
 }
 
-int us_test_http_client_main ( int argc, char **argv )
+int us_test_http_client_main ( int argc, const char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

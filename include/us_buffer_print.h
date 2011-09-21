@@ -32,6 +32,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_buffer.h"
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
+
 /**
  \addtogroup us_buffer Memory Buffer
  */
@@ -40,10 +46,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if US_ENABLE_PRINTING
 #include "us_print.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     bool
     us_buffer_print (
@@ -58,12 +60,12 @@ extern "C"
     );
 
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 
 /*@}*/
+#ifdef __cplusplus
+}
+#endif
 
 #endif

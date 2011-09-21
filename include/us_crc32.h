@@ -29,23 +29,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /**
  \addtogroup crc32
  */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     uint32_t us_crc32(
         uint32_t state_value,
         const void *buf,
         size_t len
     );
-
 #ifdef __cplusplus
 }
 #endif

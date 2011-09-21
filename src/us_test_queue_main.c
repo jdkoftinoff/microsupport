@@ -4,6 +4,7 @@
 #include "us_logger_printer.h"
 
 #include "us_testutil.h"
+#include "us_test_queue_main.h"
 
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -162,7 +163,7 @@ static bool us_test_queue ( void )
 }
 
 
-int us_test_queue_main ( int argc, char **argv )
+int us_test_queue_main ( int argc, const char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 2048, 2048, argc, argv ) )

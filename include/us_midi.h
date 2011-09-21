@@ -34,12 +34,10 @@
 
 #include "us_allocator.h"
 #include "us_buffer.h"
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
+    
     /**
        \defgroup us_midi MIDI protocol definitions
     */

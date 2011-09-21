@@ -29,26 +29,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 /**
  \addtogroup us_tests Tests
  */
 /*@{*/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 
-    int us_test_osc_msg_main( int argc, char **argv );
+    int us_test_osc_msg_main( int argc, const char **argv );
 
-
-#ifdef __cplusplus
-}
-#endif
 
 
 /*@}*/
+#ifdef __cplusplus
+}
+#endif
 
 #endif

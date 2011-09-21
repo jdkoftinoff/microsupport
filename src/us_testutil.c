@@ -61,7 +61,7 @@ bool us_testutil_start (
     int32_t US_UNUSED(sys_allocator_size),
     int32_t session_allocator_size,
     int argc,
-    char **argv
+    const char **argv
 )
 {
     bool r = true;

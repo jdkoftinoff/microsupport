@@ -99,6 +99,19 @@ bool us_example_reactor_handler_echo_readable (
     us_reactor_handler_tcp_t *self
 );
 
+bool us_example_reactor_echo_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
+
+bool us_example_reactor_quitter_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
 
 us_reactor_handler_t * us_example_reactor_handler_quitter_create ( us_allocator_t *allocator );
 
