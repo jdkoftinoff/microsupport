@@ -35,6 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*@{*/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define US_GET_BYTE_3(v) (uint8_t)((( (v) & 0xff000000) >> 24)&0xff)
 #define US_GET_BYTE_2(v) (uint8_t)((( (v) & 0xff0000) >> 16)&0xff)
@@ -76,9 +79,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 # endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
  
     struct timezone
     {
@@ -101,6 +101,7 @@ extern "C" {
 
     extern volatile char us_platform_sigterm_seen;
     extern volatile char us_platform_sigint_seen;
+
 #ifdef __cplusplus
 }
 #endif
