@@ -177,12 +177,12 @@ typedef int bool_;
 extern "C" {
 #endif
     
-    static inline bool us_strncpy( char *dest, const char *src, int32_t dest_buf_size )
+    static inline bool us_strncpy( char *dest, const char *src, size_t dest_buf_size )
     {
         bool r=false;
         if ( dest && src && dest_buf_size>2 )
         {
-            int src_len = strlen(src);
+            size_t src_len = strlen(src);
             if ( src_len<dest_buf_size-1)
             {
                 strncpy( dest, src, dest_buf_size-1 );
@@ -192,13 +192,13 @@ extern "C" {
         return r;
     }
 
-    static inline bool us_strncat( char *dest, const char *src, int32_t dest_buf_size )
+    static inline bool us_strncat( char *dest, const char *src, size_t dest_buf_size )
     {
         bool r=false;
         if ( dest && src && dest_buf_size>2 )
         {
-            int src_len = strlen(src);
-            int dest_len = strlen(dest);
+            size_t src_len = strlen(src);
+            size_t dest_len = strlen(dest);
             if ( (src_len+dest_len)<dest_buf_size-1)
             {
                 strncat( dest, src, dest_buf_size-1 );

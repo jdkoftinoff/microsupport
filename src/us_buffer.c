@@ -47,14 +47,14 @@ bool us_buffer_append_string (
 bool us_buffer_read_string (
     us_buffer_t *self,
     char *value_ptr,
-    int32_t result_max_len
+    size_t result_max_len
 )
 {
     bool r = false;
-    int32_t cur_length = us_buffer_readable_count(self);
+    size_t cur_length = us_buffer_readable_count(self);
     if ( cur_length>1 )
     {
-        int i;
+        size_t i;
         int l=0;
         if ( cur_length>result_max_len-1 )
         {
@@ -77,15 +77,15 @@ bool us_buffer_read_string (
     return r;
 }
 
-int32_t
+ssize_t
 us_buffer_find_string_len (
     const us_buffer_t *self,
     char search_char,
     char eol_char
 )
 {
-    int32_t r = -1;
-    int32_t pos;
+    ssize_t r = -1;
+    size_t pos;
     int cur_length = us_buffer_readable_count(self);
     for ( pos = 0; pos < cur_length; ++pos )
     {
@@ -106,13 +106,13 @@ bool
 us_buffer_read_line (
     us_buffer_t *self,
     char *value,
-    int32_t result_max_len
+    size_t result_max_len
 )
 {
     bool r = false;
-    int i = 0;
-    int p = 0;
-    int cur_length = us_buffer_readable_count(self);
+    size_t i = 0;
+    size_t p = 0;
+    size_t cur_length = us_buffer_readable_count(self);
     while ( i < result_max_len - 1 && p<cur_length )
     {
         char c = us_buffer_read_byte(self);
@@ -137,13 +137,13 @@ bool
 us_buffer_scan_line (
     us_buffer_t *self,
     char *value,
-    int32_t result_max_len
+    size_t result_max_len
 )
 {
     bool r = false;
-    int i = 0;
-    int p = 0;
-    int cur_length = us_buffer_readable_count(self);
+    size_t i = 0;
+    size_t p = 0;
+    size_t cur_length = us_buffer_readable_count(self);
     while ( i < result_max_len - 1 && p<cur_length )
     {
         char c = us_buffer_peek(self,p++);
@@ -176,7 +176,7 @@ us_buffer_skip_to_delim (
     int delim_chars_len = ( int ) ( strlen ( delim_chars ) );
     while ( us_buffer_can_read_byte(self))
     {
-        int i;
+        size_t i;
         char c=us_buffer_peek(self,0);
         for ( i = 0; i < delim_chars_len; ++i )
         {
@@ -202,10 +202,10 @@ us_buffer_skip_delim (
 )
 {
     bool r = false;
-    int delim_chars_len = ( int ) ( strlen ( delim_chars ) );
+    size_t delim_chars_len = ( strlen ( delim_chars ) );
     while ( us_buffer_can_read_byte(self))
     {
-        int i;
+        size_t i;
         char c=us_buffer_peek(self,0);
         bool skip = false;
         for ( i = 0; i < delim_chars_len; ++i )
@@ -232,9 +232,9 @@ bool us_buffer_append_rounded_string (
 )
 {
     bool r = true;
-    int nul_count = 0;
-    int i;
-    int32_t len = ( int32_t ) strlen ( str );
+    size_t nul_count = 0;
+    size_t i;
+    size_t len = ( int32_t ) strlen ( str );
     r &= us_buffer_append ( self, str, len );
     /*
     // length -> padding
@@ -255,7 +255,7 @@ bool us_buffer_append_rounded_string (
 bool us_buffer_read_rounded_string (
     us_buffer_t *self,
     char *value,
-    int32_t result_max_len
+    size_t result_max_len
 )
 {
     bool r = false;
@@ -267,8 +267,8 @@ bool us_buffer_read_rounded_string (
     if ( r )
     {
         /* account for extra padding */
-        int len = strlen(value);
-        int skip = 3-(len&3);
+        size_t len = strlen(value);
+        size_t skip = 3-(len&3);
         us_buffer_skip( self, skip );
     }
     return r;
@@ -530,7 +530,7 @@ us_buffer_init (
     us_buffer_t *self,
     us_allocator_t *allocator,
     void *raw_memory,
-    int32_t raw_memory_length
+    size_t raw_memory_length
 )
 {
     us_buffer_t *r = 0;
@@ -562,7 +562,7 @@ void us_buffer_reset (
 us_buffer_t *
 us_buffer_create (
     us_allocator_t *allocator,
-    int32_t max_length
+    size_t max_length
 )
 {
     us_buffer_t *r = 0;

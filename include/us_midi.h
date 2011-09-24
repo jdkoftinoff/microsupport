@@ -706,7 +706,7 @@ extern "C" {
         us_midi_sysex_put_byte ( self, ( uint8_t ) ( b & 0xf ) );
     }
 
-    static inline int32_t us_midi_sysex_get_length ( const us_midi_sysex_t *self )
+    static inline size_t us_midi_sysex_get_length ( const us_midi_sysex_t *self )
     {
         return us_buffer_readable_count( self->m_buffer );
     }

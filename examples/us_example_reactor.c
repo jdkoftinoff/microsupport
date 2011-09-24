@@ -179,7 +179,7 @@ bool us_example_reactor_handler_http_readable (
 )
 {
     FILE *f = (FILE *) self->m_base.m_extra;
-    fprintf( f, "HTTP Response data (len=%d):\n", us_buffer_readable_count(&self->m_incoming_queue) );
+    fprintf( f, "HTTP Response data (len=%zu):\n", us_buffer_readable_count(&self->m_incoming_queue) );
     while ( us_buffer_can_read_byte ( &self->m_incoming_queue ) )
     {
         char c = ( char ) us_buffer_read_byte ( &self->m_incoming_queue );
