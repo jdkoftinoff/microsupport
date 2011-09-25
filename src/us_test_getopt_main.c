@@ -66,11 +66,14 @@ static char *control_greeting;
 static const char control_name_default[] = "Person";
 static char *control_name;
 
+static const uint8_t mac_addr_default[6] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
+static uint8_t mac_addr[6];
 
 static const us_getopt_option_t control_options[] =
 {
     { "greeting", "Greeting style", US_GETOPT_STRING, &control_greeting_default, &control_greeting },
     { "name", "Target's name", US_GETOPT_STRING, &control_name_default, &control_name },
+    { "mac", "Some MAC address", US_GETOPT_MACADDR, mac_addr_default, mac_addr },
     { 0, 0, US_GETOPT_NONE, 0, 0 }
 };
 
@@ -96,6 +99,7 @@ bool us_test_getopt( int US_UNUSED(argc), const char **argv )
         us_log_info( "Log Level is %d", log_level );
         us_log_info( "Greeting is %s", control_greeting );
         us_log_info( "Name is %s", control_name );
+        us_log_info( "Mac addr is %02x:%02x:%02x:%02x:%02x:%02x", mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5] );
         us_getopt_destroy( &opt );
     }
     return r;

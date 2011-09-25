@@ -41,6 +41,8 @@ const char *us_getopt_value_types[] =
     "uint32",
     "hex16",
     "hex32",
+    "hex64",
+    "macaddr",
     "string"
 #if US_ENABLE_FLOAT
     ,
@@ -132,6 +134,47 @@ bool us_getopt_string_for_value(
             }
             break;
         }
+        case US_GETOPT_HEX64:
+        {
+            uint32_t high32 = (uint32_t)((*(uint64_t*)value)>>32);
+            uint32_t low32 = (uint32_t)(*(uint64_t*)value)&0xffffffff;
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x%08x", high32, low32 ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_MACADDR:
+        {
+            uint8_t *macaddr = (uint8_t *)value;
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%02x:%02x:%02x:%02x:%02x:%02x",
+                                      macaddr[0],
+                                      macaddr[1],
+                                      macaddr[2],
+                                      macaddr[3],
+                                      macaddr[4],
+                                      macaddr[5]
+                                    ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_STRING:
+        {
+            char tmp[1024] = "";
+            *buf='\0';
+            r=false;
+            if( us_getopt_escape( tmp, sizeof(tmp)-1, (const char *)value, strlen((const char *)value ) ) )
+            {
+                if ( strlen( tmp )< (size_t)(buf_len-1) )
+                {
+                    strncpy( buf, tmp, buf_len-1 );
+                    r=true;
+                }
+            }
+            break;
+        }
 #if US_ENABLE_FLOAT
         case US_GETOPT_FLOAT:
         {
@@ -142,22 +185,6 @@ bool us_getopt_string_for_value(
             break;
         }
 #endif
-        case US_GETOPT_STRING:
-        {
-            char tmp[1024] = "";
-            *buf='\0';
-            r=false;
-//            if( us_getopt_escape( tmp, sizeof(tmp)-1, (const char *)value, strlen((const char *)value ) ) )
-            {
-                strcpy( tmp, (const char *)value );
-                if ( strlen( tmp )< (size_t)(buf_len-1) )
-                {
-                    strncpy( buf, tmp, buf_len-1 );
-                    r=true;
-                }
-            }
-            break;
-        }
         default:
         {
             *buf='\0';
@@ -201,15 +228,32 @@ bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_typ
         case US_GETOPT_HEX32:
             *(uint32_t *)value = *(uint32_t *)default_value;
             break;
+        case US_GETOPT_HEX64:
+            *(uint64_t *)value = *(uint64_t *)default_value;
+            break;
+        case US_GETOPT_MACADDR:
+        {
+            uint8_t *dest = (uint8_t *)value;
+            const uint8_t *src = (uint8_t *)default_value;
+            int i;
+            for ( i=0; i<6; ++i )
+            {
+                dest[i] = src[i];
+            }
+            break;
+        }
+        break;
+        case US_GETOPT_STRING:
+            *(char **)value = us_strdup( allocator, (const char *)default_value );
+            break;
 #ifdef US_ENABLE_FLOAT
         case US_GETOPT_FLOAT:
             *(float *)value = *(float *)default_value;
             break;
 #endif
-        case US_GETOPT_STRING:
-            *(char **)value = us_strdup( allocator, (const char *)default_value );
-            break;
         default:
+            us_log_error( "Logic error: unknown getopt value type" );
+            abort();
             break;
         }
     }
@@ -219,13 +263,59 @@ bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_typ
 
 bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
 {
-    /* TODO: escape individual chars */
-    bool r=false;
-    if ( dest_len>str_len+1 )
+    bool r=true;
+    int i;
+    int dp=0;
+    for (i=0; i<str_len; ++i)
     {
-        memcpy( dest, str, str_len+1 );
-        dest[str_len+1] = '\0';
-        r=true;
+        char c=str[i];
+        if( dp>str_len-4 )
+        {
+            r=false;
+            break;
+        }
+        switch(c)
+        {
+        case '"':
+            dest[dp++] = '\\';
+            dest[dp++] = '"';
+            break;
+        case '\'':
+            dest[dp++] = '\\';
+            dest[dp++] = '\'';
+            break;
+        case '\r':
+            dest[dp++] = '\\';
+            dest[dp++] = 'r';
+            break;
+        case '\n':
+            dest[dp++] = '\\';
+            dest[dp++] = 'n';
+            break;
+        case '\t':
+            dest[dp++] = '\\';
+            dest[dp++] = 't';
+            break;
+        default:
+            if( isprint(c) )
+            {
+                dest[dp++] = c;
+            }
+            else
+            {
+                US_DEFAULT_SNPRINTF( &dest[dp], 3, "\\%2x", c );
+                dp+=3;
+            }
+            break;
+        }
+    }
+    if( r )
+    {
+        dest[dp] = '\0';
+    }
+    else
+    {
+        dest[0] = '\0';
     }
     return r;
 }
@@ -305,13 +395,30 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
 
 bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len )
 {
-    /* TODO: unescape individual chars */
-    bool r=false;
-    if ( dest_len>str_len+1 )
+    bool r=true;
+    int i;
+    int dp=0;
+    for ( i=0; i<str_len; )
     {
-        memcpy( dest, str, str_len+1 );
-        dest[str_len+1] = '\0';
-        r=true;
+        int todo=str_len-i;
+        int done=0;
+        if( dp>dest_len-2 )
+        {
+            r=false;
+            break;
+        }
+        done=us_getopt_unescape_char( &dest[dp], &str[i], todo );
+        todo-=done;
+        dp+=done;
+        i+=done;
+    }
+    if( r )
+    {
+        dest[dp] = '\0';
+    }
+    else
+    {
+        dest[0] = '\0';
     }
     return r;
 }
@@ -325,8 +432,9 @@ bool us_getopt_value_for_string(
 )
 {
     bool r=true;
-    /* TODO: use str_len */
-    (void)str_len;
+    char input_string[1024];
+    memcpy( input_string, str, str_len );
+    input_string[str_len]='\0';
     switch ( type )
     {
     case US_GETOPT_NONE:
@@ -335,35 +443,66 @@ bool us_getopt_value_for_string(
         *(bool *)value = true;
         break;
     case US_GETOPT_CHAR:
-        *(char *)value = str[0];
+        *(char *)value = input_string[0];
         break;
     case US_GETOPT_INT16:
-        *(int16_t *)value = (int16_t)strtol( str, 0, 10 );
+        *(int16_t *)value = (int16_t)strtol( input_string, 0, 10 );
         break;
     case US_GETOPT_UINT16:
-        *(uint16_t *)value = (uint16_t)strtoul( str, 0, 10 );
+        *(uint16_t *)value = (uint16_t)strtoul( input_string, 0, 10 );
         break;
     case US_GETOPT_INT32:
-        *(int32_t *)value = (int32_t)strtol( str, 0, 10 );
+        *(int32_t *)value = (int32_t)strtol( input_string, 0, 10 );
         break;
     case US_GETOPT_UINT32:
-        *(uint32_t *)value = (uint32_t)strtoul( str, 0, 10 );
+        *(uint32_t *)value = (uint32_t)strtoul( input_string, 0, 10 );
         break;
     case US_GETOPT_HEX16:
-        *(uint16_t *)value = (uint16_t)strtoul( str, 0, 16 );
+        *(uint16_t *)value = (uint16_t)strtoul( input_string, 0, 16 );
         break;
     case US_GETOPT_HEX32:
-        *(uint32_t *)value = (uint32_t)strtoul( str, 0, 16 );
+        *(uint32_t *)value = (uint32_t)strtoul( input_string, 0, 16 );
+        break;
+    case US_GETOPT_HEX64:
+        *(uint64_t *)value = (uint64_t)strtoull( input_string, 0, 16 );
+        break;
+    case US_GETOPT_MACADDR:
+    {
+        int32_t values[6];
+        int cnt;
+        cnt = sscanf( input_string, "%2x:%2x:%2x:%2x:%2x:%2x",
+                      &values[0],
+                      &values[1],
+                      &values[2],
+                      &values[3],
+                      &values[4],
+                      &values[5]
+                    );
+        if( cnt==6 )
+        {
+            uint8_t *macaddr = (uint8_t *)value;
+            macaddr[0] = (uint8_t)values[0];
+            macaddr[1] = (uint8_t)values[1];
+            macaddr[2] = (uint8_t)values[2];
+            macaddr[3] = (uint8_t)values[3];
+            macaddr[4] = (uint8_t)values[4];
+            macaddr[5] = (uint8_t)values[5];
+        }
+        else
+        {
+            r=false;
+        }
+    }
+    break;
+    case US_GETOPT_STRING:
+        us_delete( allocator, *(char **)value );
+        *(char **)value = us_strdup( allocator, str );
         break;
 #ifdef US_ENABLE_FLOAT
     case US_GETOPT_FLOAT:
         *(float *)value = (float)atof( str );
         break;
 #endif
-    case US_GETOPT_STRING:
-        us_delete( allocator, *(char **)value );
-        *(char **)value = us_strdup( allocator, str );
-        break;
     default:
         break;
     }
@@ -538,6 +677,13 @@ bool us_getopt_parse_args( us_getopt_t *self, const char **argv )
             int value_len = (pos_value ? strlen(pos_value) : 0 );
             r&=us_getopt_parse_one( self, pos_name, name_len, pos_value, value_len );
         }
+        else
+        {
+            if( !us_getopt_parse_file( self, *argv ) )
+            {
+                us_log_error( "Unable to parse options file: %s", *argv );
+            }
+        }
         ++argv;
     }
     return r;
@@ -545,24 +691,134 @@ bool us_getopt_parse_args( us_getopt_t *self, const char **argv )
 
 bool us_getopt_parse_file( us_getopt_t *self, const char *fname )
 {
-    /* TODO: */
-    (void)self;
-    (void)fname;
-    return false;
+    bool r=false;
+    FILE *f = fopen( fname, "rt" );
+    if( f )
+    {
+        char line[2048];
+        while( fgets( line, sizeof(line), f ) )
+        {
+            size_t line_len = strlen(line);
+            r&=us_getopt_parse_line( self, line, line_len );
+        }
+        fclose(f);
+        r=true;
+    }
+    return r;
 }
 
-bool us_getopt_parse_line( us_getopt_t *self, const char *line )
+bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len )
 {
-    /* TODO: */
-    (void)self;
-    (void)line;
-    return false;
+    bool r=true;
+    size_t i;
+    char escaped_key_name[128]="";
+    int escaped_key_name_len=0;
+    char *escaped_key_ptr = &escaped_key_name[0];
+    char escaped_value[2048]="";
+    int escaped_value_len=0;
+    char *escaped_value_ptr = &escaped_value[0];
+    char unescaped_key_name[128]="";
+    char unescaped_value[2048]="";
+    enum
+    {
+        IN_KEY_PREFIX=0,
+        IN_KEY_NAME,
+        IN_KEY_SUFFIX,
+        IN_VALUE_PREFIX,
+        IN_VALUE,
+        IN_VALUE_SUFFIX
+    } state;
+    state = IN_KEY_PREFIX;
+    for( i=0; i<line_len; ++i )
+    {
+        char c = line[i];
+        switch( state )
+        {
+        case IN_KEY_PREFIX:
+            if( !isspace(c) && isprint(c))
+            {
+                state = IN_KEY_NAME;
+                escaped_key_name[escaped_key_name_len++] = c;
+            }
+            break;
+        case IN_KEY_NAME:
+            if( c=='=' )
+            {
+                state = IN_VALUE_PREFIX;
+            }
+            else if( !isspace(c) && isprint(c) )
+            {
+                if( escaped_key_name_len< sizeof(escaped_key_name)-1 )
+                {
+                    escaped_key_name[ escaped_key_name_len++ ] = c;
+                    escaped_key_name[ escaped_key_name_len ] = '\0';
+                }
+            }
+            else
+            {
+                state = IN_KEY_SUFFIX;
+            }
+            break;
+        case IN_KEY_SUFFIX:
+            if( c=='=' )
+            {
+                state = IN_VALUE_PREFIX;
+            }
+            break;
+        case IN_VALUE_PREFIX:
+            if( !isspace(c) && isprint(c) )
+            {
+                state = IN_VALUE;
+                escaped_value[escaped_value_len++] = c;
+            }
+            break;
+        case IN_VALUE:
+            if( !isspace(c) && isprint(c) )
+            {
+                if( escaped_value_len<sizeof(escaped_value)-1 )
+                {
+                    escaped_value[ escaped_value_len++ ] = c;
+                    escaped_value[ escaped_value_len ] = '\0';
+                }
+            }
+            else
+            {
+                state = IN_VALUE_SUFFIX;
+            }
+            break;
+        case IN_VALUE_SUFFIX:
+            break;
+        }
+    }
+    /* remove optional surrounding " from escaped key and value */
+    if( escaped_key_name_len>0 &&
+            escaped_key_name[0] == '"' &&
+            escaped_key_name[ escaped_key_name_len-1 ] == '"' )
+    {
+        escaped_key_name[escaped_key_name_len-1] = '\0';
+        escaped_key_ptr++;
+        escaped_key_name_len-=2;
+    }
+    if( escaped_value_len>0 &&
+            escaped_value[0] == '"' &&
+            escaped_value[ escaped_value_len-1 ] == '"' )
+    {
+        escaped_value[escaped_value_len-1] = '\0';
+        escaped_value_ptr++;
+        escaped_value_len-=2;
+    }
+    /* if key starts with '#' then the line is actually a comment */
+    if( *escaped_key_ptr!='#' )
+    {
+        /* pass unescaped key/value to us_get_opt_parse_one */
+        us_getopt_unescape( unescaped_key_name, sizeof(unescaped_key_name)-1, escaped_key_ptr, escaped_key_name_len);
+        us_getopt_unescape( unescaped_value, sizeof(unescaped_value)-1, escaped_value_ptr, escaped_value_len );
+        r=us_getopt_parse_one(
+              self,
+              unescaped_key_name, strlen(unescaped_key_name),
+              unescaped_value, strlen( unescaped_value )
+          );
+    }
+    return r;
 }
 
-bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf )
-{
-    /* TODO: */
-    (void)self;
-    (void)buf;
-    return false;
-}

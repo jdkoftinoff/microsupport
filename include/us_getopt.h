@@ -52,8 +52,11 @@ extern "C" {
         US_GETOPT_UINT32,
         US_GETOPT_HEX16,
         US_GETOPT_HEX32,
-        US_GETOPT_STRING,
+        US_GETOPT_HEX64,
+        US_GETOPT_MACADDR,
+        US_GETOPT_STRING
 #if US_ENABLE_FLOAT
+        ,
         US_GETOPT_FLOAT
 #endif
     }
@@ -116,8 +119,7 @@ extern "C" {
     bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, const char *value, int value_len );
     bool us_getopt_parse_args( us_getopt_t *self, const char **argv );
     bool us_getopt_parse_file( us_getopt_t *self, const char *fname );
-    bool us_getopt_parse_line( us_getopt_t *self, const char *line );
-    bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf );
+    bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len );
 
 #ifdef __cplusplus
 }
