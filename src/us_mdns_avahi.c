@@ -96,4 +96,55 @@ void us_mdns_avahi_atexit(void)
     }
 }
 
+bool us_mdns_avahi_write_xml(
+    const char *avahi_services_dir,
+    const char *fname,
+    const char *service_name,
+    const char *udp_service_type,
+    const char *udp_port,
+    const char *tcp_service_type,
+    const char *tcp_port
+)
+{
+    bool r=true;
+    FILE *f;
+    chdir(avahi_services_dir);
+    f=fopen(fname, "wt");
+    if( f )
+    {
+        fprintf( f,
+                 "<?xml version=\"1.0\" standalone='no'?>\n"
+                 "<!DOCTYPE service-group SYSTEM \"avahi-service.dtd\">\n"
+                 "<service-group>\n"
+                 "  <name replace-wildcards=\"yes\">%%h %s</name>\n",
+                 service_name
+               );
+        if( tcp_service_type && *tcp_service_type && tcp_port && *tcp_port )
+        {
+            fprintf( f,
+                     "  <service>\n"
+                     "    <type>%s._tcp</type>\n"
+                     "    <port>%s</port>\n"
+                     "  </service>\n",
+                     tcp_service_type,
+                     tcp_port
+                   );
+        }
+        if( udp_service_type && *udp_service_type && udp_port && *udp_port )
+        {
+            fprintf( f,
+                     "  <service>\n"
+                     "    <type>%s._udp</type>\n"
+                     "    <port>%s</port>\n"
+                     "  </service>\n",
+                     udp_service_type,
+                     udp_port
+                   );
+        }
+        fprintf( f, "</service-group>\n" );
+        fclose(f);
+    }
+    return r;
+}
+
 #endif
