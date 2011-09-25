@@ -101,6 +101,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # include <windows.h>
 # include <io.h>
+# include <fcntl.h>
+
 # include <process.h>
 
 typedef long ssize_t;
