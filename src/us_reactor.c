@@ -829,6 +829,32 @@ bool us_reactor_handler_tcp_writable (
     return r;
 }
 
+
+int us_reactor_connect_or_open( const char *fname )
+{
+    int fd=0;
+    if( strncmp(fname,":tcp:", 5 )==0 )
+    {
+        char hostname[256]="localhost";
+        char port[32]="0";
+        char *p;
+        strcpy( hostname, fname+5 );
+        p=strchr(hostname,':');
+        if( p )
+        {
+            *p='\0';
+            strcpy( port, p+1 );
+        }
+        fd=us_reactor_tcp_blocking_connect(hostname, port);
+    }
+    else
+    {
+        fd=open(fname, O_RDONLY|O_NONBLOCK );
+    }
+    return fd;
+}
+
+
 int us_reactor_tcp_blocking_connect (
     const char *server_host,
     const char *server_port

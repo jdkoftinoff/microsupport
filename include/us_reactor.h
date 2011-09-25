@@ -167,6 +167,10 @@ extern "C" {
 
     /**
     */
+    int us_reactor_connect_or_open( const char *fname );
+
+    /**
+    */
     int us_reactor_tcp_blocking_connect (
         const char *connect_host,
         const char *connect_port
