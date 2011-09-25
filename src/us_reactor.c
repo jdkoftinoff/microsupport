@@ -849,7 +849,11 @@ int us_reactor_connect_or_open( const char *fname )
     }
     else
     {
-        fd=open(fname, O_RDONLY|O_NONBLOCK );
+        do
+        {
+            fd=open(fname, O_RDWR |O_NONBLOCK );
+        }
+        while (fd==-1 && errno==EINTR );
     }
     return fd;
 }
@@ -883,7 +887,11 @@ int us_reactor_tcp_blocking_connect (
                 us_reactor_log_error( "socket: %s\n", strerror ( errno ) );
                 break;
             }
-            e = connect( fd, cur_addr->ai_addr, cur_addr->ai_addrlen );
+            do
+            {
+                e = connect( fd, cur_addr->ai_addr, cur_addr->ai_addrlen );
+            }
+            while (e==-1 && errno == EINTR );
             if ( e==0 )
             {
                 break;
