@@ -37,12 +37,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
 
-/**
- \addtogroup us_buffer Memory Buffer
- */
-/*@{*/
+
+    /**
+     \addtogroup us_buffer Memory Buffer
+     */
+    /*@{*/
 
 
     /** us_buffer_s

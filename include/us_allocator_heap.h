@@ -35,10 +35,10 @@
 extern "C" {
 #endif
 
-/**
-   \addtogroup us_allocator Memory Allocator
-*/
-/*@{*/
+    /**
+       \addtogroup us_allocator Memory Allocator
+    */
+    /*@{*/
 
 
 
@@ -115,7 +115,7 @@ extern "C" {
     void us_allocator_heap_validate_block( us_allocator_heap_block_t *block );
 
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

@@ -92,7 +92,7 @@ void us_mdns_avahi_atexit(void)
     us_mdns_avahi_t *cur = us_mdns_avahi_service_list;
     while ( cur )
     {
-       unlink( cur->m_fname );
+        unlink( cur->m_fname );
     }
 }
 

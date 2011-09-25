@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 #define US_TRIE_NODE_EMPTY (int16_t)(-2)
 #define US_TRIE_NODE_NO_VALUE (uint16_t)(0x7fff)
 #define US_TRIE_NODE_END_BIT (uint16_t)(0x8000)

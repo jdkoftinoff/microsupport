@@ -7,7 +7,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     /** \addtogroup tc_parser MIDI Time Code Parser
      */
     /*@{*/

@@ -33,10 +33,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-/**
- \addtogroup us_logger Logger
- */
-/*@{*/
+    /**
+     \addtogroup us_logger Logger
+     */
+    /*@{*/
 
 # define US_LOG_LEVEL_NONE  (0)
 # define US_LOG_LEVEL_ERROR (1)
@@ -128,7 +128,7 @@ extern "C" {
 # define us_log_probe() us_log_debug( "At '%s':%d function '%s'", __FILE__, __LINE__, __FUNCTION__ )
 
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

@@ -36,19 +36,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 
     struct us_json_s;
 
     typedef enum
-	{
-		us_json_type_none,
-		us_json_type_json,
-		us_json_type_string_ptr,
-		us_json_type_int32_ptr,
-		us_json_type_string_buffer,
-		us_json_type_int32
-	} us_json_type_t;
+    {
+        us_json_type_none,
+        us_json_type_json,
+        us_json_type_string_ptr,
+        us_json_type_int32_ptr,
+        us_json_type_string_buffer,
+        us_json_type_int32
+    } us_json_type_t;
 
 
     typedef struct us_json_entry_s
@@ -65,7 +65,7 @@ extern "C" {
             int32_t m_value_int32;
         } value;
 
-		us_json_type_t m_type;
+        us_json_type_t m_type;
 
         struct us_json_entry_s *m_next;
     } us_json_entry_t;

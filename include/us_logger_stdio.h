@@ -33,11 +33,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-/**
- \addtogroup us_logger Logger
- */
-/*@{*/
+
+    /**
+     \addtogroup us_logger Logger
+     */
+    /*@{*/
 
 
     extern bool us_logger_stdio_files;
@@ -56,7 +56,7 @@ extern "C" {
     void us_log_trace_stdio ( const char *fmt, ... );
 
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

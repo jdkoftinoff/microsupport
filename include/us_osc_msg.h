@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 #define US_OSC_MSG_MAX_ADDRESS_LENGTH (256)
 #define US_OSC_MSG_MAX_TYPETAGS (128)
 

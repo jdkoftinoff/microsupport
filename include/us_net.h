@@ -39,7 +39,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     /** \addtogroup us_net
      */
     /*@{*/

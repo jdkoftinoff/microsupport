@@ -32,16 +32,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-/**
- \addtogroup us_tests Tests
- */
-/*@{*/
+
+    /**
+     \addtogroup us_tests Tests
+     */
+    /*@{*/
 
     int us_test_midi_main( int argc, const char **argv );
 
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

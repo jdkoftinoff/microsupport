@@ -34,7 +34,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 
 #if US_ENABLE_STDIO
 
@@ -67,7 +67,7 @@ extern "C" {
         const char *tcp_service_type,
         const char *tcp_port
     );
-    
+
 #endif
 #ifdef __cplusplus
 }

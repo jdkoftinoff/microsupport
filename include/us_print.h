@@ -34,11 +34,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-/**
- \addtogroup us_print  Print Buffers
- */
-/*@{*/
+
+    /**
+     \addtogroup us_print  Print Buffers
+     */
+    /*@{*/
 
 
     /** us_print_t
@@ -231,7 +231,7 @@ extern "C" {
 #endif
 
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

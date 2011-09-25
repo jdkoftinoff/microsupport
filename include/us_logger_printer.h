@@ -34,11 +34,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-/**
- \addtogroup us_logger Logger
- */
-/*@{*/
+
+    /**
+     \addtogroup us_logger Logger
+     */
+    /*@{*/
 
 
     bool us_logger_printer_start ( us_print_t *out_printer, us_print_t *err_printer );
@@ -51,7 +51,7 @@ extern "C" {
     void us_log_trace_printer ( const char *fmt, ... );
 
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

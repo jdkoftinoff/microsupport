@@ -31,7 +31,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 
     /* Determine the integer type use to parse non-floating point numbers */
 #if __STDC_VERSION__ >= 199901L || HAVE_LONG_LONG == 1

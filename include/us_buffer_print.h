@@ -36,12 +36,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
 
-/**
- \addtogroup us_buffer Memory Buffer
- */
-/*@{*/
+
+    /**
+     \addtogroup us_buffer Memory Buffer
+     */
+    /*@{*/
 
 #if US_ENABLE_PRINTING
 #include "us_print.h"
@@ -63,7 +63,7 @@ extern "C" {
 
 #endif
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

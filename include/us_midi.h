@@ -37,7 +37,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     /**
        \defgroup us_midi MIDI protocol definitions
     */

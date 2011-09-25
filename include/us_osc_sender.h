@@ -36,7 +36,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 
     typedef struct us_osc_sender_s
     {

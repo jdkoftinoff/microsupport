@@ -35,11 +35,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
-/**
- \addtogroup us_allocator Memory Allocator
- */
-/*@{*/
+
+    /**
+     \addtogroup us_allocator Memory Allocator
+     */
+    /*@{*/
 
 #if US_ENABLE_PRINTING
 
@@ -61,7 +61,7 @@ extern "C" {
 
 #endif
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

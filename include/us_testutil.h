@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_buffer.h"
 
 #include "us_logger.h"
-   
+
 /**
  \addtogroup us_testutil  Test Utilities
  */
@@ -46,7 +46,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #ifndef US_TESTUTIL_PRINTBUFFER_SIZE
 # define US_TESTUTIL_PRINTBUFFER_SIZE (8192)
 #endif
@@ -94,7 +94,7 @@ extern "C" {
     extern us_simple_allocator_t us_testutil_session_allocator_impl;
     extern int32_t us_testutil_session_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
 
-/*@}*/
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif

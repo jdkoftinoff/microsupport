@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-   
+
 /**
  \addtogroup us_platform  Platform Specific Configuration
  */
@@ -79,7 +79,7 @@ extern "C" {
 #  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 # endif
 
- 
+
     struct timezone
     {
         int tz_minuteswest; /* minutes W of Greenwich */
