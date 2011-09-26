@@ -851,7 +851,11 @@ int us_reactor_connect_or_open( const char *fname )
     {
         do
         {
+#ifdef WIN32
+            fd=open(fname,O_RDWR);
+#else
             fd=open(fname, O_RDWR |O_NONBLOCK );
+#endif
         }
         while (fd==-1 && errno==EINTR );
     }
