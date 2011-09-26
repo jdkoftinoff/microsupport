@@ -1587,7 +1587,7 @@ us_osc_parse(
     us_osc_msg_t **msg,
     us_osc_msg_bundle_t **bundle,
     us_buffer_t *buffer,
-    int32_t packet_size,
+    size_t packet_size,
     us_osc_msg_addrcode_typetag_map_proc addrmapper
 )
 {
