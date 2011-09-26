@@ -64,6 +64,35 @@ extern "C" {
     bool us_osc_sender_send_msg( us_osc_sender_t *US_UNUSED(self), const us_osc_msg_t *US_UNUSED(msg) );
     bool us_osc_sender_can_send( us_osc_sender_t *US_UNUSED(self) );
     bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address, const char *typetags, ... );
+
+
+    typedef struct us_osc_multisender_item_s
+    {
+        us_osc_sender_t *m_sender;
+        struct us_osc_multisender_item_s *m_next;
+        struct us_osc_multisender_item_s *m_prev;
+    } us_osc_multisender_item_t;
+
+#define US_OSC_MULTISENDER_MAX_ITEMS (16)
+
+    typedef struct us_osc_multisender_s
+    {
+        us_osc_sender_t m_base;
+        us_allocator_t *m_allocator;
+        us_osc_multisender_item_t *m_first_item;
+        us_osc_multisender_item_t *m_last_item;
+        us_osc_multisender_item_t *m_first_empty_item;
+        us_osc_multisender_item_t m_items[US_OSC_MULTISENDER_MAX_ITEMS];
+    } us_osc_multisender_t;
+
+    us_osc_multisender_t *us_osc_multisender_create( us_allocator_t *allocator );
+    bool us_osc_multisender_init( us_osc_multisender_t *self );
+    void us_osc_multisender_destroy( us_osc_sender_t *self );
+    bool us_osc_multisender_send_msg( us_osc_sender_t *self, const us_osc_msg_t *msg );
+    bool us_osc_multisender_can_send( us_osc_sender_t *self );
+    bool us_osc_multisender_add_sender( us_osc_multisender_t *self, us_osc_sender_t *item );
+    bool us_osc_multisender_remove_sender( us_osc_multisender_t *self, us_osc_sender_t *item );
+
 #ifdef __cplusplus
 }
 #endif

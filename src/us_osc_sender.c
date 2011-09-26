@@ -84,3 +84,135 @@ bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address
     return r;
 }
 
+
+
+us_osc_multisender_t *us_osc_multisender_create( us_allocator_t *allocator )
+{
+    us_osc_multisender_t *self = us_new( allocator, us_osc_multisender_t );
+    return self;
+}
+
+bool us_osc_multisender_init( us_osc_multisender_t *self )
+{
+    int i;
+    self->m_base.destroy = us_osc_multisender_destroy;
+    self->m_base.can_send = us_osc_multisender_can_send;
+    self->m_base.send_msg = us_osc_multisender_send_msg;
+    self->m_base.form_and_send_msg = us_osc_sender_form_and_send_msg;
+    self->m_first_item=0;
+    self->m_last_item=0;
+    self->m_first_empty_item=&self->m_items[0];
+    for( i=0; i<US_OSC_MULTISENDER_MAX_ITEMS; ++i )
+    {
+        self->m_items[i].m_sender = 0;
+        if( i>0 )
+        {
+            self->m_items[i].m_prev = &self->m_items[i-1];
+        }
+        else
+        {
+            self->m_items[i].m_prev = 0;
+        }
+        if( i!=US_OSC_MULTISENDER_MAX_ITEMS-1 )
+        {
+            self->m_items[i].m_next = &self->m_items[i+1];
+        }
+        else
+        {
+            self->m_items[i].m_next = 0;
+        }
+    }
+    return true;
+}
+
+void us_osc_multisender_destroy( us_osc_sender_t *self )
+{
+}
+
+bool us_osc_multisender_send_msg( us_osc_sender_t *self_, const us_osc_msg_t *msg )
+{
+    bool r=true;
+    us_osc_multisender_t *self = (us_osc_multisender_t *)self_;
+    us_osc_multisender_item_t *item = self->m_first_item;
+    while( item )
+    {
+        if( item->m_sender )
+        {
+            r&=item->m_sender->send_msg( item->m_sender, msg );
+        }
+        item = item->m_next;
+    }
+    return r;
+}
+
+bool us_osc_multisender_can_send( us_osc_sender_t *self_ )
+{
+    bool r=true;
+    us_osc_multisender_t *self = (us_osc_multisender_t *)self_;
+    us_osc_multisender_item_t *item = self->m_first_item;
+    while( item )
+    {
+        if( item->m_sender )
+        {
+            r&=item->m_sender->can_send( item->m_sender );
+        }
+        item = item->m_next;
+    }
+    return r;
+}
+
+bool us_osc_multisender_add_sender( us_osc_multisender_t *self, us_osc_sender_t *item )
+{
+    bool r=false;
+    us_osc_multisender_item_t *allocated_item = 0;
+    if( self->m_first_empty_item )
+    {
+        allocated_item = self->m_first_empty_item;
+        self->m_first_empty_item = allocated_item->m_next;
+        allocated_item->m_sender = item;
+        allocated_item->m_next = 0;
+        if( self->m_first_item==0 )
+        {
+            self->m_first_item=allocated_item;
+            self->m_last_item=allocated_item;
+        }
+        else
+        {
+            allocated_item->m_prev = self->m_last_item;
+            self->m_last_item = allocated_item;
+        }
+        r=true;
+    }
+    return r;
+}
+
+bool us_osc_multisender_remove_sender( us_osc_multisender_t *self, us_osc_sender_t *sender )
+{
+    bool r=false;
+    us_osc_multisender_item_t *item = self->m_first_item;
+    while( item )
+    {
+        if( item->m_sender == sender )
+        {
+            break;
+        }
+    }
+    if( item )
+    {
+        item->m_sender = 0;
+        item->m_prev = 0;
+        if( self->m_first_empty_item )
+        {
+            self->m_first_empty_item->m_prev = item;
+            item->m_next = self->m_first_empty_item;
+        }
+        else
+        {
+            item->m_next = 0;
+            self->m_first_empty_item = item;
+        }
+        r=true;
+    }
+    return r;
+}
+
