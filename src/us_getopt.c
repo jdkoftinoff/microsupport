@@ -408,7 +408,6 @@ bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len 
             break;
         }
         done=us_getopt_unescape_char( &dest[dp], &str[i], todo );
-        todo-=done;
         dp+=done;
         i+=done;
     }
