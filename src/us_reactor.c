@@ -953,13 +953,17 @@ bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
     struct sockaddr_storage remote_addr;
     socklen_t remote_addrlen = sizeof( remote_addr );
     us_buffer_reset( self->m_incoming_packet );
-    len = recvfrom(
-              self->m_base.m_fd,
-              (char *)self->m_incoming_packet->m_buffer,
-              self->m_incoming_packet->m_max_length, 0,
-              (struct sockaddr *)&remote_addr,
-              &remote_addrlen
-          );
+    do
+    {
+        len = recvfrom(
+                  self->m_base.m_fd,
+                  (char *)self->m_incoming_packet->m_buffer,
+                  self->m_incoming_packet->m_max_length, 0,
+                  (struct sockaddr *)&remote_addr,
+                  &remote_addrlen
+              );
+    }
+    while( len<0 && errno==EINTR );
     if ( len>0 )
     {
         self->m_incoming_packet->m_next_in = len;
