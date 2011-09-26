@@ -108,8 +108,11 @@ bool us_mdns_avahi_write_xml(
 {
     bool r=true;
     FILE *f;
-    chdir(avahi_services_dir);
-    f=fopen(fname, "wt");
+    char path[2048];
+    strncpy( path, avahi_services_dir, sizeof(path)-1 );
+    strncat( path, "/", sizeof(path)-1 );
+    strncat( path, fname, sizeof(path)-1 );
+    f=fopen(path, "wt");
     if( f )
     {
         fprintf( f,
