@@ -66,7 +66,7 @@ bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address
     bool r=false;
     us_osc_msg_t *msg;
     us_simple_allocator_t tmp_allocator;
-    char buf[2048];
+    char buf[16384];
     va_list ap;
     us_simple_allocator_init( &tmp_allocator, buf, sizeof(buf) );
     va_start( ap, typetags );
@@ -147,9 +147,14 @@ bool us_osc_multisender_send_msg( us_osc_sender_t *self_, const us_osc_msg_t *ms
 
 bool us_osc_multisender_can_send( us_osc_sender_t *self_ )
 {
-    bool r=true;
+    bool r=false;
     us_osc_multisender_t *self = (us_osc_multisender_t *)self_;
     us_osc_multisender_item_t *item = self->m_first_item;
+    if( item )
+    {
+        /* only report that we can send if we have one or more senders */
+        r=true;
+    }
     while( item )
     {
         if( item->m_sender )
