@@ -473,7 +473,6 @@ bool us_getopt_value_for_string(
                 r=false;
             }
         }
-
 #else
         *(uint64_t *)value = (uint64_t)strtoull( input_string, 0, 16 );
 #endif
