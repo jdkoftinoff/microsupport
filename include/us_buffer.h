@@ -416,7 +416,7 @@ extern "C" {
       @return bool true if exact match is found
       */
     static inline bool
-    us_buffer_string_compare( const us_buffer_t *self, int start_pos, const char *string, int len )
+    us_buffer_string_compare( const us_buffer_t *self, size_t start_pos, const char *string, size_t len )
     {
         bool r=false;
         if ( us_buffer_readable_count(self)>=len+start_pos )
@@ -460,7 +460,7 @@ extern "C" {
     us_buffer_append (
         us_buffer_t *self,
         const void *data_,
-        int32_t data_length
+        size_t data_length
     )
     {
         bool r=false;

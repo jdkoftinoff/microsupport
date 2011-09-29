@@ -463,7 +463,19 @@ bool us_getopt_value_for_string(
         *(uint32_t *)value = (uint32_t)strtoul( input_string, 0, 16 );
         break;
     case US_GETOPT_HEX64:
+#ifdef _MSC_VER
+        {
+            uint32_t *low_part = (uint32_t *)value;
+            uint32_t *hi_part = low_part+1;
+            int cnt = sscanf( input_string, "%8x%8x", hi_part, low_part );
+            if( cnt!=2 )
+            {
+                r=false;
+            }
+        }
+#else
         *(uint64_t *)value = (uint64_t)strtoull( input_string, 0, 16 );
+#endif
         break;
     case US_GETOPT_MACADDR:
     {
