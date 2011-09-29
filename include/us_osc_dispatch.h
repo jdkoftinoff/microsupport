@@ -32,7 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_allocator.h"
 #include "us_osc_msg.h"
+#include "us_osc_sender.h"
 #include "us_trie.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,6 +63,7 @@ extern "C" {
         struct us_osc_dispatch_s *self,
         const us_osc_msg_t *msg,
         const struct us_osc_dispatch_index_s *index,
+        us_osc_sender_t *sender,
         void *extra
     );
 
@@ -123,6 +126,7 @@ extern "C" {
         bool (*receive_msg)(
             struct us_osc_dispatch_s *self,
             const us_osc_msg_t * msg,
+            us_osc_sender_t *sender,
             void *extra
         );
         us_allocator_t *allocator;
@@ -156,6 +160,7 @@ extern "C" {
     bool us_osc_dispatch_receive_msg(
         us_osc_dispatch_t *self,
         const us_osc_msg_t *msg,
+        us_osc_sender_t *sender,
         void *extra
     );
 

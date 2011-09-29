@@ -160,6 +160,7 @@ bool us_osc_dispatch_add_table(
 bool us_osc_dispatch_receive_msg(
     us_osc_dispatch_t *self,
     const us_osc_msg_t *msg,
+    us_osc_sender_t *sender,
     void *extra
 )
 {
@@ -183,6 +184,7 @@ bool us_osc_dispatch_receive_msg(
                 self,
                 msg,
                 &entry->final_index,
+                sender,
                 extra
             );
     }

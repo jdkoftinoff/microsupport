@@ -55,24 +55,28 @@ static bool us_test_osc_dispatch_media_level(
     struct us_osc_dispatch_s *self,
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *extra
 );
 static bool us_test_osc_dispatch_media_pan(
     struct us_osc_dispatch_s *self,
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *extra
 );
 static bool us_test_osc_dispatch_media_mute(
     struct us_osc_dispatch_s *self,
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *extra
 );
 static bool us_test_osc_dispatch_media_invert(
     struct us_osc_dispatch_s *self,
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *extra
 );
 
@@ -80,6 +84,7 @@ static bool us_test_osc_dispatch_media_raw(
     struct us_osc_dispatch_s *self,
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *extra
 );
 
@@ -135,7 +140,7 @@ static bool us_test_osc_dispatch_test1_setup(
 )
 {
     bool r = false;
-    if (us_osc_dispatch_init(osc_dispatch, allocator, 256, 2048))
+    if (us_osc_dispatch_init(osc_dispatch, allocator, 1024, 8192))
     {
         char s[64];
         int mt, ch;
@@ -145,7 +150,7 @@ static bool us_test_osc_dispatch_test1_setup(
         for (mt = 0; mt < 2 && r == true; ++mt)
         {
             index.axis[0] = mt;
-            for (ch = 0; ch < 8 && r == true; ++ch)
+            for (ch = 0; ch < 64 && r == true; ++ch)
             {
                 index.axis[1] = ch;
                 sprintf(s, "/media/%s/%d", media_type[index.axis[0]], ch + 1);
@@ -162,6 +167,7 @@ static bool us_test_osc_dispatch_test1_setup(
                      );
             }
         }
+        us_log_info( "trie uses %d nodes", osc_dispatch->trie->m_base.m_num_nodes );
     }
     if (!r)
     {
@@ -185,7 +191,7 @@ static bool us_test_osc_dispatch_test1_feed(
           );
     us_testutil_printer_stdout->printf(us_testutil_printer_stdout, "\n\nformed msg: \n");
     msg->print(msg, us_testutil_printer_stdout);
-    osc_dispatch->receive_msg(osc_dispatch, msg, 0);
+    osc_dispatch->receive_msg(osc_dispatch, msg, 0,0);
     msg->destroy(msg);
     msg = us_osc_msg_form(
               allocator,
@@ -195,7 +201,7 @@ static bool us_test_osc_dispatch_test1_feed(
           );
     us_testutil_printer_stdout->printf(us_testutil_printer_stdout, "\n\nformed msg: \n");
     msg->print(msg, us_testutil_printer_stdout);
-    osc_dispatch->receive_msg(osc_dispatch, msg, 0);
+    osc_dispatch->receive_msg(osc_dispatch, msg, 0,0);
     msg->destroy(msg);
     msg = us_osc_msg_form(
               allocator,
@@ -204,7 +210,7 @@ static bool us_test_osc_dispatch_test1_feed(
           );
     us_testutil_printer_stdout->printf(us_testutil_printer_stdout, "\n\nformed msg: \n");
     msg->print(msg, us_testutil_printer_stdout);
-    osc_dispatch->receive_msg(osc_dispatch, msg, 0);
+    osc_dispatch->receive_msg(osc_dispatch, msg, 0,0);
     msg->destroy(msg);
     msg = us_osc_msg_form(
               allocator,
@@ -213,7 +219,7 @@ static bool us_test_osc_dispatch_test1_feed(
           );
     us_testutil_printer_stdout->printf(us_testutil_printer_stdout, "\n\nformed msg: \n");
     msg->print(msg, us_testutil_printer_stdout);
-    osc_dispatch->receive_msg(osc_dispatch, msg, 0);
+    osc_dispatch->receive_msg(osc_dispatch, msg, 0,0);
     msg->destroy(msg);
     msg = us_osc_msg_form(
               allocator,
@@ -222,7 +228,7 @@ static bool us_test_osc_dispatch_test1_feed(
           );
     us_testutil_printer_stdout->printf(us_testutil_printer_stdout, "\n\nformed msg: \n");
     msg->print(msg, us_testutil_printer_stdout);
-    osc_dispatch->receive_msg(osc_dispatch, msg, 0);
+    osc_dispatch->receive_msg(osc_dispatch, msg, 0,0);
     msg->destroy(msg);
     return r;
 }
@@ -247,6 +253,7 @@ static bool us_test_osc_dispatch_media_level(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *US_UNUSED(extra)
 )
 {
@@ -270,6 +277,7 @@ static bool us_test_osc_dispatch_media_pan(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *US_UNUSED(extra)
 )
 
@@ -294,6 +302,7 @@ static bool us_test_osc_dispatch_media_mute(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *US_UNUSED(extra)
 )
 {
@@ -317,6 +326,7 @@ static bool us_test_osc_dispatch_media_invert(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *US_UNUSED(extra)
 )
 {
@@ -340,6 +350,7 @@ static bool us_test_osc_dispatch_media_raw(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
+    us_osc_sender_t *sender,
     void *US_UNUSED(extra)
 )
 {
