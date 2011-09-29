@@ -206,7 +206,7 @@ extern "C" {
     us_osc_msg_bundle_unflatten(
         us_allocator_t *allocator,
         us_buffer_t *buf,
-        int32_t bundle_size,
+        size_t bundle_size,
         us_osc_msg_addrcode_typetag_map_proc addrmapper
     );
 

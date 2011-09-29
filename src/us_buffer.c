@@ -55,7 +55,7 @@ bool us_buffer_read_string (
     if ( cur_length>1 )
     {
         size_t i;
-        int l=0;
+        size_t l=0;
         if ( cur_length>result_max_len-1 )
         {
             cur_length=result_max_len-1;
@@ -86,7 +86,7 @@ us_buffer_find_string_len (
 {
     ssize_t r = -1;
     size_t pos;
-    int cur_length = us_buffer_readable_count(self);
+    size_t cur_length = us_buffer_readable_count(self);
     for ( pos = 0; pos < cur_length; ++pos )
     {
         if ( us_buffer_peek(self,pos) == search_char )
@@ -173,7 +173,7 @@ us_buffer_skip_to_delim (
 )
 {
     bool r = false;
-    int delim_chars_len = ( int ) ( strlen ( delim_chars ) );
+    size_t delim_chars_len = ( int ) ( strlen ( delim_chars ) );
     while ( us_buffer_can_read_byte(self))
     {
         size_t i;

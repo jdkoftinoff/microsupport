@@ -41,7 +41,7 @@ extern "C" {
     {
         us_osc_sender_t m_base;
         us_reactor_handler_tcp_t *m_handler;
-        int m_max_size;
+        size_t m_max_size;
     } us_osc_sender_tcp_t;
 
     bool us_osc_sender_tcp_init( us_osc_sender_tcp_t *self, us_reactor_handler_tcp_t *handler );

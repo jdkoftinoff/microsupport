@@ -205,7 +205,7 @@ bool us_http_server_handler_readable_request_header(
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=true;
     us_buffer_t *incoming = &self->m_base.m_incoming_queue;
-    int i;
+    size_t i;
     bool found_end_of_header=false;
     us_log_tracepoint();
     /* scan until "\r\n\r\n" is seen in the incoming queue */
