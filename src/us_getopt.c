@@ -663,7 +663,13 @@ bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, con
             {
                 if ( strncmp( subname, opt->m_name, subname_len ) == 0 )
                 {
-                    r=us_getopt_value_for_string( self->m_allocator, opt->m_value_type, opt->m_current_value, value, value_len );
+                    r=us_getopt_value_for_string(
+                          self->m_allocator,
+                          opt->m_value_type,
+                          opt->m_current_value,
+                          value,
+                          value_len
+                      );
                     return r;
                 }
                 opt++;
@@ -721,7 +727,7 @@ bool us_getopt_parse_file( us_getopt_t *self, const char *fname )
 bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len )
 {
     bool r=true;
-    size_t i;
+    ssize_t i;
     char escaped_key_name[128]="";
     int escaped_key_name_len=0;
     char *escaped_key_ptr = &escaped_key_name[0];
@@ -784,7 +790,7 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
             }
             break;
         case IN_VALUE:
-            if( !isspace(c) && isprint(c) )
+            if( isprint(c) )
             {
                 if( escaped_value_len<sizeof(escaped_value)-1 )
                 {
@@ -798,6 +804,19 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
             }
             break;
         case IN_VALUE_SUFFIX:
+            break;
+        }
+    }
+    /* remove trailing whitespace */
+    for (i=escaped_value_len-1; i>0; --i)
+    {
+        if( isspace(escaped_value[i]) )
+        {
+            escaped_value[i]='\0';
+            escaped_value_len=i;
+        }
+        else
+        {
             break;
         }
     }
@@ -818,8 +837,8 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
         escaped_value_ptr++;
         escaped_value_len-=2;
     }
-    /* if key starts with '#' then the line is actually a comment */
-    if( *escaped_key_ptr!='#' )
+    /* if key starts with '#' or ';' then the line is actually a comment */
+    if( *escaped_key_ptr!='#' && *escaped_key_ptr!=';')
     {
         /* pass unescaped key/value to us_get_opt_parse_one */
         us_getopt_unescape( unescaped_key_name, sizeof(unescaped_key_name)-1, escaped_key_ptr, escaped_key_name_len);
