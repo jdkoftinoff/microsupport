@@ -197,11 +197,11 @@ bool us_getopt_string_for_value(
 }
 
 bool us_getopt_string_for_default(
-                                char *buf,
-                                int buf_len,
-                                us_getopt_type_t type,
-                                const void *value
-                                )
+    char *buf,
+    int buf_len,
+    us_getopt_type_t type,
+    const void *value
+)
 {
     bool r=false;
     if ( value )
@@ -209,134 +209,134 @@ bool us_getopt_string_for_default(
         r=true;
         switch ( type )
         {
-            case US_GETOPT_NONE:
+        case US_GETOPT_NONE:
+        {
+            *buf='\0';
+            break;
+        }
+        case US_GETOPT_FLAG:
+        {
+            *buf='\0';
+            break;
+        }
+        case US_GETOPT_CHAR:
+        {
+            if ( buf_len>2 )
             {
-                *buf='\0';
-                break;
+                buf[0]=*(char *)value;
+                buf[1]='\0';
             }
-            case US_GETOPT_FLAG:
+            else
             {
-                *buf='\0';
-                break;
-            }
-            case US_GETOPT_CHAR:
-            {
-                if ( buf_len>2 )
-                {
-                    buf[0]=*(char *)value;
-                    buf[1]='\0';
-                }
-                else
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_INT16:
-            {
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%hd", *(int16_t*)value ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_UINT16:
-            {
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%hu", *(uint16_t *)value ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_INT32:
-            {
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%d", *(int32_t*)value ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_UINT32:
-            {
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%u", *(uint32_t *)value ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_HEX16:
-            {
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%04hx", *(uint16_t*)value ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_HEX32:
-            {
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x", *(uint32_t*)value ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_HEX64:
-            {
-                uint32_t high32 = (uint32_t)((*(uint64_t*)value)>>32);
-                uint32_t low32 = (uint32_t)(*(uint64_t*)value)&0xffffffff;
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x%08x", high32, low32 ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_MACADDR:
-            {
-                uint8_t *macaddr = (uint8_t *)value;
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%02x:%02x:%02x:%02x:%02x:%02x",
-                                         macaddr[0],
-                                         macaddr[1],
-                                         macaddr[2],
-                                         macaddr[3],
-                                         macaddr[4],
-                                         macaddr[5]
-                                         ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
-            }
-            case US_GETOPT_STRING:
-            {
-                const char *str = (const char *)value;
-                char tmp[1024] = "";
-                *buf='\0';
                 r=false;
-                if( us_getopt_escape( tmp, sizeof(tmp)-1, str, strlen(str) ) )
-                {
-                    if ( strlen( tmp )< (size_t)(buf_len-1) )
-                    {
-                        strncpy( buf, tmp, buf_len-1 );
-                        r=true;
-                    }
-                }
-                break;
             }
+            break;
+        }
+        case US_GETOPT_INT16:
+        {
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%hd", *(int16_t*)value ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_UINT16:
+        {
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%hu", *(uint16_t *)value ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_INT32:
+        {
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%d", *(int32_t*)value ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_UINT32:
+        {
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%u", *(uint32_t *)value ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_HEX16:
+        {
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%04hx", *(uint16_t*)value ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_HEX32:
+        {
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x", *(uint32_t*)value ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_HEX64:
+        {
+            uint32_t high32 = (uint32_t)((*(uint64_t*)value)>>32);
+            uint32_t low32 = (uint32_t)(*(uint64_t*)value)&0xffffffff;
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x%08x", high32, low32 ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_MACADDR:
+        {
+            uint8_t *macaddr = (uint8_t *)value;
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%02x:%02x:%02x:%02x:%02x:%02x",
+                                      macaddr[0],
+                                      macaddr[1],
+                                      macaddr[2],
+                                      macaddr[3],
+                                      macaddr[4],
+                                      macaddr[5]
+                                    ) > buf_len )
+            {
+                r=false;
+            }
+            break;
+        }
+        case US_GETOPT_STRING:
+        {
+            const char *str = (const char *)value;
+            char tmp[1024] = "";
+            *buf='\0';
+            r=false;
+            if( us_getopt_escape( tmp, sizeof(tmp)-1, str, strlen(str) ) )
+            {
+                if ( strlen( tmp )< (size_t)(buf_len-1) )
+                {
+                    strncpy( buf, tmp, buf_len-1 );
+                    r=true;
+                }
+            }
+            break;
+        }
 #if US_ENABLE_FLOAT
-            case US_GETOPT_FLOAT:
+        case US_GETOPT_FLOAT:
+        {
+            if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%f", *(float *)value ) > buf_len )
             {
-                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%f", *(float *)value ) > buf_len )
-                {
-                    r=false;
-                }
-                break;
+                r=false;
             }
+            break;
+        }
 #endif
-            default:
-            {
-                *buf='\0';
-                break;
-            }
+        default:
+        {
+            *buf='\0';
+            break;
+        }
         }
     }
     return r;
