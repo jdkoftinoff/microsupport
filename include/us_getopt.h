@@ -116,6 +116,7 @@ extern "C" {
     bool us_getopt_fill_defaults( us_getopt_t *self );
     bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_t *options, const char *prefix, const char *description );
     bool us_getopt_print( us_getopt_t *self, us_print_t *printer );
+    bool us_getopt_dump( us_getopt_t *self, us_print_t *printer, const char *ignore_key );
     bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, const char *value, int value_len );
     bool us_getopt_parse_args( us_getopt_t *self, const char **argv );
     bool us_getopt_parse_file( us_getopt_t *self, const char *fname );

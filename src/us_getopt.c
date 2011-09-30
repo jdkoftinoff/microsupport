@@ -162,10 +162,11 @@ bool us_getopt_string_for_value(
         }
         case US_GETOPT_STRING:
         {
+            const char *str = *(const char **)value;
             char tmp[1024] = "";
             *buf='\0';
             r=false;
-            if( us_getopt_escape( tmp, sizeof(tmp)-1, (const char *)value, strlen((const char *)value ) ) )
+            if( us_getopt_escape( tmp, sizeof(tmp)-1, str, strlen(str) ) )
             {
                 if ( strlen( tmp )< (size_t)(buf_len-1) )
                 {
@@ -269,7 +270,7 @@ bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
     for (i=0; i<str_len; ++i)
     {
         char c=str[i];
-        if( dp>str_len-4 )
+        if( dp>dest_len-4 )
         {
             r=false;
             break;
@@ -279,10 +280,6 @@ bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
         case '"':
             dest[dp++] = '\\';
             dest[dp++] = '"';
-            break;
-        case '\'':
-            dest[dp++] = '\\';
-            dest[dp++] = '\'';
             break;
         case '\r':
             dest[dp++] = '\\';
@@ -605,6 +602,81 @@ bool us_getopt_fill_defaults( us_getopt_t *self )
     return r;
 }
 
+bool us_getopt_dump( us_getopt_t *self, us_print_t *printer, const char *ignore_key )
+{
+    bool r=true;
+    us_getopt_option_list_t *list = self->m_option_lists;
+    while ( list && r)
+    {
+        const us_getopt_option_t *opt = list->m_options;
+        if ( list->m_prefix )
+        {
+            r&=printer->printf( printer,"#\n# Option group '%s': %s\n#\n\n", list->m_prefix, list->m_description );
+        }
+        while ( opt && r && opt->m_name!=0 )
+        {
+            char key_name[1024] = "";
+            char value_string[1024] = "";
+            us_getopt_string_for_value( value_string, sizeof(value_string)-1, opt->m_value_type, opt->m_current_value );
+            if( list->m_prefix )
+            {
+                sprintf(key_name,"%s.%s", list->m_prefix, opt->m_name );
+            }
+            else
+            {
+                strcpy( key_name, opt->m_name );
+            }
+            if(! ( ignore_key && strcmp(key_name,ignore_key)==0) )
+            {
+                if( opt->m_value_type == US_GETOPT_FLAG )
+                {
+                    if( *(bool *)opt->m_current_value == true )
+                    {
+                        r&=printer->printf(
+                               printer,
+                               "# %s (%s) : %s\n",
+                               key_name,
+                               us_getopt_value_types[opt->m_value_type],
+                               opt->m_description
+                           );
+                        r&=printer->printf(
+                               printer,
+                               "%s = \n\n",
+                               key_name
+                           );
+                    }
+                    else
+                    {
+                        r&=printer->printf(
+                               printer,
+                               "\n\n"
+                           );
+                    }
+                }
+                else
+                {
+                    r&=printer->printf(
+                           printer,
+                           "# %s (%s) : %s\n",
+                           key_name,
+                           us_getopt_value_types[opt->m_value_type],
+                           opt->m_description
+                       );
+                    r&=printer->printf(
+                           printer,
+                           "%s = \"%s\"\n\n",
+                           key_name,
+                           value_string
+                       );
+                }
+            }
+            opt++;
+        }
+        list=list->m_next;
+    }
+    return r;
+}
+
 bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
 {
     bool r=true;
@@ -614,26 +686,37 @@ bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
         const us_getopt_option_t *opt = list->m_options;
         if ( list->m_prefix )
         {
-            r&=printer->printf( printer,"Option group '%s': %s\n", list->m_prefix, list->m_description );
+            r&=printer->printf( printer,"#\n# Option group '%s': %s\n#\n\n", list->m_prefix, list->m_description );
         }
         while ( opt && r && opt->m_name!=0 )
         {
+            char key_name[1024] = "";
             char default_string[1024] = "";
-            /* TODO: Form default_string */
-            if ( !us_getopt_string_for_value( default_string, sizeof(default_string)-1, opt->m_value_type, opt->m_default_value ) )
+            us_getopt_string_for_value( default_string, sizeof(default_string)-1, opt->m_value_type, opt->m_default_value );
+            if( list->m_prefix )
             {
-                default_string[0] = '\0';
+                sprintf(key_name,"%s.%s", list->m_prefix, opt->m_name );
             }
-            r&=printer->printf( printer, "    %s%c%s (%s) : %s%s%s%s\n",
-                                ( list->m_prefix ? list->m_prefix : "" ),
-                                ( list->m_prefix ? '.' : ' ' ),
-                                opt->m_name,
-                                us_getopt_value_types[opt->m_value_type],
-                                opt->m_description,
-                                (( default_string[0]!='\0' ) ? ", default is: \"" : ""),
-                                default_string,
-                                (( default_string[0]!='\0' ) ? "\"" : "" )
-                              );
+            else
+            {
+                strcpy( key_name, opt->m_name );
+            }
+            r&=printer->printf(
+                   printer,
+                   "# %s (%s) : %s\n",
+                   key_name,
+                   us_getopt_value_types[opt->m_value_type],
+                   opt->m_description
+               );
+            if( opt->m_value_type != US_GETOPT_FLAG )
+            {
+                r&=printer->printf(
+                       printer,
+                       "%s = \"%s\"\n\n",
+                       key_name,
+                       default_string
+                   );
+            }
             opt++;
         }
         list=list->m_next;
