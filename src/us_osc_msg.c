@@ -1629,3 +1629,22 @@ us_osc_parse(
 
 
 
+bool us_osc_msg_element_get_bool( us_osc_msg_element_t *element )
+{
+    bool r=false;
+    if( element->m_code=='T' )
+    {
+        r=true;
+    }
+    else if (element->m_code=='F' )
+    {
+        r=false;
+    }
+    else if (element->m_code=='i' )
+    {
+        us_osc_msg_element_i_t *i_element = (us_osc_msg_element_i_t *)element;
+        r = (i_element->m_value!=0);
+    }
+    return(r);
+}
+

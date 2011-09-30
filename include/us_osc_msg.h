@@ -909,7 +909,12 @@ extern "C" {
 
     /*@}*/
 
+    /** Extract a boolean true/false from an element.
+     * It may be a T or F element type, or an i type with
+     * an int value where non zero is true
+     */
 
+    bool us_osc_msg_element_get_bool( us_osc_msg_element_t *element );
 
     /*@}*/
 #ifdef __cplusplus
