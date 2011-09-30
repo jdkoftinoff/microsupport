@@ -196,6 +196,153 @@ bool us_getopt_string_for_value(
     return r;
 }
 
+bool us_getopt_string_for_default(
+                                char *buf,
+                                int buf_len,
+                                us_getopt_type_t type,
+                                const void *value
+                                )
+{
+    bool r=false;
+    if ( value )
+    {
+        r=true;
+        switch ( type )
+        {
+            case US_GETOPT_NONE:
+            {
+                *buf='\0';
+                break;
+            }
+            case US_GETOPT_FLAG:
+            {
+                *buf='\0';
+                break;
+            }
+            case US_GETOPT_CHAR:
+            {
+                if ( buf_len>2 )
+                {
+                    buf[0]=*(char *)value;
+                    buf[1]='\0';
+                }
+                else
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_INT16:
+            {
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%hd", *(int16_t*)value ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_UINT16:
+            {
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%hu", *(uint16_t *)value ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_INT32:
+            {
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%d", *(int32_t*)value ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_UINT32:
+            {
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%u", *(uint32_t *)value ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_HEX16:
+            {
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%04hx", *(uint16_t*)value ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_HEX32:
+            {
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x", *(uint32_t*)value ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_HEX64:
+            {
+                uint32_t high32 = (uint32_t)((*(uint64_t*)value)>>32);
+                uint32_t low32 = (uint32_t)(*(uint64_t*)value)&0xffffffff;
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "0x%08x%08x", high32, low32 ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_MACADDR:
+            {
+                uint8_t *macaddr = (uint8_t *)value;
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%02x:%02x:%02x:%02x:%02x:%02x",
+                                         macaddr[0],
+                                         macaddr[1],
+                                         macaddr[2],
+                                         macaddr[3],
+                                         macaddr[4],
+                                         macaddr[5]
+                                         ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+            case US_GETOPT_STRING:
+            {
+                const char *str = (const char *)value;
+                char tmp[1024] = "";
+                *buf='\0';
+                r=false;
+                if( us_getopt_escape( tmp, sizeof(tmp)-1, str, strlen(str) ) )
+                {
+                    if ( strlen( tmp )< (size_t)(buf_len-1) )
+                    {
+                        strncpy( buf, tmp, buf_len-1 );
+                        r=true;
+                    }
+                }
+                break;
+            }
+#if US_ENABLE_FLOAT
+            case US_GETOPT_FLOAT:
+            {
+                if ( US_DEFAULT_SNPRINTF( buf, buf_len, "%f", *(float *)value ) > buf_len )
+                {
+                    r=false;
+                }
+                break;
+            }
+#endif
+            default:
+            {
+                *buf='\0';
+                break;
+            }
+        }
+    }
+    return r;
+}
+
+
 bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_type_t type, const void *default_value )
 {
     bool r=true;
@@ -602,6 +749,11 @@ bool us_getopt_fill_defaults( us_getopt_t *self )
     return r;
 }
 
+bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
+{
+    return us_getopt_dump(self,printer,0);
+}
+
 bool us_getopt_dump( us_getopt_t *self, us_print_t *printer, const char *ignore_key )
 {
     bool r=true;
@@ -677,52 +829,6 @@ bool us_getopt_dump( us_getopt_t *self, us_print_t *printer, const char *ignore_
     return r;
 }
 
-bool us_getopt_print( us_getopt_t *self, us_print_t *printer )
-{
-    bool r=true;
-    us_getopt_option_list_t *list = self->m_option_lists;
-    while ( list && r)
-    {
-        const us_getopt_option_t *opt = list->m_options;
-        if ( list->m_prefix )
-        {
-            r&=printer->printf( printer,"#\n# Option group '%s': %s\n#\n\n", list->m_prefix, list->m_description );
-        }
-        while ( opt && r && opt->m_name!=0 )
-        {
-            char key_name[1024] = "";
-            char default_string[1024] = "";
-            us_getopt_string_for_value( default_string, sizeof(default_string)-1, opt->m_value_type, opt->m_default_value );
-            if( list->m_prefix )
-            {
-                sprintf(key_name,"%s.%s", list->m_prefix, opt->m_name );
-            }
-            else
-            {
-                strcpy( key_name, opt->m_name );
-            }
-            r&=printer->printf(
-                   printer,
-                   "# %s (%s) : %s\n",
-                   key_name,
-                   us_getopt_value_types[opt->m_value_type],
-                   opt->m_description
-               );
-            if( opt->m_value_type != US_GETOPT_FLAG )
-            {
-                r&=printer->printf(
-                       printer,
-                       "%s = \"%s\"\n\n",
-                       key_name,
-                       default_string
-                   );
-            }
-            opt++;
-        }
-        list=list->m_next;
-    }
-    return r;
-}
 
 bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, const char *value, int value_len )
 {
