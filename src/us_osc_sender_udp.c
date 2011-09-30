@@ -57,7 +57,7 @@ bool us_osc_sender_udp_send_msg( us_osc_sender_t *self_,  const us_osc_msg_t *ms
 {
     us_osc_sender_udp_t *self = (us_osc_sender_udp_t *)self_;
     bool r;
-    char data[1024];
+    char data[4096];
     us_buffer_t buf;
     us_buffer_init( &buf, 0, data, sizeof(data) );
     r = msg->flatten( msg, &buf, 0 );
