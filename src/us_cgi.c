@@ -32,10 +32,10 @@
 
 
 const char us_cgi_tohexdigit[16] =
-    { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 char const * const us_cgi_rfc3986_reserved_chars =
-    "!*'();:@&=+$,/?%#[]";
+"!*'();:@&=+$,/?%#[]";
 
 bool us_cgi_is_escapable ( char c )
 {
