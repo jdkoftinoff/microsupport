@@ -68,6 +68,13 @@ extern "C"
         void *extra
     );
 
+    typedef bool (*us_osc_dispatch_notify_proc_t)(
+        struct us_osc_dispatch_s *self,
+        const char *address,
+        const struct us_osc_dispatch_table_s *table_item,
+        const struct us_osc_dispatch_index_s *index
+    );
+
     typedef struct us_osc_dispatch_index_s
     {
         int axis[US_OSC_DISPATCH_INDEX_DIMS];
@@ -132,6 +139,7 @@ extern "C"
         );
         us_allocator_t *allocator;
         us_trie_dyn_t *trie;
+        us_osc_dispatch_notify_proc_t notify;
         us_osc_dispatch_map_t map;
     } us_osc_dispatch_t;
 
@@ -163,13 +171,7 @@ extern "C"
         const char *address_prefix,
         const us_osc_dispatch_table_t *dispatch_table,
         const us_osc_dispatch_index_t *index_offset,
-        bool (*notify_proc)(
-            void *extra,
-            const char *address,
-            const us_osc_dispatch_table_t *table_item,
-            const us_osc_dispatch_index_t *index
-        ),
-        void *extra
+        us_osc_dispatch_notify_proc_t notify_proc
     );
 
     bool us_osc_dispatch_add_table_with_notify(
@@ -177,13 +179,7 @@ extern "C"
         const char *address_prefix,
         const us_osc_dispatch_table_t dispatch_table[],
         const us_osc_dispatch_index_t *index_offset,
-        bool (*notify_proc)(
-            void *extra,
-            const char *address,
-            const us_osc_dispatch_table_t *table_item,
-            const us_osc_dispatch_index_t *index
-        ),
-        void *extra
+        us_osc_dispatch_notify_proc_t notify_proc
     );
 
 

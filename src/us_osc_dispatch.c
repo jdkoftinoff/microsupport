@@ -86,6 +86,7 @@ bool us_osc_dispatch_init(
     self->destroy = us_osc_dispatch_destroy;
     self->receive_msg = us_osc_dispatch_receive_msg;
     self->map.entries = us_new_array(allocator, us_osc_dispatch_map_entry_t, max_table_entries);
+    self->notify = 0;
     if (self->map.entries)
     {
         self->map.max_entries = max_table_entries;
@@ -118,7 +119,6 @@ bool us_osc_dispatch_add_entry(
                address_prefix,
                dispatch_table,
                index_offset,
-               0,
                0
            );
 }
@@ -128,13 +128,7 @@ bool us_osc_dispatch_add_entry_with_notify(
     const char *address_prefix,
     const us_osc_dispatch_table_t *dispatch_table,
     const us_osc_dispatch_index_t *index_offset,
-    bool (*notify_proc)(
-        void *extra,
-        const char *address,
-        const us_osc_dispatch_table_t *table_item,
-        const us_osc_dispatch_index_t *index
-    ),
-    void *extra
+    us_osc_dispatch_notify_proc_t notify_proc
 )
 {
     bool r = false;
@@ -151,7 +145,19 @@ bool us_osc_dispatch_add_entry_with_notify(
         /* if there is no notify proc then add the item to the trie.
          * If there is a notify proc, then add the item only if it returns true
          */
-        if ( !notify_proc || notify_proc( extra, resultant_address, dispatch_table, &entry->final_index )==true )
+        if ( !notify_proc )
+        {
+            notify_proc = self->notify;
+        }
+        if (
+            !notify_proc
+            || notify_proc(
+                self,
+                resultant_address,
+                dispatch_table,
+                &entry->final_index
+            )==true
+        )
         {
             us_trie_add(
                 &self->trie->m_base,
@@ -176,7 +182,7 @@ bool us_osc_dispatch_add_table(
     const us_osc_dispatch_index_t *index_offset
 )
 {
-    return us_osc_dispatch_add_table_with_notify( self, address_prefix, dispatch_table, index_offset, 0, 0 );
+    return us_osc_dispatch_add_table_with_notify( self, address_prefix, dispatch_table, index_offset, 0 );
 }
 
 bool us_osc_dispatch_add_table_with_notify(
@@ -184,13 +190,7 @@ bool us_osc_dispatch_add_table_with_notify(
     const char *address_prefix,
     const us_osc_dispatch_table_t dispatch_table[],
     const us_osc_dispatch_index_t *index_offset,
-    bool (*notify_proc)(
-        void *extra,
-        const char *address,
-        const us_osc_dispatch_table_t *table_item,
-        const us_osc_dispatch_index_t *index
-    ),
-    void *extra
+    us_osc_dispatch_notify_proc_t notify_proc
 )
 {
     bool r = true;
@@ -201,8 +201,7 @@ bool us_osc_dispatch_add_table_with_notify(
                     address_prefix,
                     dispatch_table,
                     index_offset,
-                    notify_proc,
-                    extra
+                    notify_proc
                 ))
         {
             r = false;
