@@ -113,26 +113,57 @@ bool us_osc_dispatch_add_entry(
     const us_osc_dispatch_index_t *index_offset
 )
 {
+    return us_osc_dispatch_add_entry_with_notify(
+               self,
+               address_prefix,
+               dispatch_table,
+               index_offset,
+               0,
+               0
+           );
+}
+
+bool us_osc_dispatch_add_entry_with_notify(
+    us_osc_dispatch_t *self,
+    const char *address_prefix,
+    const us_osc_dispatch_table_t *dispatch_table,
+    const us_osc_dispatch_index_t *index_offset,
+    bool (*notify_proc)(
+        void *extra,
+        const char *address,
+        const us_osc_dispatch_table_t *table_item,
+        const us_osc_dispatch_index_t *index
+    ),
+    void *extra
+)
+{
     bool r = false;
     if (self->map.num_entries < self->map.max_entries)
     {
         char resultant_address[256];
-        int item = self->map.num_entries++;
+        int item = self->map.num_entries;
         us_osc_dispatch_map_entry_t *entry = &self->map.entries[ item ];
         r = true;
         entry->table_entry = dispatch_table;
         us_osc_dispatch_index_add(&entry->final_index, index_offset, &dispatch_table->index);
         strcpy(resultant_address, address_prefix);
         strcat(resultant_address, dispatch_table->address);
-        us_trie_add(
-            &self->trie->m_base,
-            (us_trie_node_value_t *) resultant_address,
-            strlen(resultant_address),
-            (us_trie_node_flags_t) item
-        );
-        if (self->trie->m_base.m_num_nodes >= self->trie->m_base.m_max_nodes)
+        /* if there is no notify proc then add the item to the trie.
+         * If there is a notify proc, then add the item only if it returns true
+         */
+        if ( !notify_proc || notify_proc( extra, resultant_address, dispatch_table, &entry->final_index )==true )
         {
-            r = false;
+            us_trie_add(
+                &self->trie->m_base,
+                (us_trie_node_value_t *) resultant_address,
+                strlen(resultant_address),
+                (us_trie_node_flags_t) item
+            );
+            self->map.num_entries++;
+            if (self->trie->m_base.m_num_nodes >= self->trie->m_base.m_max_nodes)
+            {
+                r = false;
+            }
         }
     }
     return r;
@@ -145,17 +176,43 @@ bool us_osc_dispatch_add_table(
     const us_osc_dispatch_index_t *index_offset
 )
 {
+    return us_osc_dispatch_add_table_with_notify( self, address_prefix, dispatch_table, index_offset, 0, 0 );
+}
+
+bool us_osc_dispatch_add_table_with_notify(
+    us_osc_dispatch_t *self,
+    const char *address_prefix,
+    const us_osc_dispatch_table_t dispatch_table[],
+    const us_osc_dispatch_index_t *index_offset,
+    bool (*notify_proc)(
+        void *extra,
+        const char *address,
+        const us_osc_dispatch_table_t *table_item,
+        const us_osc_dispatch_index_t *index
+    ),
+    void *extra
+)
+{
     bool r = true;
     while (dispatch_table->address != 0)
     {
-        if (!us_osc_dispatch_add_entry(self, address_prefix, dispatch_table++, index_offset))
+        if (!us_osc_dispatch_add_entry_with_notify(
+                    self,
+                    address_prefix,
+                    dispatch_table,
+                    index_offset,
+                    notify_proc,
+                    extra
+                ))
         {
             r = false;
             break;
         }
+        dispatch_table++;
     }
     return r;
 }
+
 
 bool us_osc_dispatch_receive_msg(
     us_osc_dispatch_t *self,

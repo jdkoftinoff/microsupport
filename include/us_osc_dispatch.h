@@ -36,7 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_trie.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     /** \addtogroup us_osc_dispatch OSC Message Dispatcher
@@ -156,6 +157,35 @@ extern "C" {
         const us_osc_dispatch_table_t dispatch_table[],
         const us_osc_dispatch_index_t *index_offset
     );
+
+    bool us_osc_dispatch_add_entry_with_notify(
+        us_osc_dispatch_t *self,
+        const char *address_prefix,
+        const us_osc_dispatch_table_t *dispatch_table,
+        const us_osc_dispatch_index_t *index_offset,
+        bool (*notify_proc)(
+            void *extra,
+            const char *address,
+            const us_osc_dispatch_table_t *table_item,
+            const us_osc_dispatch_index_t *index
+        ),
+        void *extra
+    );
+
+    bool us_osc_dispatch_add_table_with_notify(
+        us_osc_dispatch_t *self,
+        const char *address_prefix,
+        const us_osc_dispatch_table_t dispatch_table[],
+        const us_osc_dispatch_index_t *index_offset,
+        bool (*notify_proc)(
+            void *extra,
+            const char *address,
+            const us_osc_dispatch_table_t *table_item,
+            const us_osc_dispatch_index_t *index
+        ),
+        void *extra
+    );
+
 
     bool us_osc_dispatch_receive_msg(
         us_osc_dispatch_t *self,
