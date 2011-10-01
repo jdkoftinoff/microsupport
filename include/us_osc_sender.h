@@ -34,7 +34,8 @@
 #include "us_osc_msg.h"
 #include "us_reactor.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 

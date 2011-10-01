@@ -166,7 +166,7 @@ bool us_getopt_string_for_value(
             char tmp[1024] = "";
             *buf='\0';
             r=false;
-            if( us_getopt_escape( tmp, sizeof(tmp)-1, str, strlen(str) ) )
+            if ( us_getopt_escape( tmp, sizeof(tmp)-1, str, strlen(str) ) )
             {
                 if ( strlen( tmp )< (size_t)(buf_len-1) )
                 {
@@ -312,7 +312,7 @@ bool us_getopt_string_for_default(
             char tmp[1024] = "";
             *buf='\0';
             r=false;
-            if( us_getopt_escape( tmp, sizeof(tmp)-1, str, strlen(str) ) )
+            if ( us_getopt_escape( tmp, sizeof(tmp)-1, str, strlen(str) ) )
             {
                 if ( strlen( tmp )< (size_t)(buf_len-1) )
                 {
@@ -417,12 +417,12 @@ bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
     for (i=0; i<str_len; ++i)
     {
         char c=str[i];
-        if( dp>dest_len-4 )
+        if ( dp>dest_len-4 )
         {
             r=false;
             break;
         }
-        switch(c)
+        switch (c)
         {
         case '"':
             dest[dp++] = '\\';
@@ -441,7 +441,7 @@ bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
             dest[dp++] = 't';
             break;
         default:
-            if( isprint(c) )
+            if ( isprint(c) )
             {
                 dest[dp++] = c;
             }
@@ -453,7 +453,7 @@ bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
             break;
         }
     }
-    if( r )
+    if ( r )
     {
         dest[dp] = '\0';
     }
@@ -546,7 +546,7 @@ bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len 
     {
         int todo=str_len-i;
         int done=0;
-        if( dp>dest_len-2 )
+        if ( dp>dest_len-2 )
         {
             r=false;
             break;
@@ -555,7 +555,7 @@ bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len 
         dp+=done;
         i+=done;
     }
-    if( r )
+    if ( r )
     {
         dest[dp] = '\0';
     }
@@ -612,7 +612,7 @@ bool us_getopt_value_for_string(
             uint32_t *low_part = (uint32_t *)value;
             uint32_t *hi_part = low_part+1;
             int cnt = sscanf( input_string, "%8x%8x", hi_part, low_part );
-            if( cnt!=2 )
+            if ( cnt!=2 )
             {
                 r=false;
             }
@@ -633,7 +633,7 @@ bool us_getopt_value_for_string(
                       &values[4],
                       &values[5]
                     );
-        if( cnt==6 )
+        if ( cnt==6 )
         {
             uint8_t *macaddr = (uint8_t *)value;
             macaddr[0] = (uint8_t)values[0];
@@ -770,7 +770,7 @@ bool us_getopt_dump( us_getopt_t *self, us_print_t *printer, const char *ignore_
             char key_name[1024] = "";
             char value_string[1024] = "";
             us_getopt_string_for_value( value_string, sizeof(value_string)-1, opt->m_value_type, opt->m_current_value );
-            if( list->m_prefix )
+            if ( list->m_prefix )
             {
                 sprintf(key_name,"%s.%s", list->m_prefix, opt->m_name );
             }
@@ -778,11 +778,11 @@ bool us_getopt_dump( us_getopt_t *self, us_print_t *printer, const char *ignore_
             {
                 strcpy( key_name, opt->m_name );
             }
-            if(! ( ignore_key && strcmp(key_name,ignore_key)==0) )
+            if (! ( ignore_key && strcmp(key_name,ignore_key)==0) )
             {
-                if( opt->m_value_type == US_GETOPT_FLAG )
+                if ( opt->m_value_type == US_GETOPT_FLAG )
                 {
-                    if( *(bool *)opt->m_current_value == true )
+                    if ( *(bool *)opt->m_current_value == true )
                     {
                         r&=printer->printf(
                                printer,
@@ -885,7 +885,7 @@ bool us_getopt_parse_args( us_getopt_t *self, const char **argv )
         }
         else
         {
-            if( !us_getopt_parse_file( self, *argv ) )
+            if ( !us_getopt_parse_file( self, *argv ) )
             {
                 us_log_error( "Unable to parse options file: %s", *argv );
             }
@@ -899,10 +899,10 @@ bool us_getopt_parse_file( us_getopt_t *self, const char *fname )
 {
     bool r=false;
     FILE *f = fopen( fname, "rt" );
-    if( f )
+    if ( f )
     {
         char line[2048];
-        while( fgets( line, sizeof(line), f ) )
+        while ( fgets( line, sizeof(line), f ) )
         {
             size_t line_len = strlen(line);
             r&=us_getopt_parse_line( self, line, line_len );
@@ -935,26 +935,26 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
         IN_VALUE_SUFFIX
     } state;
     state = IN_KEY_PREFIX;
-    for( i=0; i<line_len; ++i )
+    for ( i=0; i<line_len; ++i )
     {
         char c = line[i];
-        switch( state )
+        switch ( state )
         {
         case IN_KEY_PREFIX:
-            if( !isspace(c) && isprint(c))
+            if ( !isspace(c) && isprint(c))
             {
                 state = IN_KEY_NAME;
                 escaped_key_name[escaped_key_name_len++] = c;
             }
             break;
         case IN_KEY_NAME:
-            if( c=='=' )
+            if ( c=='=' )
             {
                 state = IN_VALUE_PREFIX;
             }
-            else if( !isspace(c) && isprint(c) )
+            else if ( !isspace(c) && isprint(c) )
             {
-                if( escaped_key_name_len< sizeof(escaped_key_name)-1 )
+                if ( escaped_key_name_len< sizeof(escaped_key_name)-1 )
                 {
                     escaped_key_name[ escaped_key_name_len++ ] = c;
                     escaped_key_name[ escaped_key_name_len ] = '\0';
@@ -966,22 +966,22 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
             }
             break;
         case IN_KEY_SUFFIX:
-            if( c=='=' )
+            if ( c=='=' )
             {
                 state = IN_VALUE_PREFIX;
             }
             break;
         case IN_VALUE_PREFIX:
-            if( !isspace(c) && isprint(c) )
+            if ( !isspace(c) && isprint(c) )
             {
                 state = IN_VALUE;
                 escaped_value[escaped_value_len++] = c;
             }
             break;
         case IN_VALUE:
-            if( isprint(c) )
+            if ( isprint(c) )
             {
-                if( escaped_value_len<sizeof(escaped_value)-1 )
+                if ( escaped_value_len<sizeof(escaped_value)-1 )
                 {
                     escaped_value[ escaped_value_len++ ] = c;
                     escaped_value[ escaped_value_len ] = '\0';
@@ -999,7 +999,7 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
     /* remove trailing whitespace */
     for (i=escaped_value_len-1; i>0; --i)
     {
-        if( isspace(escaped_value[i]) )
+        if ( isspace(escaped_value[i]) )
         {
             escaped_value[i]='\0';
             escaped_value_len=i;
@@ -1010,7 +1010,7 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
         }
     }
     /* remove optional surrounding " from escaped key and value */
-    if( escaped_key_name_len>0 &&
+    if ( escaped_key_name_len>0 &&
             escaped_key_name[0] == '"' &&
             escaped_key_name[ escaped_key_name_len-1 ] == '"' )
     {
@@ -1018,7 +1018,7 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
         escaped_key_ptr++;
         escaped_key_name_len-=2;
     }
-    if( escaped_value_len>0 &&
+    if ( escaped_value_len>0 &&
             escaped_value[0] == '"' &&
             escaped_value[ escaped_value_len-1 ] == '"' )
     {
@@ -1027,7 +1027,7 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
         escaped_value_len-=2;
     }
     /* if key starts with '#' or ';' then the line is actually a comment */
-    if( *escaped_key_ptr!='#' && *escaped_key_ptr!=';')
+    if ( *escaped_key_ptr!='#' && *escaped_key_ptr!=';')
     {
         /* pass unescaped key/value to us_get_opt_parse_one */
         us_getopt_unescape( unescaped_key_name, sizeof(unescaped_key_name)-1, escaped_key_ptr, escaped_key_name_len);

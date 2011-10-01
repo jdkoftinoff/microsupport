@@ -34,7 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_buffer.h"
 #include "us_print.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define US_OSC_MSG_MAX_ADDRESS_LENGTH (256)

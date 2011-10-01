@@ -34,7 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 

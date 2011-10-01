@@ -34,7 +34,8 @@
 #include "us_buffer.h"
 #include "us_json_parser.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 

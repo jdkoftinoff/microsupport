@@ -34,7 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_http.h"
 #include "us_webapp.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 

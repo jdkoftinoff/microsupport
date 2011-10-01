@@ -833,14 +833,14 @@ bool us_reactor_handler_tcp_writable (
 int us_reactor_connect_or_open( const char *fname )
 {
     int fd=0;
-    if( strncmp(fname,":tcp:", 5 )==0 )
+    if ( strncmp(fname,":tcp:", 5 )==0 )
     {
         char hostname[256]="localhost";
         char port[32]="0";
         char *p;
         strcpy( hostname, fname+5 );
         p=strchr(hostname,':');
-        if( p )
+        if ( p )
         {
             *p='\0';
             strcpy( port, p+1 );
@@ -963,7 +963,7 @@ bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
                   &remote_addrlen
               );
     }
-    while( len<0 && errno==EINTR );
+    while ( len<0 && errno==EINTR );
     if ( len>0 )
     {
         self->m_incoming_packet->m_next_in = len;

@@ -35,7 +35,8 @@
 #include "us_allocator.h"
 #include "us_buffer.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     /**
@@ -70,7 +71,7 @@ extern "C" {
         US_MIDI_STOP  = 0xfc,          /**< Sequence stop message */
         US_MIDI_ACTIVE_SENSE = 0xfe,   /**< Active sense message */
         US_MIDI_META_EVENT = 0xff      /**< 0xff means a meta event in our internal processing. */
-                         };
+    };
 
 
     /**

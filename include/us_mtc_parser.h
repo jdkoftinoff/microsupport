@@ -5,7 +5,8 @@
 #include "us_mtc.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     /** \addtogroup tc_parser MIDI Time Code Parser

@@ -32,7 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_allocator.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define US_TRIE_NODE_EMPTY (int16_t)(-2)

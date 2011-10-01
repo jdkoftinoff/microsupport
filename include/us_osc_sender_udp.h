@@ -33,7 +33,8 @@
 #include "us_world.h"
 #include "us_osc_sender.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 

@@ -32,7 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_osc_msg.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 

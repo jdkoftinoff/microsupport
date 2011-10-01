@@ -1632,7 +1632,7 @@ us_osc_parse(
 bool us_osc_msg_element_get_bool( us_osc_msg_element_t *element )
 {
     bool r=false;
-    if( element->m_code=='T' )
+    if ( element->m_code=='T' )
     {
         r=true;
     }

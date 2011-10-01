@@ -32,7 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_logger.h"
 #include "us_print.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     /**

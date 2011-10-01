@@ -31,7 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
     /**
      \addtogroup us_logger Logger

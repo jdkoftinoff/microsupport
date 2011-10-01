@@ -102,10 +102,10 @@ bool us_osc_multisender_init( us_osc_multisender_t *self )
     self->m_first_item=0;
     self->m_last_item=0;
     self->m_first_empty_item=&self->m_items[0];
-    for( i=0; i<US_OSC_MULTISENDER_MAX_ITEMS; ++i )
+    for ( i=0; i<US_OSC_MULTISENDER_MAX_ITEMS; ++i )
     {
         self->m_items[i].m_sender = 0;
-        if( i>0 )
+        if ( i>0 )
         {
             self->m_items[i].m_prev = &self->m_items[i-1];
         }
@@ -113,7 +113,7 @@ bool us_osc_multisender_init( us_osc_multisender_t *self )
         {
             self->m_items[i].m_prev = 0;
         }
-        if( i!=US_OSC_MULTISENDER_MAX_ITEMS-1 )
+        if ( i!=US_OSC_MULTISENDER_MAX_ITEMS-1 )
         {
             self->m_items[i].m_next = &self->m_items[i+1];
         }
@@ -134,9 +134,9 @@ bool us_osc_multisender_send_msg( us_osc_sender_t *self_, const us_osc_msg_t *ms
     bool r=true;
     us_osc_multisender_t *self = (us_osc_multisender_t *)self_;
     us_osc_multisender_item_t *item = self->m_first_item;
-    while( item )
+    while ( item )
     {
-        if( item->m_sender )
+        if ( item->m_sender )
         {
             r&=item->m_sender->send_msg( item->m_sender, msg );
         }
@@ -150,14 +150,14 @@ bool us_osc_multisender_can_send( us_osc_sender_t *self_ )
     bool r=false;
     us_osc_multisender_t *self = (us_osc_multisender_t *)self_;
     us_osc_multisender_item_t *item = self->m_first_item;
-    if( item )
+    if ( item )
     {
         /* only report that we can send if we have one or more senders */
         r=true;
     }
-    while( item )
+    while ( item )
     {
-        if( item->m_sender )
+        if ( item->m_sender )
         {
             r&=item->m_sender->can_send( item->m_sender );
         }
@@ -170,13 +170,13 @@ bool us_osc_multisender_add_sender( us_osc_multisender_t *self, us_osc_sender_t 
 {
     bool r=false;
     us_osc_multisender_item_t *allocated_item = 0;
-    if( self->m_first_empty_item )
+    if ( self->m_first_empty_item )
     {
         allocated_item = self->m_first_empty_item;
         self->m_first_empty_item = allocated_item->m_next;
         allocated_item->m_sender = item;
         allocated_item->m_next = 0;
-        if( self->m_first_item==0 )
+        if ( self->m_first_item==0 )
         {
             self->m_first_item=allocated_item;
             self->m_last_item=allocated_item;
@@ -195,18 +195,18 @@ bool us_osc_multisender_remove_sender( us_osc_multisender_t *self, us_osc_sender
 {
     bool r=false;
     us_osc_multisender_item_t *item = self->m_first_item;
-    while( item )
+    while ( item )
     {
-        if( item->m_sender == sender )
+        if ( item->m_sender == sender )
         {
             break;
         }
     }
-    if( item )
+    if ( item )
     {
         item->m_sender = 0;
         item->m_prev = 0;
-        if( self->m_first_empty_item )
+        if ( self->m_first_empty_item )
         {
             self->m_first_empty_item->m_prev = item;
             item->m_next = self->m_first_empty_item;

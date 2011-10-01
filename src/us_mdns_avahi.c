@@ -113,7 +113,7 @@ bool us_mdns_avahi_write_xml(
     strncat( path, "/", sizeof(path)-1 );
     strncat( path, fname, sizeof(path)-1 );
     f=fopen(path, "wt");
-    if( f )
+    if ( f )
     {
         fprintf( f,
                  "<?xml version=\"1.0\" standalone='no'?>\n"
@@ -122,7 +122,7 @@ bool us_mdns_avahi_write_xml(
                  "  <name replace-wildcards=\"yes\">%%h %s</name>\n",
                  service_name
                );
-        if( tcp_service_type && *tcp_service_type && tcp_port && *tcp_port )
+        if ( tcp_service_type && *tcp_service_type && tcp_port && *tcp_port )
         {
             fprintf( f,
                      "  <service>\n"
@@ -133,7 +133,7 @@ bool us_mdns_avahi_write_xml(
                      tcp_port
                    );
         }
-        if( udp_service_type && *udp_service_type && udp_port && *udp_port )
+        if ( udp_service_type && *udp_service_type && udp_port && *udp_port )
         {
             fprintf( f,
                      "  <service>\n"
