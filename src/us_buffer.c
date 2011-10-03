@@ -39,7 +39,7 @@ bool us_buffer_append_string (
 )
 {
     bool r = true;
-    int32_t len = ( int32_t ) strlen ( str );
+    size_t len = strlen ( str );
     r &= us_buffer_append ( self, str, len );
     return r;
 }
@@ -440,7 +440,7 @@ bool us_buffer_read_float64 (
 bool us_buffer_append_data (
     us_buffer_t *self,
     const void *data,
-    int32_t data_length
+    size_t data_length
 )
 {
     bool r = true;
@@ -451,12 +451,12 @@ bool us_buffer_append_data (
 bool us_buffer_read_data (
     us_buffer_t *self,
     void *data_,
-    int32_t max_data_length,
-    int32_t *data_length
+    size_t max_data_length,
+    size_t *data_length
 )
 {
     bool r = false;
-    int32_t avail = us_buffer_readable_count( self );
+    size_t avail = us_buffer_readable_count( self );
     uint8_t *data = (uint8_t *)data_;
     if ( avail > 0 )
     {
@@ -477,12 +477,12 @@ bool us_buffer_read_data (
 bool us_buffer_append_rounded_data (
     us_buffer_t *self,
     const void *data,
-    int32_t data_length
+    size_t data_length
 )
 {
     bool r = true;
-    int nul_count = 0;
-    int i;
+    size_t nul_count = 0;
+    size_t i;
     r &= us_buffer_append ( self, data, data_length );
     // length -> padding
     // 4 -> 0
@@ -501,15 +501,15 @@ bool us_buffer_append_rounded_data (
 bool us_buffer_read_rounded_data (
     us_buffer_t *self,
     void *data_,
-    int32_t max_data_length,
-    int32_t *data_length
+    size_t max_data_length,
+    size_t *data_length
 )
 {
     bool r = false;
     int32_t avail = us_buffer_readable_count(self);
     if ( avail > 0 )
     {
-        int i;
+        size_t i;
         uint8_t *data = (uint8_t *)data_;
         if ( max_data_length > avail )
             max_data_length = avail;

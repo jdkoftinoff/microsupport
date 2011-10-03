@@ -30,13 +30,15 @@ const bool us_mtc_is_drop[] =
 /*! Map of rate codes to MIDI type codes */
 const uint8_t us_mtc_typecode[] =
 {
-    0, /* tc_RATE_24 */
-    1, /* tc_RATE_25 */
-    3, /* tc_RATE_2997 */
-    2, /* tc_RATE_2997DF */
-    3, /* tc_RATE_30 */
-    2, /* tc_RATE_30DF */
-    3, /* unknown defaults to 30 */
+    0, /* US_MTC_RATE_24        */
+    1, /* US_MTC_RATE_25        */
+    3, /* US_MTC_RATE_2997      */
+    2, /* US_MTC_RATE_2997DF    */
+    3, /* US_MTC_RATE_30        */
+    2, /* US_MTC_RATE_30DF      */
+    0, /* US_MTC_RATE_2398      */
+    0, /* US_MTC_RATE_2398DF    */
+    3, /* unknown defaults 30   */
 };
 
 /*! Map of MIDI type codes to rate codes */

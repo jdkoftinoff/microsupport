@@ -188,7 +188,7 @@ extern "C"
 
     /** us_buffer_peek Peek at data in buffer
      @param self us_buffer_t to peek at
-     @param offset uint32_t offset to peek at
+     @param offset offset to peek at
      @returns uint8_t value at position in queue
      */
     static inline uint8_t us_buffer_peek ( const us_buffer_t *self, size_t offset )
@@ -209,7 +209,7 @@ extern "C"
 
     /** us_buffer_poke Poke data to buffer at position
      @param self us_buffer_t to poke at
-     @param offset uint32_t offset to peek at
+     @param offset  offset to peek at
      @param uint8_t value to position in queue
      @returns void
      */
@@ -220,7 +220,7 @@ extern "C"
 
     /** us_buffer_poke_uint32 Poke uint32_t data to buffer at position
      @param self us_buffer_t to poke at
-     @param offset uint32_t offset to peek at
+     @param offset  offset to peek at
      @param uint32_t value to position in queue
      @returns void
      */
@@ -235,7 +235,7 @@ extern "C"
 
     /** us_buffer_poke_int32 Poke int32_t data to buffer at position
      @param self us_buffer_t to poke at
-     @param offset uint32_t offset to peek at
+     @param offset  offset to peek at
      @param int32_t value to position in queue
      @returns void
      */
@@ -643,30 +643,30 @@ extern "C"
     us_buffer_append_data (
         us_buffer_t *self,
         const void *data,
-        int32_t data_length
+        size_t data_length
     );
 
     bool
     us_buffer_read_data (
         us_buffer_t *self,
         void *data,
-        int32_t max_data_length,
-        int32_t *data_length
+        size_t max_data_length,
+        size_t *data_length
     );
 
     bool
     us_buffer_append_rounded_data (
         us_buffer_t *self,
         const void *data,
-        int32_t data_length
+        size_t data_length
     );
 
     bool
     us_buffer_read_rounded_data (
         us_buffer_t *self,
         void *data,
-        int32_t max_data_length,
-        int32_t *data_length
+        size_t max_data_length,
+        size_t *data_length
     );
 
 #ifdef __cplusplus
