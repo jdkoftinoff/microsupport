@@ -1,6 +1,34 @@
 #include "us_world.h"
 #include "us_mtc.h"
 #include "us_midi.h"
+#include "us_net.h"
+
+/*
+Copyright (c) 2010, Meyer Sound Laboratories, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the Meyer Sound Laboratories, Inc. nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL MEYER SOUND LABORATORIES, INC. BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 /**! Map of  rate codes to max frame counts */
 const uint8_t us_mtc_max_frame[] =
@@ -279,18 +307,18 @@ int us_mtc_compare ( us_mtc_t *left, us_mtc_t *right )
 
 int32_t us_mtc_get_total_frames ( us_mtc_t *self )
 {
-    uint8_t fps = us_mtc_max_frame[ self->m_fmt ];
+    uint8_t max_frame = us_mtc_max_frame[ self->m_fmt ];
     int32_t total_frames = 0;
     /* calculate total frames */
     total_frames = ( ( ( self->m_hour * 3600 ) +
                        ( self->m_minute * 60 ) +
-                       self->m_second )
-                     * fps ) + self->m_frame;
+                       self->m_second ) *
+                     max_frame ) + self->m_frame;
     /* take into account dropped frames */
     if ( us_mtc_is_drop[ self->m_fmt ] )
     {
         /*  frame 0 and 1 omitted from first second of each minute, but included when minutes divides by ten */
-        total_frames -= 108 * self->m_hour; /* 108 dropped frames per hour */
+        total_frames -= 108 * self->m_hour; /* 108 dropped frames per.m_hour */
         total_frames -= 2 * self->m_minute; /* 2 dropped frames per minute */
         total_frames += 2 * ( self->m_minute / 10 ); /* add the 2 back in when minutes / 10 */
     }
@@ -299,16 +327,16 @@ int32_t us_mtc_get_total_frames ( us_mtc_t *self )
 
 void us_mtc_set_total_frames ( us_mtc_t *self, int32_t total_frames )
 {
-    uint8_t fps = us_mtc_max_frame[ self->m_fmt ];
+    uint8_t max_frame = us_mtc_max_frame[ self->m_fmt ];
     if ( us_mtc_is_drop[ self->m_fmt ] )
     {
         int32_t etf =  total_frames - ( 2 + ( ( total_frames / 17980 ) * 2 ) );
         total_frames += ( 2 * ( etf / 1798 ) ) - ( 2 * ( etf / 17980 ) );
     }
-    self->m_frame = total_frames % fps;
-    self->m_second = ( total_frames / fps ) % 60;
-    self->m_minute = ( total_frames / ( fps * 60 ) ) % 60;
-    self->m_hour = ( total_frames / ( fps * 3600 ) ) % 24;
+    self->m_frame = total_frames % max_frame;
+    self->m_second = ( total_frames / max_frame ) % 60;
+    self->m_minute = ( total_frames / (max_frame * 60 ) ) % 60;
+    self->m_hour = ( total_frames / (max_frame * 3600 ) ) % 24;
 }
 
 int us_mtc_extract_qf ( us_mtc_t *self, int qf )
@@ -385,4 +413,5 @@ bool us_mtc_store_qf ( us_mtc_t *self, int qf, int qf_value )
     }
     return r;
 }
+
 

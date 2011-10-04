@@ -13,6 +13,7 @@ extern "C"
      */
     /*@{*/
 
+
     typedef struct us_mtc_parser_s
     {
         uint8_t m_nibbles[8];
@@ -20,42 +21,45 @@ extern "C"
         int m_first_nibble;
         int m_last_nibble;
         bool m_seen_first;
+
         us_mtc_t m_last_formed_time;
-        uint32_t m_last_qf_microseconds;
-        bool m_valid;
-        bool m_moving;
+        struct timeval m_timeout_timestamp;
+
+        int m_qf;
         bool m_forward;
+        bool m_moving;
+        bool m_valid;
     } us_mtc_parser_t;
 
-    void us_mtc_parser_init ( us_mtc_parser_t *self );
-
-    bool us_mtc_parser_handle_qf (
+    void us_mtc_parser_init( us_mtc_parser_t *self );
+    bool us_mtc_parser_parse(
         us_mtc_parser_t *self,
-        us_mtc_t *t,
-        uint32_t time_stamp,
-        int qf_value
+        const struct timeval *cur_time,
+        const us_midi_msg_t *m,
+        const us_midi_sysex_t *e,
+        us_mtc_t *t
     );
 
-    bool us_mtc_parser_handle_full (
+    bool us_mtc_parser_poll(
         us_mtc_parser_t *self,
-        us_mtc_t *t,
-        uint32_t time_stamp,
-        int h, int m, int s, int f,
-        int fmt
+        const struct timeval *cur_time,
+        us_mtc_t *t
     );
 
-    bool us_mtc_parser_handle_sysex (
+    bool us_mtc_parser_parse_qf(
         us_mtc_parser_t *self,
-        us_mtc_t *t,
-        uint32_t time_stamp,
-        uint8_t *sysex,
-        int sysex_len
+        const struct timeval *cur_time,
+        uint8_t qf_value,
+        us_mtc_t *t
     );
 
-    bool us_mtc_parser_poll (
+    bool us_mtc_parser_parse_sysex(
         us_mtc_parser_t *self,
-        uint32_t time_stamp
+        const struct timeval *cur_time,
+        const us_midi_sysex_t *e,
+        us_mtc_t *t
     );
+
 
     /*@}*/
 
