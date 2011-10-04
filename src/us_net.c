@@ -362,7 +362,7 @@ int us_net_create_tcp_socket (
 
 
 
-void  us_net_timeout_add ( struct timeval *result, struct timeval *cur_time, uint32_t microseconds_to_add )
+void  us_net_timeout_add ( struct timeval *result, const struct timeval *cur_time, uint32_t microseconds_to_add )
 {
     int32_t secs = microseconds_to_add / 1000000;
     int32_t micros = microseconds_to_add % 1000000;
@@ -375,7 +375,11 @@ void  us_net_timeout_add ( struct timeval *result, struct timeval *cur_time, uin
     }
 }
 
-bool  us_net_timeout_calc ( struct timeval *result, struct timeval *cur_time, struct timeval *next_time )
+bool  us_net_timeout_calc (
+    struct timeval *result,
+    const struct timeval *cur_time,
+    const struct timeval *next_time
+)
 {
     bool r = false;
     if ( us_net_timeout_hit ( cur_time, next_time ) )
@@ -398,7 +402,10 @@ bool  us_net_timeout_calc ( struct timeval *result, struct timeval *cur_time, st
     return r;
 }
 
-bool us_net_timeout_hit ( struct timeval *cur_time, struct timeval *next_time )
+bool us_net_timeout_hit (
+    const struct timeval *cur_time,
+    const struct timeval *next_time
+)
 {
     bool r = false;
     if ( cur_time->tv_sec > next_time->tv_sec ||
