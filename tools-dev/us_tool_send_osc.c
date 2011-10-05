@@ -9,6 +9,7 @@
 #include "us_osc_msg_print.h"
 #include "us_buffer.h"
 #include "us_buffer_print.h"
+#include "us_parse.h"
 
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -114,8 +115,45 @@ static us_osc_msg_t * us_tool_gen_osc(
             break;
             case 'b':
             {
-                /* TODO: */
-                us_log_error( "'b' typetag not supported yet");
+                uint8_t valbuf[256];
+                const char *s = *osc_values;
+                size_t sz = strlen(s);
+                size_t octet_count=sz/2;
+                if( (sz&1)==0 )
+                {
+                    bool parsed=true;
+                    size_t i;
+                    size_t pos=0;
+                    for( i=0; i<octet_count; ++i )
+                    {
+                        parsed&=us_parse_hexoctet(
+                                    &valbuf[i],
+                                    s,
+                                    sz,
+                                    &pos
+                                );
+                        if( !parsed )
+                        {
+                            us_log_error( "unable to parse hex octets in '%s'", s );
+                            break;
+                        }
+                    }
+                    if( parsed )
+                    {
+                        e = us_osc_msg_element_b_create(
+                                allocator,
+                                valbuf,
+                                octet_count
+                            );
+                        osc_values++;
+                    }
+                }
+                else
+                {
+                    us_log_error( "'b' type needs even number of octets" );
+                    r=0;
+                    break;
+                }
             }
             break;
 #if US_ENABLE_DOUBLE
