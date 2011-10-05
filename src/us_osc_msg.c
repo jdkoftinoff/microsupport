@@ -1164,7 +1164,7 @@ us_osc_msg_element_b_flatten(
     us_osc_msg_element_b_t *self = (us_osc_msg_element_b_t *) self_;
     size_t start_length = us_buffer_readable_count(buf);
     uint32_t length = (uint32_t)self->m_length;
-    r&=us_buffer_append_rounded_data(buf, &length, sizeof(uint32_t));
+    r&=us_buffer_append_uint32(buf, length);
     r&=us_buffer_append_rounded_data(buf, self->m_data, self->m_length);
     if (r && total_length )
     {
