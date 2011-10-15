@@ -147,6 +147,7 @@ typedef unsigned char uint8_t;
 # include <net/if.h>
 #endif
 
+#include <inttypes.h>
 #include <limits.h>
 #include <assert.h>
 #include <ctype.h>
@@ -218,6 +219,8 @@ extern "C"
 
 #include "us_platform.h"
 #include "us_logger.h"
+#include "us_bits.h"
+
 /*@}*/
 
 #endif
