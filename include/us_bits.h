@@ -45,7 +45,7 @@ extern "C"
 
 
 
-    /** \addtogtoup bit_util bit utilities
+    /** \addtogtoup bit_util bit utilities */
 
     /*@{*/
 
