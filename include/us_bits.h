@@ -45,13 +45,13 @@ extern "C"
 
 
 
-/** \addtogtoup bit_util bit utilities
+    /** \addtogtoup bit_util bit utilities
 
-/*@{*/
+    /*@{*/
 
 #define US_OCTET_BIT(B) (((uint8_t)0x80)>>(B))
-#define US_DOUBLET_BIT(B) (((uint16_t)0x8000)>>(B))      
-#define US_QUADLET_BIT(B) (((uint32_t)0x80000000)>>(B)) 
+#define US_DOUBLET_BIT(B) (((uint16_t)0x8000)>>(B))
+#define US_QUADLET_BIT(B) (((uint32_t)0x80000000)>>(B))
 
 #define US_OCTET_MASK_BIT(B) ((~US_OCTET_BIT(B))&0xff)
 #define US_DOUBLET_MASK_BIT(B) ((~US_DOUBLET_BIT(B))&0xffff)
@@ -88,11 +88,11 @@ extern "C"
 #define US_SET_QUADLET_BIT_IF( VAL, B, Q )  ((Q) ? US_SET_QUADLET_BIT(VAL,B) : US_CLEAR_QUADLET_BIT(VAL,B))
 #define US_CLEAR_QUADLET_BIT_IF( VAL, B, Q )  ((!Q) ? US_SET_QUADLET_BIT(VAL,B) : US_CLEAR_QUADLET_BIT(VAL,B))
 
-/*@}*/
+    /*@}*/
 
-/** \addtogtoup bitfield bitfield utility functions. BIT is IEEE style bit number of the lsb of the field */
+    /** \addtogtoup bitfield bitfield utility functions. BIT is IEEE style bit number of the lsb of the field */
 
-/*@{*/
+    /*@{*/
 
 #define US_OCTET_BITFIELD(BIT,WIDTH) (((0xff)>>(8-(WIDTH)))<<(7-(BIT)))
 #define US_DOUBLET_BITFIELD(BIT,WIDTH) (((0xffff)>>(16-(WIDTH)))<<(15-(BIT)))
@@ -111,7 +111,7 @@ extern "C"
 #define US_GET_QUADLET_BITFIELD(VAL,BIT,WIDTH)  (((VAL) & US_DOUBLET_BITFIELD(BIT,BITCOUNT)) >> (31-(BIT)))
 #define US_SET_QUADLET_BITFIELD(VAL,BIT,WIDTH,FIELDVAL) (((FIELDVAL)<<(31-(BIT))) | ((VAL) & US_DOUBLET_MASK_BITFIELD(BIT,BITCOUNT)))
 
-/*@}*/
+    /*@}*/
 
 #define US_MAKE_UINT16( B1, B0 ) ( (((uint16_t)(B1))<<8) | (((uint16_t)(B0))<<0) )
 
@@ -121,67 +121,67 @@ extern "C"
     (((uint64_t)US_MAKE_UINT32( B7, B6, B5, B4 )<<32) | ((uint64_t)US_MAKE_UINT32(B3,B2,B1,B0)))
 
 
-static inline
-uint32_t us_extract_uint16 ( const void *base, uint16_t offset )
-{
-    const uint8_t *data = ( const uint8_t * ) base;
-    return US_MAKE_UINT16 ( data[offset], data[offset+1] );
-}
+    static inline
+    uint32_t us_extract_uint16 ( const void *base, uint16_t offset )
+    {
+        const uint8_t *data = ( const uint8_t * ) base;
+        return US_MAKE_UINT16 ( data[offset], data[offset+1] );
+    }
 
-static inline
-void us_store_uint16 ( void *base, uint16_t value, uint16_t offset )
-{
-    uint8_t *data = ( uint8_t * ) base;
-    data[offset] = ( uint8_t ) ( value>>8 );
-    data[offset+1] = ( uint8_t ) ( value );
-}
+    static inline
+    void us_store_uint16 ( void *base, uint16_t value, uint16_t offset )
+    {
+        uint8_t *data = ( uint8_t * ) base;
+        data[offset] = ( uint8_t ) ( value>>8 );
+        data[offset+1] = ( uint8_t ) ( value );
+    }
 
-static inline
-uint32_t us_extract_uint32 ( const void *base, uint16_t offset )
-{
-    const uint8_t *data = ( const uint8_t * ) base;
-    return US_MAKE_UINT32 ( data[offset], data[offset+1], data[offset+2], data[offset+3] );
-}
+    static inline
+    uint32_t us_extract_uint32 ( const void *base, uint16_t offset )
+    {
+        const uint8_t *data = ( const uint8_t * ) base;
+        return US_MAKE_UINT32 ( data[offset], data[offset+1], data[offset+2], data[offset+3] );
+    }
 
-static inline
-void us_store_uint32 ( void *base, uint32_t value, uint16_t offset )
-{
-    uint8_t *data = ( uint8_t * ) base;
-    data[offset] = ( uint8_t ) ( value>>24 );
-    data[offset+1] = ( uint8_t ) ( value>>16 );
-    data[offset+2] = ( uint8_t ) ( value>>8 );
-    data[offset+3] = ( uint8_t ) ( value>>0 );
-}
+    static inline
+    void us_store_uint32 ( void *base, uint32_t value, uint16_t offset )
+    {
+        uint8_t *data = ( uint8_t * ) base;
+        data[offset] = ( uint8_t ) ( value>>24 );
+        data[offset+1] = ( uint8_t ) ( value>>16 );
+        data[offset+2] = ( uint8_t ) ( value>>8 );
+        data[offset+3] = ( uint8_t ) ( value>>0 );
+    }
 
-static inline
-uint64_t us_extract_uint64 ( const void *base, uint16_t offset )
-{
-    const uint8_t *data = ( const uint8_t * ) base;
-    return US_MAKE_UINT64 (
-               data[offset],
-               data[offset+1],
-               data[offset+2],
-               data[offset+3],
-               data[offset+4],
-               data[offset+5],
-               data[offset+6],
-               data[offset+7]
-           );
-}
+    static inline
+    uint64_t us_extract_uint64 ( const void *base, uint16_t offset )
+    {
+        const uint8_t *data = ( const uint8_t * ) base;
+        return US_MAKE_UINT64 (
+                   data[offset],
+                   data[offset+1],
+                   data[offset+2],
+                   data[offset+3],
+                   data[offset+4],
+                   data[offset+5],
+                   data[offset+6],
+                   data[offset+7]
+               );
+    }
 
-static inline
-void us_store_uint64 ( void *base, uint64_t value, uint16_t offset )
-{
-    uint8_t *data = ( uint8_t * ) base;
-    data[offset] = ( uint8_t ) ( value>> ( 24+32 ) );
-    data[offset+1] = ( uint8_t ) ( value>> ( 16+32 ) );
-    data[offset+2] = ( uint8_t ) ( value>> ( 8+32 ) );
-    data[offset+3] = ( uint8_t ) ( value>> ( 0+32 ) );
-    data[offset+4] = ( uint8_t ) ( value>> ( 24 ) );
-    data[offset+5] = ( uint8_t ) ( value>> ( 16 ) );
-    data[offset+6] = ( uint8_t ) ( value>> ( 8 ) );
-    data[offset+7] = ( uint8_t ) ( value>> ( 0 ) );
-}
+    static inline
+    void us_store_uint64 ( void *base, uint64_t value, uint16_t offset )
+    {
+        uint8_t *data = ( uint8_t * ) base;
+        data[offset] = ( uint8_t ) ( value>> ( 24+32 ) );
+        data[offset+1] = ( uint8_t ) ( value>> ( 16+32 ) );
+        data[offset+2] = ( uint8_t ) ( value>> ( 8+32 ) );
+        data[offset+3] = ( uint8_t ) ( value>> ( 0+32 ) );
+        data[offset+4] = ( uint8_t ) ( value>> ( 24 ) );
+        data[offset+5] = ( uint8_t ) ( value>> ( 16 ) );
+        data[offset+6] = ( uint8_t ) ( value>> ( 8 ) );
+        data[offset+7] = ( uint8_t ) ( value>> ( 0 ) );
+    }
 
 
 
