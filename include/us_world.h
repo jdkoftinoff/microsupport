@@ -218,6 +218,8 @@ extern "C"
 
 #include "us_platform.h"
 #include "us_logger.h"
+#include "us_bits.h"
+
 /*@}*/
 
 #endif
