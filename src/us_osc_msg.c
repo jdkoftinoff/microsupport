@@ -1185,8 +1185,9 @@ us_osc_msg_element_b_unflatten(
     uint32_t data_length_32 = 0;
     if ( us_buffer_read_uint32(buf,&data_length_32) )
     {
+        size_t rounded_data_length;
         data_length = data_length_32;
-        if ( us_buffer_read_rounded_data(buf, data, data_length, &data_length ) )
+        if ( us_buffer_read_rounded_data(buf, data, data_length, &rounded_data_length ) )
         {
             result = us_osc_msg_element_b_create(allocator, data, data_length);
         }
