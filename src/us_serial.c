@@ -304,7 +304,7 @@ int us_serial_open ( const char *serial_device, const char *serial_options )
     if ( strncmp ( serial_device, "/dev/", 5 ) == 0 )
     {
         fd = open ( serial_device, O_RDWR );
-        if ( fd >= 0 )
+        if ( fd >= 0 && serial_options )
         {
             if ( !us_serial_setup ( fd, serial_options ) )
             {
