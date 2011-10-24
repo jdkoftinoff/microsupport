@@ -40,10 +40,14 @@ extern "C"
 {
 #endif
 
-#define US_GET_BYTE_3(v) (uint8_t)((( (v) & 0xff000000) >> 24)&0xff)
-#define US_GET_BYTE_2(v) (uint8_t)((( (v) & 0xff0000) >> 16)&0xff)
-#define US_GET_BYTE_1(v) (uint8_t)((( (v) & 0xff00) >> 8)&0xff)
-#define US_GET_BYTE_0(v) (uint8_t)((( (v) & 0xff) >> 0)&0xff)
+#define US_GET_BYTE_7(v) (uint8_t)((( (v)) >> 56)&0xff)
+#define US_GET_BYTE_6(v) (uint8_t)((( (v)) >> 48)&0xff)
+#define US_GET_BYTE_5(v) (uint8_t)((( (v)) >> 40)&0xff)
+#define US_GET_BYTE_4(v) (uint8_t)((( (v)) >> 32)&0xff)
+#define US_GET_BYTE_3(v) (uint8_t)((( (v)) >> 24)&0xff)
+#define US_GET_BYTE_2(v) (uint8_t)((( (v)) >> 16)&0xff)
+#define US_GET_BYTE_1(v) (uint8_t)((( (v)) >> 8)&0xff)
+#define US_GET_BYTE_0(v) (uint8_t)((( (v)) >> 0)&0xff)
 
 #define US_COUNTOF(x) (sizeof(x)/sizeof(x[0]))
 

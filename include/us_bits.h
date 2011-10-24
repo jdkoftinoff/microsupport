@@ -32,6 +32,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #endif
 
+#define US_BITS_GET_OCTET_0 US_GET_BYTE_0
+#define US_BITS_GET_OCTET_1 US_GET_BYTE_1
+#define US_BITS_GET_OCTET_2 US_GET_BYTE_2
+#define US_BITS_GET_OCTET_3 US_GET_BYTE_3
+#define US_BITS_GET_OCTET_4 US_GET_BYTE_4
+#define US_BITS_GET_OCTET_5 US_GET_BYTE_5
+#define US_BITS_GET_OCTET_6 US_GET_BYTE_6
+#define US_BITS_GET_OCTET_7 US_GET_BYTE_7
+
+#define US_BITS_MAKE_DOUBLET( b1, b0 ) \
+( (((uint16_t)(b1))<<8) | (((uint16_t)(b0))<<0) )
+
+#define US_BITS_MAKE_QUADLET( b3, b2, b1, b0 ) \
+( (((uint32_t)(b3))<<24) | (((uint32_t)(b2))<<16) | (((uint32_t)(b1))<<8) | (((uint32_t)(b0))<<0) )
+
+#define US_BITS_MAKE_OCTLET( b7, b6, b5, b4, b3, b2, b1, b0 ) \
+(((uint64_t)US_BITS_MAKE_QUADLET( (b7), (b6), (b5), (b4) )<<32) | ((uint64_t)US_BITS_MAKE_QUADLET((b3),(b2),(b1),(b0))))
+
+
 /**
  \addtogroup us_bits IEEE bit packing utilities
  */
@@ -49,140 +68,325 @@ extern "C"
 
     /*@{*/
 
-#define US_OCTET_BIT(B) (((uint8_t)0x80)>>(B))
-#define US_DOUBLET_BIT(B) (((uint16_t)0x8000)>>(B))
-#define US_QUADLET_BIT(B) (((uint32_t)0x80000000)>>(B))
+#define US_BITS_OCTET_BIT(bit) (((uint8_t)0x80)>>(bit))
+#define US_BITS_DOUBLET_BIT(bit) (((uint16_t)0x8000)>>(bit))
+#define US_BITS_QUADLET_BIT(bit) (((uint32_t)0x80000000)>>(bit))
+#define US_BITS_OCTLET_BIT(bit) (((uint64_t)0x80000000)>>(bit))
 
-#define US_OCTET_MASK_BIT(B) ((~US_OCTET_BIT(B))&0xff)
-#define US_DOUBLET_MASK_BIT(B) ((~US_DOUBLET_BIT(B))&0xffff)
-#define US_QUADLET_MASK_BIT(B) ((~US_QUADLET_BIT(B))&0xffffffff)
+#define US_BITS_OCTET_MASK_BIT(bit) ((~US_BITS_OCTET_BIT(bit))&0xff)
+#define US_BITS_DOUBLET_MASK_BIT(bit) ((~US_BITS_DOUBLET_BIT(bit))&0xffff)
+#define US_BITS_QUADLET_MASK_BIT(bit) ((~US_BITS_QUADLET_BIT(bit))&0xffffffff)
+#define US_BITS_OCTLET_MASK_BIT(bit) ((~US_BITS_OCTLET_BIT(bit))&0xffffffffffffffff)
 
+#define US_BITS_IS_BITVALUE_SET( value, bit_value ) (((value)&(bit_value))!=0)
+#define US_BITS_IS_BITVALUE_CLEAR( value, bit_value ) (((value)&(bit_value))==0)
 
-#define US_IS_BITVALUE_SET( VALUE, BIT_VALUE ) (((VALUE)&(BIT_VALUE))!=0)
-#define US_IS_BITVALUE_CLEAR( VALUE, BIT_VALUE ) (((VALUE)&(BIT_VALUE))==0)
+#define US_BITS_MAP_FROM_OCTET_BIT( value, bit, on, off ) ( US_BITS_IS_BITVALUE_SET(value,US_BITS_OCTET_BIT(bit)) ? (on) : (off))
+#define US_BITS_MAP_FROM_DOUBLET_BIT( value, bit, on, off ) ( US_BITS_IS_BITVALUE_SET(value,US_BITS_DOUBLET_BIT(bit)) ? (on) : (off))
+#define US_BITS_MAP_FROM_QUADLET_BIT( value, bit, on, off ) ( US_BITS_IS_BITVALUE_SET(value,US_BITS_QUADLET_BIT(bit)) ? (on) : (off))
+#define US_BITS_MAP_FROM_OCTLET_BIT( value, bit, on, off ) ( US_BITS_IS_BITVALUE_SET(value,US_BITS_OCTLET_BIT(bit)) ? (on) : (off))
 
-#define US_IS_OCTET_BIT_SET( VALUE, BIT ) US_IS_BITVALUE_SET(VALUE,US_OCTET_BIT(BIT))
-#define US_IS_OCTET_BIT_CLEAR( VALUE, BIT ) US_IS_BITVALUE_CLEAR(VALUE,US_OCTET_BIT(BIT))
+#define US_BITS_IS_OCTET_BIT_SET( value, bit ) US_BITS_IS_BITVALUE_SET(value,US_BITS_OCTET_BIT(bit))
+#define US_BITS_IS_DOUBLET_BIT_SET( value, bit ) US_BITS_IS_BITVALUE_SET(value,US_BITS_DOUBLET_BIT(bit))
+#define US_BITS_IS_QUADLET_BIT_SET( value, bit ) US_BITS_IS_BITVALUE_SET(value,US_BITS_QUADLET_BIT(bit))
+#define US_BITS_IS_OCTLET_BIT_SET( value, bit ) US_BITS_IS_BITVALUE_SET(value,US_BITS_OCTLET_BIT(bit))
 
-#define US_IS_DOUBLET_BIT_SET( VALUE, BIT ) US_IS_BITVALUE_SET(VALUE,US_DOUBLET_BIT(BIT))
-#define US_IS_DOUBLET_BIT_CLEAR( VALUE, BIT ) US_IS_BITVALUE_CLEAR(VALUE,US_DOUBLET_BIT(BIT))
+#define US_BITS_IS_OCTET_BIT_CLEAR( value, bit ) US_BITS_IS_BITVALUE_CLEAR(value,US_BITS_OCTET_BIT(bit))
+#define US_BITS_IS_DOUBLET_BIT_CLEAR( value, bit ) US_BITS_IS_BITVALUE_CLEAR(value,US_BITS_DOUBLET_BIT(bit))
+#define US_BITS_IS_QUADLET_BIT_CLEAR( value, bit ) US_BITS_IS_BITVALUE_CLEAR(value,US_BITS_QUADLET_BIT(bit))
+#define US_BITS_IS_OCTLET_BIT_CLEAR( value, bit ) US_BITS_IS_BITVALUE_CLEAR(value,US_BITS_OCTLET_BIT(bit))
 
-#define US_IS_QUADLET_BIT_SET( VALUE, BIT ) US_IS_BITVALUE_SET(VALUE,US_QUADLET_BIT(BIT))
-#define US_IS_QUADLET_BIT_CLEAR( VALUE, BIT ) US_IS_BITVALUE_CLEAR(VALUE,US_QUADLET_BIT(BIT))
+#define US_BITS_GET_OCTET_BIT( value, bit ) US_BITS_IS_OCTET_BIT_SET( (value), (bit) )
+#define US_BITS_GET_DOUBLET_BIT( value, bit ) US_BITS_IS_DOUBLET_BIT_SET( (value), (bit) )
+#define US_BITS_GET_QUADLET_BIT( value, bit ) US_BITS_IS_QUADLET_BIT_SET( (value), (bit) )
+#define US_BITS_GET_OCTLET_BIT( value, bit ) US_BITS_IS_OCTLET_BIT_SET( (value), (bit) )
 
-#define US_SET_OCTET_BIT( VAL, B )  ((VAL) | US_OCTET_BIT(B))
-#define US_CLEAR_OCTET_BIT( VAL, B ) ((VAL) & US_OCTET_MASK_BIT(B))
+#define US_BITS_SET_OCTET_BIT( val, bit )  ((val) | US_BITS_OCTET_BIT(bit))
+#define US_BITS_SET_DOUBLET_BIT( val, bit )  ((val) | US_BITS_DOUBLET_BIT(bit))
+#define US_BITS_SET_QUADLET_BIT( val, bit )  ((val) | US_BITS_QUADLET_BIT(bit))
+#define US_BITS_SET_OCTLET_BIT( val, bit )  ((val) | US_BITS_OCTLET_BIT(bit))
 
-#define US_SET_DOUBLET_BIT( VAL, B )  ((VAL) | US_DOUBLET_BIT(B))
-#define US_CLEAR_DOUBLET_BIT( VAL, B ) ((VAL) & US_DOUBLET_MASK_BIT(B))
+#define US_BITS_CLEAR_OCTET_BIT( val, bit ) ((val) & US_BITS_OCTET_MASK_BIT(bit))
+#define US_BITS_CLEAR_DOUBLET_BIT( val, bit ) ((val) & US_BITS_DOUBLET_MASK_BIT(bit))
+#define US_BITS_CLEAR_QUADLET_BIT( val, bit ) ((val) & US_BITS_QUADLET_MASK_BIT(bit))
+#define US_BITS_CLEAR_OCTLET_BIT( val, bit ) ((val) & US_BITS_OCTLET_MASK_BIT(bit))
 
-#define US_SET_QUADLET_BIT( VAL, B )  ((VAL) | US_QUADLET_BIT(B))
-#define US_CLEAR_QUADLET_BIT( VAL, B ) ((VAL) & US_QUADLET_MASK_BIT(B))
+#define US_BITS_SET_OCTET_BIT_IF( val, bit, query )  ((query) ? US_BITS_SET_OCTET_BIT(val,bit) : US_BITS_CLEAR_OCTET_BIT(val,bit))
+#define US_BITS_SET_DOUBLET_BIT_IF( val, bit, query )  ((query) ? US_BITS_SET_DOUBLET_BIT(val,bit) : US_BITS_CLEAR_DOUBLET_BIT(val,bit))
+#define US_BITS_SET_QUADLET_BIT_IF( val, bit, query )  ((query) ? US_BITS_SET_QUADLET_BIT(val,bit) : US_BITS_CLEAR_QUADLET_BIT(val,bit))
+#define US_BITS_SET_OCTLET_BIT_IF( val, bit, query )  ((query) ? US_BITS_SET_OCTLET_BIT(val,bit) : US_BITS_CLEAR_OCTLET_BIT(val,bit))
 
-#define US_SET_OCTET_BIT_IF( VAL, B, Q )  ((Q) ? US_SET_OCTET_BIT(VAL,B) : US_CLEAR_OCTET_BIT(VAL,B))
-#define US_CLEAR_OCTET_BIT_IF( VAL, B, Q )  ((!Q) ? US_SET_OCTET_BIT(VAL,B) : US_CLEAR_OCTET_BIT(VAL,B))
+#define US_BITS_CLEAR_OCTET_BIT_IF( val, bit, query )  ((!query) ? US_BITS_SET_OCTET_BIT(val,bit) : US_BITS_CLEAR_OCTET_BIT(val,bit))
+#define US_BITS_CLEAR_DOUBLET_BIT_IF( val, bit, query )  ((!query) ? US_BITS_SET_DOUBLET_BIT(val,bit) : US_BITS_CLEAR_DOUBLET_BIT(val,bit))
+#define US_BITS_CLEAR_QUADLET_BIT_IF( val, bit, query )  ((!query) ? US_BITS_SET_QUADLET_BIT(val,bit) : US_BITS_CLEAR_QUADLET_BIT(val,bit))
+#define US_BITS_CLEAR_OCTLET_BIT_IF( val, bit, query )  ((!query) ? US_BITS_SET_OCTLET_BIT(val,bit) : US_BITS_CLEAR_OCTLET_BIT(val,bit))
 
-#define US_SET_DOUBLET_BIT_IF( VAL, B, Q )  ((Q) ? US_SET_DOUBLET_BIT(VAL,B) : US_CLEAR_DOUBLET_BIT(VAL,B))
-#define US_CLEAR_DOUBLET_BIT_IF( VAL, B, Q )  ((!Q) ? US_SET_DOUBLET_BIT(VAL,B) : US_CLEAR_DOUBLET_BIT(VAL,B))
-
-#define US_SET_QUADLET_BIT_IF( VAL, B, Q )  ((Q) ? US_SET_QUADLET_BIT(VAL,B) : US_CLEAR_QUADLET_BIT(VAL,B))
-#define US_CLEAR_QUADLET_BIT_IF( VAL, B, Q )  ((!Q) ? US_SET_QUADLET_BIT(VAL,B) : US_CLEAR_QUADLET_BIT(VAL,B))
 
     /*@}*/
 
-    /** \addtogtoup bitfield bitfield utility functions. BIT is IEEE style bit number of the lsb of the field */
+    /** \addtogtoup bitfield bitfield utility functions. bit is IEEE style bit number of the lsb of the field */
 
     /*@{*/
 
-#define US_OCTET_BITFIELD(BIT,WIDTH) (((0xff)>>(8-(WIDTH)))<<(7-(BIT)))
-#define US_DOUBLET_BITFIELD(BIT,WIDTH) (((0xffff)>>(16-(WIDTH)))<<(15-(BIT)))
-#define US_QUADLET_BITFIELD(BIT,WIDTH) (((0xffffffff)>>(32-(WIDTH)))<<(31-(BIT)))
+#define US_BITS_OCTET_BITFIELD(bit,width) (((0xff)>>(8-(width)))<<(7-(bit)))
+#define US_BITS_DOUBLET_BITFIELD(bit,width) (((0xffff)>>(16-(width)))<<(15-(bit)))
+#define US_BITS_QUADLET_BITFIELD(bit,width) (((0xffffffff)>>(32-(width)))<<(31-(bit)))
+#define US_BITS_OCTLET_BITFIELD(bit,width) (((0xffffffffffffffff)>>(64-(width)))<<(63-(bit)))
 
-#define US_OCTET_MASK_BITFIELD(BIT,WIDTH) ((~US_OCTET_BITFIELD(BIT,WIDTH))&0xff)
-#define US_DOUBLET_MASK_BITFIELD(BIT,WIDTH) ((~US_DOUBLET_BITFIELD(BIT,WIDTH))&0xffff)
-#define US_QUADLET_MASK_BITFIELD(BIT,WIDTH) ((~ADECC_QUADLET_BITFIELD(BIT,WIDTH))&0xffffffff)
+#define US_BITS_OCTET_MASK_BITFIELD(bit,width) ((~US_BITS_OCTET_BITFIELD((bit),(width)))&0xff)
+#define US_BITS_DOUBLET_MASK_BITFIELD(bit,width) ((~US_BITS_DOUBLET_BITFIELD((bit),(width)))&0xffff)
+#define US_BITS_QUADLET_MASK_BITFIELD(bit,width) ((~US_BITS_QUADLET_BITFIELD((bit),(width)))&0xffffffff)
+#define US_BITS_OCTLET_MASK_BITFIELD(bit,width) ((~US_BITS_OCTLET_BITFIELD((bit),(width)))&0xffffffffffffffff)
 
-#define US_GET_OCTET_BITFIELD(VAL,BIT,WIDTH)  (((VAL) & US_OCTET_BITFIELD(BIT,BITCOUNT)) >> (7-(BIT)))
-#define US_SET_OCTET_BITFIELD(VAL,BIT,WIDTH,FIELDVAL) (((FIELDVAL)<<(7-(BIT))) | ((VAL) & US_OCTET_MASK_BITFIELD(BIT,BITCOUNT)))
+#define US_BITS_GET_OCTET_BITFIELD_W(val,bit,width)  (((val) & US_BITS_OCTET_BITFIELD(bit,width)) >> (7-(bit)))
+#define US_BITS_GET_DOUBLET_BITFIELD_W(val,bit,width)  (((val) & US_BITS_DOUBLET_BITFIELD(bit,width)) >> (15-(bit)))
+#define US_BITS_GET_QUADLET_BITFIELD_W(val,bit,width)  (((val) & US_BITS_QUADLET_BITFIELD(bit,width)) >> (31-(bit)))
+#define US_BITS_GET_OCTLET_BITFIELD_W(val,bit,width)  (((val) & US_BITS_OCTLET_BITFIELD(bit,width)) >> (63-(bit)))
 
-#define US_GET_DOUBLET_BITFIELD(VAL,BIT,WIDTH)  (((VAL) & US_DOUBLET_BITFIELD(BIT,BITCOUNT)) >> (15-(BIT)))
-#define US_SET_DOUBLET_BITFIELD(VAL,BIT,WIDTH,FIELDVAL) (((FIELDVAL)<<(15-(BIT))) | ((VAL) & US_DOUBLET_MASK_BITFIELD(BIT,BITCOUNT)))
+#define US_BITS_SET_OCTET_BITFIELD_W(val,bit,width,fieldval) (((fieldval)<<(7-(bit))) | ((val) & US_BITS_OCTET_MASK_BITFIELD((bit),(width))))
+#define US_BITS_SET_DOUBLET_BITFIELD_W(val,bit,width,fieldval) (((fieldval)<<(15-(bit))) | ((val) & US_BITS_DOUBLET_MASK_BITFIELD((bit),(width))))
+#define US_BITS_SET_QUADLET_BITFIELD_W(val,bit,width,fieldval) (((fieldval)<<(31-(bit))) | ((val) & US_BITS_QUADLET_MASK_BITFIELD((bit),(width))))
+#define US_BITS_SET_OCTLET_BITFIELD_W(val,bit,width,fieldval) (((fieldval)<<(63-(bit))) | ((val) & US_BITS_OCTLET_MASK_BITFIELD((bit),(width))))
 
-#define US_GET_QUADLET_BITFIELD(VAL,BIT,WIDTH)  (((VAL) & US_DOUBLET_BITFIELD(BIT,BITCOUNT)) >> (31-(BIT)))
-#define US_SET_QUADLET_BITFIELD(VAL,BIT,WIDTH,FIELDVAL) (((FIELDVAL)<<(31-(BIT))) | ((VAL) & US_DOUBLET_MASK_BITFIELD(BIT,BITCOUNT)))
+#define US_BITS_GET_OCTET_BITFIELD(val,msb,lsb) US_BITS_GET_OCTET_BITFIELD_W( (val), (lsb), (lsb)-(msb)+1 )
+#define US_BITS_GET_DOUBLET_BITFIELD(val,msb,lsb) US_BITS_GET_DOUBLET_BITFIELD_W( (val), (lsb), (lsb)-(msb)+1 )
+#define US_BITS_GET_QUADLET_BITFIELD(val,msb,lsb) US_BITS_GET_QUADLET_BITFIELD_W( (val), (lsb), (lsb)-(msb)+1 )
+#define US_BITS_GET_OCTLET_BITFIELD(val,msb,lsb) US_BITS_GET_OCTLET_BITFIELD_W( (val), (lsb), (lsb)-(msb)+1 )
+
+#define US_BITS_SET_OCTET_BITFIELD(val,msb,lsb,fieldval) US_BITS_SET_OCTET_BITFIELD_W( (val), (lsb), (lsb)-(msb)+1, fieldval )
+#define US_BITS_SET_DOUBLET_BITFIELD(val,msb,lsb,fieldval) US_BITS_SET_DOUBLET_BITFIELD_W( (val), (lsb), (lsb)-(msb)+1, fieldval )
+#define US_BITS_SET_QUADLET_BITFIELD(val,msb,lsb,fieldval) US_BITS_SET_QUADLET_BITFIELD_W( (val), (lsb), (lsb)-(msb)+1, fieldval )
+#define US_BITS_SET_OCTLET_BITFIELD(val,msb,lsb,fieldval) US_BITS_SET_OCTLET_BITFIELD_W( (val), (lsb), (lsb)-(msb)+1, fieldval )
+
 
     /*@}*/
 
-#define US_MAKE_UINT16( B1, B0 ) ( (((uint16_t)(B1))<<8) | (((uint16_t)(B0))<<0) )
+#define US_BITS_MAP_OCTET( prefix, fieldname, type, octet_offset_of_octet ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_octet(base, octet_offset_of_octet ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_octet( base, octet_offset_of_octet, (uint8_t)new_field_value ); \
+}
 
-#define US_MAKE_UINT32( B3, B2, B1, B0 ) ( (((uint32_t)(B3))<<24) | (((uint32_t)(B2))<<16) | (((uint32_t)(B1))<<8) | (((uint32_t)(B0))<<0) )
+#define US_BITS_MAP_DOUBLET( prefix, fieldname, type, octet_offset_of_doublet ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_doublet(base, octet_offset_of_doublet ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_doublet( base, octet_offset_of_doublet, (uint16_t)new_field_value ); \
+}
 
-#define US_MAKE_UINT64( B7, B6, B5, B4, B3, B2, B1, B0 ) \
-    (((uint64_t)US_MAKE_UINT32( B7, B6, B5, B4 )<<32) | ((uint64_t)US_MAKE_UINT32(B3,B2,B1,B0)))
+#define US_BITS_MAP_QUADLET( prefix, fieldname, type, octet_offset_of_quadlet ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_quadlet(base, octet_offset_of_quadlet ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_quadlet( base, octet_offset_of_quadlet, (uint32_t)new_field_value ); \
+}
+
+#define US_BITS_MAP_OCTLET( prefix, fieldname, type, octet_offset_of_octlet ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_octlet(base, octet_offset_of_octlet ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_octlet( base, octet_offset_of_octlet, (uint64_t)new_field_value ); \
+}
+
+
+#define US_BITS_MAP_OCTET_BITFIELD( prefix, fieldname, type, octet_offset_of_octet, msb, lsb ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_octet_bitfield(base, octet_offset_of_octet, msb, lsb ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_octet_bitfield( base, octet_offset_of_octet, msb, lsb, (uint8_t)new_field_value ); \
+}
+
+
+#define US_BITS_MAP_DOUBLET_BITFIELD( prefix, fieldname, type, octet_offset_of_doublet, msb, lsb ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_doublet_bitfield(base, octet_offset_of_doublet, msb, lsb ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_doublet_bitfield( base, octet_offset_of_doublet, msb, lsb, (uint16_t)new_field_value ); \
+}
+
+
+#define US_BITS_MAP_QUADLET_BITFIELD( prefix, fieldname, type, octet_offset_of_quadlet, msb, lsb ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_quadlet_bitfield(base, octet_offset_of_quadlet, msb, lsb ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_quadlet_bitfield( base, octet_offset_of_quadlet, msb, lsb, (uint32_t)new_field_value ); \
+}
+
+#define US_BITS_MAP_OCTLET_BITFIELD( prefix, fieldname, type, octet_offset_of_octlet, msb, lsb ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_octlet_bitfield(base, octet_offset_of_octlet, msb, lsb ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_octlet_bitfield( base, octet_offset_of_octlet, msb, lsb, (uint64_t)new_field_value ); \
+}
+
 
 
     static inline
-    uint32_t us_extract_uint16 ( const void *base, uint16_t offset )
+    uint8_t us_bits_get_octet( const void *base, uint16_t offset )
     {
         const uint8_t *data = ( const uint8_t * ) base;
-        return US_MAKE_UINT16 ( data[offset], data[offset+1] );
+        return data[offset];
     }
 
     static inline
-    void us_store_uint16 ( void *base, uint16_t value, uint16_t offset )
+    void us_bits_set_octet ( void *base, uint16_t offset, uint8_t value )
     {
         uint8_t *data = ( uint8_t * ) base;
-        data[offset] = ( uint8_t ) ( value>>8 );
-        data[offset+1] = ( uint8_t ) ( value );
+        data[offset] = value;
     }
 
     static inline
-    uint32_t us_extract_uint32 ( const void *base, uint16_t offset )
+    uint16_t us_bits_get_doublet ( const void *base, uint16_t offset )
     {
         const uint8_t *data = ( const uint8_t * ) base;
-        return US_MAKE_UINT32 ( data[offset], data[offset+1], data[offset+2], data[offset+3] );
+        return US_BITS_MAKE_DOUBLET ( data[offset], data[offset+1] );
     }
 
     static inline
-    void us_store_uint32 ( void *base, uint32_t value, uint16_t offset )
+    void us_bits_set_doublet ( void *base, uint16_t offset, uint16_t value )
     {
         uint8_t *data = ( uint8_t * ) base;
-        data[offset] = ( uint8_t ) ( value>>24 );
-        data[offset+1] = ( uint8_t ) ( value>>16 );
-        data[offset+2] = ( uint8_t ) ( value>>8 );
-        data[offset+3] = ( uint8_t ) ( value>>0 );
+        data[offset] = US_BITS_GET_OCTET_1(value);
+        data[offset+1] = US_BITS_GET_OCTET_0(value);
     }
 
     static inline
-    uint64_t us_extract_uint64 ( const void *base, uint16_t offset )
+    uint32_t us_bits_get_quadlet ( const void *base, uint16_t offset )
     {
         const uint8_t *data = ( const uint8_t * ) base;
-        return US_MAKE_UINT64 (
-                   data[offset],
-                   data[offset+1],
-                   data[offset+2],
-                   data[offset+3],
-                   data[offset+4],
-                   data[offset+5],
-                   data[offset+6],
-                   data[offset+7]
-               );
+        return US_BITS_MAKE_QUADLET ( data[offset], data[offset+1], data[offset+2], data[offset+3] );
     }
 
     static inline
-    void us_store_uint64 ( void *base, uint64_t value, uint16_t offset )
+    void us_bits_set_quadlet ( void *base, uint16_t offset, uint32_t v )
     {
         uint8_t *data = ( uint8_t * ) base;
-        data[offset] = ( uint8_t ) ( value>> ( 24+32 ) );
-        data[offset+1] = ( uint8_t ) ( value>> ( 16+32 ) );
-        data[offset+2] = ( uint8_t ) ( value>> ( 8+32 ) );
-        data[offset+3] = ( uint8_t ) ( value>> ( 0+32 ) );
-        data[offset+4] = ( uint8_t ) ( value>> ( 24 ) );
-        data[offset+5] = ( uint8_t ) ( value>> ( 16 ) );
-        data[offset+6] = ( uint8_t ) ( value>> ( 8 ) );
-        data[offset+7] = ( uint8_t ) ( value>> ( 0 ) );
+        data[offset] = US_BITS_GET_OCTET_3(v);
+        data[offset+1] = US_BITS_GET_OCTET_2(v);
+        data[offset+2] = US_BITS_GET_OCTET_1(v);
+        data[offset+3] = US_BITS_GET_OCTET_0(v);
     }
 
+    static inline
+    uint64_t us_bits_get_octlet ( const void *base, uint16_t offset )
+    {
+        const uint8_t *data = ( const uint8_t * ) base;
+        uint64_t v;
+        v=US_BITS_MAKE_OCTLET (
+              data[offset],
+              data[offset+1],
+              data[offset+2],
+              data[offset+3],
+              data[offset+4],
+              data[offset+5],
+              data[offset+6],
+              data[offset+7]
+          );
+        return v;
+    }
+
+    static inline
+    void us_bits_set_octlet ( void *base, uint16_t offset, uint64_t v )
+    {
+        uint8_t *data = ( uint8_t * ) base;
+        data[offset] = US_BITS_GET_OCTET_7(v);
+        data[offset+1] = US_BITS_GET_OCTET_6(v);
+        data[offset+2] = US_BITS_GET_OCTET_5(v);
+        data[offset+3] = US_BITS_GET_OCTET_4(v);
+        data[offset+4] = US_BITS_GET_OCTET_3(v);
+        data[offset+5] = US_BITS_GET_OCTET_2(v);
+        data[offset+6] = US_BITS_GET_OCTET_1(v);
+        data[offset+7] = US_BITS_GET_OCTET_0(v);
+    }
+
+    static inline
+    uint8_t us_bits_get_octet_bitfield( const void *base, uint16_t offset, uint16_t msb, uint16_t lsb )
+    {
+        uint8_t v=us_bits_get_octet(base, offset);
+        uint8_t r=US_BITS_GET_OCTET_BITFIELD(v, msb, lsb);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_octet_bitfield( void *base, uint16_t offset, uint16_t msb, uint16_t lsb, uint32_t newbits )
+    {
+        uint8_t v=us_bits_get_octet(base, offset);
+        v=US_BITS_SET_OCTET_BITFIELD(v, msb, lsb, newbits);
+        us_bits_set_octet(base, offset, v);
+    }
+
+    static inline
+    uint16_t us_bits_get_doublet_bitfield( const void *base, uint16_t offset, uint16_t msb, uint16_t lsb )
+    {
+        uint32_t v=us_bits_get_doublet(base, offset);
+        uint32_t r=US_BITS_GET_DOUBLET_BITFIELD(v, msb, lsb);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_doublet_bitfield( void *base, uint16_t offset, uint16_t msb, uint16_t lsb, uint32_t newbits )
+    {
+        uint16_t v=us_bits_get_doublet(base, offset);
+        v=US_BITS_SET_DOUBLET_BITFIELD(v, msb, lsb, newbits);
+        us_bits_set_doublet(base, offset, v);
+    }
+
+    static inline
+    uint32_t us_bits_get_quadlet_bitfield( const void *base, uint16_t offset, uint16_t msb, uint16_t lsb )
+    {
+        uint32_t v=us_bits_get_quadlet(base, offset);
+        uint32_t r=US_BITS_GET_QUADLET_BITFIELD(v, msb, lsb);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_quadlet_bitfield( void *base, uint16_t offset, uint16_t msb, uint16_t lsb, uint32_t newbits )
+    {
+        uint32_t v=us_bits_get_quadlet(base, offset);
+        v=US_BITS_SET_QUADLET_BITFIELD(v, msb, lsb, newbits);
+        us_bits_set_quadlet(base, offset, v);
+    }
+
+    static inline
+    uint32_t us_bits_get_octlet_bitfield( const void *base, uint16_t offset, uint16_t msb, uint16_t lsb )
+    {
+        uint64_t v=us_bits_get_octlet(base, offset);
+        uint64_t r=US_BITS_GET_OCTLET_BITFIELD(v, msb, lsb);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_octlet_bitfield( void *base, uint16_t offset, uint16_t msb, uint16_t lsb, uint64_t newbits )
+    {
+        uint64_t v=us_bits_get_octlet(base, offset);
+        v=US_BITS_SET_OCTLET_BITFIELD(v, msb, lsb, newbits);
+        us_bits_set_octlet(base, offset, v);
+    }
 
 
 #ifdef __cplusplus

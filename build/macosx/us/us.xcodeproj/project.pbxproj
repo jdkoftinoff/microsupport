@@ -248,6 +248,7 @@
 		BF0D292D1386D3A30053A342 /* us_test_slip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_slip.c; path = ../../../tests/us_test_slip.c; sourceTree = SOURCE_ROOT; };
 		BF0D292E1386D3A30053A342 /* us_test_trie.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_trie.c; path = ../../../tests/us_test_trie.c; sourceTree = SOURCE_ROOT; };
 		BF0D292F1386D3A30053A342 /* us_test_webapp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_webapp.c; path = ../../../tests/us_test_webapp.c; sourceTree = SOURCE_ROOT; };
+		BF541239144DE7BB00B4B13C /* us_bits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_bits.h; path = ../../../include/us_bits.h; sourceTree = "<group>"; };
 		BFBBC801142A23E4007E3332 /* us_test_osc_io_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_osc_io_main.c; path = ../../../src/us_test_osc_io_main.c; sourceTree = "<group>"; };
 		BFCE66F9140FFD5A00AF7DE6 /* us_mtc_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_mtc_parser.h; path = ../../../include/us_mtc_parser.h; sourceTree = "<group>"; };
 		BFCE66FA140FFD5A00AF7DE6 /* us_mtc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_mtc.h; path = ../../../include/us_mtc.h; sourceTree = "<group>"; };
@@ -424,6 +425,7 @@
 				BF0D28D01386D3530053A342 /* us_allocator_heap.h */,
 				BF0D28D11386D3530053A342 /* us_allocator_print.h */,
 				BF0D28D21386D3530053A342 /* us_allocator.h */,
+				BF541239144DE7BB00B4B13C /* us_bits.h */,
 				BF0D28D31386D3530053A342 /* us_buffer_print.h */,
 				BF0D28D41386D3530053A342 /* us_buffer.h */,
 				BF0D28D51386D3530053A342 /* us_cgi.h */,
@@ -539,7 +541,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0420;
 			};
 			buildConfigurationList = 1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "us" */;
 			compatibilityVersion = "Xcode 3.2";

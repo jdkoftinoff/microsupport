@@ -175,10 +175,19 @@ typedef int bool_;
 # endif
 #endif
 
+#ifndef us_min
+# define us_min(a,b) (a) < (b) ? (a) : (b)
+#endif
+
+#ifndef us_max
+# define us_max(a,b) (a) < (b) ? (b) : (a)
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
 
     static inline bool us_strncpy( char *dest, const char *src, size_t dest_buf_size )
     {
