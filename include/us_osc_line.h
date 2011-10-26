@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_world.h"
 #include "us_osc_msg.h"
+#include "us_print.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -61,12 +62,12 @@ extern "C"
 
     bool us_osc_line_gen_msg(
         const us_osc_msg_t *msg,
-        us_buffer_t *result
+        us_print_t *result
     );
 
     bool us_osc_line_gen_bundle(
         const us_osc_msg_bundle_t *bundle,
-        us_buffer_t *result
+        us_print_t *result
     );
 
 #ifdef __cplusplus

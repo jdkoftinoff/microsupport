@@ -1,7 +1,6 @@
 #include "us_world.h"
 
 #include "us_osc_line.h"
-
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -64,15 +63,136 @@ bool us_osc_line_parse_bundle(
 
 bool us_osc_line_gen_msg(
     const us_osc_msg_t *msg,
-    us_buffer_t *result
+    us_print_t *result
 )
 {
-    return false;
+    bool r=true;
+    const us_osc_msg_element_t *element = msg->m_first_element;
+    r &= result->printf( result, "%s", msg->m_address );
+    while( element )
+    {
+        r &= result->printf( result, " %c", element->m_code );
+        switch( element->m_code )
+        {
+        case 'a':
+        {
+            const us_osc_msg_element_a_t *e = (const us_osc_msg_element_a_t *)element;
+            r &= result->printf( result, " %08lx%08lx", e->m_time_high, e->m_time_low );
+            break;
+        }
+        case 'B':
+        {
+            const us_osc_msg_element_B_t *e = (const us_osc_msg_element_B_t *)element;
+            r &= result->printf( result, " " );
+            r&=us_osc_line_gen_bundle( e->m_bundle, result );
+            break;
+        }
+        case 'b':
+        {
+            const us_osc_msg_element_b_t *e = (const us_osc_msg_element_b_t *)element;
+            int i;
+            for( i=0; i<e->m_length; ++i )
+            {
+                r&= result->printf( result, " %02x", e->m_data[i] );
+            }
+            break;
+        }
+        case 'd':
+        {
+            const us_osc_msg_element_d_t *e = (const us_osc_msg_element_d_t *)element;
+            r&=result->printf( result, " %1.14g", e->m_value );
+            break;
+        }
+        case 'f':
+        {
+            const us_osc_msg_element_f_t *e = (const us_osc_msg_element_f_t *)element;
+            r&=result->printf( result, " %1.14g", e->m_value );
+            break;
+        }
+        case 'h':
+        {
+            const us_osc_msg_element_h_t *e = (const us_osc_msg_element_h_t *)element;
+            r&=result->printf( result, " %08x%08x", e->m_value_high, e->m_value_low );
+            break;
+        }
+        case 'i':
+        {
+            const us_osc_msg_element_i_t *e = (const us_osc_msg_element_i_t *)element;
+            r&=result->printf( result, " %d", e->m_value );
+            break;
+        }
+        case 's':
+        {
+            const us_osc_msg_element_s_t *e = (const us_osc_msg_element_s_t *)element;
+            int i;
+            r&=result->printf( result, " \"" );
+            for( i=0; i<e->m_length; ++i )
+            {
+                char p = e->m_value[i];
+                switch(p)
+                {
+                case '\\':
+                    r&=result->printf( result, "\\\\" );
+                    break;
+                case '\r':
+                    r&=result->printf( result, "\\r" );
+                    break;
+                case '\n':
+                    r&=result->printf( result, "\\n" );
+                    break;
+                case '\"':
+                    r&=result->printf( result, "\\\"" );
+                    break;
+                case '\'':
+                    r&=result->printf( result, "\\\'" );
+                    break;
+                case '\t':
+                    r&=result->printf( result, "\\t" );
+                    break;
+                default:
+                    if( p<' ' )
+                    {
+                        r&=result->printf( result, "\\x%02x", p );
+                    }
+                    else
+                    {
+                        r&=result->printf( result, "%c", p );
+                    }
+                    break;
+                }
+            }
+            r&=result->printf( result, "\"" );
+        }
+        case 't':
+        {
+            const us_osc_msg_element_t_t *e = (const us_osc_msg_element_t_t *)element;
+            r&=result->printf( result, " %08x%08x", e->m_time_high, e->m_time_low );
+            break;
+        }
+        case 'T':
+        case 'F':
+        case 'I':
+        case 'N':
+        {
+            break;
+        }
+        case 'M':
+        {
+            const us_osc_msg_element_M_t *e = (const us_osc_msg_element_M_t *)element;
+            r &= result->printf( result, " { " );
+            r&=us_osc_line_gen_msg( e->m_msg, result );
+            r &= result->printf( result, " }" );
+            break;
+        }
+        }
+        element=element->m_next;
+    }
+    return r;
 }
 
 bool us_osc_line_gen_bundle(
     const us_osc_msg_bundle_t *bundle,
-    us_buffer_t *result
+    us_print_t *result
 )
 {
     return false;
