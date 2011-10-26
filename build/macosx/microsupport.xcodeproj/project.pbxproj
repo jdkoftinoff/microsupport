@@ -13,6 +13,17 @@
 			buildPhases = (
 			);
 			dependencies = (
+				BFB3F8971458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F8991458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F89B1458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F89D1458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F89F1458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F8A11458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F8A31458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F8A51458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F8A71458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F8A91458A36E00E90D3C /* PBXTargetDependency */,
+				BFB3F8AB1458A36E00E90D3C /* PBXTargetDependency */,
 				BFF4CB7811613B91002C7012 /* PBXTargetDependency */,
 			);
 			name = all;
@@ -68,6 +79,83 @@
 			containerPortal = BF0FA2C911615C2A004D450A /* us_test_slip.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 8DD76FB20486AB0100D96B5E;
+			remoteInfo = us_test_slip;
+		};
+		BFB3F8961458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA2C111615C13004D450A /* us_test_net.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_test_net;
+		};
+		BFB3F8981458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFC0E8C61280D1A800645B8D /* us_example_hex_udp_rx.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_example_hex_udp_rx;
+		};
+		BFB3F89A1458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA2B911615BF8004D450A /* us_test_json.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_test_json;
+		};
+		BFB3F89C1458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFC0E8C31280D1A800645B8D /* us_example_hex_udp_tx.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_example_hex_udp_tx;
+		};
+		BFB3F89E1458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA2A911615BC1004D450A /* us_example_httpd.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_example_httpd;
+		};
+		BFB3F8A01458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA1E811615850004D450A /* us_test_allocator.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_test_allocator;
+		};
+		BFB3F8A21458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA22011615949004D450A /* us_test_buffer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_test_buffer;
+		};
+		BFB3F8A41458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFC0E8C01280D1A800645B8D /* us_tool_rx_osc.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_tool_rx_osc;
+		};
+		BFB3F8A61458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA2B111615BDD004D450A /* us_test_http.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_test_http;
+		};
+		BFB3F8A81458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFC0E8C91280D1A800645B8D /* us_tool_send_osc.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
+			remoteInfo = us_tool_send_osc;
+		};
+		BFB3F8AA1458A36E00E90D3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF0FA2C911615C2A004D450A /* us_test_slip.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76FA90486AB0100D96B5E;
 			remoteInfo = us_test_slip;
 		};
 		BFC0E8E21280D1A800645B8D /* PBXContainerItemProxy */ = {
@@ -409,6 +497,61 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXTargetDependency section */
+		BFB3F8971458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_test_net;
+			targetProxy = BFB3F8961458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F8991458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_example_hex_udp_rx;
+			targetProxy = BFB3F8981458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F89B1458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_test_json;
+			targetProxy = BFB3F89A1458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F89D1458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_example_hex_udp_tx;
+			targetProxy = BFB3F89C1458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F89F1458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_example_httpd;
+			targetProxy = BFB3F89E1458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F8A11458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_test_allocator;
+			targetProxy = BFB3F8A01458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F8A31458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_test_buffer;
+			targetProxy = BFB3F8A21458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F8A51458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_tool_rx_osc;
+			targetProxy = BFB3F8A41458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F8A71458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_test_http;
+			targetProxy = BFB3F8A61458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F8A91458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_tool_send_osc;
+			targetProxy = BFB3F8A81458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
+		BFB3F8AB1458A36E00E90D3C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = us_test_slip;
+			targetProxy = BFB3F8AA1458A36E00E90D3C /* PBXContainerItemProxy */;
+		};
 		BFF4CB7811613B91002C7012 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = us;
