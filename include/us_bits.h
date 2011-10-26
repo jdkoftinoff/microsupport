@@ -373,7 +373,7 @@ static inline void prefix ## _set_ ## fieldname( void *base, type new_field_valu
     }
 
     static inline
-    uint32_t us_bits_get_octlet_bitfield( const void *base, uint16_t offset, uint16_t msb, uint16_t lsb )
+    uint64_t us_bits_get_octlet_bitfield( const void *base, uint16_t offset, uint16_t msb, uint16_t lsb )
     {
         uint64_t v=us_bits_get_octlet(base, offset);
         uint64_t r=US_BITS_GET_OCTLET_BITFIELD(v, msb, lsb);
