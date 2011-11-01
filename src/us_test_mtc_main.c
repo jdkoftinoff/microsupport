@@ -128,11 +128,11 @@ static bool us_test_mtc_parser ( const uint8_t *input_data, int32_t input_data_l
     p = us_midi_parser_create ( us_testutil_session_allocator, 256 );
     if ( p )
     {
+        bool t_valid=false;
+        struct timeval cur_time;
         us_midi_msg_t m;
         us_mtc_t t;
         us_mtc_init(&t);
-        bool t_valid=false;
-        struct timeval cur_time;
         while ( input_todo > 0 )
         {
             us_gettimeofday( &cur_time );

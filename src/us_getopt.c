@@ -916,7 +916,7 @@ bool us_getopt_parse_file( us_getopt_t *self, const char *fname )
 bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len )
 {
     bool r=true;
-    ssize_t i;
+    size_t i;
     char escaped_key_name[128]="";
     int escaped_key_name_len=0;
     char *escaped_key_ptr = &escaped_key_name[0];
