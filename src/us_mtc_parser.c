@@ -111,8 +111,8 @@ bool us_mtc_parser_parse_qf(
             self->m_moving=true;
         }
         else if( (self->m_last_nibble == 0 && nibble_num == 7) ||
-                (self->m_last_nibble == (int)(nibble_num+1))
-        )
+                 (self->m_last_nibble == (int)(nibble_num+1))
+               )
         {
             /* we are going backward */
             self->m_forward=false;
