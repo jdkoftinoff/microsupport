@@ -253,7 +253,7 @@ static bool us_test_osc_dispatch_media_level(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    us_osc_sender_t *sender,
+    us_osc_sender_t *US_UNUSED(sender),
     void *US_UNUSED(extra)
 )
 {
@@ -277,7 +277,7 @@ static bool us_test_osc_dispatch_media_pan(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    us_osc_sender_t *sender,
+    us_osc_sender_t *US_UNUSED(sender),
     void *US_UNUSED(extra)
 )
 
@@ -302,7 +302,7 @@ static bool us_test_osc_dispatch_media_mute(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    us_osc_sender_t *sender,
+    us_osc_sender_t *US_UNUSED(sender),
     void *US_UNUSED(extra)
 )
 {
@@ -326,7 +326,7 @@ static bool us_test_osc_dispatch_media_invert(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    us_osc_sender_t *sender,
+    us_osc_sender_t *US_UNUSED(sender),
     void *US_UNUSED(extra)
 )
 {
@@ -350,7 +350,7 @@ static bool us_test_osc_dispatch_media_raw(
     struct us_osc_dispatch_s *US_UNUSED(self),
     const us_osc_msg_t *msg,
     const us_osc_dispatch_index_t *index,
-    us_osc_sender_t *sender,
+    us_osc_sender_t *US_UNUSED(sender),
     void *US_UNUSED(extra)
 )
 {

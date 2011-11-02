@@ -125,7 +125,7 @@ bool us_osc_multisender_init( us_osc_multisender_t *self )
     return true;
 }
 
-void us_osc_multisender_destroy( us_osc_sender_t *self )
+void us_osc_multisender_destroy( us_osc_sender_t *US_UNUSED(self) )
 {
 }
 

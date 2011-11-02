@@ -918,10 +918,10 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
     bool r=true;
     size_t i;
     char escaped_key_name[128]="";
-    int escaped_key_name_len=0;
+    size_t escaped_key_name_len=0;
     char *escaped_key_ptr = &escaped_key_name[0];
     char escaped_value[2048]="";
-    int escaped_value_len=0;
+    size_t escaped_value_len=0;
     char *escaped_value_ptr = &escaped_value[0];
     char unescaped_key_name[128]="";
     char unescaped_value[2048]="";

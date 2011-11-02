@@ -110,9 +110,9 @@ bool us_mtc_parser_parse_qf(
             self->m_forward=true;
             self->m_moving=true;
         }
-        else if( 	(self->m_last_nibble == 0 && nibble_num == 7) ||
-                    (self->m_last_nibble == (int)(nibble_num+1))
-               )
+        else if( (self->m_last_nibble == 0 && nibble_num == 7) ||
+                (self->m_last_nibble == (int)(nibble_num+1))
+        )
         {
             /* we are going backward */
             self->m_forward=false;
@@ -275,6 +275,7 @@ bool us_mtc_parser_parse_sysex(
         self->m_nibbles[7] = ((self->m_last_formed_time.m_hour>>4) & 0x1) | ((type<<1) & 0xE);
         self->m_first_nibble = -1;
         self->m_last_nibble = -1;
+        us_net_timeout_add( &self->m_timeout_timestamp, cur_time, 1000000 );
     }
     return true;
 }
