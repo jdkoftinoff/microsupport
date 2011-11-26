@@ -45,7 +45,6 @@ void us_daemon_daemonize(
     const char * identity,
     const char * home_dir,
     const char * pid_file,
-    const char * lock_file,
     const char * new_uid
 )
 {
@@ -81,6 +80,11 @@ void us_daemon_daemonize(
         if( pid_fd>=0 )
         {
             char tmpbuf[64];
+			if( lockf(pid_fd,F_TLOCK,0)<0)
+			{
+				us_log_error( "Unable to lock pid file: %s", us_daemon_pid_file_name );
+				abort();
+			}
             sprintf( tmpbuf, "%ld\n", (long)getpid() );
             int len = strlen(tmpbuf);
             if( write( pid_fd, tmpbuf, len)!=len )
@@ -96,11 +100,6 @@ void us_daemon_daemonize(
             us_log_error("Error creating pid file: %s", us_daemon_pid_file_name );
             abort();
         }
-    }
-    if( lockf(pid_fd,F_TLOCK,0)<0)
-    {
-        us_log_error( "Unable to lock pid file: %s", us_daemon_pid_file_name );
-        abort();
     }
     if( real_daemon )
     {
