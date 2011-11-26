@@ -287,6 +287,62 @@ static inline void prefix ## _set_ ## fieldname( void *base, type new_field_valu
     us_bits_set_octlet_bitfield( base, octet_offset_of_octlet, msb, lsb, (uint64_t)new_field_value ); \
 } 
 
+/* bits */
+
+#define US_BITS_MAP_OCTET_BIT( prefix, fieldname, type, octet_offset_of_octet, bit ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_octet_bit(base, octet_offset_of_octet, bit ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_octet_bit( base, octet_offset_of_octet, bit, new_field_value ? true : false ); \
+} 
+
+
+
+#define US_BITS_MAP_DOUBLET_BIT( prefix, fieldname, type, octet_offset_of_doublet, bit ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_doublet_bit(base, octet_offset_of_doublet, bit ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_doublet_bit( base, octet_offset_of_doublet, bit,  new_field_value ? true : false ); \
+} 
+
+
+
+#define US_BITS_MAP_QUADLET_BIT( prefix, fieldname, type, octet_offset_of_quadlet, bit ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_quadlet_bit(base, octet_offset_of_quadlet, bit ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_quadlet_bit( base, octet_offset_of_quadlet, bit,  new_field_value ? true : false ); \
+} 
+
+#define US_BITS_MAP_SEXLET_BIT( prefix, fieldname, type, octet_offset_of_sexlet, bit ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_sexlet_bit(base, octet_offset_of_sexlet, bit ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_sexlet_bit( base, octet_offset_of_sexlet, bit,  new_field_value ? true : false ); \
+} 
+
+
+#define US_BITS_MAP_OCTLET_BITD( prefix, fieldname, type, octet_offset_of_octlet, bit ) \
+static inline type prefix ## _get_ ## fieldname( const void *base ) \
+{ \
+    return (type)us_bits_get_octlet_bit(base, octet_offset_of_octlet, bit ); \
+} \
+static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
+{ \
+    us_bits_set_octlet_bit( base, octet_offset_of_octlet, bit, new_field_value ? true : false); \
+} 
 
 
 
@@ -476,6 +532,87 @@ static inline void prefix ## _set_ ## fieldname( void *base, type new_field_valu
         us_bits_set_octlet(base, offset, v);
     }
 
+    /* bits */
+
+    static inline
+    bool us_bits_get_octet_bit( const void *base, uint16_t offset, uint16_t bit )
+    {
+        uint8_t v=us_bits_get_octet(base, offset);
+        bool r=US_BITS_GET_OCTET_BIT(v, bit);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_octet_bit( void *base, uint16_t offset, uint16_t bit, bool newbits )
+    {
+        uint8_t v=us_bits_get_octet(base, offset);
+        v=US_BITS_SET_OCTET_BIT_IF(v, bit, newbits);
+        us_bits_set_octet(base, offset, v);
+    }
+
+    static inline
+    bool us_bits_get_doublet_bit( const void *base, uint16_t offset, uint16_t bit )
+    {
+        uint32_t v=us_bits_get_doublet(base, offset);
+        bool r=US_BITS_GET_DOUBLET_BIT(v, bit);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_doublet_bit( void *base, uint16_t offset, uint16_t bit, bool newbits )
+    {
+        uint16_t v=us_bits_get_doublet(base, offset);
+        v=US_BITS_SET_DOUBLET_BIT_IF(v, bit, newbits);
+        us_bits_set_doublet(base, offset, v);
+    }
+
+    static inline
+    bool us_bits_get_quadlet_bit( const void *base, uint16_t offset, uint16_t bit )
+    {
+        uint32_t v=us_bits_get_quadlet(base, offset);
+        bool r=US_BITS_GET_QUADLET_BIT(v, bit);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_quadlet_bit( void *base, uint16_t offset, uint16_t bit, bool newbits )
+    {
+        uint32_t v=us_bits_get_quadlet(base, offset);
+        v=US_BITS_SET_QUADLET_BIT_IF(v, bit, newbits);
+        us_bits_set_quadlet(base, offset, v);
+    }
+
+    static inline
+    bool us_bits_get_sexlet_bit( const void *base, uint16_t offset, uint16_t bit)
+    {
+        uint64_t v=us_bits_get_octlet(base, offset);
+        bool r=US_BITS_GET_SEXLET_BIT(v, bit);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_sexlet_bit( void *base, uint16_t offset, uint16_t bit, bool newbits )
+    {
+        uint64_t v=us_bits_get_octlet(base, offset);
+        v=US_BITS_SET_SEXLET_BIT_IF(v, bit, newbits);
+        us_bits_set_sexlet(base, offset, v);
+    }
+
+    static inline
+    bool us_bits_get_octlet_bit( const void *base, uint16_t offset, uint16_t bit )
+    {
+        uint64_t v=us_bits_get_octlet(base, offset);
+        bool r=US_BITS_GET_OCTLET_BIT(v, bit);
+        return r;
+    }
+
+    static inline
+    void us_bits_set_octlet_bit( void *base, uint16_t offset, uint16_t bit, bool newbits )
+    {
+        uint64_t v=us_bits_get_octlet(base, offset);
+        v=US_BITS_SET_OCTLET_BIT_IF(v, bit, newbits);
+        us_bits_set_octlet(base, offset, v);
+    }
 
 #ifdef __cplusplus
 }
