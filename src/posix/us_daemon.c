@@ -6,6 +6,7 @@
 #if defined(US_CONFIG_POSIX)
 
 static char us_daemon_pid_file_name[1024];
+static int us_daemon_pid_fd=-1;
 
 void us_daemon_drop_root(
     const char * uid_name
@@ -40,6 +41,7 @@ void us_daemon_drop_root(
     }
 }
 
+
 void us_daemon_daemonize(
     bool real_daemon,
     const char * identity,
@@ -73,34 +75,6 @@ void us_daemon_daemonize(
     {
         us_daemon_drop_root(new_uid);
     }
-    umask(027);
-    if( strlen(us_daemon_pid_file_name)>0 )
-    {
-        int pid_fd = open( us_daemon_pid_file_name, O_CREAT | O_TRUNC | O_WRONLY | O_NOFOLLOW, 0640 );
-        if( pid_fd>=0 )
-        {
-            char tmpbuf[64];
-			if( lockf(pid_fd,F_TLOCK,0)<0)
-			{
-				us_log_error( "Unable to lock pid file: %s", us_daemon_pid_file_name );
-				abort();
-			}
-            sprintf( tmpbuf, "%ld\n", (long)getpid() );
-            int len = strlen(tmpbuf);
-            if( write( pid_fd, tmpbuf, len)!=len )
-            {
-                us_log_error( "Error writing pid file: %s", us_daemon_pid_file_name );
-                abort();
-            }
-            close( pid_fd );
-            atexit( us_daemon_end );
-        }
-        else
-        {
-            us_log_error("Error creating pid file: %s", us_daemon_pid_file_name );
-            abort();
-        }
-    }
     if( real_daemon )
     {
         int fd;
@@ -112,6 +86,33 @@ void us_daemon_daemonize(
         dup2(fd, STDIN_FILENO);
         dup2(fd, STDOUT_FILENO);
         dup2(fd, STDERR_FILENO);
+    }
+    umask(027);
+    if( strlen(us_daemon_pid_file_name)>0 )
+    {
+        us_daemon_pid_fd = open( us_daemon_pid_file_name, O_CREAT | O_TRUNC | O_WRONLY | O_NOFOLLOW, 0640 );
+        if( us_daemon_pid_fd>=0 )
+        {
+            char tmpbuf[64];
+			if( lockf(us_daemon_pid_fd,F_TLOCK,0)<0)
+			{
+				us_log_error( "Unable to lock pid file: %s", us_daemon_pid_file_name );
+				abort();
+			}
+            sprintf( tmpbuf, "%ld\n", (long)getpid() );
+            int len = strlen(tmpbuf);
+            if( write( us_daemon_pid_fd, tmpbuf, len)!=len )
+            {
+                us_log_error( "Error writing pid file: %s", us_daemon_pid_file_name );
+                abort();
+            }
+            atexit( us_daemon_end );
+        }
+        else
+        {
+            us_log_error("Error creating pid file: %s", us_daemon_pid_file_name );
+            abort();
+        }
     }
     us_daemon_prepare_child_start();
 }
@@ -139,6 +140,7 @@ pid_t us_daemon_fork( void )
 
 void us_daemon_end(void)
 {
+	close( us_daemon_pid_fd );
     if( strlen(us_daemon_pid_file_name)>0 )
     {
         if( unlink( us_daemon_pid_file_name )<0 )
