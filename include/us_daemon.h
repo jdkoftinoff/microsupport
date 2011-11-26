@@ -48,6 +48,7 @@ extern "C"
         const char * identity,
         const char * home_dir,
         const char * pid_file,
+        const char * lock_file,
         const char * new_uid
     );
 
