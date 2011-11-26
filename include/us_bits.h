@@ -80,6 +80,7 @@ extern "C"
 #define US_BITS_OCTET_MASK_BIT(bit) ((~US_BITS_OCTET_BIT(bit))&0xff)
 #define US_BITS_DOUBLET_MASK_BIT(bit) ((~US_BITS_DOUBLET_BIT(bit))&0xffff)
 #define US_BITS_QUADLET_MASK_BIT(bit) ((~US_BITS_QUADLET_BIT(bit))&0xffffffff)
+#define US_BITS_SEXLET_MASK_BIT(bit) ((~US_BITS_SEXLET_BIT(bit))&0xffffffffffff)
 #define US_BITS_OCTLET_MASK_BIT(bit) ((~US_BITS_OCTLET_BIT(bit))&0xffffffffffffffff)
 
 #define US_BITS_IS_BITVALUE_SET( value, bit_value ) (((value)&(bit_value))!=0)
@@ -187,8 +188,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_octet( base, octet_offset_of_octet, (uint8_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 #define US_BITS_MAP_DOUBLET( prefix, fieldname, type, octet_offset_of_doublet ) \
 static inline type prefix ## _get_ ## fieldname( const void *base ) \
@@ -198,8 +198,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_doublet( base, octet_offset_of_doublet, (uint16_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 #define US_BITS_MAP_QUADLET( prefix, fieldname, type, octet_offset_of_quadlet ) \
 static inline type prefix ## _get_ ## fieldname( const void *base ) \
@@ -209,8 +208,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_quadlet( base, octet_offset_of_quadlet, (uint32_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+}
 
 #define US_BITS_MAP_SEXLET( prefix, fieldname, type, octet_offset_of_sexlet ) \
 static inline type prefix ## _get_ ## fieldname( const void *base ) \
@@ -220,8 +218,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_sexlet( base, octet_offset_of_sexlet, (uint64_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 #define US_BITS_MAP_OCTLET( prefix, fieldname, type, octet_offset_of_octlet ) \
 static inline type prefix ## _get_ ## fieldname( const void *base ) \
@@ -231,8 +228,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_octlet( base, octet_offset_of_octlet, (uint64_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 
 
@@ -244,8 +240,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_octet_bitfield( base, octet_offset_of_octet, msb, lsb, (uint8_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 
 
@@ -257,8 +252,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_doublet_bitfield( base, octet_offset_of_doublet, msb, lsb, (uint16_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 
 
@@ -270,8 +264,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_quadlet_bitfield( base, octet_offset_of_quadlet, msb, lsb, (uint32_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 #define US_BITS_MAP_SEXLET_BITFIELD( prefix, fieldname, type, octet_offset_of_sexlet, msb, lsb ) \
 static inline type prefix ## _get_ ## fieldname( const void *base ) \
@@ -281,8 +274,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_sexlet_bitfield( base, octet_offset_of_sexlet, msb, lsb, (uint32_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 
 #define US_BITS_MAP_OCTLET_BITFIELD( prefix, fieldname, type, octet_offset_of_octlet, msb, lsb ) \
@@ -293,8 +285,7 @@ static inline type prefix ## _get_ ## fieldname( const void *base ) \
 static inline void prefix ## _set_ ## fieldname( void *base, type new_field_value ) \
 { \
     us_bits_set_octlet_bitfield( base, octet_offset_of_octlet, msb, lsb, (uint64_t)new_field_value ); \
-} \
-extern void * us_bits_map_dummy
+} 
 
 
 
