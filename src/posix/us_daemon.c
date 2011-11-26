@@ -50,7 +50,7 @@ void us_daemon_daemonize(
 )
 {
     /* remember the pid file name */
-	us_strncpy( us_daemon_pid_file_name, pid_file, 1024 );
+    us_strncpy( us_daemon_pid_file_name, pid_file, 1024 );
     if( strlen(home_dir)>0 )
     {
         mkdir(home_dir,0750);
@@ -97,7 +97,7 @@ void us_daemon_daemonize(
             abort();
         }
     }
-    if( lockf(pid_fd,F_TLOCK,0)<0) 
+    if( lockf(pid_fd,F_TLOCK,0)<0)
     {
         us_log_error( "Unable to lock pid file: %s", us_daemon_pid_file_name );
         abort();
