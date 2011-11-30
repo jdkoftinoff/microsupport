@@ -90,7 +90,7 @@ void us_daemon_daemonize(
     umask(027);
     if( strlen(us_daemon_pid_file_name)>0 )
     {
-        us_daemon_pid_fd = open( us_daemon_pid_file_name, O_CREAT | O_TRUNC | O_WRONLY | O_NOFOLLOW, 0640 );
+        us_daemon_pid_fd = open( us_daemon_pid_file_name, O_CREAT | O_TRUNC | O_WRONLY , 0640 );
         if( us_daemon_pid_fd>=0 )
         {
             char tmpbuf[64];
