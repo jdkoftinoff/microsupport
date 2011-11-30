@@ -1,6 +1,7 @@
 #include "us_world.h"
+#ifdef __linux__
 #include <linux/if_packet.h>
-
+#endif
 #include "us_rawnet.h"
 
 
