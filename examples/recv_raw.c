@@ -6,9 +6,12 @@
 #include "us_rawnet.h"
 
 #ifdef __linux__
-void join_multicast_group(int fd,char * interface_name) {
+void join_multicast_group(int fd,char * interface_name,int protocol) {
     struct ifreq ifr;
     struct packet_mreq mreq;
+    struct sockaddr_ll saddr;
+    int interface_id;
+
     memset(&ifr,0,sizeof(ifr));
     strncpy(ifr.ifr_name,interface_name, sizeof(ifr.ifr_name)-1 );
     if ( ioctl(fd ,SIOCGIFINDEX,&ifr)<0 )
@@ -16,8 +19,20 @@ void join_multicast_group(int fd,char * interface_name) {
         close( fd );
         return;
     }
+    interface_id = ifr.ifr_ifindex;
+
+    memset(&saddr,0,sizeof(saddr));
+    saddr.sll_family = AF_PACKET;
+    saddr.sll_ifindex = interface_id;
+    saddr.sll_pkttype = PACKET_MULTICAST;
+    saddr.sll_protocol = htons(protocol);
+    if(bind(fd, (struct sockaddr *) &saddr, sizeof(saddr)) < 0) {
+		perror("bind");
+		return;
+	}
+
     memset(&mreq,0,sizeof(mreq));
-    mreq.mr_ifindex=ifr.ifr_ifindex;
+    mreq.mr_ifindex=interface_id;
     mreq.mr_type=PACKET_MR_MULTICAST;
     mreq.mr_alen=6;
     mreq.mr_address[0]=0x91;
@@ -44,7 +59,7 @@ int main()
         uint8_t buf[2048];
         struct sockaddr_ll src_addr;
 
-        join_multicast_group(fd,"eth1");
+        join_multicast_group(fd,"eth1",0x22f0);
 
         socklen_t src_addr_len = sizeof(src_addr);
         int buf_len=0;
