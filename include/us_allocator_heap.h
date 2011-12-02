@@ -31,15 +31,16 @@
 #include "us_world.h"
 #include "us_allocator.h"
 
-/**
-   \addtogroup us_allocator Memory Allocator
-*/
-/*@{*/
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+    /**
+       \addtogroup us_allocator Memory Allocator
+    */
+    /*@{*/
+
 
 
     /**< Doubly linked list for a single free or allocated block */
@@ -112,10 +113,12 @@ extern "C"
 
     void us_allocator_heap_validate( us_allocator_heap_t *self );
 
+    void us_allocator_heap_validate_block( us_allocator_heap_block_t *block );
+
+
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

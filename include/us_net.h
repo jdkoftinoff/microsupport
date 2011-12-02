@@ -44,7 +44,7 @@ extern "C"
     /** \addtogroup us_net
      */
     /*@{*/
-#if defined(US_CONFIG_POSIX)
+#if defined(US_CONFIG_POSIX) || defined(US_CONFIG_WIN32)
     struct addrinfo *
     us_net_get_addrinfo (
         const char *ip_addr,
@@ -89,21 +89,21 @@ extern "C"
     void
     us_net_timeout_add (
         struct timeval *result,
-        struct timeval *cur_time,
+        const struct timeval *cur_time,
         uint32_t microseconds_to_add
     );
 
     bool
     us_net_timeout_calc (
         struct timeval *result,
-        struct timeval *cur_time,
-        struct timeval *next_time
+        const struct timeval *cur_time,
+        const struct timeval *next_time
     );
 
     bool
     us_net_timeout_hit (
-        struct timeval *cur_time,
-        struct timeval *next_time
+        const struct timeval *cur_time,
+        const struct timeval *next_time
     );
 
     bool
@@ -114,7 +114,6 @@ extern "C"
     );
 
 #endif
-
 #ifdef __cplusplus
 }
 #endif

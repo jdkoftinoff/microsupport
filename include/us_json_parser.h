@@ -161,11 +161,9 @@ extern "C"
     */
     extern int us_json_parser_is_legal_white_space_string ( const char* s );
 
-
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif
 

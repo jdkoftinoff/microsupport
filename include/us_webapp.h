@@ -32,7 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 
 #include "us_http_server.h"
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -203,8 +202,6 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
-
 
 #endif
 

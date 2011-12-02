@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 
-bool us_parse_hexdig ( uint8_t *val, const char *buf, int buf_len, int *buf_pos )
+bool us_parse_hexdig ( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos )
 {
     bool r = false;
     if ( *buf_pos < buf_len )
@@ -55,7 +55,7 @@ bool us_parse_hexdig ( uint8_t *val, const char *buf, int buf_len, int *buf_pos 
     return r;
 }
 
-bool us_parse_hexoctet ( uint8_t *val, const char *buf, int buf_len, int *buf_pos )
+bool us_parse_hexoctet ( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos )
 {
     bool r = true;
     uint8_t high = 0;

@@ -30,7 +30,7 @@
 
 #include "us_midi.h"
 
-const signed char us_midi_lut_msglen[16] =
+const int8_t us_midi_lut_msglen[16] =
 {
     0, 0, 0, 0, 0, 0, 0, 0,
     3, /**< 0x80=note off, 3 bytes */
@@ -43,7 +43,7 @@ const signed char us_midi_lut_msglen[16] =
     -1 /**< 0xf0=other things. may vary. */
 };
 
-const signed char us_midi_lut_sysmsglen[16] =
+const int8_t us_midi_lut_sysmsglen[16] =
 {
     -1,/**< 0xf0=sysex start. may vary */
     2, /**< 0xf1=MIDI Time Code. 2 bytes */
@@ -117,7 +117,7 @@ const char * us_midi_msg_to_text ( const us_midi_msg_t *self, char *txt, int max
     char buf[64];
     int buf_len = sizeof ( buf );
     int len = us_midi_msg_get_length ( self );
-    if( max_len<64 )
+    if ( max_len<64 )
     {
         return 0;
     }

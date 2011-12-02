@@ -40,13 +40,23 @@ extern "C"
 {
 #endif
 
-#define US_GET_BYTE_3(v) (uint8_t)((( (v) & 0xff000000) >> 24)&0xff)
-#define US_GET_BYTE_2(v) (uint8_t)((( (v) & 0xff0000) >> 16)&0xff)
-#define US_GET_BYTE_1(v) (uint8_t)((( (v) & 0xff00) >> 8)&0xff)
-#define US_GET_BYTE_0(v) (uint8_t)((( (v) & 0xff) >> 0)&0xff)
+#define US_GET_BYTE_7(v) (uint8_t)((( (v)) >> 56)&0xff)
+#define US_GET_BYTE_6(v) (uint8_t)((( (v)) >> 48)&0xff)
+#define US_GET_BYTE_5(v) (uint8_t)((( (v)) >> 40)&0xff)
+#define US_GET_BYTE_4(v) (uint8_t)((( (v)) >> 32)&0xff)
+#define US_GET_BYTE_3(v) (uint8_t)((( (v)) >> 24)&0xff)
+#define US_GET_BYTE_2(v) (uint8_t)((( (v)) >> 16)&0xff)
+#define US_GET_BYTE_1(v) (uint8_t)((( (v)) >> 8)&0xff)
+#define US_GET_BYTE_0(v) (uint8_t)((( (v)) >> 0)&0xff)
 
 #define US_COUNTOF(x) (sizeof(x)/sizeof(x[0]))
 
+#ifdef US_UNUSED
+#elif defined(__GNUC__)
+# define US_UNUSED(x) US_UNUSED_ ## x __attribute__((unused))
+#else
+# define US_UNUSED(x) US_UNUSED_ ## x
+#endif
 
 #if US_ENABLE_BSD_SOCKETS && !defined(US_NO_DECLARE_CLOSESOCKET)
 # ifndef WIN32
@@ -74,6 +84,7 @@ extern "C"
 #  define US_DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 # endif
 
+
     struct timezone
     {
         int tz_minuteswest; /* minutes W of Greenwich */
@@ -96,14 +107,14 @@ extern "C"
     extern volatile char us_platform_sigterm_seen;
     extern volatile char us_platform_sigint_seen;
 
+#ifdef __cplusplus
+}
+#endif
+
 #if US_ENABLE_LWIP_STACK
 # include "lwip/opt.h"
 # include "lwip/arch.h"
 # include "lwip/api.h"
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 /*@}*/

@@ -30,15 +30,15 @@
 
 #include "us_world.h"
 
-/**
- \addtogroup us_line_parse Direct from ascii line parsing
- */
-/*@{*/
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+    /**
+     \addtogroup us_line_parse Direct from ascii line parsing
+     */
+    /*@{*/
 
     static inline uint16_t us_line_parse_string_len ( void *extra )
     {
@@ -164,10 +164,10 @@ extern "C"
     );
 
 
+
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

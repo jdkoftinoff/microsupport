@@ -31,17 +31,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 
 #include "us_allocator.h"
-
-/**
- \addtogroup us_print  Print Buffers
- */
-/*@{*/
-
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+    /**
+     \addtogroup us_print  Print Buffers
+     */
+    /*@{*/
+
 
     /** us_print_t
 
@@ -232,10 +231,10 @@ extern "C"
 
 #endif
 
+
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

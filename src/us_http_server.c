@@ -58,7 +58,7 @@ bool us_http_server_handler_init(
             max_response_buffer_size
         );
     self->m_base.m_base.destroy = us_http_server_handler_destroy;
-    if( r )
+    if ( r )
     {
         int32_t local_allocator_size = US_HTTP_SERVER_HANDLER_LOCAL_BUFFER_SIZE + max_response_buffer_size;
         self->m_local_allocator_buffer = us_new_array(
@@ -68,21 +68,21 @@ bool us_http_server_handler_init(
                                          );
         self->m_request_header = 0;
         self->m_response_header = 0;
-        if( self->m_local_allocator_buffer )
+        if ( self->m_local_allocator_buffer )
         {
             us_simple_allocator_init( &self->m_local_allocator, self->m_local_allocator_buffer, local_allocator_size );
             self->m_request_header = us_http_request_header_create( &self->m_local_allocator.m_base );
             self->m_response_header = us_http_response_header_create( &self->m_local_allocator.m_base );
             self->m_response_content = us_buffer_create(&self->m_local_allocator.m_base, max_response_buffer_size );
             self->m_director = director;
-            if( self->m_request_header && self->m_response_header && self->m_response_content )
+            if ( self->m_request_header && self->m_response_header && self->m_response_content )
             {
                 us_http_server_handler_set_state_waiting_for_connection( self );
                 r=true;
             }
         }
     }
-    if( !r )
+    if ( !r )
     {
         us_log_error( "Unable to init http server handler");
         self->m_base.m_base.destroy( &self->m_base.m_base );
@@ -96,19 +96,19 @@ void us_http_server_handler_destroy(
 {
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     us_log_tracepoint();
-    if( self->m_request_header )
+    if ( self->m_request_header )
     {
         self->m_request_header->destroy( self->m_request_header );
     }
-    if( self->m_response_header )
+    if ( self->m_response_header )
     {
         self->m_response_header->destroy( self->m_response_header );
     }
-    if( self->m_response_content )
+    if ( self->m_response_content )
     {
         self->m_response_content->destroy( self->m_response_content );
     }
-    if( self->m_local_allocator_buffer )
+    if ( self->m_local_allocator_buffer )
     {
         self->m_local_allocator.m_base.destroy( &self->m_local_allocator.m_base );
         self->m_base.m_base.m_allocator->free( self->m_base.m_base.m_allocator, self->m_local_allocator_buffer );
@@ -180,11 +180,11 @@ bool us_http_server_handler_connected(
     /* someone made a tcp connection to us, clear our buffers, allocators, and parsers */
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     us_log_tracepoint();
-    if( us_log_level >= US_LOG_LEVEL_DEBUG && addr )
+    if ( us_log_level >= US_LOG_LEVEL_DEBUG && addr )
     {
         char hostname_buf[1024];
         char srv_buf[64];
-        if( getnameinfo( addr, addrlen, hostname_buf, sizeof(hostname_buf), srv_buf, sizeof(srv_buf), NI_NUMERICHOST | NI_NUMERICSERV )==0 )
+        if ( getnameinfo( addr, addrlen, hostname_buf, sizeof(hostname_buf), srv_buf, sizeof(srv_buf), NI_NUMERICHOST | NI_NUMERICSERV )==0 )
         {
             us_log_debug( "accepted connection from '%s port %s'", hostname_buf, srv_buf );
         }
@@ -205,13 +205,13 @@ bool us_http_server_handler_readable_request_header(
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=true;
     us_buffer_t *incoming = &self->m_base.m_incoming_queue;
-    int i;
+    size_t i;
     bool found_end_of_header=false;
     us_log_tracepoint();
     /* scan until "\r\n\r\n" is seen in the incoming queue */
-    for( i=self->m_byte_count; i<us_buffer_readable_count(incoming)-3; i++ )
+    for ( i=self->m_byte_count; i<us_buffer_readable_count(incoming)-3; i++ )
     {
-        if( us_buffer_peek( incoming, i )=='\r' &&
+        if ( us_buffer_peek( incoming, i )=='\r' &&
                 us_buffer_peek( incoming, i+1 )=='\n' &&
                 us_buffer_peek( incoming, i+2 )=='\r' &&
                 us_buffer_peek( incoming, i+3 )=='\n' )
@@ -221,12 +221,12 @@ bool us_http_server_handler_readable_request_header(
             break;
         }
     }
-    if( found_end_of_header )
+    if ( found_end_of_header )
     {
         /* found the end of the header, try parse it */
         r=us_http_server_handler_parse_request_header(self);
         /* if parsing fails, r=false means that the socket will close */
-        if( r )
+        if ( r )
         {
             us_log_debug( "Parsed header" );
         }
@@ -237,7 +237,7 @@ bool us_http_server_handler_readable_request_header(
     }
     else
     {
-        if( i>4 )
+        if ( i>4 )
         {
             self->m_byte_count = i-4;
         }
@@ -256,7 +256,7 @@ bool us_http_server_handler_parse_request_header(
           self->m_request_header,
           &self->m_base.m_incoming_queue
       );
-    if( r )
+    if ( r )
     {
         /* we have parsed a request! */
         /* TODO: see if http version is 1.1 or higher */
@@ -268,7 +268,7 @@ bool us_http_server_handler_parse_request_header(
         /* TODO: try find the expected content length */
         /* Get Content-Length field, if there is one */
         /* Some verbs might have content even if content length field is nonexistant */
-        if( strcmp( self->m_request_header->m_method, "POST" )==0 ||
+        if ( strcmp( self->m_request_header->m_method, "POST" )==0 ||
                 strcmp( self->m_request_header->m_method, "PUT" )==0 )
         {
             /* if we don't have a content_length item, by default todo_count is -1 meaning 'wait for close' */
@@ -296,9 +296,9 @@ bool us_http_server_handler_parse_request_header(
            then we go to receive content state.
            otherwise, we go straight to handling the request immediately
         */
-        if( self->m_todo_count!=0 )
+        if ( self->m_todo_count!=0 )
         {
-            if( self->m_todo_count > us_buffer_readable_count( &self->m_base.m_incoming_queue) )
+            if ( self->m_todo_count > (ssize_t)us_buffer_readable_count( &self->m_base.m_incoming_queue) )
             {
                 us_http_server_handler_set_state_receiving_request_content( self );
                 r=true;
@@ -313,11 +313,11 @@ bool us_http_server_handler_parse_request_header(
             r=us_http_server_handler_dispatch( self );
         }
     }
-    if( !r )
+    if ( !r )
     {
         self->m_base.close( &self->m_base );
     }
-    if( r )
+    if ( r )
     {
         us_log_debug( "Response code is %d, content length is %ld", self->m_response_header->m_code, us_buffer_readable_count( self->m_response_content) );
     }
@@ -332,7 +332,7 @@ bool us_http_server_handler_dispatch(
     us_buffer_t *incoming = &self->m_base.m_incoming_queue;
     us_buffer_t *outgoing = &self->m_base.m_outgoing_queue;
     us_log_tracepoint();
-    if( self->m_director->dispatch(
+    if ( self->m_director->dispatch(
                 self->m_director,
                 self->m_request_header,
                 incoming,
@@ -344,12 +344,12 @@ bool us_http_server_handler_dispatch(
               self->m_response_header,
               outgoing
           );
-        if( r )
+        if ( r )
         {
             /* Send content if it was not a HEAD request */
-            if( strcmp(self->m_request_header->m_method,"HEAD")!=0 )
+            if ( strcmp(self->m_request_header->m_method,"HEAD")!=0 )
             {
-                if( us_buffer_writable_count( outgoing ) > us_buffer_readable_count( self->m_response_content ) )
+                if ( us_buffer_writable_count( outgoing ) > us_buffer_readable_count( self->m_response_content ) )
                 {
                     us_buffer_write_buffer( outgoing, self->m_response_content );
                     us_http_server_handler_set_state_sending_response(self);
@@ -374,7 +374,7 @@ bool us_http_server_handler_dispatch(
             us_log_error( "unable to flatten response header");
         }
     }
-    if( !r )
+    if ( !r )
     {
         self->m_base.close( &self->m_base );
     }
@@ -391,11 +391,11 @@ bool us_http_server_handler_readable_request_content(
     us_log_tracepoint();
     /* if content length is -1, we read until close */
     /* if content length is non zero, we read until incoming queue contains that much */
-    if( self->m_todo_count == -1 )
+    if ( self->m_todo_count == -1 )
     {
         r=true;
     }
-    else if( us_buffer_readable_count(incoming) >= self->m_todo_count )
+    else if ( (ssize_t)us_buffer_readable_count(incoming) >= self->m_todo_count )
     {
         us_log_debug("got request content of %d bytes", self->m_todo_count );
         r=us_http_server_handler_dispatch( self );
@@ -410,7 +410,7 @@ bool us_http_server_handler_eof_request_content(
     us_http_server_handler_t *self = (us_http_server_handler_t *)self_;
     bool r=false;
     us_log_tracepoint();
-    if( self->m_todo_count ==-1 )
+    if ( self->m_todo_count ==-1 )
     {
         /* when content length is unknown then eof means end of request content, time to dispatch request */
         r=us_http_server_handler_dispatch( self );

@@ -32,19 +32,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_allocator.h"
 
-/**
- \addtogroup us_allocator Memory Allocator
- */
-/*@{*/
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+    /**
+     \addtogroup us_allocator Memory Allocator
+     */
+    /*@{*/
 
 #if US_ENABLE_PRINTING
 
 #include "us_print.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     /** us_simple_allocator_print
 
@@ -58,12 +59,12 @@ extern "C"
         us_print_t *printer
     );
 
+
+#endif
+
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-#endif
-
-/*@}*/
 
 #endif

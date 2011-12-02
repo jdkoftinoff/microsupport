@@ -7,6 +7,7 @@
 #include "us_logger_printer.h"
 
 #include "us_testutil.h"
+#include "us_test_http_server_main.h"
 
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -47,28 +48,28 @@ static bool us_test_http_server ( void )
     us_allocator_t *allocator = us_testutil_sys_allocator;
     us_webapp_director_t director;
     us_webapp_diag_t *diag_app = (us_webapp_diag_t *)us_webapp_diag_create( allocator );
-    if( diag_app && us_webapp_director_init( &director, allocator ) )
+    if ( diag_app && us_webapp_director_init( &director, allocator ) )
     {
         us_http_server_handler_t *handler = (us_http_server_handler_t *)us_http_server_handler_create( allocator );
         us_webapp_director_add_404_app( &director, &diag_app->m_base );
-        if( handler )
+        if ( handler )
         {
-            if( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, &director ) )
+            if ( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, &director ) )
             {
                 us_buffer_t *data_to_server = &handler->m_base.m_incoming_queue;
                 us_buffer_t *data_from_server = &handler->m_base.m_outgoing_queue;
                 const char *request = "GET /some/path HTTP/1.1\r\nHost: localhost:80\r\nConnection: Close\r\n\r\n";
                 handler->m_base.connected( &handler->m_base, 0, 0 );
                 us_buffer_write( data_to_server, (uint8_t *)request, strlen( request));
-                if( handler->m_base.readable )
+                if ( handler->m_base.readable )
                 {
                     handler->m_base.readable( &handler->m_base );
                 }
-                if( handler->m_base.incoming_eof)
+                if ( handler->m_base.incoming_eof)
                 {
                     handler->m_base.incoming_eof( &handler->m_base );
                 }
-                if( handler->m_base.writable )
+                if ( handler->m_base.writable )
                 {
                     handler->m_base.writable( &handler->m_base );
                 }
@@ -77,9 +78,9 @@ static bool us_test_http_server ( void )
             handler->m_base.m_base.destroy( &handler->m_base.m_base );
             us_delete( allocator, handler );
             handler = (us_http_server_handler_t *)us_http_server_handler_create( allocator );
-            if( handler )
+            if ( handler )
             {
-                if( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, &director ) )
+                if ( us_http_server_handler_init( &handler->m_base.m_base, allocator, 0, 0, 8192, &director ) )
                 {
                     us_buffer_t *data_to_server = &handler->m_base.m_incoming_queue;
                     us_buffer_t *data_from_server = &handler->m_base.m_outgoing_queue;
@@ -87,15 +88,15 @@ static bool us_test_http_server ( void )
                                           "1234567890123456789012345678901234567890";
                     handler->m_base.connected( &handler->m_base, 0, 0 );
                     us_buffer_write( data_to_server, (uint8_t *)request, strlen( request));
-                    if( handler->m_base.readable )
+                    if ( handler->m_base.readable )
                     {
                         handler->m_base.readable( &handler->m_base );
                     }
-                    if( handler->m_base.incoming_eof)
+                    if ( handler->m_base.incoming_eof)
                     {
                         handler->m_base.incoming_eof( &handler->m_base );
                     }
-                    if( handler->m_base.writable )
+                    if ( handler->m_base.writable )
                     {
                         handler->m_base.writable( &handler->m_base );
                     }
@@ -110,7 +111,7 @@ static bool us_test_http_server ( void )
     return r;
 }
 
-int us_test_http_server_main ( int argc, char **argv )
+int us_test_http_server_main ( int argc, const char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

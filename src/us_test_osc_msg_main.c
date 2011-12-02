@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_buffer.h"
 #include "us_osc_msg.h"
+#include "us_test_osc_msg_main.h"
 
 #if US_ENABLE_PRINTING
 #include "us_osc_msg_print.h"
@@ -76,7 +77,7 @@ test_unflatten(
     {
         us_osc_msg_bundle_t *bundle;
         us_log_info( "unflattening bundle" );
-        bundle = us_osc_msg_bundle_unflatten(allocator,buffer,us_buffer_readable_count(buffer));
+        bundle = us_osc_msg_bundle_unflatten(allocator,buffer,us_buffer_readable_count(buffer),0);
         if ( bundle )
         {
             r=true;
@@ -106,7 +107,7 @@ test_unflatten(
     {
         us_osc_msg_t *msg;
         us_log_info( "unflattening message" );
-        msg = us_osc_msg_unflatten( allocator, buffer );
+        msg = us_osc_msg_unflatten( allocator, buffer, 0);
         if ( msg )
         {
             r=true;
@@ -261,7 +262,7 @@ static bool do_test_osc_msg_bundle(
 }
 
 
-int us_test_osc_msg_main( int argc, char **argv )
+int us_test_osc_msg_main( int argc, const char **argv )
 {
     bool r=true;
     r=us_testutil_start(8192,8192,argc,argv);

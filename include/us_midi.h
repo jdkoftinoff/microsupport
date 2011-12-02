@@ -34,7 +34,6 @@
 
 #include "us_allocator.h"
 #include "us_buffer.h"
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -72,7 +71,7 @@ extern "C"
         US_MIDI_STOP  = 0xfc,          /**< Sequence stop message */
         US_MIDI_ACTIVE_SENSE = 0xfe,   /**< Active sense message */
         US_MIDI_META_EVENT = 0xff      /**< 0xff means a meta event in our internal processing. */
-                         };
+    };
 
 
     /**
@@ -708,7 +707,7 @@ extern "C"
         us_midi_sysex_put_byte ( self, ( uint8_t ) ( b & 0xf ) );
     }
 
-    static inline int32_t us_midi_sysex_get_length ( const us_midi_sysex_t *self )
+    static inline size_t us_midi_sysex_get_length ( const us_midi_sysex_t *self )
     {
         return us_buffer_readable_count( self->m_buffer );
     }

@@ -32,20 +32,36 @@
 
 #include "us_world.h"
 #include "us_osc_sender.h"
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 
+
     typedef struct us_osc_sender_udp_s
     {
         us_osc_sender_t m_base;
-        us_reactor_handler_t *m_handler;
+        int m_fd;
+        struct addrinfo *m_bind_addr;
+        struct addrinfo *m_dest_addr;
     } us_osc_sender_udp_t;
 
-    bool us_osc_sender_udp_init( us_osc_sender_udp_t *self, us_reactor_handler_t *m_handler );
+    bool us_osc_sender_udp_init(
+        us_osc_sender_udp_t *self,
+        struct addrinfo *bind_addr,
+        struct addrinfo *dest_addr
+    );
+
+    void us_osc_sender_udp_destroy(
+        us_osc_sender_t *self
+    );
+
+    void us_osc_sender_udp_set_dest_addr(
+        us_osc_sender_udp_t *self,
+        struct addrinfo *dest_addr
+    );
+
     bool us_osc_sender_udp_send_msg(
         us_osc_sender_t *self,
         const us_osc_msg_t *msg

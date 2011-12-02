@@ -99,6 +99,19 @@ bool us_example_reactor_handler_echo_readable (
     us_reactor_handler_tcp_t *self
 );
 
+bool us_example_reactor_echo_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
+
+bool us_example_reactor_quitter_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
 
 us_reactor_handler_t * us_example_reactor_handler_quitter_create ( us_allocator_t *allocator );
 
@@ -132,7 +145,7 @@ bool us_example_reactor_handler_http_init (
 {
     us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
     bool r = us_reactor_handler_tcp_client_init(self_, allocator, fd, extra, queue_buf_size, server_host, server_port, keep_open);
-    if( r )
+    if ( r )
     {
         static const char *req = "GET / HTTP/1.0\r\nHost: "US_EXAMPLE_HTTP_HOST"\r\n\r\n";
         self->readable = us_example_reactor_handler_http_readable;
@@ -166,7 +179,7 @@ bool us_example_reactor_handler_http_readable (
 )
 {
     FILE *f = (FILE *) self->m_base.m_extra;
-    fprintf( f, "HTTP Response data (len=%d):\n", us_buffer_readable_count(&self->m_incoming_queue) );
+    fprintf( f, "HTTP Response data (len=%zu):\n", us_buffer_readable_count(&self->m_incoming_queue) );
     while ( us_buffer_can_read_byte ( &self->m_incoming_queue ) )
     {
         char c = ( char ) us_buffer_read_byte ( &self->m_incoming_queue );

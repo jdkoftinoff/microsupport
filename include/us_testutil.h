@@ -43,6 +43,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_print.h"
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #ifndef US_TESTUTIL_PRINTBUFFER_SIZE
 # define US_TESTUTIL_PRINTBUFFER_SIZE (8192)
 #endif
@@ -51,16 +56,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # define US_TESTUTIL_BUFFER_SIZE_IN_WORDS (4096)
 #endif
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     bool us_testutil_start (
         int32_t sys_allocator_size,
         int32_t session_allocator_size,
         int argc,
-        char **argv
+        const char **argv
     );
 
     void us_testutil_finish ( void );
@@ -93,10 +94,10 @@ extern "C"
 #endif
     extern us_simple_allocator_t us_testutil_session_allocator_impl;
     extern int32_t us_testutil_session_buffer[ US_TESTUTIL_BUFFER_SIZE_IN_WORDS ];
+
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

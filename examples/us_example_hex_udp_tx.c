@@ -19,9 +19,9 @@ int main ( int argc, char **argv )
     struct addrinfo *src_ai = 0;
     const char *ascii_hex_data = 0;
     uint8_t data[1500];
-    int data_len = 0;
-    int pos;
-    int len;
+    size_t data_len = 0;
+    size_t pos;
+    size_t len;
     if ( argc == 2 && strcmp ( "--help", argv[1] ) == 0 )
     {
         fprintf ( stdout, "usage:\n\t%s {hexbytes} {dest ip} {dest port} {src ip} {src port}\n"

@@ -7,6 +7,7 @@
 #include "us_logger_printer.h"
 
 #include "us_testutil.h"
+#include "us_test_http_main.h"
 
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -50,7 +51,7 @@ static bool us_test_http_request ( void )
     bool r = false;
     us_http_request_header_t *req;
     req = us_http_request_header_create( us_testutil_session_allocator );
-    if( req )
+    if ( req )
     {
         r = us_http_request_header_init_get (
                 req,
@@ -74,7 +75,7 @@ static bool us_test_http_request ( void )
                     parsed_req = us_http_request_header_create( us_testutil_session_allocator );
                     if ( parsed_req )
                     {
-                        if( us_http_request_header_parse ( parsed_req, buf ) )
+                        if ( us_http_request_header_parse ( parsed_req, buf ) )
                         {
                             us_log_info ( "parsed request:" );
                             us_buffer_reset ( buf );
@@ -106,7 +107,7 @@ static bool us_test_http_response ( void )
     const char *html = "<html><head><title>Test</title></head><body><p>Hello There</p></body></html>";
     us_http_response_header_t *resp;
     resp = us_http_response_header_create( us_testutil_session_allocator );
-    if( resp )
+    if ( resp )
     {
         r = us_http_response_header_init_ok (
                 resp,
@@ -133,7 +134,7 @@ static bool us_test_http_response ( void )
                     parsed_resp = us_http_response_header_create( us_testutil_session_allocator );
                     if ( parsed_resp )
                     {
-                        if( us_http_response_header_parse ( parsed_resp, buf ) )
+                        if ( us_http_response_header_parse ( parsed_resp, buf ) )
                         {
                             us_log_info ( "parsed response:" );
                             us_buffer_reset ( buf );
@@ -174,7 +175,7 @@ static bool us_test_http ( void )
     return r;
 }
 
-int us_test_http_main ( int argc, char **argv )
+int us_test_http_main ( int argc, const char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

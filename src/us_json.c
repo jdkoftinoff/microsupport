@@ -36,7 +36,7 @@
 us_json_entry_t *us_json_entry_create( us_allocator_t *allocator, const char *key )
 {
     us_json_entry_t *self = us_new( allocator, us_json_entry_t );
-    if( self )
+    if ( self )
     {
         self->m_allocator = allocator;
         self->m_key=key;
@@ -48,7 +48,7 @@ us_json_entry_t *us_json_entry_create( us_allocator_t *allocator, const char *ke
 
 void us_json_entry_destroy( us_json_entry_t *self )
 {
-    if( self->m_next )
+    if ( self->m_next )
     {
         us_json_entry_destroy( self->m_next );
     }
@@ -58,11 +58,11 @@ void us_json_entry_destroy( us_json_entry_t *self )
 
 void us_json_entry_remove_value( us_json_entry_t *self )
 {
-    if( self->m_type == us_json_type_json )
+    if ( self->m_type == us_json_type_json )
     {
         us_json_destroy( self->value.m_value_json );
     }
-    else if( self->m_type == us_json_type_string_buffer )
+    else if ( self->m_type == us_json_type_string_buffer )
     {
         self->value.m_value_string_buffer->destroy( self->value.m_value_string_buffer );
     }
@@ -108,14 +108,14 @@ void us_json_entry_set_value_int32( us_json_entry_t *self, int32_t value )
 bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *buffer )
 {
     bool r=true;
-    if( self->m_key )
+    if ( self->m_key )
     {
         r&=us_buffer_append_string( buffer, "\"" );
         /* TODO: Do json escaping */
         r&=us_buffer_append_string( buffer, self->m_key );
         r&=us_buffer_append_string( buffer, "\" : " );
     }
-    switch( self->m_type )
+    switch ( self->m_type )
     {
     case us_json_type_none:
         r&=us_buffer_append_string( buffer, "null" );
@@ -160,7 +160,7 @@ bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *
 us_json_t *us_json_create( us_allocator_t *allocator )
 {
     us_json_t *self = us_new( allocator, us_json_t );
-    if( self )
+    if ( self )
     {
         self->m_allocator = allocator;
         self->m_is_array = false;
@@ -173,10 +173,10 @@ us_json_t *us_json_create( us_allocator_t *allocator )
 
 void us_json_destroy( us_json_t *self )
 {
-    if( self )
+    if ( self )
     {
         us_json_entry_t *cur = self->m_first_item;
-        if( cur )
+        if ( cur )
         {
             us_json_entry_destroy( cur );
         }
@@ -188,9 +188,9 @@ void us_json_destroy( us_json_t *self )
 
 us_json_entry_t *us_json_append_entry( us_json_t *self, us_json_entry_t *entry )
 {
-    if( self && entry )
+    if ( self && entry )
     {
-        if( self->m_last_item )
+        if ( self->m_last_item )
         {
             self->m_last_item->m_next = entry;
             self->m_last_item = entry;
@@ -201,7 +201,7 @@ us_json_entry_t *us_json_append_entry( us_json_t *self, us_json_entry_t *entry )
             self->m_last_item=entry;
         }
     }
-    if( !self && entry )
+    if ( !self && entry )
     {
         us_json_entry_destroy( entry );
         entry=0;
@@ -212,7 +212,7 @@ us_json_entry_t *us_json_append_entry( us_json_t *self, us_json_entry_t *entry )
 us_json_entry_t *us_json_append_string_ptr( us_json_t *self, const char *key, const char *value )
 {
     us_json_entry_t *entry = us_json_entry_create( self->m_allocator, key );
-    if( entry )
+    if ( entry )
     {
         us_json_entry_set_value_string_ptr( entry, value );
     }
@@ -222,7 +222,7 @@ us_json_entry_t *us_json_append_string_ptr( us_json_t *self, const char *key, co
 us_json_entry_t *us_json_append_int32_ptr( us_json_t *self, const char *key, int32_t *value )
 {
     us_json_entry_t *entry = us_json_entry_create( self->m_allocator, key );
-    if( entry )
+    if ( entry )
     {
         us_json_entry_set_value_int32_ptr( entry, value );
     }
@@ -234,15 +234,15 @@ us_json_t *us_json_append_object( us_json_t *self, const char *key )
 {
     us_json_t *j=0;
     us_json_entry_t *entry = us_json_entry_create( self->m_allocator, key );
-    if( entry )
+    if ( entry )
     {
         j = us_json_create( self->m_allocator );
-        if( j )
+        if ( j )
         {
             us_json_entry_set_value_json( entry, j );
         }
     }
-    if( !us_json_append_entry( self, entry ) )
+    if ( !us_json_append_entry( self, entry ) )
     {
         j=0;
     }
@@ -254,10 +254,10 @@ bool us_json_flatten_to_buffer( const us_json_t *self, us_buffer_t *buffer )
     bool r=true;
     us_json_entry_t *entry=self->m_first_item;
     us_buffer_append_string( buffer, self->m_is_array ? "[ " : "{ " );
-    while( entry )
+    while ( entry )
     {
         us_json_entry_flatten_to_buffer( entry, buffer );
-        if( entry->m_next )
+        if ( entry->m_next )
         {
             us_buffer_append_string( buffer, ",\n" );
         }

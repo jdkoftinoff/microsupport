@@ -32,7 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_allocator.h"
 #include "us_osc_msg.h"
+#include "us_osc_sender.h"
 #include "us_trie.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -62,7 +64,15 @@ extern "C"
         struct us_osc_dispatch_s *self,
         const us_osc_msg_t *msg,
         const struct us_osc_dispatch_index_s *index,
+        us_osc_sender_t *sender,
         void *extra
+    );
+
+    typedef bool (*us_osc_dispatch_notify_proc_t)(
+        struct us_osc_dispatch_s *self,
+        const char *address,
+        const struct us_osc_dispatch_table_s *table_item,
+        const struct us_osc_dispatch_index_s *index
     );
 
     typedef struct us_osc_dispatch_index_s
@@ -124,10 +134,12 @@ extern "C"
         bool (*receive_msg)(
             struct us_osc_dispatch_s *self,
             const us_osc_msg_t * msg,
+            us_osc_sender_t *sender,
             void *extra
         );
         us_allocator_t *allocator;
         us_trie_dyn_t *trie;
+        us_osc_dispatch_notify_proc_t notify;
         us_osc_dispatch_map_t map;
     } us_osc_dispatch_t;
 
@@ -154,9 +166,27 @@ extern "C"
         const us_osc_dispatch_index_t *index_offset
     );
 
+    bool us_osc_dispatch_add_entry_with_notify(
+        us_osc_dispatch_t *self,
+        const char *address_prefix,
+        const us_osc_dispatch_table_t *dispatch_table,
+        const us_osc_dispatch_index_t *index_offset,
+        us_osc_dispatch_notify_proc_t notify_proc
+    );
+
+    bool us_osc_dispatch_add_table_with_notify(
+        us_osc_dispatch_t *self,
+        const char *address_prefix,
+        const us_osc_dispatch_table_t dispatch_table[],
+        const us_osc_dispatch_index_t *index_offset,
+        us_osc_dispatch_notify_proc_t notify_proc
+    );
+
+
     bool us_osc_dispatch_receive_msg(
         us_osc_dispatch_t *self,
         const us_osc_msg_t *msg,
+        us_osc_sender_t *sender,
         void *extra
     );
 
@@ -165,6 +195,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

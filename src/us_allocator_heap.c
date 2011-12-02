@@ -57,34 +57,34 @@ static inline size_t us_allocator_round_down_types ( size_t a )
 
 void us_allocator_heap_validate_block( us_allocator_heap_block_t *block )
 {
-    if( (uint64_t)block < 0x1000 && block!=0 )
+    if ( (uint64_t)block < 0x1000 && block!=0 )
     {
         us_log_error( "block is bad" );
         abort();
     }
-    if( block )
+    if ( block )
     {
-        if( block->m_magic != US_HEAP_MAGIC )
+        if ( block->m_magic != US_HEAP_MAGIC )
         {
             us_log_error( "block->m_magic is bad" );
             abort();
         }
-        if((uint64_t)block->m_next < 0x1000 && (uint64_t)block->m_next !=0 )
+        if ((uint64_t)block->m_next < 0x1000 && (uint64_t)block->m_next !=0 )
         {
             us_log_error( "block->m_next is bad" );
             abort();
         }
-        if( (uint64_t)block->m_prev < 0x1000 && (uint64_t)block->m_prev !=0 )
+        if ( (uint64_t)block->m_prev < 0x1000 && (uint64_t)block->m_prev !=0 )
         {
             us_log_error( "block->m_prev is bad" );
             abort();
         }
-        if( ((uint64_t)block->m_prev !=0) && (block->m_prev->m_next!=block) )
+        if ( ((uint64_t)block->m_prev !=0) && (block->m_prev->m_next!=block) )
         {
             us_log_error( "block->m_prev->m_next is bad" );
             abort();
         }
-        if( ((uint64_t)block->m_next !=0) && (block->m_next->m_prev!=block) )
+        if ( ((uint64_t)block->m_next !=0) && (block->m_next->m_prev!=block) )
         {
             us_log_error( "block->m_next->m_prev is bad" );
             abort();
@@ -103,8 +103,8 @@ bool us_allocator_heap_internal_init( us_allocator_heap_t *self )
     self->m_first->m_magic = US_HEAP_MAGIC;
     self->m_first->m_next = 0;
     self->m_first->m_prev = 0;
-    self->m_first->m_size = - ( self->m_size
-                                - us_allocator_rounded_block_size ); /* negative size means empty */
+    self->m_first->m_size = (size_t)(- (ssize_t)( self->m_size
+                                     - us_allocator_rounded_block_size )); /* negative size means empty */
     /* the first empty block is also our last free block */
     self->m_last_free = self->m_first;
     return true;
@@ -125,7 +125,7 @@ bool us_allocator_heap_init_raw( us_allocator_heap_t *self, void *base, size_t s
 void us_allocator_heap_destroy( us_allocator_t *self_ )
 {
     us_allocator_heap_t *self = (us_allocator_heap_t *)self_;
-    if( self->m_allocated )
+    if ( self->m_allocated )
     {
         free( self->m_memory_base );
         self->m_memory_base = 0;
@@ -209,7 +209,7 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size 
         }
         /* now try find a free block that may be large enough */
         cur = self->m_first;
-        if( cur )
+        if ( cur )
         {
             do
             {
@@ -224,7 +224,7 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size 
             }
             while ( cur != NULL );
         }
-        if( cur == NULL )
+        if ( cur == NULL )
         {
             return 0; /* no memory! return 0 */
         }
@@ -283,7 +283,7 @@ void us_allocator_heap_internal_free ( us_allocator_heap_t *self, void *ptr )
         */
         us_allocator_heap_block_t *block =
             (us_allocator_heap_block_t *) ( ((unsigned long long) ptr) - us_allocator_rounded_block_size );
-        if( block->m_magic != US_HEAP_MAGIC )
+        if ( block->m_magic != US_HEAP_MAGIC )
         {
             us_log_error( "bad magic" );
             abort();

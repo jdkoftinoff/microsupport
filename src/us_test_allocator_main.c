@@ -5,6 +5,7 @@
 #include "us_allocator.h"
 
 #include "us_testutil.h"
+#include "us_test_allocator_main.h"
 
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -37,7 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup us_test_allocator */
 /*@{*/
 
-int us_test_allocator_main ( int argc, char **argv )
+int us_test_allocator_main ( int argc, const char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 2048, 2048, argc, argv ) )

@@ -39,22 +39,22 @@ bool us_webapp_init( us_webapp_t *self, us_allocator_t *allocator )
     return true;
 }
 
-void us_webapp_destroy( us_webapp_t *self )
+void us_webapp_destroy( us_webapp_t *US_UNUSED(self) )
 {
 }
 
-bool us_webapp_path_match(us_webapp_t *self, const char *path )
+bool us_webapp_path_match(us_webapp_t *US_UNUSED(self), const char *US_UNUSED(path) )
 {
     return true;
 }
 
 
 int us_webapp_dispatch(
-    us_webapp_t *self,
-    const us_http_request_header_t *request_header,
-    const us_buffer_t *request_content,
-    us_http_response_header_t *response_header,
-    us_buffer_t *response_content
+    us_webapp_t *US_UNUSED(self),
+    const us_http_request_header_t *US_UNUSED(request_header),
+    const us_buffer_t *US_UNUSED(request_content),
+    us_http_response_header_t *US_UNUSED(response_header),
+    us_buffer_t *US_UNUSED(response_content)
 )
 {
     return -1;
@@ -66,15 +66,15 @@ us_webapp_t *us_webapp_static_buffer_create(
 )
 {
     us_webapp_static_buffer_t *self = us_new( allocator, us_webapp_static_buffer_t );
-    if( self )
+    if ( self )
     {
-        if( !us_webapp_init( &self->m_base, allocator ) )
+        if ( !us_webapp_init( &self->m_base, allocator ) )
         {
             us_webapp_destroy(&self->m_base);
             self=0;
         }
     }
-    if( self )
+    if ( self )
     {
         self->m_base.destroy = us_webapp_static_buffer_destroy;
         self->m_base.dispatch = us_webapp_static_buffer_dispatch;
@@ -96,13 +96,13 @@ us_webapp_t *us_webapp_static_buffer_create_with_buffer(
 )
 {
     us_webapp_static_buffer_t *self = (us_webapp_static_buffer_t *)us_webapp_static_buffer_create( allocator );
-    if( self )
+    if ( self )
     {
         self->m_path = us_strdup( self->m_base.m_allocator, path );
         self->m_content_type = us_strdup( self->m_base.m_allocator, content_type );
         self->m_buffer = buffer;
         self->m_owned_buffer = own_buffer;
-        if( !self->m_path || !self->m_content_type )
+        if ( !self->m_path || !self->m_content_type )
         {
             us_webapp_static_buffer_destroy( &self->m_base );
             self = 0;
@@ -113,20 +113,20 @@ us_webapp_t *us_webapp_static_buffer_create_with_buffer(
 
 us_webapp_t *us_webapp_static_buffer_create_with_string(
     us_allocator_t *allocator,
-    const char *path,
+    const char *US_UNUSED(path),
     const char *content_type,
     const char *str
 )
 {
     us_webapp_static_buffer_t *self=0;
     us_buffer_t *buf = us_buffer_create(allocator,strlen(str));
-    if( buf )
+    if ( buf )
     {
         self = (us_webapp_static_buffer_t *)us_webapp_static_buffer_create( allocator );
-        if( self )
+        if ( self )
         {
             self->m_content_type = us_strdup( self->m_base.m_allocator, content_type );
-            if( self->m_content_type )
+            if ( self->m_content_type )
             {
                 us_buffer_append_string(buf,str);
                 self->m_buffer = buf;
@@ -150,9 +150,9 @@ void us_webapp_static_buffer_destroy(
 )
 {
     us_webapp_static_buffer_t *self = (us_webapp_static_buffer_t *)self_;
-    if( self->m_owned_buffer )
+    if ( self->m_owned_buffer )
     {
-        if( self->m_buffer )
+        if ( self->m_buffer )
         {
             self->m_buffer->destroy( self->m_buffer );
         }
@@ -167,7 +167,7 @@ bool us_webapp_static_buffer_path_match(us_webapp_t *self_, const char *path )
 {
     bool r=false;
     us_webapp_static_buffer_t *self = (us_webapp_static_buffer_t *)self_;
-    if( strcmp( path, self->m_path )==0 )
+    if ( strcmp( path, self->m_path )==0 )
     {
         r=true;
     }
@@ -176,25 +176,25 @@ bool us_webapp_static_buffer_path_match(us_webapp_t *self_, const char *path )
 
 int us_webapp_static_buffer_dispatch(
     us_webapp_t *self_,
-    const us_http_request_header_t *request_header,
-    const us_buffer_t *request_content,
+    const us_http_request_header_t *US_UNUSED(request_header),
+    const us_buffer_t *US_UNUSED(request_content),
     us_http_response_header_t *response_header,
     us_buffer_t *response_content
 )
 {
     us_webapp_static_buffer_t *self = (us_webapp_static_buffer_t *)self_;
     bool r=true;
-    if( self->m_buffer )
+    if ( self->m_buffer )
     {
         r&=us_buffer_write_buffer(response_content, self->m_buffer );
     }
-    if( self->m_content_type )
+    if ( self->m_content_type )
     {
         r&=us_http_response_header_set_content_type ( response_header, self->m_content_type );
     }
     r&=us_http_response_header_set_connection_close ( response_header );
     r&=us_http_response_header_set_content_length ( response_header, us_buffer_readable_count( response_content ) );
-    if( r )
+    if ( r )
     {
         response_header->m_code = 200;
     }
@@ -213,15 +213,15 @@ us_webapp_t *us_webapp_redirect_create(
 )
 {
     us_webapp_redirect_t *self = us_new( allocator, us_webapp_redirect_t );
-    if( self )
+    if ( self )
     {
-        if( !us_webapp_init( &self->m_base, allocator ) )
+        if ( !us_webapp_init( &self->m_base, allocator ) )
         {
             us_webapp_destroy(&self->m_base);
             self=0;
         }
     }
-    if( self )
+    if ( self )
     {
         self->m_base.destroy = us_webapp_redirect_destroy;
         self->m_base.dispatch = us_webapp_redirect_dispatch;
@@ -229,7 +229,7 @@ us_webapp_t *us_webapp_redirect_create(
         self->m_original_path = us_strdup( allocator, original_path );
         self->m_new_path = us_strdup( allocator, new_path );
         self->m_redirect_code = redirect_code;
-        if( !self->m_original_path || !self->m_new_path )
+        if ( !self->m_original_path || !self->m_new_path )
         {
             self->m_base.destroy( &self->m_base );
             self=0;
@@ -252,7 +252,7 @@ bool us_webapp_redirect_path_match(us_webapp_t *self_, const char *path )
 {
     bool r=false;
     us_webapp_redirect_t *self = (us_webapp_redirect_t *)self_;
-    if( strcmp( path, self->m_original_path )==0 )
+    if ( strcmp( path, self->m_original_path )==0 )
     {
         r=true;
     }
@@ -261,10 +261,10 @@ bool us_webapp_redirect_path_match(us_webapp_t *self_, const char *path )
 
 int us_webapp_redirect_dispatch(
     us_webapp_t *self_,
-    const us_http_request_header_t *request_header,
-    const us_buffer_t *request_content,
+    const us_http_request_header_t *US_UNUSED(request_header),
+    const us_buffer_t *US_UNUSED(request_content),
     us_http_response_header_t *response_header,
-    us_buffer_t *response_content
+    us_buffer_t *US_UNUSED(response_content)
 )
 {
     us_webapp_redirect_t *self = (us_webapp_redirect_t *)self_;
@@ -279,15 +279,15 @@ us_webapp_t *us_webapp_diag_create(
 )
 {
     us_webapp_diag_t *self = us_new( allocator, us_webapp_diag_t );
-    if( self )
+    if ( self )
     {
-        if( !us_webapp_init( &self->m_base, allocator ) )
+        if ( !us_webapp_init( &self->m_base, allocator ) )
         {
             us_webapp_destroy(&self->m_base);
             self=0;
         }
     }
-    if( self )
+    if ( self )
     {
         self->m_base.destroy = us_webapp_diag_destroy;
         self->m_base.dispatch = us_webapp_diag_dispatch;
@@ -303,13 +303,13 @@ void us_webapp_diag_destroy(
     us_webapp_destroy(self);
 }
 
-bool us_webapp_diag_path_match(us_webapp_t *self, const char *url )
+bool us_webapp_diag_path_match(us_webapp_t *US_UNUSED(self), const char *US_UNUSED(url) )
 {
     return true;
 }
 
 int us_webapp_diag_dispatch(
-    us_webapp_t *self,
+    us_webapp_t *US_UNUSED(self),
     const us_http_request_header_t *request_header,
     const us_buffer_t *request_content,
     us_http_response_header_t *response_header,
@@ -325,7 +325,7 @@ int us_webapp_diag_dispatch(
     us_buffer_append_string(response_content, request_header->m_version );
     us_buffer_append_string(response_content, "'\r\n\r\n" );
     item=request_header->m_items->m_first;
-    while( item )
+    while ( item )
     {
         us_buffer_append_string(response_content,item->m_key);
         us_buffer_append_string(response_content,": ");
@@ -361,13 +361,13 @@ bool us_webapp_director_init( us_webapp_director_t *self, us_allocator_t *alloca
 void us_webapp_director_destroy( us_webapp_director_t *self )
 {
     us_webapp_t *cur = self->m_apps;
-    while( cur )
+    while ( cur )
     {
         us_webapp_t *next = cur->m_next;
         cur->destroy( cur );
         cur = next;
     }
-    if( self->m_404_app )
+    if ( self->m_404_app )
     {
         self->m_404_app->destroy( self->m_404_app );
     }
@@ -377,9 +377,9 @@ void us_webapp_director_destroy( us_webapp_director_t *self )
 bool us_webapp_director_add_app( us_webapp_director_t *self, us_webapp_t *app )
 {
     bool r=false;
-    if( app )
+    if ( app )
     {
-        if( self->m_last_app )
+        if ( self->m_last_app )
         {
             self->m_last_app->m_next = app;
             self->m_last_app = app;
@@ -411,9 +411,9 @@ int us_webapp_director_dispatch(
     int http_code=-1;
     us_webapp_t *cur = self->m_apps;
     /* TODO: convert path '%' escape codes and '+' into ascii */
-    while( cur && http_code==-1 )
+    while ( cur && http_code==-1 )
     {
-        if( cur->path_match( cur, request_header->m_path ) )
+        if ( cur->path_match( cur, request_header->m_path ) )
         {
             http_code = cur->dispatch(
                             cur,
@@ -423,15 +423,15 @@ int us_webapp_director_dispatch(
                             response_content
                         );
         }
-        if( http_code==-1 )
+        if ( http_code==-1 )
         {
             cur = cur->m_next;
         }
     }
     /* if http_code is still -1 or 404 then no one handled it, pass it to 404 */
-    if( http_code==-1 || http_code==404 )
+    if ( http_code==-1 || http_code==404 )
     {
-        if( self->m_404_app )
+        if ( self->m_404_app )
         {
             http_code = self->m_404_app->dispatch(
                             self->m_404_app,
@@ -454,7 +454,7 @@ int us_webapp_director_dispatch(
         }
     }
     /* if we STILL have -1, then this is an internal server error */
-    if( http_code==-1 )
+    if ( http_code==-1 )
     {
         http_code=500;
         us_http_response_header_init_error(

@@ -58,9 +58,9 @@ struct addrinfo *us_net_get_addrinfo (
     hints.ai_family = AF_UNSPEC;
     hints.ai_protocol = 0;
 
-    if( ip_addr!=0 && *ip_addr=='\0' )
+    if ( ip_addr!=0 && *ip_addr=='\0' )
         ip_addr=0;
-    if( ip_port!=0 && *ip_port=='\0' )
+    if ( ip_port!=0 && *ip_port=='\0' )
         ip_port=0;
 
     do
@@ -290,15 +290,14 @@ int us_net_create_multicast_tx_udp_socket (
         if ( interface_name && *interface_name != '\0' )
         {
             if_index = if_nametoindex ( interface_name );
-            if(  if_index==0 )
+            if (  if_index==0 )
             {
                 us_log_error( "socket: %s interface_name %s unknown", s, interface_name );
                 closesocket(s);
                 return -1;
             }
-
             if (setsockopt(s, IPPROTO_IPV6, IPV6_MULTICAST_IF, &if_index,
-                          sizeof(if_index)) < 0)
+                           sizeof(if_index)) < 0)
             {
                 us_log_error( "socket: %s unable to IPV6_MULTICAST_IF for multicast via interface %s (%d)", s, interface_name, if_index );
                 closesocket(s);
@@ -363,7 +362,7 @@ int us_net_create_tcp_socket (
 
 
 
-void  us_net_timeout_add ( struct timeval *result, struct timeval *cur_time, uint32_t microseconds_to_add )
+void  us_net_timeout_add ( struct timeval *result, const struct timeval *cur_time, uint32_t microseconds_to_add )
 {
     int32_t secs = microseconds_to_add / 1000000;
     int32_t micros = microseconds_to_add % 1000000;
@@ -376,7 +375,11 @@ void  us_net_timeout_add ( struct timeval *result, struct timeval *cur_time, uin
     }
 }
 
-bool  us_net_timeout_calc ( struct timeval *result, struct timeval *cur_time, struct timeval *next_time )
+bool  us_net_timeout_calc (
+    struct timeval *result,
+    const struct timeval *cur_time,
+    const struct timeval *next_time
+)
 {
     bool r = false;
     if ( us_net_timeout_hit ( cur_time, next_time ) )
@@ -399,7 +402,10 @@ bool  us_net_timeout_calc ( struct timeval *result, struct timeval *cur_time, st
     return r;
 }
 
-bool us_net_timeout_hit ( struct timeval *cur_time, struct timeval *next_time )
+bool us_net_timeout_hit (
+    const struct timeval *cur_time,
+    const struct timeval *next_time
+)
 {
     bool r = false;
     if ( cur_time->tv_sec > next_time->tv_sec ||
@@ -426,8 +432,8 @@ us_net_blocking_send(
         {
             cnt=send(sock, data, todo, 0);
         }
-        while(cnt<0 && errno==EINTR);
-        if( cnt<=0)
+        while (cnt<0 && errno==EINTR);
+        if ( cnt<=0)
             break;
         todo-=cnt;
         data+=cnt;

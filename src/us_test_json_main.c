@@ -7,6 +7,7 @@
 #include "us_logger_printer.h"
 
 #include "us_testutil.h"
+#include "us_test_json_main.h"
 
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -48,11 +49,11 @@ static bool us_test_json ( void )
     us_allocator_t *allocator = us_testutil_sys_allocator;
     us_json_t *j = us_json_create( allocator );
     us_buffer_t *b = us_buffer_create( allocator, 1024 );
-    if( !b )
+    if ( !b )
     {
         abort();
     }
-    if( j )
+    if ( j )
     {
         int i;
         us_json_t *a=0;
@@ -63,20 +64,20 @@ static bool us_test_json ( void )
         int32_t histogram[11] = { 1, 3,6,10, 15, 14, 11, 4, 2, 1, 0 };
         static int32_t hitpoints=90210;
         r=true;
-        if( !us_json_append_string_ptr( j, "name", name ) )
+        if ( !us_json_append_string_ptr( j, "name", name ) )
             r=false;
-        if( !us_json_append_int32_ptr( j, "hitpoints", &hitpoints ) )
+        if ( !us_json_append_int32_ptr( j, "hitpoints", &hitpoints ) )
             r=false;
         a=us_json_append_object( j, "address" );
-        if( !us_json_append_string_ptr( a, "city", city ) )
+        if ( !us_json_append_string_ptr( a, "city", city ) )
             r=false;
-        if( !us_json_append_string_ptr( a, "country", country ) )
+        if ( !us_json_append_string_ptr( a, "country", country ) )
             r=false;
         a1=us_json_append_object( j, "histogram" );
         us_json_set_array( a1, true );
-        for( i=0; i<sizeof(histogram)/sizeof(histogram[0]); ++i )
+        for ( i=0; i<(int)(sizeof(histogram)/sizeof(histogram[0])); ++i )
         {
-            if( !us_json_append_int32_ptr( a1, 0, &histogram[i] ))
+            if ( !us_json_append_int32_ptr( a1, 0, &histogram[i] ))
             {
                 r=false;
                 break;
@@ -88,7 +89,7 @@ static bool us_test_json ( void )
         strcpy( city, "Berkeley" );
         strcpy( country, "United States" );
         hitpoints = 999;
-        for( i=0; i<sizeof(histogram)/sizeof(histogram[0]); ++i )
+        for ( i=0; i<(int)(sizeof(histogram)/sizeof(histogram[0])); ++i )
         {
             histogram[i] = i*i;
         }
@@ -98,7 +99,7 @@ static bool us_test_json ( void )
     {
         int i=0;
         int len = us_buffer_readable_count(b);
-        for( i=0; i<len; ++i )
+        for ( i=0; i<len; ++i )
         {
             fprintf( stdout, "%c", us_buffer_peek(b,i) );
         }
@@ -107,7 +108,7 @@ static bool us_test_json ( void )
     return r;
 }
 
-int us_test_json_main ( int argc, char **argv )
+int us_test_json_main ( int argc, const char **argv )
 {
     int r = 1;
     if ( us_testutil_start ( 4096, 4096, argc, argv ) )

@@ -1,7 +1,22 @@
+#if defined(__linux__) 
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/socket.h> 
+#include <arpa/inet.h>
+#include <sys/ioctl.h> 
+#include <linux/sockios.h>
+#include <linux/if_packet.h>
+#include <linux/if_ether.h>
+#include <linux/if_arp.h>
+#include <sys/types.h>
+#include <string.h>       
+#include <errno.h>
+
 #include "us_world.h"
 #include "us_rawnet.h"
 #include "us_logger.h"
-
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -29,35 +44,35 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__linux__) && 0
-
-#include <linux/sockios.h>
-#include <linux/if_packet.h>
-#include <linux/if_ether.h>
-#include <linux/if_arp.h>
-
 int us_rawnet_socket( uint16_t ethertype, uint8_t my_mac[6], int *interface_id, const char *interface_name )
 {
-    int i;
-    struct ifreq ifr;
     int fd=socket(AF_PACKET,SOCK_RAW,htons(ethertype) );
-    if( fd<0 )
-        return -1;
-    strncpy(ifr.ifr_name,interface_name, sizeof(ifr.ifr_name)-1 );
-    if( ioctl(fd ,SIOCGIFINDEX,&ifr)<0 )
+    if( fd>=0 && interface_name ) 
     {
-        close( fd );
-        return -1;
-    }
-    *interface_id = ifr.ifr_ifindex;
-    if( ioctl(fd ,SIOCGIFHWADDR,&ifr)<0 )
-    {
-        close(fd);
-        return -1;
-    }
-    for( i=0; i<6; ++i )
-    {
-        my_mac[i] = (uint8_t)ifr.ifr_hwaddr.sa_data[i];
+        int i;
+        struct ifreq ifr;
+        strncpy(ifr.ifr_name,interface_name, sizeof(ifr.ifr_name)-1 );
+        if ( ioctl(fd ,SIOCGIFINDEX,&ifr)<0 )
+        {
+            close( fd );
+            return -1;
+        }
+        if( interface_id )
+        {
+            *interface_id = ifr.ifr_ifindex;
+        }
+        if ( ioctl(fd ,SIOCGIFHWADDR,&ifr)<0 )
+        {
+            close(fd);
+            return -1;
+        }
+        if( my_mac )
+        {
+            for ( i=0; i<6; ++i )
+            {
+                my_mac[i] = (uint8_t)ifr.ifr_hwaddr.sa_data[i];
+            }
+        }
     }
     return fd;
 }
@@ -76,7 +91,7 @@ int us_rawnet_send( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_m
     socket_address.sll_hatype   = ARPHRD_ETHER;
     socket_address.sll_pkttype  = PACKET_OTHERHOST;
     socket_address.sll_halen    = ETH_ALEN;
-    memcpy(socket_address.sll_addr,src_ac,ETH_ALEN );
+    memcpy(socket_address.sll_addr,src_mac,ETH_ALEN );
     socket_address.sll_addr[6]  = 0x00;
     socket_address.sll_addr[7]  = 0x00;
     memcpy((void*)buffer, (void*)dest_mac, ETH_ALEN);
@@ -87,12 +102,6 @@ int us_rawnet_send( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_m
                   (struct sockaddr*)&socket_address, sizeof(socket_address));
 }
 
-
-int us_rawnet_send_vlan( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_mac[6], uint32_t vlanbits,uint16_t ethertype, void *payload, int payload_len )
-{
-    /* TODO: */
-    return -1;
-}
 
 #endif
 

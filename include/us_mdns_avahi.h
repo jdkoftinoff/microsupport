@@ -31,11 +31,11 @@
 
 #include "us_world.h"
 #include "us_allocator.h"
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
 
 #if US_ENABLE_STDIO
 
@@ -59,8 +59,17 @@ extern "C"
     bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description );
     void us_mdns_avahi_atexit(void);
 
-#endif
+    bool us_mdns_avahi_write_xml(
+        const char *avahi_services_dir,
+        const char *fname,
+        const char *service_name,
+        const char *udp_service_type,
+        const char *udp_port,
+        const char *tcp_service_type,
+        const char *tcp_port
+    );
 
+#endif
 #ifdef __cplusplus
 }
 #endif

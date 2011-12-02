@@ -31,11 +31,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 
 #include "us_osc_msg.h"
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
 
 
     /**
@@ -240,7 +240,6 @@ extern "C"
     );
 
     /*@}*/
-
 
 #ifdef __cplusplus
 }

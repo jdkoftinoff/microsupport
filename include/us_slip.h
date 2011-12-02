@@ -31,16 +31,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 
 #include "us_buffer.h"
-
-/**
- \addtogroup us_slip  Slip Encoding/Decoding ( RFC-1055 http://www.faqs.org/rfcs/rfc1055.html )
- */
-/*@{*/
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+    /**
+     \addtogroup us_slip  Slip Encoding/Decoding ( RFC-1055 http://www.faqs.org/rfcs/rfc1055.html )
+     */
+    /*@{*/
 
 #define US_SLIP_END (0300) /**! indicates end of packet */
 #define US_SLIP_ESC (0333) /**! indicates byte stuffing */
@@ -151,10 +150,9 @@ extern "C"
     );
 
 
+    /*@}*/
 #ifdef __cplusplus
 }
 #endif
-
-/*@}*/
 
 #endif

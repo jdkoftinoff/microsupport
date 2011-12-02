@@ -29,12 +29,12 @@
 */
 
 bool us_trie_dump (
-    us_trie_t *self,
-    const char *prefix,
-    const char *c_filename,
-    const char *h_filename,
-    us_print_t *c_file_printer,
-    us_print_t *h_file_printer
+    us_trie_t *US_UNUSED(self),
+    const char *US_UNUSED(prefix),
+    const char *US_UNUSED(c_filename),
+    const char *US_UNUSED(h_filename),
+    us_print_t *US_UNUSED(c_file_printer),
+    us_print_t *US_UNUSED(h_file_printer)
 )
 {
     return false; /* TODO: */

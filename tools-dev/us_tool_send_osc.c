@@ -9,6 +9,7 @@
 #include "us_osc_msg_print.h"
 #include "us_buffer.h"
 #include "us_buffer_print.h"
+#include "us_parse.h"
 
 /*
  Copyright (c) 2010, Meyer Sound Laboratories, Inc.
@@ -45,7 +46,7 @@ static bool us_tool_send_osc(
     const char *dest_port,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 );
 
 
@@ -53,7 +54,7 @@ static us_osc_msg_t * us_tool_gen_osc(
     us_allocator_t *allocator,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 );
 
 static bool us_tool_gen_flattened_osc(
@@ -61,7 +62,7 @@ static bool us_tool_gen_flattened_osc(
     us_buffer_t *buffer,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 );
 
 static bool us_tool_send_osc_udp(
@@ -84,7 +85,7 @@ static us_osc_msg_t * us_tool_gen_osc(
     us_allocator_t *allocator,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 )
 {
     us_osc_msg_t *r = 0;
@@ -114,8 +115,45 @@ static us_osc_msg_t * us_tool_gen_osc(
             break;
             case 'b':
             {
-                /* TODO: */
-                us_log_error( "'b' typetag not supported yet");
+                uint8_t valbuf[256];
+                const char *s = *osc_values;
+                size_t sz = strlen(s);
+                size_t octet_count=sz/2;
+                if( (sz&1)==0 )
+                {
+                    bool parsed=true;
+                    size_t i;
+                    size_t pos=0;
+                    for( i=0; i<octet_count; ++i )
+                    {
+                        parsed&=us_parse_hexoctet(
+                                    &valbuf[i],
+                                    s,
+                                    sz,
+                                    &pos
+                                );
+                        if( !parsed )
+                        {
+                            us_log_error( "unable to parse hex octets in '%s'", s );
+                            break;
+                        }
+                    }
+                    if( parsed )
+                    {
+                        e = us_osc_msg_element_b_create(
+                                allocator,
+                                valbuf,
+                                octet_count
+                            );
+                        osc_values++;
+                    }
+                }
+                else
+                {
+                    us_log_error( "'b' type needs even number of octets" );
+                    r=0;
+                    break;
+                }
             }
             break;
 #if US_ENABLE_DOUBLE
@@ -219,12 +257,12 @@ static bool us_tool_gen_flattened_osc(
     us_buffer_t *buffer,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 )
 {
     bool r=false;
     us_osc_msg_t *msg = us_tool_gen_osc(allocator, osc_address, osc_typetags, osc_values);
-    if( msg )
+    if ( msg )
     {
         r=msg->flatten( msg, buffer, 0 );
         msg->destroy( msg );
@@ -240,10 +278,10 @@ static bool us_tool_send_osc_udp(
 {
     bool r=false;
     int s = socket( src_addr->ai_family, src_addr->ai_socktype, 0 );
-    if( s>=0 )
+    if ( s>=0 )
     {
         int len = us_buffer_readable_count(buf);
-        if( sendto(s, buf->m_buffer, len, 0, dest_addr->ai_addr, dest_addr->ai_addrlen)== len )
+        if ( sendto(s, buf->m_buffer, len, 0, dest_addr->ai_addr, dest_addr->ai_addrlen)== len )
         {
             r=true;
         }
@@ -263,9 +301,9 @@ static bool us_tool_send_osc_tcp(
 {
     bool r=false;
     int s = us_net_create_tcp_socket(dest_addr, false);
-    if( s>=0 )
+    if ( s>=0 )
     {
-        if( connect(s, dest_addr->ai_addr, dest_addr->ai_addrlen)>=0 )
+        if ( connect(s, dest_addr->ai_addr, dest_addr->ai_addrlen)>=0 )
         {
             uint8_t length[4];
             int len=us_buffer_readable_count( buf );
@@ -275,11 +313,11 @@ static bool us_tool_send_osc_tcp(
             length[2] = US_GET_BYTE_1( len );
             length[3] = US_GET_BYTE_0( len );
             r&=us_net_blocking_send(s, length, sizeof(length) );
-            if( r )
+            if ( r )
             {
                 r&=us_net_blocking_send(s, buf->m_buffer, len );
             }
-            if( !r )
+            if ( !r )
             {
                 us_stderr->printf( us_stderr, "Error sending to TCP socket: %s\n", strerror(errno) );
             }
@@ -308,13 +346,13 @@ static bool us_tool_send_osc_tcpslip(
     us_slip_encode(&slipped_buffer, buf);
     l = us_buffer_readable_count( &slipped_buffer );
     s = us_net_create_tcp_socket(dest_addr, false);
-    if( s>=0 )
+    if ( s>=0 )
     {
-        if( connect(s, dest_addr->ai_addr, dest_addr->ai_addrlen)>=0 )
+        if ( connect(s, dest_addr->ai_addr, dest_addr->ai_addrlen)>=0 )
         {
             r=true;
             r&=us_net_blocking_send(s, slipped_buffer.m_buffer, l );
-            if( !r )
+            if ( !r )
             {
                 us_stderr->printf( us_stderr, "Error sending slipped packet to TCP socket: %s\n", strerror(errno) );
             }
@@ -338,17 +376,17 @@ static bool us_tool_send_osc(
     const char *dest_port,
     const char *osc_address,
     const char *osc_typetags,
-    char **osc_values
+    const char **osc_values
 )
 {
     bool r=false;
-    char **v;
+    const char **v;
     const char *t=osc_typetags;
     us_allocator_t *allocator = us_testutil_sys_allocator;
     int sock_type=SOCK_DGRAM;
     struct addrinfo *src_addr;
     struct addrinfo *dest_addr;
-    if( strcmp( protocol, "udp" )==0 )
+    if ( strcmp( protocol, "udp" )==0 )
     {
         sock_type = SOCK_DGRAM;
     }
@@ -362,40 +400,40 @@ static bool us_tool_send_osc(
         return false;
     }
     src_addr = us_net_get_addrinfo(src_host, src_port, sock_type, true);
-    if( !src_addr )
+    if ( !src_addr )
     {
         us_stderr->printf( us_stderr, "unable to get src address for '[%s]:%s'\n", dest_host, dest_port );
         return false;
     }
     dest_addr = us_net_get_addrinfo(dest_host, dest_port, sock_type, false);
-    if( !dest_addr )
+    if ( !dest_addr )
     {
         us_stderr->printf( us_stderr, "unable to get dest address for '[%s]:%s'\n", dest_host, dest_port );
         freeaddrinfo(src_addr);
         return false;
     }
     us_buffer_t *buf = us_buffer_create(allocator, 4096);
-    if( buf )
+    if ( buf )
     {
         us_log_info( "Sending '%s' to '[%s]:%s' osc address '%s' types ',%s' ", protocol, dest_host, dest_port, osc_address, osc_typetags );
-        if( osc_values )
+        if ( osc_values )
         {
-            for( v=osc_values; *v!=0 && t!=0; v++,t++ )
+            for ( v=osc_values; *v!=0 && t!=0; v++,t++ )
             {
                 us_log_info( "Type '%c' Value: '%s'", *t, *v );
             }
         }
         r=us_tool_gen_flattened_osc( us_testutil_sys_allocator, buf, osc_address, osc_typetags, osc_values );
-        if( r )
+        if ( r )
         {
             us_buffer_print( buf, us_stdout );
-            if( sock_type==SOCK_DGRAM )
+            if ( sock_type==SOCK_DGRAM )
             {
                 r=us_tool_send_osc_udp( src_addr, dest_addr, buf );
             }
-            else if( sock_type == SOCK_STREAM )
+            else if ( sock_type == SOCK_STREAM )
             {
-                if( strcmp(protocol, "tcpslip" )==0 )
+                if ( strcmp(protocol, "tcpslip" )==0 )
                 {
                     r=us_tool_send_osc_tcpslip( dest_addr, buf );
                 }
@@ -412,7 +450,7 @@ static bool us_tool_send_osc(
 }
 
 
-int main ( int argc, char **argv )
+int main ( int argc, const char **argv )
 {
     int r = 1;
     const char *protocol = "udp";
@@ -422,8 +460,8 @@ int main ( int argc, char **argv )
     const char *dest_port = "10000";
     const char *osc_address = "/osc/version";
     const char *osc_typetags = "";
-    char **osc_values = 0;
-    if( argc > 1 )
+    const char **osc_values = 0;
+    if ( argc > 1 )
         protocol = argv[1];
     if ( argc > 2 )
         src_host = argv[2];
@@ -454,7 +492,7 @@ int main ( int argc, char **argv )
         }
         else
         {
-            if(  us_tool_send_osc( protocol, src_host, src_port, dest_host, dest_port, osc_address, osc_typetags, osc_values ) )
+            if (  us_tool_send_osc( protocol, src_host, src_port, dest_host, dest_port, osc_address, osc_typetags, osc_values ) )
                 r=0;
         }
         us_logger_finish();

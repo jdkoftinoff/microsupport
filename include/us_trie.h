@@ -31,7 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 
 #include "us_allocator.h"
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -93,7 +92,7 @@ extern "C"
 
     static inline bool us_trie_node_is_end ( const us_trie_node_t *self )
     {
-        return ( self->m_flags & US_TRIE_NODE_END_BIT );
+        return ( self->m_flags & US_TRIE_NODE_END_BIT )!=0;
     }
 
 
@@ -266,7 +265,6 @@ extern "C"
         int16_t max_len,
         us_trie_node_id_t end_leaf_index
     );
-
 
 #ifdef __cplusplus
 }

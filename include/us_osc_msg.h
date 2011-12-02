@@ -33,14 +33,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_allocator.h"
 #include "us_buffer.h"
 #include "us_print.h"
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 #define US_OSC_MSG_MAX_ADDRESS_LENGTH (256)
-#define US_OSC_MSG_MAX_TYPETAGS (32)
+#define US_OSC_MSG_MAX_TYPETAGS (128)
 
     /**
      \addtogroup us_osc_msg OSC Message and Bundle Objects
@@ -78,6 +77,7 @@ extern "C"
 
         us_allocator_t *m_allocator;
         char *m_address;
+        uint32_t m_address_code;
         us_osc_msg_element_t *m_first_element;
         us_osc_msg_element_t *m_last_element;
         struct us_osc_msg_s *m_next;
@@ -88,6 +88,12 @@ extern "C"
     us_osc_msg_create(
         us_allocator_t *allocator,
         const char *address
+    );
+
+    us_osc_msg_t *
+    us_osc_msg_create_code(
+        us_allocator_t *allocator,
+        uint32_t address_code
     );
 
     void us_osc_msg_destroy( us_osc_msg_t *self );
@@ -122,10 +128,13 @@ extern "C"
         int32_t *length
     );
 
+    typedef const char * (*us_osc_msg_addrcode_typetag_map_proc)( uint32_t addrcode );
+
     us_osc_msg_t *
     us_osc_msg_unflatten(
         us_allocator_t *allocator,
-        us_buffer_t *buf
+        us_buffer_t *buf,
+        us_osc_msg_addrcode_typetag_map_proc addrcode_mapper
     );
 
 
@@ -198,7 +207,8 @@ extern "C"
     us_osc_msg_bundle_unflatten(
         us_allocator_t *allocator,
         us_buffer_t *buf,
-        int32_t bundle_size
+        size_t bundle_size,
+        us_osc_msg_addrcode_typetag_map_proc addrmapper
     );
 
     /*@}*/
@@ -210,6 +220,8 @@ extern "C"
     /*@{*/
     struct us_osc_msg_element_s
     {
+        void (*destroy)( struct us_osc_msg_element_s *self, us_allocator_t *allocator );
+
         bool
         (*print)(
             const struct us_osc_msg_element_s *self,
@@ -239,6 +251,17 @@ extern "C"
         us_osc_msg_element_t *self,
         int code
     );
+
+    /**
+     * Destroy a message element
+     */
+
+    void
+    us_osc_msg_element_destroy(
+        us_osc_msg_element_t *self,
+        us_allocator_t *allocator
+    );
+
 
     /**
      * Flatten a message element structure into a buffer
@@ -303,6 +326,7 @@ extern "C"
         uint32_t time_low
     );
 
+
     bool
     us_osc_msg_element_a_flatten(
         const us_osc_msg_element_t *self,
@@ -335,6 +359,17 @@ extern "C"
         us_allocator_t *allocator,
         us_osc_msg_bundle_t *m_msg
     );
+
+    /**
+     * Destroy a message element B
+     */
+
+    void
+    us_osc_msg_element_B_destroy(
+        us_osc_msg_element_t *self,
+        us_allocator_t *allocator
+    );
+
 
     bool
     us_osc_msg_element_B_flatten(
@@ -371,6 +406,18 @@ extern "C"
         const uint8_t *data,
         int32_t length
     );
+
+    /**
+     * Destroy a message element b
+     */
+
+    void
+    us_osc_msg_element_b_destroy(
+        us_osc_msg_element_t *self,
+        us_allocator_t *allocator
+    );
+
+
 
     bool
     us_osc_msg_element_b_flatten(
@@ -608,6 +655,18 @@ extern "C"
         us_osc_msg_t *m_msg
     );
 
+    /**
+     * Destroy a message element M
+     */
+
+    void
+    us_osc_msg_element_M_destroy(
+        us_osc_msg_element_t *self,
+        us_allocator_t *allocator
+    );
+
+
+
     bool
     us_osc_msg_element_M_flatten(
         const us_osc_msg_element_t *self,
@@ -676,6 +735,16 @@ extern "C"
     us_osc_msg_element_s_create(
         us_allocator_t *allocator,
         const char *value
+    );
+
+    /**
+     * Destroy a message element s
+     */
+
+    void
+    us_osc_msg_element_s_destroy(
+        us_osc_msg_element_t *self,
+        us_allocator_t *allocator
     );
 
 
@@ -795,6 +864,32 @@ extern "C"
     );
 
     /**
+     Check if buffer contains an OSC message with quadlet address-code
+
+     @param buffer buffer to check
+     @return bool true if it is a valid OSC Message with address-code
+     */
+
+    bool
+    us_osc_msg_is_msg_code(
+        const us_buffer_t *buffer
+    );
+
+    /**
+     Check if address code has the flag that says the message has a typetag string
+
+     @param uint32_t address code
+     @return bool true if it is an address code with a typetag
+     */
+    static inline bool
+    us_osc_msg_address_has_typetags(
+        uint32_t address_code
+    )
+    {
+        return (address_code & 0xc0000000)==0xc0000000;
+    }
+
+    /**
      Parse either a bundle or an OSC message
 
      @param allocator allocator to use to allocate msg or bundle
@@ -809,12 +904,18 @@ extern "C"
         us_osc_msg_t **msg,
         us_osc_msg_bundle_t **bundle,
         us_buffer_t *buffer,
-        int32_t packet_size
+        size_t packet_size,
+        us_osc_msg_addrcode_typetag_map_proc addrmapper
     );
 
     /*@}*/
 
+    /** Extract a boolean true/false from an element.
+     * It may be a T or F element type, or an i type with
+     * an int value where non zero is true
+     */
 
+    bool us_osc_msg_element_get_bool( us_osc_msg_element_t *element );
 
     /*@}*/
 #ifdef __cplusplus

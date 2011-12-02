@@ -31,16 +31,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #include "us_buffer.h"
 #include "us_print.h"
-
-/**
- \addtogroup us_getopt program options handling
- */
-/*@{*/
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+    /**
+     \addtogroup us_getopt program options handling
+     */
+    /*@{*/
+
 
     typedef enum
     {
@@ -53,8 +53,11 @@ extern "C"
         US_GETOPT_UINT32,
         US_GETOPT_HEX16,
         US_GETOPT_HEX32,
-        US_GETOPT_STRING,
+        US_GETOPT_HEX64,
+        US_GETOPT_MACADDR,
+        US_GETOPT_STRING
 #if US_ENABLE_FLOAT
+        ,
         US_GETOPT_FLOAT
 #endif
     }
@@ -113,12 +116,12 @@ extern "C"
     void us_getopt_destroy( us_getopt_t *self );
     bool us_getopt_fill_defaults( us_getopt_t *self );
     bool us_getopt_add_list( us_getopt_t *self, const us_getopt_option_t *options, const char *prefix, const char *description );
+    bool us_getopt_dump( us_getopt_t *self, us_print_t *printer, const char *ignore_key );
     bool us_getopt_print( us_getopt_t *self, us_print_t *printer );
     bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, const char *value, int value_len );
     bool us_getopt_parse_args( us_getopt_t *self, const char **argv );
     bool us_getopt_parse_file( us_getopt_t *self, const char *fname );
-    bool us_getopt_parse_line( us_getopt_t *self, const char *line );
-    bool us_getopt_parse_buffer( us_getopt_t *self, us_buffer_t *buf );
+    bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len );
 
 #ifdef __cplusplus
 }

@@ -52,14 +52,14 @@ us_trie_init (
 }
 
 bool us_trie_basic_ignorer (
-    us_trie_node_value_t v
+    us_trie_node_value_t US_UNUSED(v)
 )
 {
     return false;
 }
 
 int us_trie_basic_db_skip (
-    us_trie_node_value_t v
+    us_trie_node_value_t US_UNUSED(v)
 )
 {
     return 1;

@@ -29,9 +29,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 
@@ -41,13 +41,13 @@ extern "C" {
     /*@{*/
 
 
-    bool us_parse_hexdig ( uint8_t *val, const char *buf, int buf_len, int *buf_pos );
-    bool us_parse_hexoctet ( uint8_t *val, const char *buf, int buf_len, int *buf_pos );
-
+    bool us_parse_hexdig ( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos );
+    bool us_parse_hexoctet ( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos );
 
 #ifdef __cplusplus
 }
 #endif
+
 
 /*@}*/
 

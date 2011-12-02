@@ -29,7 +29,8 @@
 
 #include "us_mdns_avahi.h"
 
-#if US_ENABLE_STDIO
+
+#if US_ENABLE_STDIO && !defined(WIN32)
 
 static us_mdns_avahi_t *us_mdns_avahi_service_list=0;
 
@@ -37,7 +38,7 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
 {
     bool r=false;
     FILE *f = fopen( description->m_fname, "wt" );
-    if(f)
+    if (f)
     {
         const us_mdns_txt_record_t *curtxt = description->m_txt;
         fprintf( f,
@@ -52,7 +53,7 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
                  description->m_type,
                  description->m_port
                );
-        while( curtxt )
+        while ( curtxt )
         {
             fprintf( f, "   <txt-record>%s=%s</txt-record>\n", curtxt->m_key, curtxt->m_value );
             curtxt = curtxt->m_next;
@@ -62,18 +63,18 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
                  "</service-group>\n"
                );
         fflush(f);
-        if( !ferror(f) )
+        if ( !ferror(f) )
         {
             us_mdns_avahi_t *cur = us_mdns_avahi_service_list;
             description->m_next = 0;
-            if( cur==0 )
+            if ( cur==0 )
             {
                 us_mdns_avahi_service_list = description;
                 atexit( us_mdns_avahi_atexit );
             }
             else
             {
-                while( cur->m_next )
+                while ( cur->m_next )
                 {
                     cur=cur->m_next;
                 }
@@ -89,10 +90,64 @@ bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description )
 void us_mdns_avahi_atexit(void)
 {
     us_mdns_avahi_t *cur = us_mdns_avahi_service_list;
-    while( cur )
+    while ( cur )
     {
         unlink( cur->m_fname );
     }
+}
+
+bool us_mdns_avahi_write_xml(
+    const char *avahi_services_dir,
+    const char *fname,
+    const char *service_name,
+    const char *udp_service_type,
+    const char *udp_port,
+    const char *tcp_service_type,
+    const char *tcp_port
+)
+{
+    bool r=true;
+    FILE *f;
+    char path[2048];
+    strncpy( path, avahi_services_dir, sizeof(path)-1 );
+    strncat( path, "/", sizeof(path)-1 );
+    strncat( path, fname, sizeof(path)-1 );
+    f=fopen(path, "wt");
+    if ( f )
+    {
+        fprintf( f,
+                 "<?xml version=\"1.0\" standalone='no'?>\n"
+                 "<!DOCTYPE service-group SYSTEM \"avahi-service.dtd\">\n"
+                 "<service-group>\n"
+                 "  <name replace-wildcards=\"yes\">%%h %s</name>\n",
+                 service_name
+               );
+        if ( tcp_service_type && *tcp_service_type && tcp_port && *tcp_port )
+        {
+            fprintf( f,
+                     "  <service>\n"
+                     "    <type>%s._tcp</type>\n"
+                     "    <port>%s</port>\n"
+                     "  </service>\n",
+                     tcp_service_type,
+                     tcp_port
+                   );
+        }
+        if ( udp_service_type && *udp_service_type && udp_port && *udp_port )
+        {
+            fprintf( f,
+                     "  <service>\n"
+                     "    <type>%s._udp</type>\n"
+                     "    <port>%s</port>\n"
+                     "  </service>\n",
+                     udp_service_type,
+                     udp_port
+                   );
+        }
+        fprintf( f, "</service-group>\n" );
+        fclose(f);
+    }
+    return r;
 }
 
 #endif

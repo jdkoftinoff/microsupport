@@ -101,6 +101,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # include <windows.h>
 # include <io.h>
+# include <fcntl.h>
+
 # include <process.h>
 
 typedef long ssize_t;
@@ -173,17 +175,27 @@ typedef int bool_;
 # endif
 #endif
 
-#ifdef __cplusplus
-extern "C"  {
+#ifndef us_min
+# define us_min(a,b) (a) < (b) ? (a) : (b)
 #endif
 
-    static inline bool us_strncpy( char *dest, const char *src, int32_t dest_buf_size )
+#ifndef us_max
+# define us_max(a,b) (a) < (b) ? (b) : (a)
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+
+    static inline bool us_strncpy( char *dest, const char *src, size_t dest_buf_size )
     {
         bool r=false;
-        if( dest && src && dest_buf_size>2 )
+        if ( dest && src && dest_buf_size>2 )
         {
-            int src_len = strlen(src);
-            if( src_len<dest_buf_size-1)
+            size_t src_len = strlen(src);
+            if ( src_len<dest_buf_size-1)
             {
                 strncpy( dest, src, dest_buf_size-1 );
                 r=true;
@@ -192,14 +204,14 @@ extern "C"  {
         return r;
     }
 
-    static inline bool us_strncat( char *dest, const char *src, int32_t dest_buf_size )
+    static inline bool us_strncat( char *dest, const char *src, size_t dest_buf_size )
     {
         bool r=false;
-        if( dest && src && dest_buf_size>2 )
+        if ( dest && src && dest_buf_size>2 )
         {
-            int src_len = strlen(src);
-            int dest_len = strlen(dest);
-            if( (src_len+dest_len)<dest_buf_size-1)
+            size_t src_len = strlen(src);
+            size_t dest_len = strlen(dest);
+            if ( (src_len+dest_len)<dest_buf_size-1)
             {
                 strncat( dest, src, dest_buf_size-1 );
                 r=true;
@@ -215,6 +227,8 @@ extern "C"  {
 
 #include "us_platform.h"
 #include "us_logger.h"
+#include "us_bits.h"
+
 /*@}*/
 
 #endif

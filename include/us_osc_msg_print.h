@@ -34,11 +34,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if US_ENABLE_PRINTING
 #include "us_print.h"
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
 
     /**
      \addtogroup us_osc_msg OSC Message and Bundle Objects
@@ -167,9 +167,10 @@ extern "C"
 
     /*@}*/
 
+
 #ifdef __cplusplus
 }
 #endif
-#endif
 
+#endif
 #endif

@@ -53,8 +53,8 @@ void us_log_udp_send ( void )
                 us_logger_udp_printer_impl.m_buffer,
                 us_logger_udp_printer_impl.m_cur_length,
                 0,
-                ( void * ) &us_logger_udp_dest_sockaddr,
-                sizeof ( us_logger_udp_dest_sockaddr )
+                ( struct sockaddr * ) &us_logger_udp_dest_sockaddr,
+                (ssize_t)sizeof ( us_logger_udp_dest_sockaddr )
             ) < 0
         )
         {
