@@ -608,19 +608,19 @@ bool us_getopt_value_for_string(
         break;
     case US_GETOPT_HEX64:
 #ifdef _MSC_VER
+    {
+        uint32_t *low_part = (uint32_t *)value;
+        uint32_t *hi_part = low_part+1;
+        int cnt = sscanf( input_string, "%8x%8x", hi_part, low_part );
+        if ( cnt!=2 )
         {
-            uint32_t *low_part = (uint32_t *)value;
-            uint32_t *hi_part = low_part+1;
-            int cnt = sscanf( input_string, "%8x%8x", hi_part, low_part );
-            if ( cnt!=2 )
-            {
-                r=false;
-            }
+            r=false;
         }
+    }
 #else
-        *(uint64_t *)value = (uint64_t)strtoull( input_string, 0, 16 );
+    *(uint64_t *)value = (uint64_t)strtoull( input_string, 0, 16 );
 #endif
-        break;
+    break;
     case US_GETOPT_MACADDR:
     {
         int32_t values[6];
@@ -916,12 +916,12 @@ bool us_getopt_parse_file( us_getopt_t *self, const char *fname )
 bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len )
 {
     bool r=true;
-    ssize_t i;
+    size_t i;
     char escaped_key_name[128]="";
-    int escaped_key_name_len=0;
+    size_t escaped_key_name_len=0;
     char *escaped_key_ptr = &escaped_key_name[0];
     char escaped_value[2048]="";
-    int escaped_value_len=0;
+    size_t escaped_value_len=0;
     char *escaped_value_ptr = &escaped_value[0];
     char unescaped_key_name[128]="";
     char unescaped_value[2048]="";

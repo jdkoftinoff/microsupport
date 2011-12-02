@@ -298,7 +298,7 @@ bool us_http_server_handler_parse_request_header(
         */
         if ( self->m_todo_count!=0 )
         {
-            if ( self->m_todo_count > us_buffer_readable_count( &self->m_base.m_incoming_queue) )
+            if ( self->m_todo_count > (ssize_t)us_buffer_readable_count( &self->m_base.m_incoming_queue) )
             {
                 us_http_server_handler_set_state_receiving_request_content( self );
                 r=true;
@@ -395,7 +395,7 @@ bool us_http_server_handler_readable_request_content(
     {
         r=true;
     }
-    else if ( us_buffer_readable_count(incoming) >= self->m_todo_count )
+    else if ( (ssize_t)us_buffer_readable_count(incoming) >= self->m_todo_count )
     {
         us_log_debug("got request content of %d bytes", self->m_todo_count );
         r=us_http_server_handler_dispatch( self );

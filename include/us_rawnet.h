@@ -46,9 +46,6 @@ extern "C"
 
     int us_rawnet_send( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_mac[6], uint16_t ethertype, void *payload, int payload_len );
 
-    int us_rawnet_send_vlan( int fd, uint8_t src_mac[6], uint8_t dest_mac[6], uint32_t vlanbits,uint16_t ethertype, void *payload, int payload_len );
-
-
 #endif
 
 #ifdef __cplusplus

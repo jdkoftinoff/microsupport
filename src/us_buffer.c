@@ -460,7 +460,7 @@ bool us_buffer_read_data (
     uint8_t *data = (uint8_t *)data_;
     if ( avail > 0 )
     {
-        int i;
+        size_t i;
         if ( max_data_length > avail )
             max_data_length = avail;
         for ( i=0; i<max_data_length; ++i )
@@ -506,7 +506,7 @@ bool us_buffer_read_rounded_data (
 )
 {
     bool r = false;
-    int32_t avail = us_buffer_readable_count(self);
+    size_t avail = us_buffer_readable_count(self);
     if ( avail > 0 )
     {
         size_t i;

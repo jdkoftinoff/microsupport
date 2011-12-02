@@ -83,6 +83,9 @@
 		BF0D28CC1386D32A0053A342 /* us_webapp_json.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0D288C1386D32A0053A342 /* us_webapp_json.c */; };
 		BF0D28CD1386D32A0053A342 /* us_webapp.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0D288D1386D32A0053A342 /* us_webapp.c */; };
 		BF0D28CE1386D32A0053A342 /* us_world.c in Sources */ = {isa = PBXBuildFile; fileRef = BF0D288E1386D32A0053A342 /* us_world.c */; };
+		BFB3F8931458A0CE00E90D3C /* us_osc_line.c in Sources */ = {isa = PBXBuildFile; fileRef = BFB3F8901458A0CE00E90D3C /* us_osc_line.c */; };
+		BFB3F8941458A0CE00E90D3C /* us_test_mtc_main.c in Sources */ = {isa = PBXBuildFile; fileRef = BFB3F8911458A0CE00E90D3C /* us_test_mtc_main.c */; };
+		BFB3F8951458A0CE00E90D3C /* us_test_osc_line_main.c in Sources */ = {isa = PBXBuildFile; fileRef = BFB3F8921458A0CE00E90D3C /* us_test_osc_line_main.c */; };
 		BFBBC802142A23E4007E3332 /* us_test_osc_io_main.c in Sources */ = {isa = PBXBuildFile; fileRef = BFBBC801142A23E4007E3332 /* us_test_osc_io_main.c */; };
 		BFCE66FD140FFD7300AF7DE6 /* us_mtc_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BFCE66FB140FFD7300AF7DE6 /* us_mtc_parser.c */; };
 		BFCE66FE140FFD7300AF7DE6 /* us_mtc.c in Sources */ = {isa = PBXBuildFile; fileRef = BFCE66FC140FFD7300AF7DE6 /* us_mtc.c */; };
@@ -248,6 +251,13 @@
 		BF0D292D1386D3A30053A342 /* us_test_slip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_slip.c; path = ../../../tests/us_test_slip.c; sourceTree = SOURCE_ROOT; };
 		BF0D292E1386D3A30053A342 /* us_test_trie.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_trie.c; path = ../../../tests/us_test_trie.c; sourceTree = SOURCE_ROOT; };
 		BF0D292F1386D3A30053A342 /* us_test_webapp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_webapp.c; path = ../../../tests/us_test_webapp.c; sourceTree = SOURCE_ROOT; };
+		BF541239144DE7BB00B4B13C /* us_bits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_bits.h; path = ../../../include/us_bits.h; sourceTree = "<group>"; };
+		BFB3F88C1458A0AC00E90D3C /* us_osc_line.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_osc_line.h; path = ../../../include/us_osc_line.h; sourceTree = "<group>"; };
+		BFB3F88D1458A0AC00E90D3C /* us_test_mtc_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_test_mtc_main.h; path = ../../../include/us_test_mtc_main.h; sourceTree = "<group>"; };
+		BFB3F88E1458A0AC00E90D3C /* us_test_osc_line_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_test_osc_line_main.h; path = ../../../include/us_test_osc_line_main.h; sourceTree = "<group>"; };
+		BFB3F8901458A0CE00E90D3C /* us_osc_line.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_osc_line.c; path = ../../../src/us_osc_line.c; sourceTree = "<group>"; };
+		BFB3F8911458A0CE00E90D3C /* us_test_mtc_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_mtc_main.c; path = ../../../src/us_test_mtc_main.c; sourceTree = "<group>"; };
+		BFB3F8921458A0CE00E90D3C /* us_test_osc_line_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_osc_line_main.c; path = ../../../src/us_test_osc_line_main.c; sourceTree = "<group>"; };
 		BFBBC801142A23E4007E3332 /* us_test_osc_io_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_test_osc_io_main.c; path = ../../../src/us_test_osc_io_main.c; sourceTree = "<group>"; };
 		BFCE66F9140FFD5A00AF7DE6 /* us_mtc_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_mtc_parser.h; path = ../../../include/us_mtc_parser.h; sourceTree = "<group>"; };
 		BFCE66FA140FFD5A00AF7DE6 /* us_mtc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_mtc.h; path = ../../../include/us_mtc.h; sourceTree = "<group>"; };
@@ -288,38 +298,38 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				BFBBC801142A23E4007E3332 /* us_test_osc_io_main.c */,
-				BFCE66FB140FFD7300AF7DE6 /* us_mtc_parser.c */,
-				BFCE66FC140FFD7300AF7DE6 /* us_mtc.c */,
+				BF0D28511386D32A0053A342 /* us_allocator.c */,
 				BF0D284F1386D32A0053A342 /* us_allocator_heap.c */,
 				BF0D28501386D32A0053A342 /* us_allocator_print.c */,
-				BF0D28511386D32A0053A342 /* us_allocator.c */,
-				BF0D28521386D32A0053A342 /* us_buffer_print.c */,
 				BF0D28531386D32A0053A342 /* us_buffer.c */,
+				BF0D28521386D32A0053A342 /* us_buffer_print.c */,
 				BF0D28541386D32A0053A342 /* us_cgi.c */,
 				BF0D28551386D32A0053A342 /* us_crc32.c */,
 				BF0D28561386D32A0053A342 /* us_getopt.c */,
+				BF0D28591386D32A0053A342 /* us_http.c */,
 				BF0D28571386D32A0053A342 /* us_http_client.c */,
 				BF0D28581386D32A0053A342 /* us_http_server.c */,
-				BF0D28591386D32A0053A342 /* us_http.c */,
-				BF0D285A1386D32A0053A342 /* us_json_parser.c */,
 				BF0D285B1386D32A0053A342 /* us_json.c */,
+				BF0D285A1386D32A0053A342 /* us_json_parser.c */,
 				BF0D285C1386D32A0053A342 /* us_line_parse.c */,
+				BF0D28611386D32A0053A342 /* us_logger.c */,
 				BF0D285D1386D32A0053A342 /* us_logger_printer.c */,
 				BF0D285E1386D32A0053A342 /* us_logger_stdio.c */,
 				BF0D285F1386D32A0053A342 /* us_logger_syslog.c */,
 				BF0D28601386D32A0053A342 /* us_logger_udp.c */,
-				BF0D28611386D32A0053A342 /* us_logger.c */,
 				BF0D28621386D32A0053A342 /* us_mdns_avahi.c */,
 				BF0D28631386D32A0053A342 /* us_midi.c */,
+				BFCE66FC140FFD7300AF7DE6 /* us_mtc.c */,
+				BFCE66FB140FFD7300AF7DE6 /* us_mtc_parser.c */,
 				BF0D28641386D32A0053A342 /* us_net.c */,
 				BF0D28651386D32A0053A342 /* us_osc_dispatch.c */,
 				BF0D28661386D32A0053A342 /* us_osc_io.c */,
-				BF0D28671386D32A0053A342 /* us_osc_msg_print.c */,
+				BFB3F8901458A0CE00E90D3C /* us_osc_line.c */,
 				BF0D28681386D32A0053A342 /* us_osc_msg.c */,
+				BF0D28671386D32A0053A342 /* us_osc_msg_print.c */,
+				BF0D286B1386D32A0053A342 /* us_osc_sender.c */,
 				BF0D28691386D32A0053A342 /* us_osc_sender_tcp.c */,
 				BF0D286A1386D32A0053A342 /* us_osc_sender_udp.c */,
-				BF0D286B1386D32A0053A342 /* us_osc_sender.c */,
 				BF0D286D1386D32A0053A342 /* us_parse.c */,
 				BF0D286E1386D32A0053A342 /* us_platform.c */,
 				BF0D286F1386D32A0053A342 /* us_print.c */,
@@ -338,8 +348,11 @@
 				BF0D287C1386D32A0053A342 /* us_test_json_main.c */,
 				BF0D287D1386D32A0053A342 /* us_test_line_parse_main.c */,
 				BF0D287E1386D32A0053A342 /* us_test_midi_main.c */,
+				BFB3F8911458A0CE00E90D3C /* us_test_mtc_main.c */,
 				BF0D287F1386D32A0053A342 /* us_test_net_main.c */,
 				BF0D28801386D32A0053A342 /* us_test_osc_dispatch_main.c */,
+				BFBBC801142A23E4007E3332 /* us_test_osc_io_main.c */,
+				BFB3F8921458A0CE00E90D3C /* us_test_osc_line_main.c */,
 				BF0D28811386D32A0053A342 /* us_test_osc_msg_main.c */,
 				BF0D28821386D32A0053A342 /* us_test_queue_main.c */,
 				BF0D28831386D32A0053A342 /* us_test_slip_main.c */,
@@ -350,9 +363,9 @@
 				BF0D28881386D32A0053A342 /* us_trie_dump.c */,
 				BF0D28891386D32A0053A342 /* us_trie_ro.c */,
 				BF0D288A1386D32A0053A342 /* us_trie_rw.c */,
+				BF0D288D1386D32A0053A342 /* us_webapp.c */,
 				BF0D288B1386D32A0053A342 /* us_webapp_fs.c */,
 				BF0D288C1386D32A0053A342 /* us_webapp_json.c */,
-				BF0D288D1386D32A0053A342 /* us_webapp.c */,
 				BF0D288E1386D32A0053A342 /* us_world.c */,
 			);
 			name = Source;
@@ -421,25 +434,27 @@
 		BFAA50BE1247C8E600FF1616 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				BF0D29101386D3530053A342 /* us.h */,
+				BF0D28D21386D3530053A342 /* us_allocator.h */,
 				BF0D28D01386D3530053A342 /* us_allocator_heap.h */,
 				BF0D28D11386D3530053A342 /* us_allocator_print.h */,
-				BF0D28D21386D3530053A342 /* us_allocator.h */,
-				BF0D28D31386D3530053A342 /* us_buffer_print.h */,
+				BF541239144DE7BB00B4B13C /* us_bits.h */,
 				BF0D28D41386D3530053A342 /* us_buffer.h */,
+				BF0D28D31386D3530053A342 /* us_buffer_print.h */,
 				BF0D28D51386D3530053A342 /* us_cgi.h */,
 				BF0D28D61386D3530053A342 /* us_crc32.h */,
 				BF0D28D71386D3530053A342 /* us_getopt.h */,
+				BF0D28DA1386D3530053A342 /* us_http.h */,
 				BF0D28D81386D3530053A342 /* us_http_client.h */,
 				BF0D28D91386D3530053A342 /* us_http_server.h */,
-				BF0D28DA1386D3530053A342 /* us_http.h */,
-				BF0D28DB1386D3530053A342 /* us_json_parser.h */,
 				BF0D28DC1386D3530053A342 /* us_json.h */,
+				BF0D28DB1386D3530053A342 /* us_json_parser.h */,
 				BF0D28DD1386D3530053A342 /* us_line_parse.h */,
+				BF0D28E21386D3530053A342 /* us_logger.h */,
 				BF0D28DE1386D3530053A342 /* us_logger_printer.h */,
 				BF0D28DF1386D3530053A342 /* us_logger_stdio.h */,
 				BF0D28E01386D3530053A342 /* us_logger_syslog.h */,
 				BF0D28E11386D3530053A342 /* us_logger_udp.h */,
-				BF0D28E21386D3530053A342 /* us_logger.h */,
 				BF0D28E31386D3530053A342 /* us_mdns_avahi.h */,
 				BF0D28E41386D3530053A342 /* us_midi.h */,
 				BFCE66FA140FFD5A00AF7DE6 /* us_mtc.h */,
@@ -448,11 +463,12 @@
 				BF0D28E61386D3530053A342 /* us_options.h */,
 				BF0D28E71386D3530053A342 /* us_osc_dispatch.h */,
 				BF0D28E81386D3530053A342 /* us_osc_io.h */,
-				BF0D28E91386D3530053A342 /* us_osc_msg_print.h */,
+				BFB3F88C1458A0AC00E90D3C /* us_osc_line.h */,
 				BF0D28EA1386D3530053A342 /* us_osc_msg.h */,
+				BF0D28E91386D3530053A342 /* us_osc_msg_print.h */,
+				BF0D28ED1386D3530053A342 /* us_osc_sender.h */,
 				BF0D28EB1386D3530053A342 /* us_osc_sender_tcp.h */,
 				BF0D28EC1386D3530053A342 /* us_osc_sender_udp.h */,
-				BF0D28ED1386D3530053A342 /* us_osc_sender.h */,
 				BF0D28EE1386D3530053A342 /* us_parse.h */,
 				BF0D28EF1386D3530053A342 /* us_platform.h */,
 				BF0D28F01386D3530053A342 /* us_print.h */,
@@ -471,9 +487,11 @@
 				BF0D28FD1386D3530053A342 /* us_test_json_main.h */,
 				BF0D28FE1386D3530053A342 /* us_test_line_parse_main.h */,
 				BF0D28FF1386D3530053A342 /* us_test_midi_main.h */,
+				BFB3F88D1458A0AC00E90D3C /* us_test_mtc_main.h */,
 				BF0D29001386D3530053A342 /* us_test_net_main.h */,
 				BF0D29011386D3530053A342 /* us_test_osc_dispatch_main.h */,
 				BF0D29021386D3530053A342 /* us_test_osc_io_main.h */,
+				BFB3F88E1458A0AC00E90D3C /* us_test_osc_line_main.h */,
 				BF0D29031386D3530053A342 /* us_test_osc_msg_main.h */,
 				BF0D29041386D3530053A342 /* us_test_queue_main.h */,
 				BF0D29051386D3530053A342 /* us_test_slip_main.h */,
@@ -481,13 +499,12 @@
 				BF0D29071386D3530053A342 /* us_test_webapp_main.h */,
 				BF0D29081386D3530053A342 /* us_testutil.h */,
 				BF0D29091386D3530053A342 /* us_time.h */,
-				BF0D290A1386D3530053A342 /* us_trie_dump.h */,
 				BF0D290B1386D3530053A342 /* us_trie.h */,
+				BF0D290A1386D3530053A342 /* us_trie_dump.h */,
+				BF0D290E1386D3530053A342 /* us_webapp.h */,
 				BF0D290C1386D3530053A342 /* us_webapp_fs.h */,
 				BF0D290D1386D3530053A342 /* us_webapp_json.h */,
-				BF0D290E1386D3530053A342 /* us_webapp.h */,
 				BF0D290F1386D3530053A342 /* us_world.h */,
-				BF0D29101386D3530053A342 /* us.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -539,7 +556,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0420;
 			};
 			buildConfigurationList = 1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "us" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -632,6 +649,9 @@
 				BFCE66FD140FFD7300AF7DE6 /* us_mtc_parser.c in Sources */,
 				BFCE66FE140FFD7300AF7DE6 /* us_mtc.c in Sources */,
 				BFBBC802142A23E4007E3332 /* us_test_osc_io_main.c in Sources */,
+				BFB3F8931458A0CE00E90D3C /* us_osc_line.c in Sources */,
+				BFB3F8941458A0CE00E90D3C /* us_test_mtc_main.c in Sources */,
+				BFB3F8951458A0CE00E90D3C /* us_test_osc_line_main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
