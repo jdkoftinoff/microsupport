@@ -17,6 +17,7 @@
 #include "us_world.h"
 #include "us_rawnet.h"
 #include "us_logger.h"
+
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -78,7 +79,7 @@ int us_rawnet_socket( uint16_t ethertype, uint8_t my_mac[6], int *interface_id, 
 }
 
 
-int us_rawnet_send( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_mac[6], uint16_t ethertype, void *payload, int payload_len )
+int us_rawnet_send( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_mac[6], uint16_t ethertype, const void *payload, int payload_len )
 {
     struct sockaddr_ll socket_address;
     uint8_t buffer[ETH_FRAME_LEN];
