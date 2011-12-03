@@ -38,9 +38,9 @@ void join_multicast_group(int fd,char * interface_name,int protocol) {
     mreq.mr_address[0]=0x91;
     mreq.mr_address[1]=0xe0;
     mreq.mr_address[2]=0xf0;
-    mreq.mr_address[3]=0x00;
+    mreq.mr_address[3]=0x01;
     mreq.mr_address[4]=0x00;
-    mreq.mr_address[5]=0x01;
+    mreq.mr_address[5]=0x00;
     
     if(setsockopt(fd,SOL_PACKET,PACKET_ADD_MEMBERSHIP,&mreq,sizeof(mreq))<0) {
         perror("setsockopt[SOL_SOCKET,PACKET_ADD_MEMBERSHIP]");
