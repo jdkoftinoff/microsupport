@@ -46,6 +46,8 @@ extern "C"
 
     int us_rawnet_send( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_mac[6], uint16_t ethertype, const void *payload, int payload_len );
 
+    bool us_rawnet_join_multicast( int fd, int interface_id, int ethertype, const uint8_t multicast_mac[] );
+
 #endif
 
 #ifdef __cplusplus
