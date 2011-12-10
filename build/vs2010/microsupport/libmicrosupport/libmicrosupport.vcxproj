@@ -15,6 +15,7 @@
     <ClInclude Include="..\..\..\..\include\us_allocator.h" />
     <ClInclude Include="..\..\..\..\include\us_allocator_heap.h" />
     <ClInclude Include="..\..\..\..\include\us_allocator_print.h" />
+    <ClInclude Include="..\..\..\..\include\us_bits.h" />
     <ClInclude Include="..\..\..\..\include\us_buffer.h" />
     <ClInclude Include="..\..\..\..\include\us_buffer_print.h" />
     <ClInclude Include="..\..\..\..\include\us_cgi.h" />
@@ -39,6 +40,7 @@
     <ClInclude Include="..\..\..\..\include\us_options.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_dispatch.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_io.h" />
+    <ClInclude Include="..\..\..\..\include\us_osc_line.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_msg.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_msg_print.h" />
     <ClInclude Include="..\..\..\..\include\us_osc_sender.h" />
@@ -63,9 +65,11 @@
     <ClInclude Include="..\..\..\..\include\us_test_json_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_line_parse_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_midi_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_mtc_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_net_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_osc_dispatch_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_osc_io_main.h" />
+    <ClInclude Include="..\..\..\..\include\us_test_osc_line_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_osc_msg_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_queue_main.h" />
     <ClInclude Include="..\..\..\..\include\us_test_slip_main.h" />
@@ -191,6 +195,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\us_osc_io.c" />
+    <ClCompile Include="..\..\..\..\src\us_osc_line.c" />
     <ClCompile Include="..\..\..\..\src\us_osc_msg.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -295,6 +300,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">us_world.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\us_test_mtc_main.c" />
     <ClCompile Include="..\..\..\..\src\us_test_net_main.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>
@@ -303,6 +309,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\us_test_osc_dispatch_main.c" />
     <ClCompile Include="..\..\..\..\src\us_test_osc_io_main.c" />
+    <ClCompile Include="..\..\..\..\src\us_test_osc_line_main.c" />
     <ClCompile Include="..\..\..\..\src\us_test_osc_msg_main.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">us_world.h</PrecompiledHeaderFile>

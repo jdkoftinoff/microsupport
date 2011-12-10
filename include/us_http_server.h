@@ -68,7 +68,7 @@ extern "C"
 
         us_http_server_handler_state_t m_state;
         size_t m_byte_count;
-        size_t m_todo_count;
+        ssize_t m_todo_count;
 
         struct us_webapp_director_s *m_director;
 
