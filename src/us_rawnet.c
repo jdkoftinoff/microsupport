@@ -1,5 +1,7 @@
 #if defined(__linux__) 
 
+#include "us_world.h"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -14,7 +16,6 @@
 #include <string.h>       
 #include <errno.h>
 
-#include "us_world.h"
 #include "us_rawnet.h"
 #include "us_logger.h"
 
@@ -45,7 +46,13 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-int us_rawnet_socket( uint16_t ethertype, uint8_t my_mac[6], int *interface_id, const char *interface_name )
+
+int us_rawnet_socket(
+    uint16_t ethertype,
+    uint8_t my_mac[6],
+    int *interface_id,
+    const char *interface_name
+    )
 {
     int fd=socket(AF_PACKET,SOCK_RAW,htons(ethertype) );
     if( fd>=0 && interface_name ) 
@@ -79,7 +86,15 @@ int us_rawnet_socket( uint16_t ethertype, uint8_t my_mac[6], int *interface_id, 
 }
 
 
-int us_rawnet_send( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_mac[6], uint16_t ethertype, const void *payload, int payload_len )
+int us_rawnet_send(
+    int fd,
+    int interface_id,
+    uint8_t src_mac[6],
+    uint8_t dest_mac[6],
+    uint16_t ethertype,
+    const void *payload,
+    int payload_len
+    )
 {
     struct sockaddr_ll socket_address;
     uint8_t buffer[ETH_FRAME_LEN];
@@ -103,6 +118,50 @@ int us_rawnet_send( int fd, int interface_id, uint8_t src_mac[6], uint8_t dest_m
                   (struct sockaddr*)&socket_address, sizeof(socket_address));
 }
 
+bool us_rawnet_join_multicast(
+    int fd,
+    int interface_id,
+    int ethertype,
+    const uint8_t multicast_mac[]
+    )
+{
+    bool r=false;
+    struct packet_mreq mreq;
+    struct sockaddr_ll saddr;
+
+    memset(&saddr,0,sizeof(saddr));
+    saddr.sll_family = AF_PACKET;
+    saddr.sll_ifindex = interface_id;
+    saddr.sll_pkttype = PACKET_MULTICAST;
+    saddr.sll_protocol = htons(ethertype);
+    if(bind(fd, (struct sockaddr *) &saddr, sizeof(saddr)) >=0 )
+    {
+        memset(&mreq,0,sizeof(mreq));
+        mreq.mr_ifindex=interface_id;
+        mreq.mr_type=PACKET_MR_MULTICAST;
+        mreq.mr_alen=6;
+        mreq.mr_address[0]=multicast_mac[0];
+        mreq.mr_address[1]=multicast_mac[1];
+        mreq.mr_address[2]=multicast_mac[2];
+        mreq.mr_address[3]=multicast_mac[3];
+        mreq.mr_address[4]=multicast_mac[4];
+        mreq.mr_address[5]=multicast_mac[5];
+
+        if(setsockopt(fd,SOL_PACKET,PACKET_ADD_MEMBERSHIP,&mreq,sizeof(mreq))>=0)
+        {
+            r=true;
+        }
+        else
+        {
+            us_log_error("us_rawnet_join_multicast setsockopt[SOL_SOCKET,PACKET_ADD_MEMBERSHIP] error %s", strerror(errno) );
+        }
+    }
+    else
+    {
+        us_log_error( "us_rawnet_join_multicast bind error: %s", strerror(errno));
+    }
+    return r;
+}
 
 #endif
 
