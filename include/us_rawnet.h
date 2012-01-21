@@ -47,18 +47,29 @@ extern "C"
         uint8_t my_mac[6],
         int *interface_id,
         const char *interface_name
-        );
+    );
 
 
-    int us_rawnet_send(
+    ssize_t us_rawnet_send(
         int fd,
         int interface_id,
-        uint8_t src_mac[6],
-        uint8_t dest_mac[6],
+        const uint8_t src_mac[6],
+        const uint8_t dest_mac[6],
         uint16_t ethertype,
         const void *payload,
-        int payload_len
-        );
+        ssize_t payload_len
+    );
+
+    ssize_t us_rawnet_recv(
+        int fd,
+        int *interface_id,
+        uint8_t src_mac[6],
+        uint8_t dest_mac[6],
+        uint16_t *ethertype,
+        void *payload_buf,
+        ssize_t payload_buf_max_size
+    );
+
 
     bool us_rawnet_join_multicast( int fd, int interface_id, int ethertype, const uint8_t multicast_mac[] );
 

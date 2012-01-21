@@ -1,19 +1,19 @@
-#if defined(__linux__) 
+#if defined(__linux__)
 
 #include "us_world.h"
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/socket.h> 
+#include <sys/socket.h>
 #include <arpa/inet.h>
-#include <sys/ioctl.h> 
+#include <sys/ioctl.h>
 #include <linux/sockios.h>
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
 #include <linux/if_arp.h>
 #include <sys/types.h>
-#include <string.h>       
+#include <string.h>
 #include <errno.h>
 
 #include "us_rawnet.h"
@@ -52,10 +52,10 @@ int us_rawnet_socket(
     uint8_t my_mac[6],
     int *interface_id,
     const char *interface_name
-    )
+)
 {
     int fd=socket(AF_PACKET,SOCK_RAW,htons(ethertype) );
-    if( fd>=0 && interface_name ) 
+    if( fd>=0 && interface_name )
     {
         int i;
         struct ifreq ifr;
@@ -86,15 +86,15 @@ int us_rawnet_socket(
 }
 
 
-int us_rawnet_send(
+ssize_t us_rawnet_send(
     int fd,
     int interface_id,
-    uint8_t src_mac[6],
-    uint8_t dest_mac[6],
+    const uint8_t src_mac[6],
+    const uint8_t dest_mac[6],
     uint16_t ethertype,
     const void *payload,
-    int payload_len
-    )
+    ssize_t payload_len
+)
 {
     struct sockaddr_ll socket_address;
     uint8_t buffer[ETH_FRAME_LEN];
@@ -118,12 +118,62 @@ int us_rawnet_send(
                   (struct sockaddr*)&socket_address, sizeof(socket_address));
 }
 
+ssize_t us_rawnet_recv(
+    int fd,
+    int *interface_id,
+    uint8_t src_mac[6],
+    uint8_t dest_mac[6],
+    uint16_t *ethertype,
+    void *payload_buf,
+    ssize_t payload_buf_max_size
+)
+{
+    ssize_t r=-1;
+    ssize_t buf_len;
+    uint8_t buf[2048];
+    struct sockaddr_ll src_addr;
+    socklen_t src_addr_len = sizeof(src_addr);
+
+    buf_len=recvfrom(
+                fd,
+                buf, sizeof(buf),
+                0,
+                (struct sockaddr *)&src_addr, &src_addr_len
+            );
+    if( buf_len>=0 )
+    {
+        if( interface_id )
+        {
+            interface_id = src_addr.sll_ifindex;
+        }
+        if( dest_mac )
+        {
+            memcpy( dest_mac, &buf[0], 6 );
+        }
+        if( src_mac )
+        {
+            memcpy( src_mac, &buf[6], 6 );
+        }
+        if( ethertype )
+        {
+            *ethertype = US_BITS_MAKE_DOUBLET( buf[12], buf[13] );
+        }
+        if( payload_buf && (payload_buf_max_size > buf_len-14) )
+        {
+            memcpy( payload_buf, &buf[14], buf_len-14 );
+            r = buf_len-14;
+        }
+    }
+    return r;
+}
+
+
 bool us_rawnet_join_multicast(
     int fd,
     int interface_id,
     int ethertype,
     const uint8_t multicast_mac[]
-    )
+)
 {
     bool r=false;
     struct packet_mreq mreq;
