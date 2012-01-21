@@ -10,12 +10,10 @@ int main( int argc, char **argv )
     int if_id=0;
     uint8_t my_mac[6];
     uint8_t dest_mac[6] = { 0x91, 0xe0, 0xf0, 0x00, 0x00, 0x1 };
-
-	if( argc>1 )
-	{
-		if_name=argv[1];
-	}
-
+    if( argc>1 )
+    {
+        if_name=argv[1];
+    }
     int fd=us_rawnet_socket( 0x22f0, my_mac, &if_id, if_name );
     if( fd>=0 )
     {
@@ -32,7 +30,6 @@ int main( int argc, char **argv )
             {
                 printf( "sent packet %d\n", i++ );
             }
-
             sleep(1);
         }
     }

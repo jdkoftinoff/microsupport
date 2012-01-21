@@ -133,7 +133,6 @@ ssize_t us_rawnet_recv(
     uint8_t buf[2048];
     struct sockaddr_ll src_addr;
     socklen_t src_addr_len = sizeof(src_addr);
-
     buf_len=recvfrom(
                 fd,
                 buf, sizeof(buf),
@@ -178,7 +177,6 @@ bool us_rawnet_join_multicast(
     bool r=false;
     struct packet_mreq mreq;
     struct sockaddr_ll saddr;
-
     memset(&saddr,0,sizeof(saddr));
     saddr.sll_family = AF_PACKET;
     saddr.sll_ifindex = interface_id;
@@ -196,7 +194,6 @@ bool us_rawnet_join_multicast(
         mreq.mr_address[3]=multicast_mac[3];
         mreq.mr_address[4]=multicast_mac[4];
         mreq.mr_address[5]=multicast_mac[5];
-
         if(setsockopt(fd,SOL_PACKET,PACKET_ADD_MEMBERSHIP,&mreq,sizeof(mreq))>=0)
         {
             r=true;
