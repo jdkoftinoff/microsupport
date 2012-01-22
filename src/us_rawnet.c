@@ -281,8 +281,7 @@ bool us_rawnet_join_multicast(
 #include <linux/sockios.h>
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
-#include <linux/if_arp.h>
-
+/* #include <linux/if_arp.h> for ARPHRD_ETHER -- cant include this here because linux headers are broken.  */
 
 int us_rawnet_socket(
     us_rawnet_context_t *self,
@@ -345,7 +344,7 @@ ssize_t us_rawnet_send(
     socket_address.sll_family   = PF_PACKET;
     socket_address.sll_protocol = htons(self->m_ethertype);
     socket_address.sll_ifindex  = self->m_interface_id;
-    socket_address.sll_hatype   = ARPHRD_ETHER;
+    socket_address.sll_hatype   = 1; /*ARPHRD_ETHER; */
     socket_address.sll_pkttype  = PACKET_OTHERHOST;
     socket_address.sll_halen    = ETH_ALEN;
     memcpy(socket_address.sll_addr,self->m_my_mac,ETH_ALEN );
