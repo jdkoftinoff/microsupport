@@ -273,7 +273,7 @@ bool us_rawnet_join_multicast(
 
 #endif
 
-#if defined(__linux__) && !defined(US_USE_PCAP)
+#if defined(__linux__) && US_ENABLE_PCAP==0
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -301,10 +301,7 @@ int us_rawnet_socket(
             close( fd );
             return -1;
         }
-        if( interface_id )
-        {
-            self->m_interface_id = ifr.ifr_ifindex;
-        }
+		self->m_interface_id = ifr.ifr_ifindex;
         if ( ioctl(fd ,SIOCGIFHWADDR,&ifr)<0 )
         {
             close(fd);
@@ -346,7 +343,7 @@ ssize_t us_rawnet_send(
     unsigned char* data = buffer + 14;
     struct ethhdr *eh = (struct ethhdr *)etherhead;
     socket_address.sll_family   = PF_PACKET;
-    socket_address.sll_protocol = htons(ethertype);
+    socket_address.sll_protocol = htons(self->m_ethertype);
     socket_address.sll_ifindex  = self->m_interface_id;
     socket_address.sll_hatype   = ARPHRD_ETHER;
     socket_address.sll_pkttype  = PACKET_OTHERHOST;
@@ -406,13 +403,13 @@ bool us_rawnet_join_multicast(
     struct sockaddr_ll saddr;
     memset(&saddr,0,sizeof(saddr));
     saddr.sll_family = AF_PACKET;
-    saddr.sll_ifindex = interface_id;
+    saddr.sll_ifindex = self->m_interface_id;
     saddr.sll_pkttype = PACKET_MULTICAST;
-    saddr.sll_protocol = htons(ethertype);
+    saddr.sll_protocol = htons(self->m_ethertype);
     if(bind(self->m_fd, (struct sockaddr *) &saddr, sizeof(saddr)) >=0 )
     {
         memset(&mreq,0,sizeof(mreq));
-        mreq.mr_ifindex=interface_id;
+        mreq.mr_ifindex=self->m_interface_id;
         mreq.mr_type=PACKET_MR_MULTICAST;
         mreq.mr_alen=6;
         mreq.mr_address[0]=multicast_mac[0];
