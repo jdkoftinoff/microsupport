@@ -94,11 +94,11 @@ void us_daemon_daemonize(
         if( us_daemon_pid_fd>=0 )
         {
             char tmpbuf[64];
-			if( lockf(us_daemon_pid_fd,F_TLOCK,0)<0)
-			{
-				us_log_error( "Unable to lock pid file: %s", us_daemon_pid_file_name );
-				abort();
-			}
+            if( lockf(us_daemon_pid_fd,F_TLOCK,0)<0)
+            {
+                us_log_error( "Unable to lock pid file: %s", us_daemon_pid_file_name );
+                abort();
+            }
             sprintf( tmpbuf, "%ld\n", (long)getpid() );
             int len = strlen(tmpbuf);
             if( write( us_daemon_pid_fd, tmpbuf, len)!=len )
@@ -140,7 +140,7 @@ pid_t us_daemon_fork( void )
 
 void us_daemon_end(void)
 {
-	close( us_daemon_pid_fd );
+    close( us_daemon_pid_fd );
     if( strlen(us_daemon_pid_file_name)>0 )
     {
         if( unlink( us_daemon_pid_file_name )<0 )

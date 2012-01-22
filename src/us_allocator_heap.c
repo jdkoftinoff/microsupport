@@ -247,8 +247,8 @@ void *us_allocator_heap_internal_alloc ( us_allocator_heap_t *self, size_t size 
         self->m_current_allocation_count -= ( orig_size - size );
         /* calculate the position of the next block */
         usable->m_next
-        = ( us_allocator_heap_block_t * ) ( (unsigned long long)( usable )
-                                            + size + us_allocator_rounded_block_size );
+            = ( us_allocator_heap_block_t * ) ( (unsigned long long)( usable )
+                                                + size + us_allocator_rounded_block_size );
         /* put the links in properly */
         usable->m_next->m_next = orig_next;
         usable->m_next->m_prev = usable;

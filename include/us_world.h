@@ -43,6 +43,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #elif defined(TARGET_PLATFORM_LINUX)
 # define US_CONFIG_POSIX
 # define US_CONFIG_LINUX
+#elif defined(TARGET_PLATFORM_MACOSX)
+# undef US_CONFIG_POSIX
+# define US_CONFIG_POSIX
+# undef US_CONFIG_MACOSX
+# define US_CONFIG_MACOSX
 #endif
 
 
@@ -152,6 +157,7 @@ typedef unsigned char uint8_t;
 # include <sys/poll.h>
 # include <errno.h>
 # include <strings.h>
+
 #ifdef __linux__
 # include <linux/if.h>
 #else

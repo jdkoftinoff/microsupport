@@ -6,24 +6,19 @@
 
 int main(int argc, const char **argv )
 {
-    int interface_id=0;
     uint8_t multicast_mac[6] = { 0x91, 0xe0, 0xf0, 0x01, 0x00, 0x00 };
     uint16_t ethertype=0x22f0;
+    us_rawnet_context_t sock;
     const char *ifname = "eth1";
     if( argc>1 )
         ifname=argv[1];
-    int fd=us_rawnet_socket( ethertype, 0, &interface_id, ifname );
+    int fd=us_rawnet_socket( &sock, ethertype, ifname );
     if( fd>=0 )
     {
         uint8_t pkt_src_mac[6];
-        uint8_t pkt_dest_mac[6];
-        uint16_t pkt_ethertype;
-        int pkt_if;
         uint8_t buf[2048];
         if( !us_rawnet_join_multicast(
-                    fd,
-                    interface_id,
-                    ethertype,
+                    &sock,
                     multicast_mac
                 ) )
         {
@@ -33,19 +28,14 @@ int main(int argc, const char **argv )
         do
         {
             buf_len=us_rawnet_recv(
-                        fd,
-                        &pkt_if,
+                        &sock,
                         pkt_src_mac,
-                        pkt_dest_mac,
-                        &pkt_ethertype,
                         buf, sizeof(buf)
                     );
             if( buf_len>=0 )
             {
                 int i;
-                printf( "Received interface %d EtherType 0x%04x packet multicast addr %02x:%02x:%02x:%02x:%02x:%02x payload len=%d from: %02x:%02x:%02x:%02x:%02x:%02x\n",
-                        pkt_if, pkt_ethertype,
-                        pkt_dest_mac[0], pkt_dest_mac[1], pkt_dest_mac[2], pkt_dest_mac[3], pkt_dest_mac[4], pkt_dest_mac[5],
+                printf( "Received packet payload len=%d from: %02x:%02x:%02x:%02x:%02x:%02x\n",
                         (int)buf_len,
                         pkt_src_mac[0], pkt_src_mac[1], pkt_src_mac[2], pkt_src_mac[3], pkt_src_mac[4], pkt_src_mac[5]
                       );
@@ -55,8 +45,12 @@ int main(int argc, const char **argv )
                 }
                 printf( "\n\n" );
             }
+            else
+            {
+                sleep(1);
+            }
         }
-        while( buf_len>=0 );
+        while( true );
     }
 }
 

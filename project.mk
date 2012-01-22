@@ -4,7 +4,7 @@ PROJECT_VERSION=1
 PROJECT_EMAIL=jeffk@meyersound.com
 PROJECT_LICENSE=private
 PROJECT_MAINTAINER=jeffk@meyersound.com
-PROJECT_COPYRIGHT=Copyright 2010
+PROJECT_COPYRIGHT=Copyright 2012
 PROJECT_DESCRIPTION=microsupport
 PROJECT_WEBSITE=https://github.com/jeffk-meyersound/microsupport
 PROJECT_IDENTIFIER=com.meyersound.microsupport
@@ -18,5 +18,14 @@ ENABLE_PRECOMPILED_HEADERS?=1
 PRECOMPILED_HEADER=$(TOP)/include/us_world.h
 
 STRIP=true
+
+ifdef US_ENABLE_RAW_ETHERNET
+DEFINES+=US_ENABLE_RAW_ETHERNET=$(US_ENABLE_RAW_ETHERNET)
+endif
+
+ifdef US_ENABLE_PCAP
+DEFINES+=US_ENABLE_PCAP=$(US_ENABLE_PCAP)
+LDLIBS+=-lpcap
+endif
 
 
