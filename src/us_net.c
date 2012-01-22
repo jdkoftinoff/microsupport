@@ -445,7 +445,7 @@ int us_net_wait_readable( int timeout_ms, int fd_count, ... )
 {
     int r=-1;
     int n=0;
-    struct fd_set readable_set;
+    fd_set readable_set;
     struct timeval tv_timeout;
     int max_fd=-1;
     int i;
