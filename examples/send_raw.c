@@ -17,6 +17,7 @@ int main( int argc, char **argv )
     if( fd>=0 )
     {
         int i=0;
+        us_rawnet_join_multicast( &sock, dest_mac );
         while(true)
         {
             uint8_t buf[1500];

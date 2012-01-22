@@ -16,6 +16,7 @@ int main(int argc, const char **argv )
     if( fd>=0 )
     {
         uint8_t pkt_src_mac[6];
+        uint8_t pkt_dest_mac[6];
         uint8_t buf[2048];
         if( !us_rawnet_join_multicast(
                     &sock,
@@ -30,14 +31,16 @@ int main(int argc, const char **argv )
             buf_len=us_rawnet_recv(
                         &sock,
                         pkt_src_mac,
+						pkt_dest_mac,
                         buf, sizeof(buf)
                     );
             if( buf_len>=0 )
             {
                 int i;
-                printf( "Received packet payload len=%d from: %02x:%02x:%02x:%02x:%02x:%02x\n",
+                printf( "Received packet payload len=%d from: %02x:%02x:%02x:%02x:%02x:%02x to: %02x:%02x:%02x:%02x:%02x:%02x\n",
                         (int)buf_len,
-                        pkt_src_mac[0], pkt_src_mac[1], pkt_src_mac[2], pkt_src_mac[3], pkt_src_mac[4], pkt_src_mac[5]
+                        pkt_src_mac[0], pkt_src_mac[1], pkt_src_mac[2], pkt_src_mac[3], pkt_src_mac[4], pkt_src_mac[5],
+						pkt_dest_mac[0], pkt_dest_mac[1], pkt_dest_mac[2], pkt_dest_mac[3], pkt_dest_mac[4], pkt_dest_mac[5]
                       );
                 for( i=0; i<buf_len; ++i )
                 {
