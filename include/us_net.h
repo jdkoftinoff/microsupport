@@ -113,6 +113,22 @@ extern "C"
         int32_t len
     );
 
+    /** us_net_wait_readable
+     *
+     *  Utility function for simple (and inefficent) select() calls.
+     *  Given list of file handles it waits for up to timeout_ms time in milleconds
+     *  for one of the file handles to become readable.
+     *  timeout_ms may be -1 for infinite timeout.
+     *  return value is a single file handle that is readable.
+     *  return value is -1 if timeout is hit.
+     *  return value is -2 if error occurred
+     */
+    int us_net_wait_readable(
+        int timeout_ms,
+        int fd_count,
+        ...
+    );
+
 #endif
 #ifdef __cplusplus
 }

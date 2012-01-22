@@ -441,6 +441,58 @@ us_net_blocking_send(
     return (todo==0);
 }
 
+int us_net_wait_readable( int timeout_ms, int fd_count, ... )
+{
+    int r=-1;
+    int n=0;
+    struct fd_set readable_set;
+    struct timeval tv_timeout;
+    int max_fd=-1;
+    int i;
+    va_list ap;
+    va_start( ap, fd_count );
+    FD_ZERO( &readable_set );
+    tv_timeout.tv_usec = (timeout_ms*1000)%1000;
+    tv_timeout.tv_sec = (timeout_ms/1000);
+    for( i=0; i<fd_count; ++i )
+    {
+        int fd=va_arg( ap, int );
+        FD_SET( fd, &readable_set );
+        if( fd>max_fd )
+        {
+            max_fd=fd;
+        }
+    }
+    do
+    {
+        n = select(max_fd+1, &readable_set, 0, 0, timeout_ms < 0 ? 0 : &tv_timeout );
+    }
+    while (n<0 && (errno==EINTR || errno==EAGAIN ) );
+
+    va_end( ap );
+
+    if( n<0 )
+    {
+        r=-2; /* Error */
+    }
+    else if( n==0 )
+    {
+        r=-1; /* Timeout */
+    }
+    else if( n>0 )
+    {
+        r=-1;
+        for( i=0; i<max_fd+1; i++ )
+        {
+            if( FD_ISSET( i, &readable_set ) )
+            {
+                r=i;
+                break;
+            }
+        }
+    }
+    return r;
+}
 
 #endif
 
