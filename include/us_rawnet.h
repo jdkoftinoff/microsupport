@@ -72,6 +72,7 @@ extern "C"
     ssize_t us_rawnet_recv(
         us_rawnet_context_t *self,
         uint8_t src_mac[6],
+        uint8_t dest_mac[6],
         void *payload_buf,
         ssize_t payload_buf_max_size
     );

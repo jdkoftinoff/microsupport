@@ -214,6 +214,7 @@ ssize_t us_rawnet_send(
 ssize_t us_rawnet_recv(
     us_rawnet_context_t *self,
     uint8_t src_mac[6],
+    uint8_t dest_mac[6],
     void *payload_buf,
     ssize_t payload_buf_max_size
 )
@@ -231,7 +232,14 @@ ssize_t us_rawnet_recv(
         {
             r = header->caplen-14;
             memcpy ( payload_buf, &data[14], r );
-            memcpy ( src_mac, &data[6], 6 );
+            if( src_mac )
+            {
+                memcpy ( src_mac, &data[6], 6 );
+            }
+            if( dest_mac )
+            {
+                memcpy ( dest_mac, &data[0], 6 );
+            }
         }
     }
     return r;
@@ -300,7 +308,7 @@ int us_rawnet_socket(
             close( fd );
             return -1;
         }
-		self->m_interface_id = ifr.ifr_ifindex;
+        self->m_interface_id = ifr.ifr_ifindex;
         if ( ioctl(fd ,SIOCGIFHWADDR,&ifr)<0 )
         {
             close(fd);
@@ -336,6 +344,8 @@ ssize_t us_rawnet_send(
     ssize_t payload_len
 )
 {
+    ssize_t r=-1;
+    ssize_t sent_len;
     struct sockaddr_ll socket_address;
     uint8_t buffer[ETH_FRAME_LEN];
     unsigned char *etherhead = buffer;
@@ -354,13 +364,24 @@ ssize_t us_rawnet_send(
     memcpy((void*)(buffer+ETH_ALEN), (void*)self->m_my_mac, ETH_ALEN);
     eh->h_proto = htons(self->m_ethertype);
     memcpy( data, payload, payload_len );
-    return sendto(self->m_fd, buffer, payload_len+14, 0,
-                  (struct sockaddr*)&socket_address, sizeof(socket_address));
+    do
+    {
+        sent_len = sendto(self->m_fd, buffer, payload_len+14, 0,
+                          (struct sockaddr*)&socket_address, sizeof(socket_address));
+    }
+    while( sent_len<0 && (errno==EINTR || errno==EAGAIN) );
+    if( sent_len>=0 )
+    {
+        r=sent_len-14;
+    }
+
+    return r;
 }
 
 ssize_t us_rawnet_recv(
     us_rawnet_context_t *self,
     uint8_t src_mac[6],
+    uint8_t dest_mac[6],
     void *payload_buf,
     ssize_t payload_buf_max_size
 )
@@ -368,19 +389,26 @@ ssize_t us_rawnet_recv(
     ssize_t r=-1;
     ssize_t buf_len;
     uint8_t buf[2048];
-    struct sockaddr_ll src_addr;
-    socklen_t src_addr_len = sizeof(src_addr);
-    buf_len=recvfrom(
-                self->m_fd,
-                buf, sizeof(buf),
-                0,
-                (struct sockaddr *)&src_addr, &src_addr_len
-            );
+
+    do
+    {
+        buf_len=recv(
+                    self->m_fd,
+                    buf, sizeof(buf),
+                    0
+                );
+    }
+    while(buf_len<0  && (errno==EINTR || errno==EAGAIN ) );
+
     if( buf_len>=0 )
     {
         if( src_mac )
         {
             memcpy( src_mac, &buf[6], 6 );
+        }
+        if( dest_mac )
+        {
+            memcpy ( dest_mac, &buf[0], 6 );
         }
         if( payload_buf && (payload_buf_max_size > buf_len-14) )
         {

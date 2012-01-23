@@ -7,8 +7,8 @@ int main( int argc, char **argv )
 {
     const char *if_name="eth0";
     uint8_t dest_mac[6] = { 0x91, 0xe0, 0xf0, 0x01, 0x00, 0x00 };
-	int fd;
-	us_rawnet_context_t sock;
+    int fd;
+    us_rawnet_context_t sock;
     if( argc>1 )
     {
         if_name=argv[1];
@@ -17,6 +17,7 @@ int main( int argc, char **argv )
     if( fd>=0 )
     {
         int i=0;
+        us_rawnet_join_multicast( &sock, dest_mac );
         while(true)
         {
             uint8_t buf[1500];
