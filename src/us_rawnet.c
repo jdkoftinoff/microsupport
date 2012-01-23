@@ -232,8 +232,14 @@ ssize_t us_rawnet_recv(
         {
             r = header->caplen-14;
             memcpy ( payload_buf, &data[14], r );
-            memcpy ( src_mac, &data[6], 6 );
-            memcpy ( dest_mac, &data[0], 6 );
+            if( src_mac )
+            {
+                memcpy ( src_mac, &data[6], 6 );
+            }
+            if( dest_mac )
+            {
+                memcpy ( dest_mac, &data[0], 6 );
+            }
         }
     }
     return r;
