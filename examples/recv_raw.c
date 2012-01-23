@@ -12,19 +12,12 @@ int main(int argc, const char **argv )
     const char *ifname = "eth1";
     if( argc>1 )
         ifname=argv[1];
-    int fd=us_rawnet_socket( &sock, ethertype, ifname );
+    int fd=us_rawnet_socket( &sock, ethertype, ifname, multicast_mac );
     if( fd>=0 )
     {
         uint8_t pkt_src_mac[6];
         uint8_t pkt_dest_mac[6];
         uint8_t buf[2048];
-        if( !us_rawnet_join_multicast(
-                    &sock,
-                    multicast_mac
-                ) )
-        {
-            exit(1);
-        }
         ssize_t buf_len=0;
         do
         {

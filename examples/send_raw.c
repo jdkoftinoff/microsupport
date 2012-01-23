@@ -13,11 +13,10 @@ int main( int argc, char **argv )
     {
         if_name=argv[1];
     }
-    fd=us_rawnet_socket( &sock, 0x22f0, if_name );
+    fd=us_rawnet_socket( &sock, 0x22f0, if_name, dest_mac );
     if( fd>=0 )
     {
         int i=0;
-        us_rawnet_join_multicast( &sock, dest_mac );
         while(true)
         {
             uint8_t buf[1500];

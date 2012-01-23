@@ -55,7 +55,8 @@ extern "C"
     int us_rawnet_socket(
         us_rawnet_context_t *self,
         uint16_t ethertype,
-        const char *interface_name
+        const char *interface_name,
+        const uint8_t join_multicast[6]
     );
 
     void us_rawnet_close(
