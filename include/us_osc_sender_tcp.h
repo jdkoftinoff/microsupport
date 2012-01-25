@@ -32,6 +32,9 @@
 
 #include "us_world.h"
 #include "us_osc_sender.h"
+#include "us_reactor_handler_tcp.h"
+#include "us_reactor_handler_udp.h"
+
 #ifdef __cplusplus
 extern "C"
 {

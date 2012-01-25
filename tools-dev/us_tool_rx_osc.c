@@ -3,14 +3,16 @@
 #include "us_logger_printer.h"
 #include "us_net.h"
 #include "us_reactor.h"
+#include "us_reactor_handler_udp.h"
+#include "us_reactor_handler_tcp.h"
 #include "us_osc_msg.h"
 #include "us_osc_msg_print.h"
 #include "us_buffer_print.h"
 
-void us_tool_rx_osc_udp_packet_received(
+bool us_tool_rx_osc_udp_packet_received(
     us_reactor_handler_udp_t *self,
     us_buffer_t *buf,
-    struct sockaddr *remote_addr,
+    const struct sockaddr *remote_addr,
     socklen_t remote_addrlen
 );
 
@@ -45,14 +47,14 @@ bool us_tool_rx_osc( us_allocator_t *allocator, const char *listen_host, const c
  @{
  */
 
-void us_tool_rx_osc_udp_packet_received(
+bool us_tool_rx_osc_udp_packet_received(
     us_reactor_handler_udp_t *self,
     us_buffer_t *buf,
-    struct sockaddr *remote_addr,
+    const struct sockaddr *remote_addr,
     socklen_t remote_addrlen
 )
 {
-    bool r=false;
+    bool r;
     us_osc_msg_t *msg;
     us_osc_msg_bundle_t *bundle;
     r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf, us_buffer_readable_count(buf),0);
@@ -75,6 +77,7 @@ void us_tool_rx_osc_udp_packet_received(
             bundle->destroy(bundle);
         }
     }
+    return r;
 }
 
 bool us_tool_rx_osc_udp_init( us_reactor_handler_t *self_, us_allocator_t *allocator, int fd, void *extra )

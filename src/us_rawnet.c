@@ -229,7 +229,7 @@ ssize_t us_rawnet_recv(
         struct pcap_pkthdr *header;
         int e = pcap_next_ex ( m_pcap, &header,&data );
 
-        if ( e==1 && header->caplen <= payload_buf_max_size )
+        if ( e==1 && (header->caplen-14) <= payload_buf_max_size )
         {
             r = header->caplen-14;
             memcpy ( payload_buf, &data[14], r );
@@ -257,6 +257,7 @@ bool us_rawnet_join_multicast(
     pcap_t *p = (pcap_t *)self->m_pcap;
     char filter[1024];
     /* TODO: add multicast address to pcap filter here if multicast_mac is not null*/
+    (void)multicast_mac;
     sprintf ( filter, "ether proto 0x%04x", self->m_ethertype );
 
     if ( pcap_compile ( p, &fcode, filter, 1, 0xffffffff ) <0 )

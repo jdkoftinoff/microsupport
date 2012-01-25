@@ -63,28 +63,27 @@ extern "C"
 
     int
     us_net_create_udp_socket (
-        struct addrinfo *ai,
+        const struct addrinfo *ai,
         bool do_bind
     );
 
     int
     us_net_create_tcp_socket (
-        struct addrinfo *ai,
+        const struct addrinfo *ai,
         bool do_bind
     );
 
     int us_net_create_multicast_rx_udp_socket (
         struct addrinfo *listenaddr,
-        struct addrinfo *multicastgroup,
+        const struct addrinfo *multicastgroup,
         const char *interface_name
     );
 
     int us_net_create_multicast_tx_udp_socket (
         struct addrinfo *localaddr,
-        struct addrinfo *multicastgroup,
+        const struct addrinfo *multicastgroup,
         const char *interface_name
     );
-
 
     void
     us_net_timeout_add (

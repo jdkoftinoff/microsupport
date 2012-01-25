@@ -103,7 +103,7 @@ bool us_net_get_nameinfo (
 
 
 int us_net_create_udp_socket (
-    struct addrinfo *ai,
+    const struct addrinfo *ai,
     bool do_bind
 )
 {
@@ -157,7 +157,7 @@ int us_net_create_udp_socket (
 
 int us_net_create_multicast_rx_udp_socket (
     struct addrinfo *listenaddr,
-    struct addrinfo *multicastgroup,
+    const struct addrinfo *multicastgroup,
     const char *interface_name
 )
 {
@@ -262,7 +262,7 @@ int us_net_create_multicast_rx_udp_socket (
 
 int us_net_create_multicast_tx_udp_socket (
     struct addrinfo *localaddr,
-    struct addrinfo *multicastgroup,
+    const struct addrinfo *multicastgroup,
     const char *interface_name
 )
 {
@@ -270,7 +270,7 @@ int us_net_create_multicast_tx_udp_socket (
     int if_index = 0;
     if ( !localaddr )
     {
-        if ( multicastgroup->ai_family == PF_INET6 )
+        if ( multicastgroup && multicastgroup->ai_family == PF_INET6 )
         {
             localaddr = us_net_get_addrinfo ( "0::0", 0, SOCK_DGRAM, false );
         }
@@ -285,7 +285,7 @@ int us_net_create_multicast_tx_udp_socket (
         us_log_error ( "socket: %s", strerror(errno) );
         return -1;
     }
-    if ( multicastgroup->ai_family == PF_INET6 )
+    if ( multicastgroup && multicastgroup->ai_family == PF_INET6 )
     {
         if ( interface_name && *interface_name != '\0' )
         {
@@ -305,7 +305,7 @@ int us_net_create_multicast_tx_udp_socket (
             }
         }
     }
-    if ( localaddr->ai_family == PF_INET )
+    if ( localaddr && localaddr->ai_family == PF_INET )
     {
         struct in_addr in_local;
         in_local.s_addr = ( ( struct sockaddr_in * ) localaddr->ai_addr )->sin_addr.s_addr;
@@ -325,8 +325,9 @@ int us_net_create_multicast_tx_udp_socket (
     return s;
 }
 
+
 int us_net_create_tcp_socket (
-    struct addrinfo *ai,
+    const struct addrinfo *ai,
     bool do_bind
 )
 {

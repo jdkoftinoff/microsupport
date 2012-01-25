@@ -36,6 +36,8 @@
 #include "us_testutil.h"
 
 #include "us_reactor.h"
+#include "us_reactor_handler_tcp.h"
+
 #include <ctype.h>
 
 #ifndef US_EXAMPLE_HTTP_HOST
