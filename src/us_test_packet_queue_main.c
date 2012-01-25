@@ -54,10 +54,11 @@ static bool us_test_packet_queue ( us_allocator_t *a )
 
         for( k=0; k<10; ++k )
         {
+            int i;
             FAIL_IF( !us_packet_queue_is_empty( q ) );
             FAIL_IF( !us_packet_queue_can_write( q ) );
             FAIL_IF( us_packet_queue_can_read( q ) );
-            for( int i=0; i<6; ++i )
+            for( i=0; i<6; ++i )
             {
                 us_log_info( "w%d in:%d out:%d", i, q->m_next_in, q->m_next_out );
                 p=us_packet_queue_get_next_in(q);
@@ -77,7 +78,7 @@ static bool us_test_packet_queue ( us_allocator_t *a )
             FAIL_IF( us_packet_queue_can_write( q ) );
             FAIL_IF( !us_packet_queue_can_read( q ) );
 
-            for( int i=0; i<6; ++i )
+            for( i=0; i<6; ++i )
             {
                 us_log_info( "r%d in:%d out:%d", i, q->m_next_in, q->m_next_out );
                 p1=us_packet_queue_get_next_out(q);
