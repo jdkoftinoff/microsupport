@@ -59,6 +59,15 @@ extern "C"
         bool (*readable)(
             struct us_reactor_handler_rawnet_s *self
         );
+        bool (*queue_readable)(
+            struct us_reactor_handler_rawnet_s *self
+        );
+        bool (*packet_received)(
+            struct us_reactor_handler_rawnet_s *self,
+            const us_packet_t *packet,
+            us_packet_queue_t *outgoing_queue
+        );
+
     } us_reactor_handler_rawnet_t;
 
     /**
@@ -97,6 +106,10 @@ extern "C"
     /**
     */
     bool us_reactor_handler_rawnet_writable( us_reactor_handler_t *self );
+
+    /**
+      */
+    bool us_reactor_handler_rawnet_queue_readable( us_reactor_handler_rawnet_t  *self );
 
     /*@}*/
     /*@}*/

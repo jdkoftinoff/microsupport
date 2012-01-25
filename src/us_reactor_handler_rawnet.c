@@ -59,6 +59,8 @@ bool us_reactor_handler_rawnet_init (
     self->m_outgoing_packets = 0;
     self->tick=0;
     self->readable=0;
+    self->queue_readable=us_reactor_handler_rawnet_queue_readable;
+    self->packet_received = 0;
 
     fd = us_rawnet_socket( &self->m_rawsock, ethertype, ethernet_port, multicast_mac );
     if( fd>=0 )
@@ -139,6 +141,7 @@ bool us_reactor_handler_rawnet_readable( us_reactor_handler_t *self_ )
                     p->m_src_address.address.mac48.m_if_id = self->m_rawsock.m_interface_id;
                     p->m_dest_address.address.mac48.m_if_id = self->m_rawsock.m_interface_id;
                     us_packet_queue_next_in( q );
+
                     r=true;
                 }
                 else
@@ -198,11 +201,17 @@ bool us_reactor_handler_rawnet_tick( us_reactor_handler_t *self_ )
         {
             if( self->readable )
             {
-                if( us_packet_queue_can_read( self->m_incoming_packets ) )
+                /* only accept incoming packets if we have space in our incoming queue
+                  and we have space in our writable queue for a potential response
+                  */
+                if( us_packet_queue_can_write( self->m_incoming_packets )
+                        && us_packet_queue_can_write(( self->m_outgoing_packets )))
                 {
                     r=self->readable( self );
                 }
             }
+
+            /* if we have packets in our outgoing queue, wake on writable */
             if( us_packet_queue_can_read( self->m_outgoing_packets) )
             {
                 self_->m_wake_on_writable = true;
@@ -211,16 +220,37 @@ bool us_reactor_handler_rawnet_tick( us_reactor_handler_t *self_ )
             {
                 self_->m_wake_on_writable = false;
             }
-            if( us_packet_queue_can_write( self->m_incoming_packets ) )
+        }
+    }
+    return r;
+}
+
+
+bool us_reactor_handler_rawnet_queue_readable( us_reactor_handler_rawnet_t  *self )
+{
+    bool r=false;
+    if( self && self->packet_received )
+    {
+        us_packet_queue_t *q = self->m_incoming_packets;
+        while( us_packet_queue_can_read( q ) )
+        {
+            const us_packet_t *p = us_packet_queue_get_next_out(q);
+            if( p )
             {
-                self_->m_wake_on_readable = true;
+                self->packet_received(
+                            self,
+                            p,
+                            self->m_outgoing_packets
+                            );
             }
-            else
+            if( !r )
             {
-                self_->m_wake_on_readable = false;
+                break;
             }
         }
     }
     return r;
 }
+
+
 

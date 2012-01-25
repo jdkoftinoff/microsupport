@@ -241,21 +241,33 @@ bool us_reactor_handler_udp_tick( us_reactor_handler_t *self_ )
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
     if( self )
     {
-        if( us_packet_queue_can_read( self->m_outgoing_packets) )
+        if( self->tick )
         {
-            self_->m_wake_on_writable = true;
+            r = self->tick( self );
         }
-        else
+        if( r )
         {
-            self_->m_wake_on_writable = false;
-        }
-        if( us_packet_queue_can_write( self->m_incoming_packets ) )
-        {
-            self_->m_wake_on_readable = true;
-        }
-        else
-        {
-            self_->m_wake_on_readable = false;
+            if( self->queue_readable )
+            {
+                /* only accept incoming packets if we have space in our incoming queue
+                  and we have space in our writable queue for a potential response
+                  */
+                if( us_packet_queue_can_write( self->m_incoming_packets )
+                        && us_packet_queue_can_write(( self->m_outgoing_packets )))
+                {
+                    r=self->queue_readable( self );
+                }
+            }
+
+            /* if we have packets in our outgoing queue, wake on writable */
+            if( us_packet_queue_can_read( self->m_outgoing_packets) )
+            {
+                self_->m_wake_on_writable = true;
+            }
+            else
+            {
+                self_->m_wake_on_writable = false;
+            }
         }
     }
     return r;
@@ -264,7 +276,7 @@ bool us_reactor_handler_udp_tick( us_reactor_handler_t *self_ )
 bool us_reactor_handler_udp_queue_readable( us_reactor_handler_udp_t  *self )
 {
     bool r=false;
-    if( self )
+    if( self && self->packet_received )
     {
         us_packet_queue_t *q = self->m_incoming_packets;
         while( us_packet_queue_can_read( q ) )
@@ -272,9 +284,11 @@ bool us_reactor_handler_udp_queue_readable( us_reactor_handler_udp_t  *self )
             const us_packet_t *p = us_packet_queue_get_next_out(q);
             if( p )
             {
-                us_buffer_t b;
-                us_buffer_init(&b,0,p->m_data,p->m_length);
-                r = self->packet_received( self, &b, (struct sockaddr *)&p->m_src_address.address.tcp.m_addr, sizeof(struct sockaddr_storage));
+                self->packet_received(
+                            self,
+                            p,
+                            self->m_outgoing_packets
+                            );
             }
             if( !r )
             {

@@ -60,9 +60,8 @@ extern "C"
         );
         bool (*packet_received)(
             struct us_reactor_handler_udp_s *self,
-            us_buffer_t *buf,
-            const struct sockaddr *remote_addr,
-            socklen_t remote_addrlen
+            const us_packet_t *packet,
+            us_packet_queue_t *outgoing_queue
         );
     } us_reactor_handler_udp_t;
 
