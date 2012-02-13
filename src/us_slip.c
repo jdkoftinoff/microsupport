@@ -155,7 +155,7 @@ int us_slip_decoder_parse_buffer (
 {
     int packet_count = 0;
     int i;
-    int len = us_buffer_readable_count(buffer);
+    int len = (int)us_buffer_readable_count(buffer);
     for ( i = 0; i < len; ++i )
     {
         uint8_t c = us_buffer_read_byte(buffer);
@@ -228,7 +228,7 @@ bool us_slip_encode (
 {
     bool r = true;
     int32_t i;
-    int32_t len =us_buffer_readable_count(src_buffer);
+    int32_t len =(int32_t)us_buffer_readable_count(src_buffer);
     if ( len > 0 )
     {
         /* start the packet with an END code to ensure packet beginning is seen */

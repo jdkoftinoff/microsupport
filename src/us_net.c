@@ -426,7 +426,7 @@ us_net_blocking_send(
 {
     int32_t todo=len;
     const uint8_t *data = (const uint8_t *)data_;
-    int cnt;
+    ssize_t cnt;
     while (todo>0)
     {
         do

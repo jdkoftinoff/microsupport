@@ -201,7 +201,7 @@ bool us_reactor_handler_tcp_tick (
 {
     bool r = true;
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
-    int32_t incoming_count = us_buffer_contig_writable_count ( &self->m_incoming_queue );
+    size_t incoming_count = us_buffer_contig_writable_count ( &self->m_incoming_queue );
     bool outgoing_available = us_buffer_can_read_byte ( &self->m_outgoing_queue );
     us_reactor_log_tracepoint();
     /* If we have space in our incoming queue, wake up when the socket is readable */
@@ -235,7 +235,7 @@ bool us_reactor_handler_tcp_readable (
 {
     us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     int len;
-    int max_len = us_buffer_contig_writable_count( &self->m_incoming_queue );
+    int max_len = (int)us_buffer_contig_writable_count( &self->m_incoming_queue );
     void *p = us_buffer_contig_write_ptr( &self->m_incoming_queue );
     us_reactor_log_tracepoint();
     if ( max_len==0 )
@@ -245,7 +245,7 @@ bool us_reactor_handler_tcp_readable (
     }
     do
     {
-        len = recv ( self->m_base.m_fd, (char *)p, max_len, 0 );
+        len = (int)recv ( self->m_base.m_fd, (char *)p, max_len, 0 );
     }
     while ( len<0 && errno==EINTR );
     if ( len > 0 )
@@ -304,19 +304,19 @@ bool us_reactor_handler_tcp_writable (
     bool r = false;
     int len;
     us_reactor_log_tracepoint();
-    len = us_buffer_readable_count ( &self->m_outgoing_queue );
+    len = (int)us_buffer_readable_count ( &self->m_outgoing_queue );
     if ( len==0 && self->writable )
     {
         self->writable( self );
-        len = us_buffer_readable_count ( &self->m_outgoing_queue );
+        len = (int)us_buffer_readable_count ( &self->m_outgoing_queue );
     }
     if ( len > 0 )
     {
         const uint8_t *outgoing = us_buffer_contig_read_ptr ( &self->m_outgoing_queue );
-        int outgoing_len = us_buffer_contig_readable_count ( &self->m_outgoing_queue );
+        int outgoing_len = (int)us_buffer_contig_readable_count ( &self->m_outgoing_queue );
         do
         {
-            len = send ( self->m_base.m_fd, (const char *)outgoing, outgoing_len, 0 );
+            len = (int)send ( self->m_base.m_fd, (const char *)outgoing, outgoing_len, 0 );
         }
         while ( len<0 && errno==EINTR );
         if ( len > 0 )

@@ -285,10 +285,10 @@ bool us_reactor_handler_udp_queue_readable( us_reactor_handler_udp_t  *self )
             if( p )
             {
                 self->packet_received(
-                            self,
-                            p,
-                            self->m_outgoing_packets
-                            );
+                    self,
+                    p,
+                    self->m_outgoing_packets
+                );
             }
             if( !r )
             {

@@ -43,7 +43,7 @@ us_buffer_print (
     bool r = false;
     if ( self && printer )
     {
-        int len=us_buffer_readable_count(self);
+        size_t len=us_buffer_readable_count(self);
         r = true;
         r &= printer->printf (
                  printer,
@@ -76,7 +76,7 @@ us_buffer_print_string (
     bool r = false;
     if ( self && printer )
     {
-        int len=us_buffer_readable_count(self);
+        size_t len=us_buffer_readable_count(self);
         r = true;
         r &= printer->printf (
                  printer,

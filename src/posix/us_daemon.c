@@ -27,7 +27,7 @@ void us_daemon_drop_root(
         else
         {
             /* that failed, maybe uid is actually a number */
-            new_uid = strtol( uid_name, 0, 10 );
+            new_uid = (uid_t)strtol( uid_name, 0, 10 );
             pw = getpwuid( new_uid );
             if( pw )
                 new_gid = pw->pw_gid;
@@ -100,7 +100,7 @@ void us_daemon_daemonize(
                 abort();
             }
             sprintf( tmpbuf, "%ld\n", (long)getpid() );
-            int len = strlen(tmpbuf);
+            size_t len = strlen(tmpbuf);
             if( write( us_daemon_pid_fd, tmpbuf, len)!=len )
             {
                 us_log_error( "Error writing pid file: %s", us_daemon_pid_file_name );

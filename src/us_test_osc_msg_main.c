@@ -244,7 +244,7 @@ static bool do_test_osc_msg_bundle(
             if ( bundle->flatten( bundle, buffer, 0 ) )
             {
 #if US_ENABLE_PRINTING
-                int32_t bundle_size = us_buffer_readable_count(buffer);
+                int32_t bundle_size = (int32_t)us_buffer_readable_count(buffer);
                 {
                     printer->printf( printer, "bundle size: %ld\n", bundle_size );
                     printer->printf( printer, "Flattened message bundle buffer contents:\n" );

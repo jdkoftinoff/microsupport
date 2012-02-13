@@ -66,9 +66,9 @@ extern "C"
     extern const char *us_getopt_value_types[];
 
 
-    bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len );
-    int us_getopt_unescape_char( char *dest, const char *str, int str_len );
-    bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len );
+    bool us_getopt_escape(char *dest, size_t dest_len, const char *str, size_t str_len );
+    int us_getopt_unescape_char( char *dest, const char *str, size_t str_len );
+    bool us_getopt_unescape( char *dest, size_t dest_len, const char *str, size_t str_len );
 
     bool us_getopt_string_for_value(
         char *buf,
@@ -83,6 +83,13 @@ extern "C"
         void *value,
         const char *str,
         int str_len
+    );
+
+    bool us_getopt_string_for_default(
+        char *buf,
+        int buf_len,
+        us_getopt_type_t type,
+        const void *value
     );
 
     bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_type_t type, const void *default_value );

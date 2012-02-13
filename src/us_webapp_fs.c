@@ -89,7 +89,7 @@ us_webapp_t *us_webapp_fs_create(
         self->m_base.destroy = us_webapp_fs_destroy;
         self->m_base.dispatch = us_webapp_fs_dispatch;
         self->m_base.path_match = us_webapp_fs_path_match;
-        self->m_web_path_prefix_len = strlen( web_path_prefix );
+        self->m_web_path_prefix_len = (int)strlen( web_path_prefix );
         self->m_filesystem_path = us_strdup( allocator, filesystem_path );
         self->m_web_path_prefix = us_strdup( allocator, web_path_prefix );
         if ( ext_map )
@@ -138,7 +138,7 @@ static bool us_webapp_fs_validate_path( const char *path )
     bool r=true;
     bool last_was_dot=false;
     int i;
-    int len = strlen( path );
+    int len = (int)strlen( path );
     for ( i=0; i<len; ++i )
     {
         char c= path[i];
@@ -248,7 +248,7 @@ int us_webapp_fs_dispatch(
     }
     /* path ends in / means readirect to index.html */
     {
-        int len = strlen( request_header->m_path );
+        int len = (int)strlen( request_header->m_path );
         if ( len>0 && request_header->m_path[len-1]=='/' )
         {
             char new_path[4096];
@@ -280,7 +280,7 @@ int us_webapp_fs_dispatch(
     content_type=us_webapp_file_ext_mime_map_find( self->m_ext_map, request_header->m_path );
     r&=us_http_response_header_set_content_type ( response_header, content_type );
     r&=us_http_response_header_set_connection_close ( response_header );
-    r&=us_http_response_header_set_content_length ( response_header, us_buffer_readable_count( response_content ) );
+    r&=us_http_response_header_set_content_length ( response_header, (int)us_buffer_readable_count( response_content ) );
     if ( r )
     {
         response_header->m_code = 200;

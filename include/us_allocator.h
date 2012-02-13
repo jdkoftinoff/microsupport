@@ -62,7 +62,7 @@ extern "C"
     */
 
 #define us_new_array( ALLOCATOR, T, COUNT )                             \
-    (T *)((ALLOCATOR)->alloc( (ALLOCATOR), (int32_t)sizeof( T ), (COUNT) ))
+    (T *)((ALLOCATOR)->alloc( (ALLOCATOR), (int32_t)sizeof( T ), (int32_t)(COUNT) ))
 
     /** us_round_size
 

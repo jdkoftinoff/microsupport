@@ -155,6 +155,16 @@ LINK.c=icc
 LINK_FLAGS+=-cxxlib -lstdc++ -lm -lsvml
 endif
 
+ifeq ($(COMPILER),clang)
+CXX=$(COMPILER_PREFIX)clang++
+CC=$(COMPILER_PREFIX)clang
+AR=$(COMPILER_PREFIX)ar
+RANLIB=$(COMPILER_PREFIX)ranlib
+LINK.cpp?=$(CXX)
+LINK.c?=$(CC)
+endif
+
+
 ifeq ($(COMPILER),gcc)
 CXX=$(COMPILER_PREFIX)g++
 CC=$(COMPILER_PREFIX)gcc

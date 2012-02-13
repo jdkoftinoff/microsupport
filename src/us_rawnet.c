@@ -203,7 +203,7 @@ ssize_t us_rawnet_send(
         buffer[12] = US_GET_BYTE_1 ( self->m_ethertype );
         buffer[13] = US_GET_BYTE_0 ( self->m_ethertype );
         memcpy ( data, payload, payload_len );
-        r=pcap_sendpacket ( m_pcap,buffer,payload_len+14 ) ==0;
+        r=pcap_sendpacket ( m_pcap,buffer,(int)payload_len+14 ) ==0;
     }
     else
     {

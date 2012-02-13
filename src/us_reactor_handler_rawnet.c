@@ -238,10 +238,10 @@ bool us_reactor_handler_rawnet_queue_readable( us_reactor_handler_rawnet_t  *sel
             if( p )
             {
                 self->packet_received(
-                            self,
-                            p,
-                            self->m_outgoing_packets
-                            );
+                    self,
+                    p,
+                    self->m_outgoing_packets
+                );
             }
             if( !r )
             {

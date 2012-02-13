@@ -409,7 +409,7 @@ bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_typ
 }
 
 
-bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
+bool us_getopt_escape(char *dest, size_t dest_len, const char *str, size_t str_len )
 {
     bool r=true;
     int i;
@@ -464,7 +464,7 @@ bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
     return r;
 }
 
-int us_getopt_unescape_char( char *dest, const char *str, int str_len )
+int us_getopt_unescape_char( char *dest, const char *str, size_t str_len )
 {
     const char *p;
     int r=-1;
@@ -537,14 +537,14 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
     return r;
 }
 
-bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len )
+bool us_getopt_unescape( char *dest, size_t dest_len, const char *str, size_t str_len )
 {
     bool r=true;
     int i;
     int dp=0;
     for ( i=0; i<str_len; )
     {
-        int todo=str_len-i;
+        int todo=(int32_t)(str_len-i);
         int done=0;
         if ( dp>dest_len-2 )
         {
@@ -841,7 +841,7 @@ bool us_getopt_parse_one( us_getopt_t *self, const char *name, int name_len, con
         int subname_len=name_len;
         if ( list->m_prefix!=0 )
         {
-            prefix_len = strlen( list->m_prefix );
+            prefix_len = (int32_t)strlen( list->m_prefix );
             subname+=(prefix_len+1);
             subname_len-=(prefix_len+1);
         }
@@ -878,9 +878,9 @@ bool us_getopt_parse_args( us_getopt_t *self, const char **argv )
         {
             const char *pos_equals = strchr( *argv, '=' );
             const char *pos_name = (*argv)+2;
-            int name_len = (pos_equals!=0 ? pos_equals-pos_name : (int)strlen(pos_name) );
+            int name_len = (pos_equals!=0 ? (int32_t)(pos_equals-pos_name) : (int32_t)strlen(pos_name) );
             const char *pos_value = (pos_equals ? pos_equals+1 : 0 );
-            int value_len = (pos_value ? strlen(pos_value) : 0 );
+            int value_len = (pos_value ? (int32_t)strlen(pos_value) : 0 );
             r&=us_getopt_parse_one( self, pos_name, name_len, pos_value, value_len );
         }
         else
@@ -1034,8 +1034,8 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
         us_getopt_unescape( unescaped_value, sizeof(unescaped_value)-1, escaped_value_ptr, escaped_value_len );
         r=us_getopt_parse_one(
               self,
-              unescaped_key_name, strlen(unescaped_key_name),
-              unescaped_value, strlen( unescaped_value )
+              unescaped_key_name, (int32_t)strlen(unescaped_key_name),
+              unescaped_value, (int32_t)strlen( unescaped_value )
           );
     }
     return r;
