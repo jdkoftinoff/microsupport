@@ -412,8 +412,8 @@ bool us_getopt_copy_value( us_allocator_t *allocator, void *value, us_getopt_typ
 bool us_getopt_escape(char *dest, int dest_len, const char *str, int str_len )
 {
     bool r=true;
-    int i;
-    int dp=0;
+    size_t i;
+    size_t dp=0;
     for (i=0; i<str_len; ++i)
     {
         char c=str[i];
@@ -540,8 +540,8 @@ int us_getopt_unescape_char( char *dest, const char *str, int str_len )
 bool us_getopt_unescape( char *dest, int dest_len, const char *str, int str_len )
 {
     bool r=true;
-    int i;
-    int dp=0;
+    size_t i;
+    size_t dp=0;
     for ( i=0; i<str_len; )
     {
         int todo=str_len-i;

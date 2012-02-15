@@ -52,7 +52,7 @@ us_buffer_print (
              );
         if ( r )
         {
-            int32_t i;
+            size_t i;
             for ( i = 0; i < len; ++i )
             {
                 r &= printer->printf ( printer, "%02x ", us_buffer_peek( self, i ) );
@@ -85,7 +85,7 @@ us_buffer_print_string (
              );
         if ( r )
         {
-            int32_t i;
+            size_t i;
             for ( i = 0; i < len; ++i )
             {
                 r &= printer->printf ( printer, "%c", us_buffer_peek(self,i) );
