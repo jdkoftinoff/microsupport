@@ -1,16 +1,14 @@
 ########################################################################
 #
-# The magic.makefile Copyright 2004-2008 
+# The magic.makefile Copyright 2011
 # by Jeff Koftinoff <jeffk@jdkoftinoff.com> 
 # and J.D. Koftinoff Software Ltd.
+# All rights reserved.
 #
-# Version 9: http://wiki.github.com/jdkoftinoff/magicmake/
+# Version 2011.10.31: http://wiki.github.com/jdkoftinoff/magicmake/
 #
 # Simplifies the building of a c/c++ library, tests, tools, examples, 
 # and documentation.
-#
-# Copyright (c) 2010, Jeff Koftinoff <jeff.koftinoff@ieee.org>
-# All rights reserved.
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -153,6 +151,7 @@ AR=xiar
 LINK.cpp=icc
 LINK.c=icc
 LINK_FLAGS+=-cxxlib -lstdc++ -lm -lsvml
+flags_for_deps=$(1) -MM -M -MT $(2) -MF $(3) $(4) 
 endif
 
 ifeq ($(COMPILER),clang)
@@ -162,8 +161,8 @@ AR=$(COMPILER_PREFIX)ar
 RANLIB=$(COMPILER_PREFIX)ranlib
 LINK.cpp?=$(CXX)
 LINK.c?=$(CC)
+flags_for_deps=true
 endif
-
 
 ifeq ($(COMPILER),gcc)
 CXX=$(COMPILER_PREFIX)g++
@@ -172,6 +171,7 @@ AR=$(COMPILER_PREFIX)ar
 RANLIB=$(COMPILER_PREFIX)ranlib
 LINK.cpp?=$(CXX)
 LINK.c?=$(CC)
+flags_for_deps=$(1) -MM -M -MT $(2) -MF $(3) $(4)
 endif
 
 ifeq ($(CROSS_COMPILING),1)
@@ -650,9 +650,12 @@ endif
 
 CONFIG_TOOLS_PATHS:=$(foreach pkg,$(CONFIG_TOOLS),$(shell which $(pkg)))
 
-INCLUDES_PACKAGES:=$(sort $(filter-out -Wstrict-prototypes,$(foreach pkg,$(PKGCONFIG_PACKAGES),$(shell pkg-config $(pkg) --cflags)) $(foreach pkg,$(CONFIG_TOOLS),$(shell $(pkg) $(CONFIG_TOOLS_OPTIONS) --cflags))))
+INCLUDES_PACKAGES:=$(sort $(filter-out -Wstrict-prototypes,$(foreach pkg,$(PKGCONFIG_PACKAGES),$(shell pkg-config $(pkg) --cppflags)) $(foreach pkg,$(CONFIG_TOOLS),$(shell $(pkg) $(CONFIG_TOOLS_OPTIONS) --cppflags))))
 
 COMPILE_FLAGS+=$(COMPILE_FLAGS_PACKAGES)
+
+CFLAGS_PACKAGES:=$(foreach pkg,$(PKGCONFIG_PACKAGES),$(shell pkg-config $(pkg) --cflags)) $(foreach pkg,$(CONFIG_TOOLS),$(shell $(pkg) $(CONFIG_TOOLS_OPTIONS) --cflags))
+CXXFLAGS_PACKAGES:=$(foreach pkg,$(PKGCONFIG_PACKAGES),$(shell pkg-config $(pkg) --cxxflags)) $(foreach pkg,$(CONFIG_TOOLS),$(shell $(pkg) $(CONFIG_TOOLS_OPTIONS) --cxxflags))
 
 # all our */include directories
 INCLUDES+=$(LIB_INCLUDE_DIR)
@@ -1447,39 +1450,39 @@ ifeq ($(ENABLE_PRECOMPILED_HEADERS),1)
 # For C++: (hh)
 $(OUTPUT_OBJ_DIR)/%.hh.gch $(OUTPUT_OBJ_DIR)/%.hh.gch.d : %.hh
 	@echo "PRECOMPILE HEADER $(PRECOMPILE_HH_FLAGS) : $(notdir $<)"
-	@$(COMPILE.cpp) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS)  $(DEPENDENCY_OPTIONS) -M -MT $(OUTPUT_OBJ_DIR)/$(@F) -MF $(OUTPUT_OBJ_DIR)/$*.d $< && $(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
+	@$(call flags_for_deps,$(COMPILE.cpp) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) && $(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
 
 # For C++: (hpp)
 $(OUTPUT_OBJ_DIR)/%.hpp.gch $(OUTPUT_OBJ_DIR)/%.hpp.gch.d : %.hpp
 	@echo "PRECOMPILE HEADER $(PRECOMPILE_HH_FLAGS) : $(notdir $<)"
-	@$(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -M -MT $(OUTPUT_OBJ_DIR)/$(@F) -MF $(OUTPUT_OBJ_DIR)/$*.d $< && $(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
+	@$(call flags_for_deps,$(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) && $(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
 
 # For C++: (H)
 $(OUTPUT_OBJ_DIR)/%.H.gch $(OUTPUT_OBJ_DIR)/%.H.gch.d : %.H
 	@echo "PRECOMPILE HEADER $(PRECOMPILE_HH_FLAGS) : $(notdir $<)"
-	@$(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -M -MT $(OUTPUT_OBJ_DIR)/$(@F) -MF $(OUTPUT_OBJ_DIR)/$*.d $< && $(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
+	@$(call flags_for_deps,$(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) && $(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_HH_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
 
 # For C: (h)
 $(OUTPUT_OBJ_DIR)/%.h.gch $(OUTPUT_OBJ_DIR)/%.h.gch.d : %.h
 	@echo "PRECOMPILE HEADER $(PRECOMPILE_H_FLAGS) : $(notdir $<)"
-	@$(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_H_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -M -MT $(OUTPUT_OBJ_DIR)/$(@F) -MF $(OUTPUT_OBJ_DIR)/$*.d $< && $(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_H_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
+	@$(call flags_for_deps,$(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_H_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) && $(COMPILE.cpp) $(PRECOMPILE_FLAGS) $(PRECOMPILE_H_FLAGS) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
 endif
 
 
 # For Objective C++:
 $(OUTPUT_OBJ_DIR)/%.o $(OUTPUT_OBJ_DIR)/%.d : %.mm
 	@echo "CXX mm : $(notdir $<)"
-	@$(CXX) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(MMFLAGS) $(DEPENDENCY_OPTIONS) -MT $(OUTPUT_OBJ_DIR)/$*.o -MF $(OUTPUT_OBJ_DIR)/$*.d $< &&	$(COMPILE.cpp) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$*.o $< 
+	@$(call flags_for_deps,$(CXX) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(MMFLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) &&	$(COMPILE.cpp) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $< 
 
 # For Objective C:
 $(OUTPUT_OBJ_DIR)/%.o $(OUTPUT_OBJ_DIR)/%.d : %.m
 	@echo "CC  m  : $(notdir $<)"
-	@$(CC) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(MFLAGS) $(DEPENDENCY_OPTIONS) -MT  $(OUTPUT_OBJ_DIR)/$*.o -MF $(OUTPUT_OBJ_DIR)/$*.d $< &&	$(COMPILE.c) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$*.o $<
+	@$(call flags_for_deps,$(CC) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(MFLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) &&	$(COMPILE.c) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
 
 # For C++: (cpp)
 $(OUTPUT_OBJ_DIR)/%.o $(OUTPUT_OBJ_DIR)/%.d : %.cpp
 	@echo "CXX    : $(notdir $<)"
-	@$(CXX) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS)  $(DEPENDENCY_OPTIONS) -MT $(OUTPUT_OBJ_DIR)/$*.o -MF $(OUTPUT_OBJ_DIR)/$*.d $< && $(COMPILE.cpp) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$*.o $<
+	@$(call flags_for_deps,$(CXX) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) && $(COMPILE.cpp) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
 
 # Asm For C++: (cpp)
 $(OUTPUT_OBJ_DIR)/%.asm : %.cpp
@@ -1489,7 +1492,7 @@ $(OUTPUT_OBJ_DIR)/%.asm : %.cpp
 # For C++: (cc)
 $(OUTPUT_OBJ_DIR)/%.o $(OUTPUT_OBJ_DIR)/%.d : %.cc
 	@echo "CXX    : $(notdir $<)"
-	@$(CXX) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS)  $(DEPENDENCY_OPTIONS) -MT  $(OUTPUT_OBJ_DIR)/$*.o -MF $(OUTPUT_OBJ_DIR)/$*.d $< && $(COMPILE.cc) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$*.o $<
+	@$(call flags_for_deps,$(CXX) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) && $(COMPILE.cc) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
 
 # Asm For C++: (cc)
 $(OUTPUT_OBJ_DIR)/%.asm : %.cc
@@ -1499,7 +1502,7 @@ $(OUTPUT_OBJ_DIR)/%.asm : %.cc
 # For C:
 $(OUTPUT_OBJ_DIR)/%.o $(OUTPUT_OBJ_DIR)/%.d : %.c
 	@echo "CC     : $(notdir $<)"
-	@$(CC) $(SORTED_PREPROCESS_FLAGS)   $(LOCAL_PREPROCESS_FLAGS) $(DEPENDENCY_OPTIONS) -MT  $(OUTPUT_OBJ_DIR)/$*.o -MF $(OUTPUT_OBJ_DIR)/$*.d $< && $(COMPILE.c) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$*.o $<
+	@$(call flags_for_deps,$(CC) $(SORTED_PREPROCESS_FLAGS)   $(LOCAL_PREPROCESS_FLAGS),$(OUTPUT_OBJ_DIR)/$(@F),$(OUTPUT_OBJ_DIR)/$*.d,$<) && $(COMPILE.c) $(LOCAL_PREPROCESS_FLAGS) $(SORTED_PREPROCESS_FLAGS) $(COMPILE_FLAGS) $(LOCAL_COMPILE_FLAGS) -o $(OUTPUT_OBJ_DIR)/$(@F) $<
 
 # Asm For C:
 $(OUTPUT_OBJ_DIR)/%.asm : %.c
@@ -3140,17 +3143,16 @@ compile_info :
 	@echo "AR=$(AR)"
 	@echo "RANLIB=$(RANLIB)"
 	@echo "COMPILE_FLAGS=$(COMPILE_FLAGS)"
-	@echo
+	@echo "CFLAGS=$(CFLAGS)"
+	@echo "CXXFLAGS=$(CXXFLAGS)"
 	@echo "PREPROCESS_FLAGS=$(PREPROCESS_FLAGS)"
 ifeq ($(ENABLE_PRECOMPILED_HEADERS),1)
 	@echo "PRECOMPILED_HEADER=$(PRECOMPILED_HEADER)"
 	@echo "PRECOMPILED_HEADER_GCH=$(PRECOMPILED_HEADER_GCH)"
 endif
-	@echo
 	@echo "LINK_FLAGS=$(LINK_FLAGS)"
 	@echo
 	@echo "LDLIBS=$(LDLIBS) $(FINAL_LDLIBS)"
-	@echo
 	@echo "LDLIBS_NO_OPTS=$(LDLIBS_NO_OPTS)"
 	@echo
 ifneq ($(PKGCONFIG_PACKAGES),)
