@@ -11,9 +11,8 @@
 
 bool us_tool_rx_osc_udp_packet_received(
     us_reactor_handler_udp_t *self,
-    us_buffer_t *buf,
-    const struct sockaddr *remote_addr,
-    socklen_t remote_addrlen
+    const us_packet_t *packet,
+    us_packet_queue_t *outgoing_queue
 );
 
 
@@ -49,14 +48,18 @@ bool us_tool_rx_osc( us_allocator_t *allocator, const char *listen_host, const c
 
 bool us_tool_rx_osc_udp_packet_received(
     us_reactor_handler_udp_t *self,
-    us_buffer_t *buf,
-    const struct sockaddr *remote_addr,
-    socklen_t remote_addrlen
+    const us_packet_t *packet,
+    us_packet_queue_t *outgoing_queue
 )
 {
     bool r;
+    us_buffer_t buf_;
+    us_buffer_t *buf;
     us_osc_msg_t *msg;
     us_osc_msg_bundle_t *bundle;
+
+    buf = us_buffer_init( &buf_, (us_allocator_t *)0, (void *)packet->m_data, packet->m_max_length );
+    buf->m_next_in = packet->m_length;
     r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf, us_buffer_readable_count(buf),0);
     if ( r )
     {
