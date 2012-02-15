@@ -193,7 +193,7 @@ inline bool operator < (
             {
                 const struct sockaddr_in6 *pleft = (const struct sockaddr_in6 *)&left.m_addr;
                 const struct sockaddr_in6 *pright = (const struct sockaddr_in6 *)&right.m_addr;
-                if( pleft->sin6_port < pright->sin6_port 
+                if( pleft->sin6_port < pright->sin6_port
                    || pleft->sin6_scope_id < pright->sin6_scope_id )
                 {
                     r=true;
@@ -213,6 +213,58 @@ inline bool operator < (
             }
             
         }
+    }
+    return r;
+}
+
+inline bool operator == ( const us_packet_address_t &left, const us_packet_address_t &right )
+{
+    bool r=false;
+    if( left.m_type == right.m_type )
+    {
+        switch( left.m_type )
+        {
+        case us_packet_address_none:
+            r=true;
+            break;
+        case us_packet_address_mac48:
+            r= (left.address.mac48 == right.address.mac48);
+            break;
+        case us_packet_address_tcp:
+            r= (left.address.tcp == right.address.tcp);
+            break;
+        default:
+            r=false;
+            break;
+        }
+    }
+    return r;
+}
+
+inline bool operator < ( const us_packet_address_t &left, const us_packet_address_t &right )
+{
+    bool r=false;
+    if( left.m_type == right.m_type )
+    {
+        switch( left.m_type )
+        {
+        case us_packet_address_none:
+            r=false;
+            break;
+        case us_packet_address_mac48:
+            r= (left.address.mac48 < right.address.mac48);
+            break;
+        case us_packet_address_tcp:
+            r= (left.address.tcp < right.address.tcp);
+            break;
+        default:
+            r=false;
+            break;
+        }
+    }
+    else
+    {
+        r=( (int)left.m_type < (int)right.m_type);
     }
     return r;
 }
