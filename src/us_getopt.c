@@ -996,6 +996,10 @@ bool us_getopt_parse_line( us_getopt_t *self, const char *line, size_t line_len 
             break;
         }
     }
+    if( state!=IN_VALUE_SUFFIX)
+    {
+        return false;
+    }
     /* remove trailing whitespace */
     for (i=escaped_value_len-1; i>0; --i)
     {

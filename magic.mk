@@ -620,7 +620,7 @@ endif
 # having DEBUG set to 1 means we compile with -g and add preprocessor define DEBUG=1
 
 ifeq ($(DEBUG),1)
-DEBUG_FLAGS?=-g -rdynamic
+DEBUG_FLAGS?=-g 
 COMPILE_FLAGS+=$(DEBUG_FLAGS)
 DEFINES+=DEBUG=1
 LINK_FLAGS+=$(DEBUG_FLAGS)
