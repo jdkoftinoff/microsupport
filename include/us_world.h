@@ -237,10 +237,13 @@ extern "C"
 }
 #endif
 
-
 #include "us_platform.h"
 #include "us_logger.h"
 #include "us_bits.h"
+
+#ifdef __cplusplus
+#include "us_world.hpp"
+#endif
 
 /*@}*/
 

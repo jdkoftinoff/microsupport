@@ -176,6 +176,7 @@ bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
                 if( s>=0 )
                 {
                     p->m_src_address.address.tcp.m_if_id = -1;
+                    p->m_src_address.address.tcp.m_len = remote_addrlen;
                     us_packet_queue_next_in( q );
                     r=true;
                 }
@@ -216,7 +217,7 @@ bool us_reactor_handler_udp_writable( us_reactor_handler_t *self_ )
                           p->m_length,
                           0,
                           (struct sockaddr *)&p->m_dest_address.address.tcp.m_addr,
-                          sizeof( struct sockaddr_storage )
+                          p->m_dest_address.address.tcp.m_len
                       );
             }
             while ( len<0 && errno==EINTR );

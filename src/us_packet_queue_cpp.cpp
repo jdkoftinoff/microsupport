@@ -1,5 +1,5 @@
-#ifndef US_WORLD_HPP
-#define US_WORLD_HPP
+#include "us_world.h"
+#include "us_packet_queue.hpp"
 
 /*
 Copyright (c) 2012, Meyer Sound Laboratories, Inc.
@@ -26,17 +26,11 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
  */
 
-#include "us_world.h"
-#include <string>
-#include <iostream>
-#include <stdexcept>
-#include <vector>
-#include "us_packet.hpp"
-#include "us_packet_queue.hpp"
-#include "us_reactor.hpp"
+namespace microsupport
+{
 
 
-#endif
-
+}

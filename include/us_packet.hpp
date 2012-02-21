@@ -32,242 +32,228 @@
 #include "us_world.hpp"
 
 #include "us_packet.h"
-    
-/* \addtogroup packet packet*/
-/*@{*/
-    
-inline bool operator == ( 
-                         const us_packet_address_mac48_t &left,
-                         const us_packet_address_mac48_t &right
-                         )
-{
-    bool r=true;
-    for( int i=0; i<6; ++i )
-    {
-        if( left.m_mac[i] != right.m_mac[i] )
-        {
-            r=false;
-            break;
-        }
-        if( r )
-        {
-            if( left.m_if_id != right.m_if_id )
-            {
-                r=false;
-            }
-        }
-    }
-        
-    return r;
-}
 
-inline bool operator < (
-                        const us_packet_address_mac48_t &left,
-                        const us_packet_address_mac48_t &right
-                        )
+    /* \addtogroup packet packet*/
+    /*@{*/
+
+namespace microsupport
 {
-    bool r=false;
-    
-    if( left.m_if_id < right.m_if_id )
+    struct packet_address_mac48_t : us_packet_address_mac48_t
     {
-        r=true;
-    }
-    else
+    };
+
+    struct packet_address_tcp_t : us_packet_address_tcp_t
     {
-        for( int i=0; i<6; ++i )
+    };
+
+    struct packet_address_t : us_packet_address_t
+    {
+        const packet_address_t & operator = ( const us_packet_address_t &v )
         {
-            if( left.m_mac[i] < right.m_mac[i] )
+            m_type = v.m_type;
+            if( v.m_type == us_packet_address_mac48 )
             {
-                r=true;
-                break;
+                address.mac48.m_if_id = v.address.mac48.m_if_id;
+                memcpy( address.mac48.m_mac, v.address.mac48.m_mac, sizeof( address.mac48.m_mac));
+            }
+            else if( v.m_type==us_packet_address_tcp )
+            {
+                address.tcp.m_len = v.address.tcp.m_len;
+                address.tcp.m_addr = v.address.tcp.m_addr;
+            }
+            return *this;
+        }
+
+        packet_address_t( const us_packet_address_t &v )
+        {
+            m_type = v.m_type;
+            if( v.m_type == us_packet_address_mac48 )
+            {
+                address.mac48.m_if_id = v.address.mac48.m_if_id;
+                memcpy( address.mac48.m_mac, v.address.mac48.m_mac, sizeof( address.mac48.m_mac));
+            }
+            else if( v.m_type==us_packet_address_tcp )
+            {
+                address.tcp.m_len = v.address.tcp.m_len;
+                address.tcp.m_addr = v.address.tcp.m_addr;
             }
         }
-    }
-    
-    return r;
-}
-                        
-inline bool operator == ( 
-                         const us_packet_address_tcp_t &left,
-                         const us_packet_address_tcp_t &right 
-                         )
-{
-    bool r=true;
-    if( left.m_if_id != right.m_if_id )
-    {
-        r=false;
-    }
-    else
-    {
-        if( left.m_addr.ss_family != right.m_addr.ss_family )
+        packet_address_t( int if_id, const uint8_t mac[6] )
         {
-            r=false;
+            m_type = us_packet_address_mac48;
+            address.mac48.m_if_id = if_id;
+            memcpy( address.mac48.m_mac, mac, sizeof( address.mac48.m_mac ));
         }
-        else
+        packet_address_t( int if_id, const struct sockaddr *addr, size_t addrlen )
         {
-            if( left.m_addr.ss_family == AF_UNIX )
+            m_type = us_packet_address_tcp;
+            address.tcp.m_if_id = if_id;
+            memcpy( &address.tcp.m_addr, addr, addrlen );
+        }
+
+        std::ostream & print( std::ostream &s ) const
+        {
+            bool r;
+            char buf[8192];
+            size_t offset = 0;
+            r = print( buf,&offset,sizeof(buf) );
+            if( r )
             {
+                s << buf;
             }
-            else if( left.m_addr.ss_family == AF_INET )
+            return s;
+        }
+
+        bool print( char *buf, size_t *pos, size_t len ) const
+        {
+            bool r=false;
+            if( m_type == us_packet_address_mac48 )
             {
-                const struct sockaddr_in *pleft = (const struct sockaddr_in *)&left.m_addr;
-                const struct sockaddr_in *pright = (const struct sockaddr_in *)&right.m_addr;
-                if( pleft->sin_port != pright->sin_port )
+                int cnt;
+                cnt=snprintf( (buf+*pos), len-*pos, "%s if:%d %02x-%02x-%02x-%02x-%02x-%02x",
+                              "MAC48",
+                              address.mac48.m_if_id,
+                              address.mac48.m_mac[0],
+                              address.mac48.m_mac[1],
+                              address.mac48.m_mac[2],
+                              address.mac48.m_mac[3],
+                              address.mac48.m_mac[4],
+                              address.mac48.m_mac[5]
+                              );
+                if( cnt>0 )
                 {
-                    r=false;
+                    *pos += cnt;
                 }
-                else
+                r = (cnt>0);
+            }
+            else if( m_type == us_packet_address_tcp )
+            {
+                char hostbuf[512];
+                char portbuf[64];
+
+                if( getnameinfo(
+                            (const sockaddr *)&address.tcp.m_addr,
+                            address.tcp.m_len,
+                            hostbuf, sizeof(hostbuf),
+                            portbuf, sizeof(portbuf),
+                            NI_NUMERICHOST | NI_NUMERICSERV ) ==0 )
                 {
-                    if( memcmp( &pleft->sin_addr, &pright->sin_addr, sizeof( struct in_addr ) ) != 0 )
+                    int cnt;
+                    cnt=snprintf( (buf+*pos), len-*pos, "%s if:%d %s:%s",
+                                  "TCP",
+                                  address.tcp.m_if_id,
+                                  hostbuf,
+                                  portbuf
+                                  );
+                    if( cnt>0 )
                     {
-                        r=false;
+                        *pos += cnt;
                     }
-                }                
-            }
-            else if( left.m_addr.ss_family == AF_INET6 )
-            {
-                const struct sockaddr_in6 *pleft = (const struct sockaddr_in6 *)&left.m_addr;
-                const struct sockaddr_in6 *pright = (const struct sockaddr_in6 *)&right.m_addr;
-                if( pleft->sin6_port != pright->sin6_port 
-                   || pleft->sin6_scope_id != pright->sin6_scope_id )
-                {
-                    r=false;
-                }
-                else
-                {
-                    if( memcmp( &pleft->sin6_addr, &pright->sin6_addr, sizeof( struct in6_addr ) ) != 0 )
-                    {
-                        r=false;
-                    }
-                }                
-                
-            }
-            else
-            {
-                r=false;
-            }
-            
-        }
-    }
-    return r;
-}
-    
-inline bool operator < ( 
-                         const us_packet_address_tcp_t &left,
-                         const us_packet_address_tcp_t &right 
-                         )
-{
-    bool r=false;
-    if( left.m_if_id < right.m_if_id )
-    {
-        r=true;
-    }
-    else
-    {
-        if( left.m_addr.ss_family < right.m_addr.ss_family )
-        {
-            r=true;
-        }
-        else
-        {
-            if( left.m_addr.ss_family == AF_UNIX )
-            {
-            }
-            else if( left.m_addr.ss_family == AF_INET )
-            {
-                const struct sockaddr_in *pleft = (const struct sockaddr_in *)&left.m_addr;
-                const struct sockaddr_in *pright = (const struct sockaddr_in *)&right.m_addr;
-                if( pleft->sin_port < pright->sin_port )
-                {
                     r=true;
                 }
-                else
-                {
-                    if( memcmp( &pleft->sin_addr, &pright->sin_addr, sizeof( struct in_addr ) ) < 0 )
-                    {
-                        r=true;
-                    }
-                }                
             }
-            else if( left.m_addr.ss_family == AF_INET6 )
-            {
-                const struct sockaddr_in6 *pleft = (const struct sockaddr_in6 *)&left.m_addr;
-                const struct sockaddr_in6 *pright = (const struct sockaddr_in6 *)&right.m_addr;
-                if( pleft->sin6_port < pright->sin6_port
-                   || pleft->sin6_scope_id < pright->sin6_scope_id )
-                {
-                    r=true;
-                }
-                else
-                {
-                    if( memcmp( &pleft->sin6_addr, &pright->sin6_addr, sizeof( struct in6_addr ) ) < 0 )
-                    {
-                        r=true;
-                    }
-                }                
-                
-            }
-            else
-            {
-                r=true;
-            }
-            
+            return r;
         }
+    };
+
+    inline std::ostream &operator << (std::ostream &s, const packet_address_t &v )
+    {
+        return v.print( s );
     }
-    return r;
+
+
+
+    bool operator == (
+                const packet_address_mac48_t &left,
+                const packet_address_mac48_t &right
+                );
+
+    bool operator < (
+                const packet_address_mac48_t &left,
+                const packet_address_mac48_t &right
+                );
+
+    bool operator == (
+                const packet_address_tcp_t &left,
+                const packet_address_tcp_t &right
+                );
+    
+    bool operator < (
+                const packet_address_tcp_t &left,
+                const packet_address_tcp_t &right
+                );
+
+    bool operator == (
+                const packet_address_t &left,
+                const packet_address_t &right
+                );
+
+    bool operator < (
+                const us_packet_address_t &left,
+                const us_packet_address_t &right
+                );
+
+    class packet_t : public us_packet_t
+    {
+    public:
+        std::ostream &print(std::ostream &s) const
+        {
+            s << "packet_t:\n";
+            s << "length: " << length() << "\n";
+            s << "max_length: " << max_length() << "\n";
+            s << "data" << "\n";
+            const uint8_t *d = data();
+            for( size_t i=0; i<length(); ++i )
+            {
+                char buf[8];
+                sprintf( buf, "%02x ", d[i] );
+                s << buf;
+            }
+            s << "\n";
+            return s;
+        }
+
+        void clear()
+        {
+            us_packet_clear(this);
+        }
+        const uint8_t *data() const
+        {
+            return us_packet_get_data(this);
+        }
+        uint8_t *data()
+        {
+            return us_packet_data(this);
+        }
+        size_t max_length() const
+        {
+            return us_packet_get_max_length(this);
+        }
+        size_t length() const
+        {
+            return us_packet_get_length(this);
+        }
+        void length( size_t n )
+        {
+            us_packet_set_length( this, n );
+        }
+        packet_address_t src_address() const
+        {
+            return packet_address_t( m_src_address );
+        }
+        packet_address_t dest_address() const
+        {
+            return packet_address_t( m_dest_address );
+        }
+    };
+
+    inline std::ostream &operator << (std::ostream &s, const packet_t &v )
+    {
+        return v.print( s );
+    }
+
 }
 
-inline bool operator == ( const us_packet_address_t &left, const us_packet_address_t &right )
-{
-    bool r=false;
-    if( left.m_type == right.m_type )
-    {
-        switch( left.m_type )
-        {
-        case us_packet_address_none:
-            r=true;
-            break;
-        case us_packet_address_mac48:
-            r= (left.address.mac48 == right.address.mac48);
-            break;
-        case us_packet_address_tcp:
-            r= (left.address.tcp == right.address.tcp);
-            break;
-        default:
-            r=false;
-            break;
-        }
-    }
-    return r;
-}
-
-inline bool operator < ( const us_packet_address_t &left, const us_packet_address_t &right )
-{
-    bool r=false;
-    if( left.m_type == right.m_type )
-    {
-        switch( left.m_type )
-        {
-        case us_packet_address_none:
-            r=false;
-            break;
-        case us_packet_address_mac48:
-            r= (left.address.mac48 < right.address.mac48);
-            break;
-        case us_packet_address_tcp:
-            r= (left.address.tcp < right.address.tcp);
-            break;
-        default:
-            r=false;
-            break;
-        }
-    }
-    else
-    {
-        r=( (int)left.m_type < (int)right.m_type);
-    }
-    return r;
-}
 
 /*@}*/
 

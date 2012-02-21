@@ -1,5 +1,5 @@
-#ifndef US_WORLD_HPP
-#define US_WORLD_HPP
+#ifndef US_PACKET_QUEUE_HPP
+#define US_PACKET_QUEUE_HPP
 
 /*
 Copyright (c) 2012, Meyer Sound Laboratories, Inc.
@@ -26,17 +26,82 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
  */
 
-#include "us_world.h"
-#include <string>
-#include <iostream>
-#include <stdexcept>
-#include <vector>
+#include "us_world.hpp"
 #include "us_packet.hpp"
-#include "us_packet_queue.hpp"
-#include "us_reactor.hpp"
+#include "us_packet_queue.h"
 
+namespace microsupport
+{
+class packet_queue_t
+{
+public:
+    packet_queue_t(
+        us_allocator_t *allocator,
+        size_t num_packets,
+        size_t max_packet_size=1500
+        )
+    {
+        queue=us_packet_queue_create( allocator, num_packets, max_packet_size );
+        if( !queue )
+        {
+            throw std::bad_alloc();
+        }
+    }
+
+    ~packet_queue_t()
+    {
+        if( queue )
+        {
+            queue->destroy( queue );
+        }
+    }
+
+    void clear()
+    {
+        us_packet_queue_clear( queue );
+    }
+
+    packet_t * get_next_in()
+    {
+        return reinterpret_cast<packet_t *>(us_packet_queue_get_next_in( queue ));
+    }
+
+    const us_packet_t *get_next_out() const
+    {
+        return reinterpret_cast<const packet_t *>(us_packet_queue_get_next_out( queue ));
+    }
+
+    bool is_empty() const
+    {
+        return us_packet_queue_is_empty( queue );
+    }
+
+    bool can_read() const
+    {
+        return us_packet_queue_can_read( queue );
+    }
+
+    bool can_write() const
+    {
+        return us_packet_queue_can_write( queue );
+    }
+
+    void next_in()
+    {
+        us_packet_queue_next_in( queue );
+    }
+
+    void next_out()
+    {
+        us_packet_queue_next_out( queue );
+    }
+
+private:
+    us_packet_queue_t *queue;
+};
+}
 
 #endif
-
