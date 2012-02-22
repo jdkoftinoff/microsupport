@@ -38,6 +38,7 @@ namespace microsupport
 class packet_queue_t
 {
 public:
+
     packet_queue_t(
         us_allocator_t *allocator,
         size_t num_packets,
@@ -69,7 +70,7 @@ public:
         return reinterpret_cast<packet_t *>(us_packet_queue_get_next_in( queue ));
     }
 
-    const us_packet_t *get_next_out() const
+    const packet_t *get_next_out() const
     {
         return reinterpret_cast<const packet_t *>(us_packet_queue_get_next_out( queue ));
     }
