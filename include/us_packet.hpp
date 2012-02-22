@@ -61,6 +61,7 @@ namespace microsupport
                 address.tcp.m_len = v.address.tcp.m_len;
                 address.tcp.m_addr = v.address.tcp.m_addr;
             }
+
             return *this;
         }
 
@@ -100,6 +101,10 @@ namespace microsupport
             if( r )
             {
                 s << buf;
+            }
+            else
+            {
+                s << "None";
             }
             return s;
         }
@@ -189,8 +194,8 @@ namespace microsupport
                 );
 
     bool operator < (
-                const us_packet_address_t &left,
-                const us_packet_address_t &right
+                const packet_address_t &left,
+                const packet_address_t &right
                 );
 
     class packet_t : public us_packet_t
@@ -199,9 +204,11 @@ namespace microsupport
         std::ostream &print(std::ostream &s) const
         {
             s << "packet_t:\n";
+            s << "src_address: " << src_address() << "\n";
+            s << "dest_address: " << dest_address() << "\n";
             s << "length: " << length() << "\n";
             s << "max_length: " << max_length() << "\n";
-            s << "data" << "\n";
+            s << "data:" << "\n";
             const uint8_t *d = data();
             for( size_t i=0; i<length(); ++i )
             {
