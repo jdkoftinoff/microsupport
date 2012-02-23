@@ -94,6 +94,7 @@ void us_packet_queue_destroy( us_packet_queue_t *self )
                 }
             }
             us_delete( self->m_allocator, self->m_packets );
+            self->m_packets = 0;
         }
         us_delete( self->m_allocator, self );
     }

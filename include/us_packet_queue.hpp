@@ -35,74 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace microsupport
 {
-class packet_queue_t
-{
-public:
 
-    packet_queue_t(
-        us_allocator_t *allocator,
-        size_t num_packets,
-        size_t max_packet_size=1500
-        )
-    {
-        queue=us_packet_queue_create( allocator, num_packets, max_packet_size );
-        if( !queue )
-        {
-            throw std::bad_alloc();
-        }
-    }
-
-    ~packet_queue_t()
-    {
-        if( queue )
-        {
-            queue->destroy( queue );
-        }
-    }
-
-    void clear()
-    {
-        us_packet_queue_clear( queue );
-    }
-
-    packet_t * get_next_in()
-    {
-        return reinterpret_cast<packet_t *>(us_packet_queue_get_next_in( queue ));
-    }
-
-    const packet_t *get_next_out() const
-    {
-        return reinterpret_cast<const packet_t *>(us_packet_queue_get_next_out( queue ));
-    }
-
-    bool is_empty() const
-    {
-        return us_packet_queue_is_empty( queue );
-    }
-
-    bool can_read() const
-    {
-        return us_packet_queue_can_read( queue );
-    }
-
-    bool can_write() const
-    {
-        return us_packet_queue_can_write( queue );
-    }
-
-    void next_in()
-    {
-        us_packet_queue_next_in( queue );
-    }
-
-    void next_out()
-    {
-        us_packet_queue_next_out( queue );
-    }
-
-private:
-    us_packet_queue_t *queue;
-};
 }
 
 #endif
