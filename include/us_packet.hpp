@@ -38,14 +38,6 @@
 
 namespace microsupport
 {
-    struct packet_address_mac48_t : us_packet_address_mac48_t
-    {
-    };
-
-    struct packet_address_tcp_t : us_packet_address_tcp_t
-    {
-    };
-
     struct packet_address_t : us_packet_address_t
     {
         const packet_address_t & operator = ( const us_packet_address_t &v )
@@ -53,13 +45,13 @@ namespace microsupport
             m_type = v.m_type;
             if( v.m_type == us_packet_address_mac48 )
             {
-                address.mac48.m_if_id = v.address.mac48.m_if_id;
-                memcpy( address.mac48.m_mac, v.address.mac48.m_mac, sizeof( address.mac48.m_mac));
+                mac48.m_if_id = v.mac48.m_if_id;
+                memcpy( mac48.m_mac, v.mac48.m_mac, sizeof( mac48.m_mac));
             }
             else if( v.m_type==us_packet_address_tcp )
             {
-                address.tcp.m_len = v.address.tcp.m_len;
-                address.tcp.m_addr = v.address.tcp.m_addr;
+                tcp.m_len = v.tcp.m_len;
+                tcp.m_addr = v.tcp.m_addr;
             }
 
             return *this;
@@ -70,26 +62,39 @@ namespace microsupport
             m_type = v.m_type;
             if( v.m_type == us_packet_address_mac48 )
             {
-                address.mac48.m_if_id = v.address.mac48.m_if_id;
-                memcpy( address.mac48.m_mac, v.address.mac48.m_mac, sizeof( address.mac48.m_mac));
+                mac48.m_if_id = v.mac48.m_if_id;
+                memcpy( mac48.m_mac, v.mac48.m_mac, sizeof( mac48.m_mac));
             }
             else if( v.m_type==us_packet_address_tcp )
             {
-                address.tcp.m_len = v.address.tcp.m_len;
-                address.tcp.m_addr = v.address.tcp.m_addr;
+                tcp.m_len = v.tcp.m_len;
+                tcp.m_addr = v.tcp.m_addr;
             }
         }
+        packet_address_t( const char *ifname, uint64_t mac )
+        {
+            m_type = us_packet_address_mac48;
+            mac48.m_if_id = if_nametoindex( ifname );
+            mac48.m_mac[0] = US_GET_BYTE_5( mac );
+            mac48.m_mac[1] = US_GET_BYTE_4( mac );
+            mac48.m_mac[2] = US_GET_BYTE_3( mac );
+            mac48.m_mac[3] = US_GET_BYTE_2( mac );
+            mac48.m_mac[4] = US_GET_BYTE_1( mac );
+            mac48.m_mac[5] = US_GET_BYTE_0( mac );
+        }
+
         packet_address_t( int if_id, const uint8_t mac[6] )
         {
             m_type = us_packet_address_mac48;
-            address.mac48.m_if_id = if_id;
-            memcpy( address.mac48.m_mac, mac, sizeof( address.mac48.m_mac ));
+            mac48.m_if_id = if_id;
+            memcpy( mac48.m_mac, mac, sizeof( mac48.m_mac ));
         }
+
         packet_address_t( int if_id, const struct sockaddr *addr, size_t addrlen )
         {
             m_type = us_packet_address_tcp;
-            address.tcp.m_if_id = if_id;
-            memcpy( &address.tcp.m_addr, addr, addrlen );
+            tcp.m_if_id = if_id;
+            memcpy( &tcp.m_addr, addr, addrlen );
         }
 
         std::ostream & print( std::ostream &s ) const
@@ -117,13 +122,13 @@ namespace microsupport
                 int cnt;
                 cnt=snprintf( (buf+*pos), len-*pos, "%s if:%d %02x-%02x-%02x-%02x-%02x-%02x",
                               "MAC48",
-                              address.mac48.m_if_id,
-                              address.mac48.m_mac[0],
-                              address.mac48.m_mac[1],
-                              address.mac48.m_mac[2],
-                              address.mac48.m_mac[3],
-                              address.mac48.m_mac[4],
-                              address.mac48.m_mac[5]
+                              mac48.m_if_id,
+                              mac48.m_mac[0],
+                              mac48.m_mac[1],
+                              mac48.m_mac[2],
+                              mac48.m_mac[3],
+                              mac48.m_mac[4],
+                              mac48.m_mac[5]
                               );
                 if( cnt>0 )
                 {
@@ -137,8 +142,8 @@ namespace microsupport
                 char portbuf[64];
 
                 if( getnameinfo(
-                            (const sockaddr *)&address.tcp.m_addr,
-                            address.tcp.m_len,
+                            (const sockaddr *)&tcp.m_addr,
+                            tcp.m_len,
                             hostbuf, sizeof(hostbuf),
                             portbuf, sizeof(portbuf),
                             NI_NUMERICHOST | NI_NUMERICSERV ) ==0 )
@@ -146,7 +151,7 @@ namespace microsupport
                     int cnt;
                     cnt=snprintf( (buf+*pos), len-*pos, "%s if:%d %s:%s",
                                   "TCP",
-                                  address.tcp.m_if_id,
+                                  tcp.m_if_id,
                                   hostbuf,
                                   portbuf
                                   );
@@ -169,23 +174,23 @@ namespace microsupport
 
 
     bool operator == (
-                const packet_address_mac48_t &left,
-                const packet_address_mac48_t &right
+                const us_packet_address_mac48_t &left,
+                const us_packet_address_mac48_t &right
                 );
 
     bool operator < (
-                const packet_address_mac48_t &left,
-                const packet_address_mac48_t &right
+                const us_packet_address_mac48_t &left,
+                const us_packet_address_mac48_t &right
                 );
 
     bool operator == (
-                const packet_address_tcp_t &left,
-                const packet_address_tcp_t &right
+                const us_packet_address_tcp_t &left,
+                const us_packet_address_tcp_t &right
                 );
-    
+
     bool operator < (
-                const packet_address_tcp_t &left,
-                const packet_address_tcp_t &right
+                const us_packet_address_tcp_t &left,
+                const us_packet_address_tcp_t &right
                 );
 
     bool operator == (
@@ -203,12 +208,11 @@ namespace microsupport
     public:
         std::ostream &print(std::ostream &s) const
         {
-            s << "packet_t:\n";
-            s << "src_address: " << src_address() << "\n";
-            s << "dest_address: " << dest_address() << "\n";
-            s << "length: " << length() << "\n";
-            s << "max_length: " << max_length() << "\n";
-            s << "data:" << "\n";
+            s << "src_address: " << *src_address() << std::endl;
+            s << "dest_address: " << *dest_address() << std::endl;
+            s << "length: " << length() << std::endl;
+            s << "max_length: " << max_length() << std::endl;
+            s << "data:" << std::endl;
             const uint8_t *d = data();
             for( size_t i=0; i<length(); ++i )
             {
@@ -216,7 +220,7 @@ namespace microsupport
                 sprintf( buf, "%02x ", d[i] );
                 s << buf;
             }
-            s << "\n";
+            s << std::endl;
             return s;
         }
 
@@ -244,13 +248,13 @@ namespace microsupport
         {
             us_packet_set_length( this, n );
         }
-        packet_address_t src_address() const
+        const packet_address_t *src_address() const
         {
-            return packet_address_t( m_src_address );
+            return reinterpret_cast<const packet_address_t *>( &m_src_address );
         }
-        packet_address_t dest_address() const
+        const packet_address_t *dest_address() const
         {
-            return packet_address_t( m_dest_address );
+            return reinterpret_cast<const packet_address_t *>( &m_dest_address );
         }
     };
 

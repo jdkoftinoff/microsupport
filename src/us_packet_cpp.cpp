@@ -34,8 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace microsupport
 {
 bool operator == (
-    const packet_address_mac48_t &left,
-    const packet_address_mac48_t &right
+    const us_packet_address_mac48_t &left,
+    const us_packet_address_mac48_t &right
     )
 {
     bool r=true;
@@ -59,8 +59,8 @@ bool operator == (
 }
 
 bool operator < (
-    const packet_address_mac48_t &left,
-    const packet_address_mac48_t &right
+    const us_packet_address_mac48_t &left,
+    const us_packet_address_mac48_t &right
     )
 {
     bool r=false;
@@ -85,8 +85,8 @@ bool operator < (
 }
 
 bool operator == (
-    const packet_address_tcp_t &left,
-    const packet_address_tcp_t &right
+    const us_packet_address_tcp_t &left,
+    const us_packet_address_tcp_t &right
     )
 {
     bool r=true;
@@ -150,8 +150,8 @@ bool operator == (
 }
 
 bool operator < (
-    const packet_address_tcp_t &left,
-    const packet_address_tcp_t &right
+    const us_packet_address_tcp_t &left,
+    const us_packet_address_tcp_t &right
     )
 {
     bool r=false;
@@ -228,16 +228,16 @@ bool operator == (
             r=true;
             break;
         case us_packet_address_mac48:
-            if( memcmp( &left.address.mac48, &right.address.mac48, sizeof(left.address.mac48))==0 )
+            if( memcmp( &left.mac48, &right.mac48, sizeof(left.mac48))==0 )
             {
                 r=true;
             }
             break;
         case us_packet_address_tcp:
             if( memcmp(
-                        &left.address.tcp.m_addr,
-                        &right.address.tcp.m_addr,
-                        left.address.tcp.m_len
+                        &left.tcp.m_addr,
+                        &right.tcp.m_addr,
+                        left.tcp.m_len
                         )==0 )
             {
                 r=true;
@@ -264,16 +264,16 @@ bool operator < (
             r=false;
             break;
         case us_packet_address_mac48:
-            if( memcmp( &left.address.mac48, &right.address.mac48, sizeof(left.address.mac48))<0 )
+            if( memcmp( &left.mac48, &right.mac48, sizeof(left.mac48))<0 )
             {
                 r=true;
             }
             break;
         case us_packet_address_tcp:
             if( memcmp(
-                        &left.address.tcp.m_addr,
-                        &right.address.tcp.m_addr,
-                        left.address.tcp.m_len
+                        &left.tcp.m_addr,
+                        &right.tcp.m_addr,
+                        left.tcp.m_len
                         )<0 )
             {
                 r=true;

@@ -131,15 +131,15 @@ bool us_reactor_handler_rawnet_readable( us_reactor_handler_t *self_ )
                 p->m_dest_address.m_type = us_packet_address_mac48;
                 s = us_rawnet_recv(
                         &self->m_rawsock,
-                        p->m_src_address.address.mac48.m_mac,
-                        p->m_dest_address.address.mac48.m_mac,
+                        p->m_src_address.mac48.m_mac,
+                        p->m_dest_address.mac48.m_mac,
                         p->m_data,
                         p->m_max_length
                     );
                 if( s>=0 )
                 {
-                    p->m_src_address.address.mac48.m_if_id = self->m_rawsock.m_interface_id;
-                    p->m_dest_address.address.mac48.m_if_id = self->m_rawsock.m_interface_id;
+                    p->m_src_address.mac48.m_if_id = self->m_rawsock.m_interface_id;
+                    p->m_dest_address.mac48.m_if_id = self->m_rawsock.m_interface_id;
                     us_packet_queue_next_in( q );
 
                     r=true;
@@ -172,7 +172,7 @@ bool us_reactor_handler_rawnet_writable( us_reactor_handler_t *self_ )
         if( us_packet_queue_can_read( q ) )
         {
             const us_packet_t *p = us_packet_queue_get_next_out( q );
-            ssize_t s = us_rawnet_send( &self->m_rawsock, p->m_dest_address.address.mac48.m_mac, p->m_data, p->m_length );
+            ssize_t s = us_rawnet_send( &self->m_rawsock, p->m_dest_address.mac48.m_mac, p->m_data, p->m_length );
             if( s>=0 )
             {
                 us_packet_queue_next_out(q);

@@ -65,11 +65,8 @@ typedef struct us_packet_address_tcp_s
 typedef struct us_packet_address_s
 {
     us_packet_address_type_t m_type;
-    union
-    {
-        us_packet_address_mac48_t mac48;
-        us_packet_address_tcp_t tcp;
-    } address;
+    us_packet_address_mac48_t mac48;
+    us_packet_address_tcp_t tcp;
 } us_packet_address_t;
 
 typedef struct us_packet_s
