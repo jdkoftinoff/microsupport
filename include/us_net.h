@@ -128,6 +128,14 @@ extern "C"
         ...
     );
 
+    int us_net_wait_readable_list(
+        struct timeval *cur_time,
+        struct timeval *wake_up_time,
+        uint32_t next_wake_up_delta_time_microseconds,
+        int fd_count,
+        const int *fds
+        );
+
 #endif
 #ifdef __cplusplus
 }
