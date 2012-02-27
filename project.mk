@@ -1,6 +1,6 @@
 PROJECT=microsupport
 PROJECT_NAME=microsupport
-PROJECT_VERSION=1
+PROJECT_VERSION=20120227
 PROJECT_EMAIL=jeffk@meyersound.com
 PROJECT_LICENSE=private
 PROJECT_MAINTAINER=jeffk@meyersound.com
