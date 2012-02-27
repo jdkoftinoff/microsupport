@@ -30,10 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_rawnet.h"
 #include "us_logger.h"
 
-#if US_ENABLE_RAW_ETHERNET
-
-
-#if defined(US_CONFIG_LINUX)
+#if defined(__linux__)
 #include <linux/if_packet.h>
 #endif
 
@@ -41,7 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <net/if_dl.h>
 #endif
 
-#if US_ENABLE_PCAP==1
+#if defined(US_ENABLE_PCAP)
 #include <pcap.h>
 
 int us_rawnet_socket(
@@ -283,7 +280,7 @@ bool us_rawnet_join_multicast(
 
 #endif
 
-#if defined(__linux__) && US_ENABLE_PCAP==0
+#if defined(__linux__) && !defined(US_ENABLE_PCAP)
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -473,4 +470,3 @@ bool us_rawnet_join_multicast(
 
 #endif
 
-#endif

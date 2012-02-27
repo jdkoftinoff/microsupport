@@ -32,10 +32,6 @@
 #include "us_world.h"
 #endif
 
-#if defined(US_CONFIG_LINUX) && !defined(US_ENABLE_RAW_ETHERNET)
-# define US_ENABLE_RAW_ETHERNET 1
-#endif
-
 
 #ifdef __cplusplus
 extern "C"
