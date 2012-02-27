@@ -2,7 +2,7 @@
 #define US_RAWNET_H
 
 /*
- Copyright (c) 2010, Meyer Sound Laboratories, Inc.
+ Copyright (c) 2012, Meyer Sound Laboratories, Inc.
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,12 @@
 #ifndef US_WORLD_H
 #include "us_world.h"
 #endif
+
+#if defined(US_CONFIG_LINUX) && !defined(US_ENABLE_RAW_ETHERNET)
+# define US_ENABLE_RAW_ETHERNET 1
+#endif
+
+
 #ifdef __cplusplus
 extern "C"
 {

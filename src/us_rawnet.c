@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if US_ENABLE_RAW_ETHERNET
 
+
 #if defined(US_CONFIG_LINUX)
 #include <linux/if_packet.h>
 #endif
@@ -42,7 +43,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if US_ENABLE_PCAP==1
 #include <pcap.h>
-
 
 int us_rawnet_socket(
     us_rawnet_context_t *self,
