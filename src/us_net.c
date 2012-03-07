@@ -155,6 +155,51 @@ int us_net_create_udp_socket (
     return s;
 }
 
+
+int
+us_net_create_udp_socket_host(
+        const char *localaddr_host,
+        const char *localaddr_port,
+        bool do_bind
+  )
+{
+    int fd=0;
+    struct addrinfo  *localaddr=0;
+
+    localaddr=us_net_get_addrinfo(
+                localaddr_host,
+                localaddr_port,
+                SOCK_DGRAM,
+                true
+                );
+
+    fd = us_net_create_udp_socket( localaddr, do_bind );
+    freeaddrinfo(localaddr);
+    return fd;
+}
+
+int
+us_net_create_tcp_socket_host(
+        const char *localaddr_host,
+        const char *localaddr_port,
+        bool do_bind
+  )
+{
+    int fd=0;
+    struct addrinfo  *localaddr=0;
+
+    localaddr=us_net_get_addrinfo(
+                localaddr_host,
+                localaddr_port,
+                SOCK_STREAM,
+                true
+                );
+
+    fd = us_net_create_tcp_socket( localaddr, do_bind );
+    freeaddrinfo(localaddr);
+    return fd;
+}
+
 int us_net_create_multicast_rx_udp_socket (
     struct addrinfo *listenaddr,
     const struct addrinfo *multicastgroup,
@@ -325,6 +370,73 @@ int us_net_create_multicast_tx_udp_socket (
     return s;
 }
 
+int us_net_create_multicast_udp_socket(
+        struct addrinfo *localaddr,
+        const struct addrinfo *multicastgroup,
+        const char *interface_name,
+        bool tx
+        )
+{
+    int fd;
+    if( tx )
+    {
+        fd = us_net_create_multicast_tx_udp_socket(
+                    localaddr,
+                    multicastgroup,
+                    interface_name
+                    );
+    }
+    else
+    {
+        fd = us_net_create_multicast_rx_udp_socket(
+                    localaddr,
+                    multicastgroup,
+                    interface_name
+                    );
+    }
+
+    return fd;
+}
+
+int us_net_create_multicast_udp_socket_host(
+        const char *localaddr_host,
+        const char *localaddr_port,
+        const char *multicast_host,
+        const char *multicast_port,
+        const char *interface_name,
+        bool tx
+        )
+{
+    int fd=0;
+    struct addrinfo *localaddr=0;
+    struct addrinfo *multicastaddr=0;
+
+    localaddr=us_net_get_addrinfo(
+                localaddr_host,
+                localaddr_port,
+                SOCK_DGRAM,
+                true
+                );
+
+    multicastaddr = us_net_get_addrinfo(
+                multicast_host,
+                multicast_port,
+                SOCK_DGRAM,
+                false
+                );
+
+    fd = us_net_create_multicast_udp_socket(
+                localaddr,
+                multicastaddr,
+                interface_name,
+                tx
+                );
+
+    freeaddrinfo(localaddr);
+    freeaddrinfo(multicastaddr);
+
+    return fd;
+}
 
 int us_net_create_tcp_socket (
     const struct addrinfo *ai,
@@ -501,7 +613,7 @@ int us_net_wait_readable( int timeout_ms, int fd_count, ... )
 int us_net_wait_readable_list(
     struct timeval *cur_time,
     struct timeval *wake_up_time,
-    uint32_t next_wake_up_delta_time_microseconds,
+    uint32_t next_wake_up_delta_time_milliseconds,
     int fd_count,
     const int *fds
     )
@@ -516,7 +628,7 @@ int us_net_wait_readable_list(
     if( cur_time->tv_sec == 0 && cur_time->tv_usec==0 )
     {
         gettimeofday( cur_time, 0 );
-        us_net_timeout_add( wake_up_time, cur_time, next_wake_up_delta_time_microseconds );
+        us_net_timeout_add( wake_up_time, cur_time, next_wake_up_delta_time_milliseconds*1000 );
     }
 
     us_net_timeout_calc( &tv_timeout, cur_time, wake_up_time );
@@ -564,7 +676,7 @@ int us_net_wait_readable_list(
     }
     if( us_net_timeout_hit( cur_time, wake_up_time ) )
     {
-        us_net_timeout_add( wake_up_time, wake_up_time, next_wake_up_delta_time_microseconds );
+        us_net_timeout_add( wake_up_time, wake_up_time, next_wake_up_delta_time_milliseconds );
     }
 
     return r;

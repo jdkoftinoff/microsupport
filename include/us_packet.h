@@ -57,7 +57,7 @@ typedef struct us_packet_address_mac48_s
 
 typedef struct us_packet_address_tcp_s
 {
-    size_t m_len;
+    socklen_t m_len;
     struct sockaddr_storage m_addr;
     int m_if_id;
 } us_packet_address_tcp_t;
