@@ -17,17 +17,18 @@ int main( int argc, char **argv )
     if( fd>=0 )
     {
         int i=0;
-        while(true)
+        int rep=0;
+        for( rep=0; rep<10; ++rep )
         {
             uint8_t buf[1500];
             size_t buflen=sizeof(buf);
-            for( int i=0; i<buflen; ++i )
+            for( i=0; i<buflen; ++i )
             {
                 buf[i] = (uint8_t)i&0xff;
             }
             if( us_rawnet_send( &sock, dest_mac, buf, buflen )>=0 )
             {
-                printf( "sent packet %d\n", i++ );
+                printf( "sent packet %d\n", rep );
             }
             sleep(1);
         }
