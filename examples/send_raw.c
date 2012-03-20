@@ -5,7 +5,12 @@
 
 int main( int argc, char **argv )
 {
+#if defined (WIN32)
+#define sleep(x) Sleep(x*1000)
+    const char *if_name="\\Device\\NPF_{BD3BC03E-E00B-490E-97C4-7A01467918D4}";
+#else
     const char *if_name="eth0";
+#endif
     uint8_t dest_mac[6] = { 0x91, 0xe0, 0xf0, 0x01, 0x00, 0x00 };
     int fd;
     us_rawnet_context_t sock;

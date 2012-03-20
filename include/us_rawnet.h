@@ -49,7 +49,7 @@ extern "C"
         uint16_t m_ethertype;
         uint8_t m_my_mac[6];
         int m_interface_id;
-#if US_ENABLE_PCAP==1
+#if defined(US_ENABLE_PCAP)
         void *m_pcap;
 #endif
     } us_rawnet_context_t;
