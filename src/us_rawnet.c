@@ -40,6 +40,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if defined(US_ENABLE_PCAP)
 #include <pcap.h>
+#if defined(_WIN32)
+#include <iphlpapi.h>
+#pragma comment(lib, "IPHLPAPI.lib")
+#endif
 
 int us_rawnet_socket(
     us_rawnet_context_t *self,
@@ -73,8 +77,6 @@ int us_rawnet_socket(
         {
             pcap_if_t *alldevs;
             pcap_if_t *d;
-            pcap_addr_t *alladdrs;
-            pcap_addr_t *a;
 
             self->m_interface_id = -1;
             if( pcap_findalldevs( &alldevs, errbuf )!=0 )
@@ -91,11 +93,45 @@ int us_rawnet_socket(
                     if ( strcmp ( interface_name, d->name ) ==0 )
                     {
                         /* now find the MAC address associated with it */
+#if defined(_WIN32)
+                        PIP_ADAPTER_INFO info = NULL, ninfo; 
+                        ULONG ulOutBufLen = 0; 
+                        DWORD dwRetVal = 0;
+                        if( GetAdaptersInfo( info, &ulOutBufLen ) == ERROR_BUFFER_OVERFLOW ) 
+                        {
+                            info = (PIP_ADAPTER_INFO)malloc( ulOutBufLen ); 
+                            if( info != NULL )
+                            {
+                                if( (dwRetVal = GetAdaptersInfo(info, &ulOutBufLen)) == NO_ERROR )
+                                {
+                                    ninfo = info;
+                                    while( ninfo != NULL )
+                                    {
+                                        if( strstr( d->name, ninfo->AdapterName ) > 0 )
+                                        {
+                                            if( ninfo->AddressLength == 6 )
+                                                memcpy( self->m_my_mac, ninfo->Address, 6  );
+                                            break;
+                                        }
+                                        ninfo = ninfo->Next;
+                                      }
+                                  }
+                                  else
+                                      us_log_error("Error in GetAdaptersInfo");
+                                  free( info );
+                              }
+                              else
+                              {
+                                  us_log_error("Error in malloc for GetAdaptersInfo");
+                              }
+                        }
+#else                        
+                        pcap_addr_t *alladdrs;
+                        pcap_addr_t *a;
                         alladdrs = d->addresses;
-
                         for ( a = alladdrs; a != NULL; a = a->next )
                         {
-#ifdef __APPLE__
+#if defined(__APPLE__)
                             /* Apple AF_LINK format depends on osx version */
 
                             if ( a->addr->sa_family == AF_LINK && a->addr->sa_data != NULL )
@@ -116,8 +152,6 @@ int us_rawnet_socket(
                                     memcpy( self->m_my_mac, &mac[1], 6 );
                                 }
                             }
-#elif defined(_WIN32)
-#error TODO get MAC address WIN32
 #elif defined(__linux__)
                             if ( a->addr->sa_family == AF_PACKET )
                             {
@@ -126,7 +160,7 @@ int us_rawnet_socket(
                             }
 #endif
                         }
-
+#endif
                         break;
                     }
                 }
