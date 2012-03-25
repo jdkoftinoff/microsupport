@@ -39,7 +39,7 @@ char us_logger_udp_buffer[1500]; /**! buffer to hold text for one log line */
 us_print_t *us_logger_udp_printer;  /**! pointer to printer object to use to form buffer text */
 us_printraw_t us_logger_udp_printer_impl; /**! printer object to use to form buffer text */
 
-struct sockaddr_in us_logger_udp_dest_sockaddr; /**! ip address/port list to send to */
+struct addrinfo * us_logger_udp_dest_addrinfo;
 
 void us_log_udp_send ( void );
 
@@ -53,8 +53,8 @@ void us_log_udp_send ( void )
                 us_logger_udp_printer_impl.m_buffer,
                 us_logger_udp_printer_impl.m_cur_length,
                 0,
-                ( struct sockaddr * ) &us_logger_udp_dest_sockaddr,
-                (ssize_t)sizeof ( us_logger_udp_dest_sockaddr )
+                us_logger_udp_dest_addrinfo->ai_addr,
+                us_logger_udp_dest_addrinfo->ai_addrlen
             ) < 0
         )
         {
@@ -63,39 +63,49 @@ void us_log_udp_send ( void )
     }
 }
 
-bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port )
+bool us_logger_udp_start ( const char *dest_addr, const char * service)
 {
     bool r = false;
+
+    struct addrinfo hints, *ai;
+    int gai;
+
     us_logger_udp_printer = us_printraw_init (
                                 &us_logger_udp_printer_impl,
                                 us_logger_udp_buffer,
                                 sizeof ( us_logger_udp_buffer )
                             );
+
     if ( us_logger_udp_printer )
     {
-        /*
-          First, find ip address to bind to
-        */
-        memset ( &us_logger_udp_dest_sockaddr, 0, sizeof ( us_logger_udp_dest_sockaddr ) );
-        us_logger_udp_dest_sockaddr.sin_family = AF_INET;
-        us_logger_udp_dest_sockaddr.sin_port = htons ( dest_port );
-#ifdef _WIN32
-        us_logger_udp_dest_sockaddr.sin_addr.S_un.S_addr = inet_addr ( dest_addr );
-        if ( us_logger_udp_dest_sockaddr.sin_addr.S_un.S_addr != INADDR_NONE )
-#else
-        if ( inet_aton ( dest_addr, &us_logger_udp_dest_sockaddr.sin_addr ) )
-#endif
-        {
-            /*
-              Create socket for this address
-             */
-            us_logger_udp_socket = socket (
-                                       AF_INET, SOCK_DGRAM, IPPROTO_UDP
-                                   );
-            if ( us_logger_udp_socket >= 0 )
-            {
-                r = true;
-            }
+        /* resolve address */
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_UNSPEC;
+        hints.ai_socktype = SOCK_DGRAM;
+        hints.ai_protocol = IPPROTO_UDP;
+        hints.ai_flags = AI_ADDRCONFIG;
+
+        gai = getaddrinfo(dest_addr, service, &hints, &ai);
+        if (gai) {
+            fprintf(stderr,
+                "getaddrinfo(): %s service:%s: %s\n",
+                dest_addr != NULL ? dest_addr : "(null)",
+                service,
+                gai_strerror(gai));
+            return(r);
+        }
+        us_logger_udp_socket = -1;
+        if(us_logger_udp_dest_addrinfo!=NULL) {
+            freeaddrinfo(us_logger_udp_dest_addrinfo);
+            us_logger_udp_dest_addrinfo=NULL;
+        }
+        us_logger_udp_dest_addrinfo=ai;
+        us_logger_udp_socket = socket(
+                                        us_logger_udp_dest_addrinfo->ai_family,
+                                        us_logger_udp_dest_addrinfo->ai_socktype,
+                                        us_logger_udp_dest_addrinfo->ai_protocol);
+        if ( us_logger_udp_socket >= 0 ) {
+            r = true;
         }
     }
     if ( r )
@@ -120,11 +130,16 @@ bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port )
 
 void us_logger_udp_finish()
 {
-    if ( us_logger_udp_socket != -1 )
-    {
+    if ( us_logger_udp_socket != -1 ) {
         closesocket ( us_logger_udp_socket );
         us_logger_udp_socket = -1;
     }
+
+    if(us_logger_udp_dest_addrinfo!=NULL) {
+        freeaddrinfo(us_logger_udp_dest_addrinfo);
+        us_logger_udp_dest_addrinfo=NULL;
+    }
+
     us_log_error_proc = us_log_null;
     us_log_warn_proc = us_log_null;
     us_log_info_proc = us_log_null;
