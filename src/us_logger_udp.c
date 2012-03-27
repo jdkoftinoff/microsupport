@@ -83,7 +83,6 @@ bool us_logger_udp_start ( const char *dest_addr, const char * service)
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = SOCK_DGRAM;
         hints.ai_protocol = IPPROTO_UDP;
-        hints.ai_flags = AI_ADDRCONFIG;
 
         gai = getaddrinfo(dest_addr, service, &hints, &ai);
         if (gai) {
