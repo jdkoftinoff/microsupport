@@ -179,7 +179,7 @@ typedef unsigned char uint8_t;
 # if __STDC_VERSION__ >= 199901L
 #  include <stdbool.h>
 # else
-#  if !defined(bool) && defined(BOOL)
+#  if !defined(bool) && (defined(BOOL) || defined(_WIN32))
 #   define bool BOOL
 #  endif
 #  if !defined(true) && defined(TRUE)
@@ -190,7 +190,6 @@ typedef unsigned char uint8_t;
 #  endif
 #  if !defined(bool)
 #   define bool int
-#   warning bool is being defined as int on your platform for C this may not be the same as bool for c++
 #  endif
 #  if !defined(true)
 #   define true (1)
