@@ -179,8 +179,8 @@ typedef unsigned char uint8_t;
 # if __STDC_VERSION__ >= 199901L
 #  include <stdbool.h>
 # else
-#  if !defined(bool) && (defined(BOOL) || defined(_WIN32))
-#   define bool BOOL
+#  if !defined(bool) && (defined(BOOLEAN) || defined(_WIN32))
+#   define bool BOOLEAN
 #  endif
 #  if !defined(true) && defined(TRUE)
 #   define true TRUE
