@@ -6,6 +6,7 @@
 
 int main(int argc, const char **argv )
 {
+#if US_ENABLE_RAW_ETHERNET==1
     uint8_t multicast_mac[6] = { 0x91, 0xe0, 0xf0, 0x01, 0x00, 0x00 };
     uint16_t ethertype=0x22f0;
     us_rawnet_context_t sock;
@@ -55,5 +56,6 @@ int main(int argc, const char **argv )
         }
         while( true );
     }
+#endif
 }
 

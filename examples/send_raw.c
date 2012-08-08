@@ -5,6 +5,7 @@
 
 int main( int argc, char **argv )
 {
+#if US_ENABLE_RAW_ETHERNET==1
     const char *if_name="eth0";
     uint8_t dest_mac[6] = { 0x91, 0xe0, 0xf0, 0x01, 0x00, 0x00 };
     int fd;
@@ -33,5 +34,6 @@ int main( int argc, char **argv )
             sleep(1);
         }
     }
+#endif
 }
 
