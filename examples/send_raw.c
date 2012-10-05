@@ -31,6 +31,7 @@ int main( int argc, char **argv )
             {
                 buf[i] = (uint8_t)i&0xff;
             }
+	    buf[0]=0xfa;
             if( us_rawnet_send( &sock, dest_mac, buf, buflen )>=0 )
             {
                 printf( "sent packet %d\n", rep );
