@@ -36,7 +36,7 @@ public:
                     &reactor,
                     allocator,
                     extra,
-                    queue_buf_size,
+                    (int)queue_buf_size,
                     server_host,
                     server_port,
                     keep_open,
