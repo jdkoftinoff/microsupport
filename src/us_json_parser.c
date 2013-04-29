@@ -26,7 +26,7 @@
   Callbacks, comments, Unicode handling by Jean Gressmann (jean@0x42.de), 2007-2009.
 
   Changelog:
-  2010-03-10 ( Jeff Koftinoff <jeffk@meyersound.com> )
+  2010-03-10 ( Jeff Koftinoff <jeffk@jdkoftinoff.com> )
   Changed calls to malloc and free to use us_allocator_t instead.
   renamed structs, classes, defines to be prefixed with us_ and lowercase JSON
 
