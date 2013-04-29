@@ -1,10 +1,3 @@
-#include "us_world.h"
-
-#include "us_buffer_print.h"
-#include "us_buffer.h"
-#include "us_print.h"
-#include "us_logger_syslog.h"
-
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -32,71 +25,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if US_ENABLE_PRINTING
+#include "us_world.h"
+#include "us_test_packet_queue_main.h"
 
-bool
-us_buffer_print (
-    us_buffer_t *self,
-    us_print_t *printer
-)
+int main( int argc, const char **argv )
 {
-    bool r = false;
-    if ( self && printer )
-    {
-        size_t len=us_buffer_readable_count(self);
-        r = true;
-        r &= printer->printf (
-                 printer,
-                 "length: 0x%x\nContents:\n",
-                 len
-             );
-        if ( r )
-        {
-            size_t i;
-            for ( i = 0; i < len; ++i )
-            {
-                r &= printer->printf ( printer, "%02x ", us_buffer_peek( self, i ) );
-                if ( !r )
-                    break;
-            }
-            r &= printer->printf ( printer, "\n" );
-        }
-    }
-    return r;
+    return us_test_packet_queue_main( argc, argv );
 }
-
-
-
-bool
-us_buffer_print_string (
-    us_buffer_t *self,
-    us_print_t *printer
-)
-{
-    bool r = false;
-    if ( self && printer )
-    {
-        size_t len=us_buffer_readable_count(self);
-        r = true;
-        r &= printer->printf (
-                 printer,
-                 "length: 0x%x\nContents:\n",
-                 len
-             );
-        if ( r )
-        {
-            size_t i;
-            for ( i = 0; i < len; ++i )
-            {
-                r &= printer->printf ( printer, "%c", us_buffer_peek(self,i) );
-                if ( !r )
-                    break;
-            }
-            r &= printer->printf ( printer, "\n" );
-        }
-    }
-    return r;
-}
-
-#endif
 

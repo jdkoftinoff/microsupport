@@ -1,16 +1,14 @@
 ########################################################################
 #
-# The magic.makefile Copyright 2004-2008 
+# The magic.makefile Copyright 2011
 # by Jeff Koftinoff <jeffk@jdkoftinoff.com> 
 # and J.D. Koftinoff Software Ltd.
+# All rights reserved.
 #
-# Version 9: http://wiki.github.com/jdkoftinoff/magicmake/
+# Version 2011.10.31: http://wiki.github.com/jdkoftinoff/magicmake/
 #
 # Simplifies the building of a c/c++ library, tests, tools, examples, 
 # and documentation.
-#
-# Copyright (c) 2010, Jeff Koftinoff <jeff.koftinoff@ieee.org>
-# All rights reserved.
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -640,9 +638,12 @@ endif
 
 CONFIG_TOOLS_PATHS:=$(foreach pkg,$(CONFIG_TOOLS),$(shell which $(pkg)))
 
-INCLUDES_PACKAGES:=$(sort $(filter-out -Wstrict-prototypes,$(foreach pkg,$(PKGCONFIG_PACKAGES),$(shell pkg-config $(pkg) --cflags)) $(foreach pkg,$(CONFIG_TOOLS),$(shell $(pkg) $(CONFIG_TOOLS_OPTIONS) --cflags))))
+INCLUDES_PACKAGES:=$(sort $(filter-out -Wstrict-prototypes,$(foreach pkg,$(PKGCONFIG_PACKAGES),$(shell pkg-config $(pkg) --cppflags)) $(foreach pkg,$(CONFIG_TOOLS),$(shell $(pkg) $(CONFIG_TOOLS_OPTIONS) --cppflags))))
 
 COMPILE_FLAGS+=$(COMPILE_FLAGS_PACKAGES)
+
+CFLAGS_PACKAGES:=$(foreach pkg,$(PKGCONFIG_PACKAGES),$(shell pkg-config $(pkg) --cflags)) $(foreach pkg,$(CONFIG_TOOLS),$(shell $(pkg) $(CONFIG_TOOLS_OPTIONS) --cflags))
+CXXFLAGS_PACKAGES:=$(foreach pkg,$(PKGCONFIG_PACKAGES),$(shell pkg-config $(pkg) --cxxflags)) $(foreach pkg,$(CONFIG_TOOLS),$(shell $(pkg) $(CONFIG_TOOLS_OPTIONS) --cxxflags))
 
 # all our */include directories
 INCLUDES+=$(LIB_INCLUDE_DIR)
@@ -3130,17 +3131,16 @@ compile_info :
 	@echo "AR=$(AR)"
 	@echo "RANLIB=$(RANLIB)"
 	@echo "COMPILE_FLAGS=$(COMPILE_FLAGS)"
-	@echo
+	@echo "CFLAGS=$(CFLAGS)"
+	@echo "CXXFLAGS=$(CXXFLAGS)"
 	@echo "PREPROCESS_FLAGS=$(PREPROCESS_FLAGS)"
 ifeq ($(ENABLE_PRECOMPILED_HEADERS),1)
 	@echo "PRECOMPILED_HEADER=$(PRECOMPILED_HEADER)"
 	@echo "PRECOMPILED_HEADER_GCH=$(PRECOMPILED_HEADER_GCH)"
 endif
-	@echo
 	@echo "LINK_FLAGS=$(LINK_FLAGS)"
 	@echo
 	@echo "LDLIBS=$(LDLIBS) $(FINAL_LDLIBS)"
-	@echo
 	@echo "LDLIBS_NO_OPTS=$(LDLIBS_NO_OPTS)"
 	@echo
 ifneq ($(PKGCONFIG_PACKAGES),)

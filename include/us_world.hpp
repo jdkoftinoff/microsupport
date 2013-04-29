@@ -1,8 +1,8 @@
-#ifndef US_TIME_H
-#define US_TIME_H
+#ifndef US_WORLD_HPP
+#define US_WORLD_HPP
 
 /*
-Copyright (c) 2010, Meyer Sound Laboratories, Inc.
+Copyright (c) 2012, Meyer Sound Laboratories, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,19 +29,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#include <string>
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+#include "us_packet.hpp"
+#include "us_packet_queue.hpp"
+#include "us_reactor.hpp"
 
-    /**
-     \addtogroup us_time Time Handling
-     */
-    /*@{*/
-
-    /*@}*/
-#ifdef __cplusplus
-}
-#endif
 
 #endif
+

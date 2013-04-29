@@ -1,12 +1,9 @@
 #include "us_world.h"
+#include "us_packet.h"
 
-#include "us_buffer_print.h"
-#include "us_buffer.h"
-#include "us_print.h"
-#include "us_logger_syslog.h"
 
 /*
-Copyright (c) 2010, Meyer Sound Laboratories, Inc.
+Copyright (c) 2012, Meyer Sound Laboratories, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,73 +27,38 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
  */
 
-#if US_ENABLE_PRINTING
-
-bool
-us_buffer_print (
-    us_buffer_t *self,
-    us_print_t *printer
-)
+us_packet_t * us_packet_create( us_allocator_t *allocator, size_t max_length )
 {
-    bool r = false;
-    if ( self && printer )
+    us_packet_t *r=0;
+    us_packet_t *self = us_new( allocator, us_packet_t );
+    if( self )
     {
-        size_t len=us_buffer_readable_count(self);
-        r = true;
-        r &= printer->printf (
-                 printer,
-                 "length: 0x%x\nContents:\n",
-                 len
-             );
-        if ( r )
+        self->m_allocator = allocator;
+        self->m_data = us_new_array( allocator, uint8_t, (int32_t)max_length );
+        if( self->m_data )
         {
-            size_t i;
-            for ( i = 0; i < len; ++i )
-            {
-                r &= printer->printf ( printer, "%02x ", us_buffer_peek( self, i ) );
-                if ( !r )
-                    break;
-            }
-            r &= printer->printf ( printer, "\n" );
+            self->m_max_length = max_length;
+            us_packet_clear( self );
+            self->destroy = us_packet_destroy;
+            r=self;
         }
+    }
+    if( !r )
+    {
+        us_packet_destroy( self );
     }
     return r;
 }
 
-
-
-bool
-us_buffer_print_string (
-    us_buffer_t *self,
-    us_print_t *printer
-)
+void us_packet_destroy( us_packet_t *self )
 {
-    bool r = false;
-    if ( self && printer )
+    if( self )
     {
-        size_t len=us_buffer_readable_count(self);
-        r = true;
-        r &= printer->printf (
-                 printer,
-                 "length: 0x%x\nContents:\n",
-                 len
-             );
-        if ( r )
-        {
-            size_t i;
-            for ( i = 0; i < len; ++i )
-            {
-                r &= printer->printf ( printer, "%c", us_buffer_peek(self,i) );
-                if ( !r )
-                    break;
-            }
-            r &= printer->printf ( printer, "\n" );
-        }
+        us_delete( self->m_allocator, self->m_data );
+        us_delete( self->m_allocator, self );
     }
-    return r;
 }
-
-#endif
 

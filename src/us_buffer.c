@@ -573,7 +573,7 @@ us_buffer_create (
         r = us_buffer_init (
                 self,
                 allocator,
-                allocator->alloc ( allocator, max_length, 1 ),
+                allocator->alloc ( allocator, (int32_t)max_length, 1 ),
                 max_length
             );
     }

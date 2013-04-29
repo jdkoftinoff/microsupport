@@ -103,7 +103,7 @@ bool us_net_get_nameinfo (
 
 
 int us_net_create_udp_socket (
-    struct addrinfo *ai,
+    const struct addrinfo *ai,
     bool do_bind
 )
 {
@@ -155,9 +155,54 @@ int us_net_create_udp_socket (
     return s;
 }
 
+
+int
+us_net_create_udp_socket_host(
+        const char *localaddr_host,
+        const char *localaddr_port,
+        bool do_bind
+  )
+{
+    int fd=0;
+    struct addrinfo  *localaddr=0;
+
+    localaddr=us_net_get_addrinfo(
+                localaddr_host,
+                localaddr_port,
+                SOCK_DGRAM,
+                true
+                );
+
+    fd = us_net_create_udp_socket( localaddr, do_bind );
+    freeaddrinfo(localaddr);
+    return fd;
+}
+
+int
+us_net_create_tcp_socket_host(
+        const char *localaddr_host,
+        const char *localaddr_port,
+        bool do_bind
+  )
+{
+    int fd=0;
+    struct addrinfo  *localaddr=0;
+
+    localaddr=us_net_get_addrinfo(
+                localaddr_host,
+                localaddr_port,
+                SOCK_STREAM,
+                true
+                );
+
+    fd = us_net_create_tcp_socket( localaddr, do_bind );
+    freeaddrinfo(localaddr);
+    return fd;
+}
+
 int us_net_create_multicast_rx_udp_socket (
     struct addrinfo *listenaddr,
-    struct addrinfo *multicastgroup,
+    const struct addrinfo *multicastgroup,
     const char *interface_name
 )
 {
@@ -262,7 +307,7 @@ int us_net_create_multicast_rx_udp_socket (
 
 int us_net_create_multicast_tx_udp_socket (
     struct addrinfo *localaddr,
-    struct addrinfo *multicastgroup,
+    const struct addrinfo *multicastgroup,
     const char *interface_name
 )
 {
@@ -270,7 +315,7 @@ int us_net_create_multicast_tx_udp_socket (
     int if_index = 0;
     if ( !localaddr )
     {
-        if ( multicastgroup->ai_family == PF_INET6 )
+        if ( multicastgroup && multicastgroup->ai_family == PF_INET6 )
         {
             localaddr = us_net_get_addrinfo ( "0::0", 0, SOCK_DGRAM, false );
         }
@@ -285,27 +330,27 @@ int us_net_create_multicast_tx_udp_socket (
         us_log_error ( "socket: %s", strerror(errno) );
         return -1;
     }
-    if ( multicastgroup->ai_family == PF_INET6 )
+    if ( multicastgroup && multicastgroup->ai_family == PF_INET6 )
     {
         if ( interface_name && *interface_name != '\0' )
         {
             if_index = if_nametoindex ( interface_name );
             if (  if_index==0 )
             {
-                us_log_error( "socket: %s interface_name %s unknown", s, interface_name );
+                us_log_error( "socket: %d interface_name %s unknown", s, interface_name );
                 closesocket(s);
                 return -1;
             }
             if (setsockopt(s, IPPROTO_IPV6, IPV6_MULTICAST_IF, &if_index,
                            sizeof(if_index)) < 0)
             {
-                us_log_error( "socket: %s unable to IPV6_MULTICAST_IF for multicast via interface %s (%d)", s, interface_name, if_index );
+                us_log_error( "socket: %d unable to IPV6_MULTICAST_IF for multicast via interface %s (%d)", s, interface_name, if_index );
                 closesocket(s);
                 return -1;
             }
         }
     }
-    if ( localaddr->ai_family == PF_INET )
+    if ( localaddr && localaddr->ai_family == PF_INET )
     {
         struct in_addr in_local;
         in_local.s_addr = ( ( struct sockaddr_in * ) localaddr->ai_addr )->sin_addr.s_addr;
@@ -325,8 +370,76 @@ int us_net_create_multicast_tx_udp_socket (
     return s;
 }
 
+int us_net_create_multicast_udp_socket(
+        struct addrinfo *localaddr,
+        const struct addrinfo *multicastgroup,
+        const char *interface_name,
+        bool tx
+        )
+{
+    int fd;
+    if( tx )
+    {
+        fd = us_net_create_multicast_tx_udp_socket(
+                    localaddr,
+                    multicastgroup,
+                    interface_name
+                    );
+    }
+    else
+    {
+        fd = us_net_create_multicast_rx_udp_socket(
+                    localaddr,
+                    multicastgroup,
+                    interface_name
+                    );
+    }
+
+    return fd;
+}
+
+int us_net_create_multicast_udp_socket_host(
+        const char *localaddr_host,
+        const char *localaddr_port,
+        const char *multicast_host,
+        const char *multicast_port,
+        const char *interface_name,
+        bool tx
+        )
+{
+    int fd=0;
+    struct addrinfo *localaddr=0;
+    struct addrinfo *multicastaddr=0;
+
+    localaddr=us_net_get_addrinfo(
+                localaddr_host,
+                localaddr_port,
+                SOCK_DGRAM,
+                true
+                );
+
+    multicastaddr = us_net_get_addrinfo(
+                multicast_host,
+                multicast_port,
+                SOCK_DGRAM,
+                false
+                );
+
+    fd = us_net_create_multicast_udp_socket(
+                localaddr,
+                multicastaddr,
+                interface_name,
+                tx
+                );
+
+    freeaddrinfo(localaddr);
+    freeaddrinfo(multicastaddr);
+
+    return fd;
+}
+
 int us_net_create_tcp_socket (
-    struct addrinfo *ai,
+    const struct addrinfo *ai,
     bool do_bind
 )
 {
@@ -425,7 +538,7 @@ us_net_blocking_send(
 {
     int32_t todo=len;
     const uint8_t *data = (const uint8_t *)data_;
-    int cnt;
+    ssize_t cnt;
     while (todo>0)
     {
         do
@@ -457,10 +570,13 @@ int us_net_wait_readable( int timeout_ms, int fd_count, ... )
     for( i=0; i<fd_count; ++i )
     {
         int fd=va_arg( ap, int );
-        FD_SET( fd, &readable_set );
-        if( fd>max_fd )
+        if( fd!=-1 )
         {
-            max_fd=fd;
+            FD_SET( fd, &readable_set );
+            if( fd>max_fd )
+            {
+                max_fd=fd;
+            }
         }
     }
     do
@@ -491,6 +607,78 @@ int us_net_wait_readable( int timeout_ms, int fd_count, ... )
             }
         }
     }
+    return r;
+}
+
+int us_net_wait_readable_list(
+    struct timeval *cur_time,
+    struct timeval *wake_up_time,
+    uint32_t next_wake_up_delta_time_milliseconds,
+    int fd_count,
+    const int *fds
+    )
+{
+    int r=-1;
+    int n=0;
+    fd_set readable_set;
+    struct timeval tv_timeout;
+    int max_fd=-1;
+    int i;
+
+    if( cur_time->tv_sec == 0 && cur_time->tv_usec==0 )
+    {
+        gettimeofday( cur_time, 0 );
+        us_net_timeout_add( wake_up_time, cur_time, next_wake_up_delta_time_milliseconds*1000 );
+    }
+
+    us_net_timeout_calc( &tv_timeout, cur_time, wake_up_time );
+
+    FD_ZERO( &readable_set );
+    for( i=0; i<fd_count; ++i )
+    {
+        int fd=fds[i];
+        if( fd!=-1 )
+        {
+            FD_SET( fd, &readable_set );
+            if( fd>max_fd )
+            {
+                max_fd=fd;
+            }
+        }
+    }
+    do
+    {
+        n = select(max_fd+1, &readable_set, 0, 0, &tv_timeout );
+    }
+    while (n<0 && (errno==EINTR || errno==EAGAIN ) );
+
+    gettimeofday(cur_time,0);
+
+    if( n<0 )
+    {
+        r=-2; /* Error */
+    }
+    else if( n==0 )
+    {
+        r=-1; /* Timeout */
+    }
+    else if( n>0 )
+    {
+        r=-1;
+        for( i=0; i<max_fd+1; i++ )
+        {
+            if( FD_ISSET( i, &readable_set ) )
+            {
+                r=i;
+                break;
+            }
+        }
+    }
+    if( us_net_timeout_hit( cur_time, wake_up_time ) )
+    {
+        us_net_timeout_add( wake_up_time, wake_up_time, next_wake_up_delta_time_milliseconds );
+    }
+
     return r;
 }
 

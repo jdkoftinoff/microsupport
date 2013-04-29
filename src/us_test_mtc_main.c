@@ -86,7 +86,7 @@ static uint8_t test_data_1[] =
 static void print_sysex ( us_midi_sysex_t *ex )
 {
     int i;
-    int l = us_midi_sysex_get_length ( ex );
+    int l = (int)us_midi_sysex_get_length ( ex );
     us_log_info ( "Sysex Len=%d", l );
     for ( i = 0; i < l; ++i )
     {

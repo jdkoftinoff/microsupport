@@ -63,28 +63,57 @@ extern "C"
 
     int
     us_net_create_udp_socket (
-        struct addrinfo *ai,
+        const struct addrinfo *ai,
         bool do_bind
     );
 
     int
+    us_net_create_udp_socket_host(
+            const char *localaddr_host,
+            const char *localaddr_port,
+            bool do_bind
+      );
+
+    int
     us_net_create_tcp_socket (
-        struct addrinfo *ai,
+        const struct addrinfo *ai,
         bool do_bind
     );
 
+    int
+    us_net_create_tcp_socket_host(
+            const char *localaddr_host,
+            const char *localaddr_port,
+            bool do_bind
+      );
+
     int us_net_create_multicast_rx_udp_socket (
         struct addrinfo *listenaddr,
-        struct addrinfo *multicastgroup,
+        const struct addrinfo *multicastgroup,
         const char *interface_name
     );
 
     int us_net_create_multicast_tx_udp_socket (
         struct addrinfo *localaddr,
-        struct addrinfo *multicastgroup,
+        const struct addrinfo *multicastgroup,
         const char *interface_name
     );
 
+    int us_net_create_multicast_udp_socket(
+            struct addrinfo *localaddr,
+            const struct addrinfo *multicastgroup,
+            const char *interface_name,
+            bool tx
+            );
+
+    int us_net_create_multicast_udp_socket_host(
+            const char *localaddr_host,
+            const char *localaddr_port,
+            const char *multicast_host,
+            const char *multicast_port,
+            const char *interface_name,
+            bool tx
+            );
 
     void
     us_net_timeout_add (
@@ -128,6 +157,14 @@ extern "C"
         int fd_count,
         ...
     );
+
+    int us_net_wait_readable_list(
+        struct timeval *cur_time,
+        struct timeval *wake_up_time,
+        uint32_t next_wake_up_delta_time_milliseconds,
+        int fd_count,
+        const int *fds
+        );
 
 #endif
 #ifdef __cplusplus

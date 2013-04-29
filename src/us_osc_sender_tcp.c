@@ -50,7 +50,7 @@ bool us_osc_sender_tcp_send_msg( us_osc_sender_t *self_,  const us_osc_msg_t *ms
     r = msg->flatten( msg, &buf, 0 );
     if ( r )
     {
-        int32_t len = us_buffer_readable_count( &buf );
+        int32_t len = (int32_t)us_buffer_readable_count( &buf );
         us_buffer_t *outgoing = &self->m_handler->m_outgoing_queue;
         us_buffer_append_int32( outgoing, len );
         us_buffer_write_buffer( outgoing, &buf );

@@ -1,6 +1,8 @@
 #ifndef US_OPTIONS_H
 #define US_OPTIONS_H
 
+#include "us_world.h"
+
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -76,28 +78,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # define US_ENABLE_BSD_SOCKETS (1)
 #endif
 
-#ifndef US_ENABLE_RAW_ETHERNET
-#if defined(US_CONFIG_LINUX)
-# define US_ENABLE_RAW_ETHERNET (1)
-#else
-# define US_ENABLE_RAW_ETHERNET (0)
-#endif
-#endif
-
 #if US_ENABLE_RAW_ETHERNET
-#if defined(US_CONFIG_MACOSX)
+#if defined(US_CONFIG_MACOSX) || defined(US_CONFIG_WIN32)
 # undef US_ENABLE_PCAP
 # define US_ENABLE_PCAP 1
-#endif
-#if defined(US_CONFIG_WIN32)
-# undef US_ENABLE_PCAP
-# define US_ENABLE_PCAP 1
+# undef US_ENABLE_RAW_ETHERNET
+# define US_ENABLE_RAW_ETHERNET (1)
 #endif
 #endif
 
-#ifndef US_ENABLE_PCAP
-# define US_ENABLE_PCAP 0
+#ifndef US_ENABLE_RAW_ETHERNET
+#if defined(US_CONFIG_LINUX) || defined(__linux__)
+# define US_ENABLE_RAW_ETHERNET (1)
 #endif
+#endif
+
 
 #ifndef US_MAX_ADDRESS_LENGTH
 # define US_MAX_ADDRESS_LENGTH (256)

@@ -10,22 +10,22 @@ int main(int argc, const char **argv )
     uint8_t multicast_mac[6] = { 0x91, 0xe0, 0xf0, 0x01, 0x00, 0x00 };
     uint16_t ethertype=0x22f0;
     us_rawnet_context_t sock;
-    const char *ifname = "eth1";
+#if defined (WIN32)
+#define sleep(x) Sleep(x*1000)
+    const char *ifname="\\Device\\NPF_{BD3BC03E-E00B-490E-97C4-7A01467918D4}";
+#else
+    const char *ifname="eth1";
+#endif
+
+    int fd;
     if( argc>1 )
         ifname=argv[1];
-    int fd=us_rawnet_socket( &sock, ethertype, ifname );
+    fd=us_rawnet_socket( &sock, ethertype, ifname, multicast_mac );
     if( fd>=0 )
     {
         uint8_t pkt_src_mac[6];
         uint8_t pkt_dest_mac[6];
         uint8_t buf[2048];
-        if( !us_rawnet_join_multicast(
-                    &sock,
-                    multicast_mac
-                ) )
-        {
-            exit(1);
-        }
         ssize_t buf_len=0;
         do
         {

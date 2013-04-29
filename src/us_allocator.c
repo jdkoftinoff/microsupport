@@ -34,7 +34,7 @@
 
 char * us_strdup ( struct us_allocator_s *allocator, const char *src )
 {
-    int len = ( int ) ( strlen ( src ) );
+    size_t len = strlen ( src );
     char *p = us_new_array ( allocator, char, len + 1 );
     if ( p )
     {

@@ -68,7 +68,7 @@ static int32_t us_test_allocator_heap_get_largest_free_size( us_allocator_heap_t
         }
         cur = cur->m_next;
     }
-    return largest_free;
+    return (int32_t)largest_free;
 }
 int saved_allocation_item[10000];
 int saved_allocation_size[10000];

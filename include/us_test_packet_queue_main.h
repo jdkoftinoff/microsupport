@@ -1,8 +1,8 @@
-#ifndef US_TIME_H
-#define US_TIME_H
+#ifndef US_TEST_PACKET_QUEUE_MAIN_H
+#define US_TEST_PACKET_QUEUE_MAIN_H
 
 /*
-Copyright (c) 2010, Meyer Sound Laboratories, Inc.
+Copyright (c) 2012, Meyer Sound Laboratories, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,15 +29,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "us_world.h"
+#include "us_packet_queue.h"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
     /**
-     \addtogroup us_time Time Handling
+     \addtogroup us_tests Tests
      */
     /*@{*/
+
+
+
+    int us_test_packet_queue_main( int argc, const char **argv );
+
 
     /*@}*/
 #ifdef __cplusplus

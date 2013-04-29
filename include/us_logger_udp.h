@@ -45,8 +45,8 @@ extern "C"
 #  define US_LOGGER_UDP_DEFAULT_DEST_ADDR "255.255.255.255"
 # endif
 
-# ifndef US_LOGGER_UDP_DEFAULT_DEST_PORT
-#  define US_LOGGER_UDP_DEFAULT_DEST_PORT (9001)
+# ifndef US_LOGGER_UDP_DEFAULT_DEST_SERVICE
+#  define US_LOGGER_UDP_DEFAULT_DEST_SERVICE "9001"
 # endif
 
 
@@ -62,7 +62,7 @@ extern "C"
 
     void us_log_udp_send();
 
-    bool us_logger_udp_start ( const char *dest_addr, int16_t dest_port );
+    bool us_logger_udp_start ( const char *dest_addr, const char * service );
     void us_logger_udp_finish ( void );
 
     void us_log_error_udp ( const char *fmt, ... );

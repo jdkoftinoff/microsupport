@@ -330,7 +330,7 @@ us_http_request_header_get_content_length (
     content_length_item = self->m_items->find( self->m_items, "Content-Length" );
     if ( content_length_item )
     {
-        content_length = strtol( content_length_item->m_value, 0, 10 );
+        content_length = (int32_t)strtol( content_length_item->m_value, 0, 10 );
     }
     return content_length;
 }
@@ -581,7 +581,7 @@ us_http_response_header_get_content_length (
     if ( content_length_item )
     {
         /* found it, extract the value as our todo count */
-        content_length = strtol( content_length_item->m_value, 0, 10 );
+        content_length = (int32_t)strtol( content_length_item->m_value, 0, 10 );
     }
     return content_length;
 }
@@ -745,7 +745,7 @@ bool us_http_response_header_parse (
     if ( self )
     {
         int32_t len;
-        len = us_buffer_find_string_len ( buf, ' ', '\n' );
+        len = (int32_t)us_buffer_find_string_len ( buf, ' ', '\n' );
         if ( len != -1 )
         {
             us_http_response_header_set_versionn (
@@ -755,7 +755,7 @@ bool us_http_response_header_parse (
             );
             if ( us_buffer_advance ( buf, len + 1 ) )
             {
-                len = us_buffer_find_string_len ( buf, ' ', '\n' );
+                len = (int32_t)us_buffer_find_string_len ( buf, ' ', '\n' );
                 if ( len == 3 )
                 {
                     int status_code = 0;
@@ -804,7 +804,7 @@ us_http_request_header_parse (
     if ( self )
     {
         int32_t len;
-        len = us_buffer_find_string_len ( buf, ' ', '\n' );
+        len = (int32_t)us_buffer_find_string_len ( buf, ' ', '\n' );
         if ( len != -1 )
         {
             us_http_request_header_set_methodn (
@@ -814,7 +814,7 @@ us_http_request_header_parse (
             );
             if ( us_buffer_advance ( buf, len + 1 ) )
             {
-                len = us_buffer_find_string_len ( buf, ' ', '\n' );
+                len = (int32_t)us_buffer_find_string_len ( buf, ' ', '\n' );
                 if ( len > 0 )
                 {
                     us_http_request_header_set_pathn (
@@ -824,7 +824,7 @@ us_http_request_header_parse (
                     );
                     if ( us_buffer_advance ( buf, len + 1 ) )
                     {
-                        len = us_buffer_find_string_len ( buf, '\r', '\n' );
+                        len = (int32_t)us_buffer_find_string_len ( buf, '\r', '\n' );
                         if ( len > 0 )
                         {
                             us_http_request_header_set_versionn (
@@ -897,11 +897,11 @@ us_http_header_item_list_parse (
             const char *value;
             int value_len;
             key = p;
-            key_len = us_buffer_find_string_len ( buf, ':', '\n' );
+            key_len = (int32_t)us_buffer_find_string_len ( buf, ':', '\n' );
             us_buffer_advance ( buf, key_len + 1 );
             us_buffer_skip_delim ( buf, " \t" );
             value = us_buffer_read_ptr ( buf );
-            value_len = us_buffer_find_string_len ( buf, '\r', '\n' );
+            value_len = (int32_t)us_buffer_find_string_len ( buf, '\r', '\n' );
             us_buffer_advance ( buf, value_len + 1 );
             p=us_buffer_read_ptr ( buf );
             if ( *p=='\n' )

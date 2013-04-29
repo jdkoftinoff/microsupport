@@ -34,6 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_buffer.h"
 #include "us_net.h"
 #include "us_reactor.h"
+#include "us_reactor_handler_tcp.h"
 #include "us_logger.h"
 #include "us_http.h"
 #ifdef __cplusplus

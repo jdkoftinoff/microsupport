@@ -63,8 +63,8 @@ static bool us_validate_buffer (
     bool got_writable_byte = us_buffer_can_write_byte ( self );
     bool expected_readable_byte = ( expected_readable_count > 0 );
     bool got_readable_byte = us_buffer_can_read_byte ( self );
-    int contig_writable = us_buffer_contig_writable_count( self );
-    int contig_readable = us_buffer_contig_readable_count( self );
+    int contig_writable = (int)us_buffer_contig_writable_count( self );
+    int contig_readable = (int)us_buffer_contig_readable_count( self );
     if ( got_readable_byte != expected_readable_byte )
     {
         us_log_error ( "Expected readable byte: %d got: %d", expected_readable_byte, got_readable_byte );

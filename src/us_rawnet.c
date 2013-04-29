@@ -30,9 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_rawnet.h"
 #include "us_logger.h"
 
-#if US_ENABLE_RAW_ETHERNET
-
-#if defined(US_CONFIG_LINUX)
+#if defined(__linux__)
 #include <linux/if_packet.h>
 #endif
 
@@ -40,14 +38,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <net/if_dl.h>
 #endif
 
-#if US_ENABLE_PCAP==1
+#if defined(US_ENABLE_PCAP)
 #include <pcap.h>
-
+#if defined(_WIN32)
+#include <iphlpapi.h>
+#pragma comment(lib, "IPHLPAPI.lib")
+#endif
 
 int us_rawnet_socket(
     us_rawnet_context_t *self,
     uint16_t ethertype,
-    const char *interface_name
+    const char *interface_name,
+    const uint8_t join_multicast[6]
 )
 {
     int r=-1;
@@ -75,8 +77,6 @@ int us_rawnet_socket(
         {
             pcap_if_t *alldevs;
             pcap_if_t *d;
-            pcap_addr_t *alladdrs;
-            pcap_addr_t *a;
 
             self->m_interface_id = -1;
             if( pcap_findalldevs( &alldevs, errbuf )!=0 )
@@ -93,11 +93,45 @@ int us_rawnet_socket(
                     if ( strcmp ( interface_name, d->name ) ==0 )
                     {
                         /* now find the MAC address associated with it */
+#if defined(_WIN32)
+                        PIP_ADAPTER_INFO info = NULL, ninfo; 
+                        ULONG ulOutBufLen = 0; 
+                        DWORD dwRetVal = 0;
+                        if( GetAdaptersInfo( info, &ulOutBufLen ) == ERROR_BUFFER_OVERFLOW ) 
+                        {
+                            info = (PIP_ADAPTER_INFO)malloc( ulOutBufLen ); 
+                            if( info != NULL )
+                            {
+                                if( (dwRetVal = GetAdaptersInfo(info, &ulOutBufLen)) == NO_ERROR )
+                                {
+                                    ninfo = info;
+                                    while( ninfo != NULL )
+                                    {
+                                        if( strstr( d->name, ninfo->AdapterName ) > 0 )
+                                        {
+                                            if( ninfo->AddressLength == 6 )
+                                                memcpy( self->m_my_mac, ninfo->Address, 6  );
+                                            break;
+                                        }
+                                        ninfo = ninfo->Next;
+                                      }
+                                  }
+                                  else
+                                      us_log_error("Error in GetAdaptersInfo");
+                                  free( info );
+                              }
+                              else
+                              {
+                                  us_log_error("Error in malloc for GetAdaptersInfo");
+                              }
+                        }
+#else                        
+                        pcap_addr_t *alladdrs;
+                        pcap_addr_t *a;
                         alladdrs = d->addresses;
-
                         for ( a = alladdrs; a != NULL; a = a->next )
                         {
-#ifdef __APPLE__
+#if defined(__APPLE__)
                             /* Apple AF_LINK format depends on osx version */
 
                             if ( a->addr->sa_family == AF_LINK && a->addr->sa_data != NULL )
@@ -118,8 +152,6 @@ int us_rawnet_socket(
                                     memcpy( self->m_my_mac, &mac[1], 6 );
                                 }
                             }
-#elif defined(_WIN32)
-#error TODO get MAC address WIN32
 #elif defined(__linux__)
                             if ( a->addr->sa_family == AF_PACKET )
                             {
@@ -128,7 +160,7 @@ int us_rawnet_socket(
                             }
 #endif
                         }
-
+#endif
                         break;
                     }
                 }
@@ -139,6 +171,8 @@ int us_rawnet_socket(
                 }
                 else
                 {
+                    /* enable ether protocol filter */
+                    us_rawnet_join_multicast( self, join_multicast );
                     self->m_fd = pcap_fileno ( p );
                     if( self->m_fd == -1 )
                     {
@@ -146,8 +180,6 @@ int us_rawnet_socket(
                     }
                     else
                     {
-                        /* enable ether protocol filter */
-                        us_rawnet_join_multicast( self, 0 );
                         r=self->m_fd;
                     }
                 }
@@ -202,7 +234,7 @@ ssize_t us_rawnet_send(
         buffer[12] = US_GET_BYTE_1 ( self->m_ethertype );
         buffer[13] = US_GET_BYTE_0 ( self->m_ethertype );
         memcpy ( data, payload, payload_len );
-        r=pcap_sendpacket ( m_pcap,buffer,payload_len+14 ) ==0;
+        r=pcap_sendpacket ( m_pcap,buffer,(int)payload_len+14 ) ==0;
     }
     else
     {
@@ -228,7 +260,7 @@ ssize_t us_rawnet_recv(
         struct pcap_pkthdr *header;
         int e = pcap_next_ex ( m_pcap, &header,&data );
 
-        if ( e==1 && header->caplen <= payload_buf_max_size )
+        if ( e==1 && (header->caplen-14) <= payload_buf_max_size )
         {
             r = header->caplen-14;
             memcpy ( payload_buf, &data[14], r );
@@ -255,7 +287,8 @@ bool us_rawnet_join_multicast(
     struct bpf_program fcode;
     pcap_t *p = (pcap_t *)self->m_pcap;
     char filter[1024];
-    /* TODO: add multicast address to pcap filter here */
+    /* TODO: add multicast address to pcap filter here if multicast_mac is not null*/
+    (void)multicast_mac;
     sprintf ( filter, "ether proto 0x%04x", self->m_ethertype );
 
     if ( pcap_compile ( p, &fcode, filter, 1, 0xffffffff ) <0 )
@@ -281,7 +314,7 @@ bool us_rawnet_join_multicast(
 
 #endif
 
-#if defined(__linux__) && US_ENABLE_PCAP==0
+#if defined(__linux__) && !defined(US_ENABLE_PCAP)
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -294,7 +327,8 @@ bool us_rawnet_join_multicast(
 int us_rawnet_socket(
     us_rawnet_context_t *self,
     uint16_t ethertype,
-    const char *interface_name
+    const char *interface_name,
+    const uint8_t join_multicast[6]
 )
 {
     int fd= socket(AF_PACKET,SOCK_RAW,htons(ethertype) );
@@ -320,6 +354,10 @@ int us_rawnet_socket(
         }
         self->m_fd=fd;
         self->m_ethertype = ethertype;
+        if( join_multicast )
+        {
+            us_rawnet_join_multicast( self, join_multicast );
+        }
     }
     return fd;
 }
@@ -428,39 +466,41 @@ bool us_rawnet_join_multicast(
     bool r=false;
     struct packet_mreq mreq;
     struct sockaddr_ll saddr;
-    memset(&saddr,0,sizeof(saddr));
-    saddr.sll_family = AF_PACKET;
-    saddr.sll_ifindex = self->m_interface_id;
-    saddr.sll_pkttype = PACKET_MULTICAST;
-    saddr.sll_protocol = htons(self->m_ethertype);
-    if(bind(self->m_fd, (struct sockaddr *) &saddr, sizeof(saddr)) >=0 )
+    if( multicast_mac )
     {
-        memset(&mreq,0,sizeof(mreq));
-        mreq.mr_ifindex=self->m_interface_id;
-        mreq.mr_type=PACKET_MR_MULTICAST;
-        mreq.mr_alen=6;
-        mreq.mr_address[0]=multicast_mac[0];
-        mreq.mr_address[1]=multicast_mac[1];
-        mreq.mr_address[2]=multicast_mac[2];
-        mreq.mr_address[3]=multicast_mac[3];
-        mreq.mr_address[4]=multicast_mac[4];
-        mreq.mr_address[5]=multicast_mac[5];
-        if(setsockopt(self->m_fd,SOL_PACKET,PACKET_ADD_MEMBERSHIP,&mreq,sizeof(mreq))>=0)
+        memset(&saddr,0,sizeof(saddr));
+        saddr.sll_family = AF_PACKET;
+        saddr.sll_ifindex = self->m_interface_id;
+        saddr.sll_pkttype = PACKET_MULTICAST;
+        saddr.sll_protocol = htons(self->m_ethertype);
+        if(bind(self->m_fd, (struct sockaddr *) &saddr, sizeof(saddr)) >=0 )
         {
-            r=true;
+            memset(&mreq,0,sizeof(mreq));
+            mreq.mr_ifindex=self->m_interface_id;
+            mreq.mr_type=PACKET_MR_MULTICAST;
+            mreq.mr_alen=6;
+            mreq.mr_address[0]=multicast_mac[0];
+            mreq.mr_address[1]=multicast_mac[1];
+            mreq.mr_address[2]=multicast_mac[2];
+            mreq.mr_address[3]=multicast_mac[3];
+            mreq.mr_address[4]=multicast_mac[4];
+            mreq.mr_address[5]=multicast_mac[5];
+            if(setsockopt(self->m_fd,SOL_PACKET,PACKET_ADD_MEMBERSHIP,&mreq,sizeof(mreq))>=0)
+            {
+                r=true;
+            }
+            else
+            {
+                us_log_error("us_rawnet_join_multicast setsockopt[SOL_SOCKET,PACKET_ADD_MEMBERSHIP] error %s", strerror(errno) );
+            }
         }
         else
         {
-            us_log_error("us_rawnet_join_multicast setsockopt[SOL_SOCKET,PACKET_ADD_MEMBERSHIP] error %s", strerror(errno) );
+            us_log_error( "us_rawnet_join_multicast bind error: %s", strerror(errno));
         }
-    }
-    else
-    {
-        us_log_error( "us_rawnet_join_multicast bind error: %s", strerror(errno));
     }
     return r;
 }
 
 #endif
 
-#endif
