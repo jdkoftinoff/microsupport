@@ -17,7 +17,7 @@ int main ( int argc, char **argv )
     const char * src_host = "::1";
     const char * src_port = "10001";
     struct addrinfo *src_ai = 0;
-    const char *ascii_hex_data = 0;
+    const char *ascii_hex_data = "414243";
     uint8_t data[1500];
     size_t data_len = 0;
     size_t pos;
