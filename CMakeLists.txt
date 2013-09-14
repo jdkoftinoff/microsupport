@@ -117,3 +117,36 @@ target_link_libraries(us_tool_rx_osc ${LIBS})
 add_executable(us_tool_send_osc tools-dev/us_tool_send_osc.c)
 target_link_libraries(us_tool_send_osc ${LIBS})
 
+add_executable(recv_raw examples/recv_raw.c)
+target_link_libraries(recv_raw ${LIBS})
+
+add_executable(send_raw examples/send_raw.c)
+target_link_libraries(send_raw ${LIBS})
+
+add_executable(us_example_hex_udp_rx examples/us_example_hex_udp_rx.c)
+target_link_libraries(us_example_hex_udp_rx ${LIBS})
+
+add_executable(us_example_hex_udp_tx examples/us_example_hex_udp_tx.c)
+target_link_libraries(us_example_hex_udp_tx ${LIBS})
+
+add_executable(us_example_http_client examples/us_example_http_client.c)
+target_link_libraries(us_example_http_client ${LIBS})
+
+add_executable(us_example_http_server examples/us_example_http_server.c)
+target_link_libraries(us_example_http_server ${LIBS})
+
+add_executable(us_example_json examples/us_example_json.c)
+target_link_libraries(us_example_json ${LIBS})
+
+add_executable(us_example_mudp_rx examples/us_example_mudp_rx.c)
+target_link_libraries(us_example_mudp_rx ${LIBS})
+
+add_executable(us_example_mudp_tx examples/us_example_mudp_tx.c)
+target_link_libraries(us_example_mudp_tx ${LIBS})
+
+add_executable(us_example_reactor examples/us_example_reactor.c)
+target_link_libraries(us_example_reactor ${LIBS})
+
+add_executable(us_example_webapp examples/us_example_webapp.c)
+target_link_libraries(us_example_webapp ${LIBS})
+
