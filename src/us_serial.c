@@ -77,7 +77,7 @@ bool us_serial_setup ( int fd, const char *serial_options )
         {
             serial_fmt++;
         }
-        if ( strlen ( serial_fmt ) != 5 )
+        if ( serial_fmt == 0 || strlen ( serial_fmt ) != 5 )
         {
             us_log_error ( "invalid serial format: for example use 8N1,H or 8N1,N " );
             return false;
