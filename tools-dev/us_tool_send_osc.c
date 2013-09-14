@@ -106,6 +106,12 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 'a':
             {
                 uint32_t high, low;
+                if( !*osc_values )
+                {
+                    us_log_error( "Missing osc_value a" );
+                    r=0;
+                    break;
+                }
                 uint64_t val = strtoull( *osc_values, 0, 10 );
                 high = (uint32_t)((val>>32)&0xffffffff);
                 low = (uint32_t)(val&0xffffffff);
@@ -116,9 +122,18 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 'b':
             {
                 uint8_t valbuf[256];
-                const char *s = *osc_values;
-                size_t sz = strlen(s);
-                size_t octet_count=sz/2;
+                const char *s;
+                size_t sz;
+                size_t octet_count;
+                if( !*osc_values )
+                {
+                    us_log_error( "Missing osc_value b" );
+                    r=0;
+                    break;
+                }
+                s = *osc_values;
+                sz = strlen(s);
+                octet_count=sz/2;
                 if( (sz&1)==0 )
                 {
                     bool parsed=true;
@@ -135,6 +150,7 @@ static us_osc_msg_t * us_tool_gen_osc(
                         if( !parsed )
                         {
                             us_log_error( "unable to parse hex octets in '%s'", s );
+                            r=0;
                             break;
                         }
                     }
@@ -160,6 +176,12 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 'd':
             {
                 double v;
+                if( !*osc_values )
+                {
+                    us_log_error( "Missing osc_value d" );
+                    r=0;
+                    break;
+                }
                 v = strtod( *osc_values, 0 );
                 e = us_osc_msg_element_d_create( allocator, v );
                 osc_values++;
@@ -175,6 +197,12 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 'f':
             {
                 float v;
+                if( !*osc_values )
+                {
+                    us_log_error( "Missing osc_value f" );
+                    r=0;
+                    break;
+                }
                 v = atof( *osc_values );
                 e = us_osc_msg_element_f_create( allocator, v );
                 osc_values++;
@@ -184,7 +212,14 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 'h':
             {
                 uint32_t high, low;
-                uint64_t val = strtoull( *osc_values, 0, 10 );
+                uint64_t val;
+                if( !*osc_values )
+                {
+                    us_log_error( "Missing osc_value h" );
+                    r=0;
+                    break;
+                }
+                val = strtoull( *osc_values, 0, 10 );
                 high = (uint32_t)((val>>32)&0xffffffff);
                 low = (uint32_t)(val&0xffffffff);
                 e = us_osc_msg_element_h_create( allocator, high, low );
@@ -199,6 +234,12 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 'i':
             {
                 int32_t v;
+                if( !*osc_values )
+                {
+                    us_log_error( "Missing osc_value i" );
+                    r=0;
+                    break;
+                }
                 v = strtol( *osc_values, 0, 10 );
                 e = us_osc_msg_element_i_create( allocator, v );
                 osc_values++;
@@ -212,6 +253,12 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 's':
             {
                 const char *s;
+                if( !*osc_values )
+                {
+                    us_log_error( "Missing osc_value s" );
+                    r=0;
+                    break;
+                }
                 s = *osc_values;
                 e = us_osc_msg_element_s_create( allocator, s );
                 osc_values++;
@@ -225,7 +272,14 @@ static us_osc_msg_t * us_tool_gen_osc(
             case 't':
             {
                 uint32_t high, low;
-                uint64_t val = strtoull( *osc_values, 0, 10 );
+                uint64_t val;
+                if( !*osc_values )
+                {
+                    us_log_error( "Missing osc_value t" );
+                    r=0;
+                    break;
+                }
+                val = strtoull( *osc_values, 0, 10 );
                 high = (uint32_t)((val>>32)&0xffffffff);
                 low = (uint32_t)(val&0xffffffff);
                 e = us_osc_msg_element_t_create( allocator, high, low );
