@@ -36,100 +36,84 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /** \addtogroup us_test_json */
 /*@{*/
 
+static bool us_test_json(void);
 
-static bool us_test_json ( void );
-
-static bool us_test_json ( void )
-{
+static bool us_test_json(void) {
     bool r = false;
     us_allocator_t *allocator = us_testutil_sys_allocator;
-    us_json_t *j = us_json_create( allocator );
-    us_buffer_t *b = us_buffer_create( allocator, 1024 );
-    if ( !b )
-    {
+    us_json_t *j = us_json_create(allocator);
+    us_buffer_t *b = us_buffer_create(allocator, 1024);
+    if (!b) {
         abort();
     }
-    if ( j )
-    {
+    if (j) {
         int i;
-        us_json_t *a=0;
-        us_json_t *a1=0;
-        char name[32]="Jeff";
-        char city[32]="Vernon";
-        char country[32]="Canada";
-        int32_t histogram[11] = { 1, 3,6,10, 15, 14, 11, 4, 2, 1, 0 };
-        static int32_t hitpoints=90210;
-        r=true;
-        if ( !us_json_append_string_ptr( j, "name", name ) )
-            r=false;
-        if ( !us_json_append_int32_ptr( j, "hitpoints", &hitpoints ) )
-            r=false;
-        a=us_json_append_object( j, "address" );
-        if ( !us_json_append_string_ptr( a, "city", city ) )
-            r=false;
-        if ( !us_json_append_string_ptr( a, "country", country ) )
-            r=false;
-        a1=us_json_append_object( j, "histogram" );
-        us_json_set_array( a1, true );
-        for ( i=0; i<(int)(sizeof(histogram)/sizeof(histogram[0])); ++i )
-        {
-            if ( !us_json_append_int32_ptr( a1, 0, &histogram[i] ))
-            {
-                r=false;
+        us_json_t *a = 0;
+        us_json_t *a1 = 0;
+        char name[32] = "Jeff";
+        char city[32] = "Vernon";
+        char country[32] = "Canada";
+        int32_t histogram[11] = {1, 3, 6, 10, 15, 14, 11, 4, 2, 1, 0};
+        static int32_t hitpoints = 90210;
+        r = true;
+        if (!us_json_append_string_ptr(j, "name", name))
+            r = false;
+        if (!us_json_append_int32_ptr(j, "hitpoints", &hitpoints))
+            r = false;
+        a = us_json_append_object(j, "address");
+        if (!us_json_append_string_ptr(a, "city", city))
+            r = false;
+        if (!us_json_append_string_ptr(a, "country", country))
+            r = false;
+        a1 = us_json_append_object(j, "histogram");
+        us_json_set_array(a1, true);
+        for (i = 0; i < (int)(sizeof(histogram) / sizeof(histogram[0])); ++i) {
+            if (!us_json_append_int32_ptr(a1, 0, &histogram[i])) {
+                r = false;
                 break;
             }
         }
-        r&=us_json_flatten_to_buffer( j, b );
-        r&=us_buffer_append_string( b, ", \n" );
-        strcpy( name, "John" );
-        strcpy( city, "Berkeley" );
-        strcpy( country, "United States" );
+        r &= us_json_flatten_to_buffer(j, b);
+        r &= us_buffer_append_string(b, ", \n");
+        strcpy(name, "John");
+        strcpy(city, "Berkeley");
+        strcpy(country, "United States");
         hitpoints = 999;
-        for ( i=0; i<(int)(sizeof(histogram)/sizeof(histogram[0])); ++i )
-        {
-            histogram[i] = i*i;
+        for (i = 0; i < (int)(sizeof(histogram) / sizeof(histogram[0])); ++i) {
+            histogram[i] = i * i;
         }
-        r&=us_json_flatten_to_buffer( j, b );
+        r &= us_json_flatten_to_buffer(j, b);
         j->destroy(j);
     }
     {
-        int i=0;
+        int i = 0;
         int len = (int)us_buffer_readable_count(b);
-        for ( i=0; i<len; ++i )
-        {
-            fprintf( stdout, "%c", us_buffer_peek(b,i) );
+        for (i = 0; i < len; ++i) {
+            fprintf(stdout, "%c", us_buffer_peek(b, i));
         }
-        fprintf( stdout, "\n" );
+        fprintf(stdout, "\n");
     }
     return r;
 }
 
-int us_test_json_main ( int argc, const char **argv )
-{
+int us_test_json_main(int argc, const char **argv) {
     int r = 1;
-    if ( us_testutil_start ( 4096, 4096, argc, argv ) )
-    {
+    if (us_testutil_start(4096, 4096, argc, argv)) {
 #if US_ENABLE_LOGGING
-        us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
+        us_logger_printer_start(us_testutil_printer_stdout, us_testutil_printer_stderr);
 #endif
-        us_log_set_level ( US_LOG_LEVEL_DEBUG );
-        us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        if ( us_test_json() )
+        us_log_set_level(US_LOG_LEVEL_DEBUG);
+        us_log_info("Hello world from %s compiled on %s", __FILE__, __DATE__);
+        if (us_test_json())
             r = 0;
-        us_log_info ( "Finishing %s", argv[0] );
+        us_log_info("Finishing %s", argv[0]);
         us_logger_finish();
         us_testutil_finish();
     }
     return r;
 }
 
-
 /*@}*/
-
-
-
-

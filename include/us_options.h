@@ -35,143 +35,140 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*@{*/
 
-
 #ifdef US_CUSTOM_OPTIONS_HEADER
-# include US_CUSTOM_OPTIONS_HEADER
+#include US_CUSTOM_OPTIONS_HEADER
 #endif
 
 #ifdef US_CONFIG_MICROCONTROLLER
 #endif
 
 #ifndef US_ENABLE_UIPV4_STACK
-# define US_ENABLE_UIPV4_STACK (0)
+#define US_ENABLE_UIPV4_STACK (0)
 #endif
 
 #ifndef US_ENABLE_LWIP_STACK
-# define US_ENABLE_LWIP_STACK (0)
+#define US_ENABLE_LWIP_STACK (0)
 #endif
 
 #ifndef US_ENABLE_NETWORK
-# define US_ENABLE_NETWORK (1)
+#define US_ENABLE_NETWORK (1)
 #endif
 
-
-#if defined( US_ENABLE_NETWORK ) && defined(US_CONFIG_POSIX)
-# define US_ENABLE_NETWORK_IPV4 (1)
-# define US_ENABLE_NETWORK_IPV6 (1)
-# define US_ENABLE_BSD_SOCKETS (1)
-#elif defined( US_ENABLE_NETWORK ) && defined(US_ENABLE_UIPV4_STACK)
-# define US_ENABLE_NETWORK_IPV4 (1)
-# define US_ENABLE_NETWORK_IPV6 (0)
-# define US_ENABLE_BSD_SOCKETS (0)
-#elif defined( US_ENABLE_NETWORK ) && defined(US_ENABLE_UIPV6_STACK)
-# define US_ENABLE_NETWORK_IPV4 (1)
-# define US_ENABLE_NETWORK_IPV6 (1)
-# define US_ENABLE_BSD_SOCKETS (0)
-#elif defined( US_ENABLE_NETWORK ) && defined(US_ENABLE_LWIP_STACK)
-# define US_ENABLE_NETWORK_IPV4 (1)
-# define US_ENABLE_NETWORK_IPV6 (0)
-# define US_ENABLE_BSD_SOCKETS (0)
-#elif defined( US_ENABLE_NETWORK ) && defined(US_CONFIG_WIN32)
-# define US_ENABLE_NETWORK_IPV4 (1)
-# define US_ENABLE_NETWORK_IPV6 (1)
-# define US_ENABLE_BSD_SOCKETS (1)
+#if defined(US_ENABLE_NETWORK) && defined(US_CONFIG_POSIX)
+#define US_ENABLE_NETWORK_IPV4 (1)
+#define US_ENABLE_NETWORK_IPV6 (1)
+#define US_ENABLE_BSD_SOCKETS (1)
+#elif defined(US_ENABLE_NETWORK) && defined(US_ENABLE_UIPV4_STACK)
+#define US_ENABLE_NETWORK_IPV4 (1)
+#define US_ENABLE_NETWORK_IPV6 (0)
+#define US_ENABLE_BSD_SOCKETS (0)
+#elif defined(US_ENABLE_NETWORK) && defined(US_ENABLE_UIPV6_STACK)
+#define US_ENABLE_NETWORK_IPV4 (1)
+#define US_ENABLE_NETWORK_IPV6 (1)
+#define US_ENABLE_BSD_SOCKETS (0)
+#elif defined(US_ENABLE_NETWORK) && defined(US_ENABLE_LWIP_STACK)
+#define US_ENABLE_NETWORK_IPV4 (1)
+#define US_ENABLE_NETWORK_IPV6 (0)
+#define US_ENABLE_BSD_SOCKETS (0)
+#elif defined(US_ENABLE_NETWORK) && defined(US_CONFIG_WIN32)
+#define US_ENABLE_NETWORK_IPV4 (1)
+#define US_ENABLE_NETWORK_IPV6 (1)
+#define US_ENABLE_BSD_SOCKETS (1)
 #endif
 
 #if US_ENABLE_RAW_ETHERNET
 #if defined(US_CONFIG_MACOSX) || defined(US_CONFIG_WIN32)
-# undef US_ENABLE_PCAP
-# define US_ENABLE_PCAP 1
-# undef US_ENABLE_RAW_ETHERNET
-# define US_ENABLE_RAW_ETHERNET (1)
+#undef US_ENABLE_PCAP
+#define US_ENABLE_PCAP 1
+#undef US_ENABLE_RAW_ETHERNET
+#define US_ENABLE_RAW_ETHERNET (1)
 #endif
 #endif
 
 #ifndef US_ENABLE_RAW_ETHERNET
 #if defined(US_CONFIG_LINUX) || defined(__linux__)
-# define US_ENABLE_RAW_ETHERNET (1)
+#define US_ENABLE_RAW_ETHERNET (1)
 #endif
 #endif
-
 
 #ifndef US_MAX_ADDRESS_LENGTH
-# define US_MAX_ADDRESS_LENGTH (256)
+#define US_MAX_ADDRESS_LENGTH (256)
 #endif
 
 #ifndef US_MAX_TYPETAGS
-# define US_MAX_TYPETAGS (16)
+#define US_MAX_TYPETAGS (16)
 #endif
 
 #ifndef US_ENABLE_MALLOC
-# define US_ENABLE_MALLOC (1)
+#define US_ENABLE_MALLOC (1)
 #endif
 
 #ifndef US_ENABLE_FLOAT
-# define US_ENABLE_FLOAT (1)
+#define US_ENABLE_FLOAT (1)
 #endif
 
 #ifndef US_ENABLE_DOUBLE
-# define US_ENABLE_DOUBLE US_ENABLE_FLOAT
+#define US_ENABLE_DOUBLE US_ENABLE_FLOAT
 #endif
 
 #ifndef US_ENABLE_PRINTING
-# define US_ENABLE_PRINTING (1)
+#define US_ENABLE_PRINTING (1)
 #endif
 
 #ifndef US_ENABLE_LOGGING
-# define US_ENABLE_LOGGING (1)
+#define US_ENABLE_LOGGING (1)
 #endif
 
 #ifndef US_ENABLE_SYSLOG
-# define US_ENABLE_SYSLOG (0)
+#define US_ENABLE_SYSLOG (0)
 #endif
 
 #ifndef US_ENABLE_STDIO
-# if defined(US_CONFIG_MICROCONTROLLER)
-#  define US_ENABLE_STDIO (0)
-# else
-#  define US_ENABLE_STDIO (1)
-# endif
+#if defined(US_CONFIG_MICROCONTROLLER)
+#define US_ENABLE_STDIO (0)
+#else
+#define US_ENABLE_STDIO (1)
+#endif
 #endif
 
 #ifndef US_DEFAULT_MALLOC
-# define US_DEFAULT_MALLOC malloc
+#define US_DEFAULT_MALLOC malloc
 #endif
 
 #ifndef US_DEFAULT_REALLOC
-# define US_DEFAULT_REALLOC realloc
+#define US_DEFAULT_REALLOC realloc
 #endif
 
 #ifndef US_DEFAULT_FREE
-# define US_DEFAULT_FREE free
+#define US_DEFAULT_FREE free
 #endif
 
 #ifndef US_DEFAULT_PRINTF
-# define US_DEFAULT_PRINTF printf
+#define US_DEFAULT_PRINTF printf
 #endif
 
 #ifndef US_DEFAULT_FPRINTF
-# define US_DEFAULT_FPRINTF fprintf
+#define US_DEFAULT_FPRINTF fprintf
 #endif
 
 #ifndef US_DEFAULT_SNPRINTF
-# ifdef _MSC_VER
-#  define US_DEFAULT_SNPRINTF sprintf_s
-# else
-#  define US_DEFAULT_SNPRINTF snprintf
-# endif
+#ifdef _MSC_VER
+#define US_DEFAULT_SNPRINTF sprintf_s
+#else
+#define US_DEFAULT_SNPRINTF snprintf
+#endif
 #endif
 
 #ifndef US_DEFAULT_VFPRINTF
-# define US_DEFAULT_VFPRINTF vfprintf
+#define US_DEFAULT_VFPRINTF vfprintf
 #endif
 
 #ifndef US_DEFAULT_VSNPRINTF
-# define US_DEFAULT_VSNPRINTF vsnprintf
+#define US_DEFAULT_VSNPRINTF vsnprintf
 #endif
 
 #ifndef US_ENABLE_LOGGING
-# define US_ENABLE_LOGGING 1
+#define US_ENABLE_LOGGING 1
 #endif
 
 /*@}*/

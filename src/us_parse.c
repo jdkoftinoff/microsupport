@@ -29,24 +29,17 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-bool us_parse_hexdig ( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos )
-{
+bool us_parse_hexdig(uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos) {
     bool r = false;
-    if ( *buf_pos < buf_len )
-    {
+    if (*buf_pos < buf_len) {
         char c = buf[*buf_pos];
-        ++ ( *buf_pos );
-        if ( c >= '0' && c <= '9' )
-        {
+        ++(*buf_pos);
+        if (c >= '0' && c <= '9') {
             *val = c - '0';
             r = true;
-        }
-        else
-        {
+        } else {
             c = c & 0xdf;
-            if ( c >= 'A' && c <= 'F' )
-            {
+            if (c >= 'A' && c <= 'F') {
                 *val = c - 'A' + 10;
                 r = true;
             }
@@ -55,18 +48,14 @@ bool us_parse_hexdig ( uint8_t *val, const char *buf, size_t buf_len, size_t *bu
     return r;
 }
 
-bool us_parse_hexoctet ( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos )
-{
+bool us_parse_hexoctet(uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos) {
     bool r = true;
     uint8_t high = 0;
     uint8_t low = 0;
-    r &= us_parse_hexdig ( &high, buf, buf_len, buf_pos );
-    r &= us_parse_hexdig ( &low, buf, buf_len, buf_pos );
-    if ( r )
-    {
-        *val = ( high << 4 ) + low;
+    r &= us_parse_hexdig(&high, buf, buf_len, buf_pos);
+    r &= us_parse_hexdig(&low, buf, buf_len, buf_pos);
+    if (r) {
+        *val = (high << 4) + low;
     }
     return r;
 }
-
-

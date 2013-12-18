@@ -33,98 +33,90 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /** \addtogroup us_test_packet_queue */
 /*@{*/
 
+static bool us_test_packet_queue(us_allocator_t *);
 
-static bool us_test_packet_queue ( us_allocator_t * );
+#define FAIL_IF(A)                                                                                                             \
+    if (A) {                                                                                                                   \
+        us_log_error("FAIL FILE %s LINE %d: %s", __FILE__, __LINE__, #A);                                                      \
+        goto error;                                                                                                            \
+    }
 
-#define FAIL_IF( A ) if( A ) { us_log_error("FAIL FILE %s LINE %d: %s", __FILE__, __LINE__, #A ); goto error; }
-
-static bool us_test_packet_queue ( us_allocator_t *a )
-{
-    bool r=false;
-    us_packet_queue_t *q = us_packet_queue_create( a, 8, 512 );
-    if(q)
-    {
+static bool us_test_packet_queue(us_allocator_t *a) {
+    bool r = false;
+    us_packet_queue_t *q = us_packet_queue_create(a, 8, 512);
+    if (q) {
         us_packet_t *p;
         const us_packet_t *p1;
         int k;
 
-        for( k=0; k<10; ++k )
-        {
+        for (k = 0; k < 10; ++k) {
             int i;
-            FAIL_IF( !us_packet_queue_is_empty( q ) );
-            FAIL_IF( !us_packet_queue_can_write( q ) );
-            FAIL_IF( us_packet_queue_can_read( q ) );
-            for( i=0; i<6; ++i )
-            {
-                us_log_info( "w%d in:%d out:%d", i, q->m_next_in, q->m_next_out );
-                p=us_packet_queue_get_next_in(q);
-                FAIL_IF( p==0 );
+            FAIL_IF(!us_packet_queue_is_empty(q));
+            FAIL_IF(!us_packet_queue_can_write(q));
+            FAIL_IF(us_packet_queue_can_read(q));
+            for (i = 0; i < 6; ++i) {
+                us_log_info("w%d in:%d out:%d", i, q->m_next_in, q->m_next_out);
+                p = us_packet_queue_get_next_in(q);
+                FAIL_IF(p == 0);
                 p->m_data[0] = i;
                 us_packet_queue_next_in(q);
-                FAIL_IF( us_packet_queue_is_empty( q ) );
-                FAIL_IF( !us_packet_queue_can_write( q ) );
-                FAIL_IF( !us_packet_queue_can_read( q ) );
+                FAIL_IF(us_packet_queue_is_empty(q));
+                FAIL_IF(!us_packet_queue_can_write(q));
+                FAIL_IF(!us_packet_queue_can_read(q));
             }
-            us_log_info( "w%d in:%d out:%d", 6, q->m_next_in, q->m_next_out );
-            p=us_packet_queue_get_next_in(q);
-            FAIL_IF( p==0 );
+            us_log_info("w%d in:%d out:%d", 6, q->m_next_in, q->m_next_out);
+            p = us_packet_queue_get_next_in(q);
+            FAIL_IF(p == 0);
             p->m_data[0] = 6;
             us_packet_queue_next_in(q);
-            FAIL_IF( us_packet_queue_is_empty( q ) );
-            FAIL_IF( us_packet_queue_can_write( q ) );
-            FAIL_IF( !us_packet_queue_can_read( q ) );
+            FAIL_IF(us_packet_queue_is_empty(q));
+            FAIL_IF(us_packet_queue_can_write(q));
+            FAIL_IF(!us_packet_queue_can_read(q));
 
-            for( i=0; i<6; ++i )
-            {
-                us_log_info( "r%d in:%d out:%d", i, q->m_next_in, q->m_next_out );
-                p1=us_packet_queue_get_next_out(q);
-                FAIL_IF(p1==0);
-                FAIL_IF( p1->m_data[0] != i );
+            for (i = 0; i < 6; ++i) {
+                us_log_info("r%d in:%d out:%d", i, q->m_next_in, q->m_next_out);
+                p1 = us_packet_queue_get_next_out(q);
+                FAIL_IF(p1 == 0);
+                FAIL_IF(p1->m_data[0] != i);
                 us_packet_queue_next_out(q);
-                FAIL_IF( us_packet_queue_is_empty(q) );
-                FAIL_IF( !us_packet_queue_can_write(q) );
-                FAIL_IF( !us_packet_queue_can_read(q) );
+                FAIL_IF(us_packet_queue_is_empty(q));
+                FAIL_IF(!us_packet_queue_can_write(q));
+                FAIL_IF(!us_packet_queue_can_read(q));
             }
-            us_log_info( "r%d in:%d out:%d", 6, q->m_next_in, q->m_next_out );
-            p1=us_packet_queue_get_next_out(q);
-            FAIL_IF(p1==0);
-            FAIL_IF( p1->m_data[0] != 6 );
+            us_log_info("r%d in:%d out:%d", 6, q->m_next_in, q->m_next_out);
+            p1 = us_packet_queue_get_next_out(q);
+            FAIL_IF(p1 == 0);
+            FAIL_IF(p1->m_data[0] != 6);
             us_packet_queue_next_out(q);
-            FAIL_IF( !us_packet_queue_is_empty(q) );
-            FAIL_IF( !us_packet_queue_can_write(q) );
-            FAIL_IF( us_packet_queue_can_read(q) );
+            FAIL_IF(!us_packet_queue_is_empty(q));
+            FAIL_IF(!us_packet_queue_can_write(q));
+            FAIL_IF(us_packet_queue_can_read(q));
         }
 
-        r=true;
+        r = true;
     }
 error:
     return r;
 }
 
-
-int us_test_packet_queue_main ( int argc, const char **argv )
-{
+int us_test_packet_queue_main(int argc, const char **argv) {
     int r = 1;
-    if ( us_testutil_start ( 20480, 20480, argc, argv ) )
-    {
+    if (us_testutil_start(20480, 20480, argc, argv)) {
 #if US_ENABLE_LOGGING
-        us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
+        us_logger_printer_start(us_testutil_printer_stdout, us_testutil_printer_stderr);
 #endif
-        us_log_set_level ( US_LOG_LEVEL_DEBUG );
-        us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        if ( us_test_packet_queue(us_testutil_sys_allocator) )
+        us_log_set_level(US_LOG_LEVEL_DEBUG);
+        us_log_info("Hello world from %s compiled on %s", __FILE__, __DATE__);
+        if (us_test_packet_queue(us_testutil_sys_allocator))
             r = 0;
-        us_log_info ( "Finishing us_test_packet_queue" );
+        us_log_info("Finishing us_test_packet_queue");
         us_logger_finish();
         us_testutil_finish();
     }
     return r;
 }
 
-
 /*@}*/
-

@@ -37,60 +37,38 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_buffer_print.h"
 #endif
 
-static
-bool do_test_osc_line(
-    us_allocator_t *allocator,
-    us_buffer_t *buffer,
-    us_print_t *printer
-);
+static bool do_test_osc_line(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer);
 
-
-
-static bool do_test_osc_line(
-    us_allocator_t *allocator,
-    us_buffer_t *buffer,
-    us_print_t *printer
-)
-{
+static bool do_test_osc_line(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer) {
     /* TODO: */
     return false;
 }
 
-int us_test_osc_line_main( int argc, const char **argv )
-{
-    bool r=true;
-    r=us_testutil_start(8192,8192,argc,argv);
-    if ( r )
-    {
+int us_test_osc_line_main(int argc, const char **argv) {
+    bool r = true;
+    r = us_testutil_start(8192, 8192, argc, argv);
+    if (r) {
 #if US_ENABLE_LOGGING
-        us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
+        us_logger_printer_start(us_testutil_printer_stdout, us_testutil_printer_stderr);
 #endif
-        us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+        us_log_info("Hello world from %s compiled on %s", __FILE__, __DATE__);
         {
             us_buffer_t *buffer = 0;
-            us_log_debug( "resetting session allocator" );
-            us_log_debug( "allocating 4k buffer from session" );
+            us_log_debug("resetting session allocator");
+            us_log_debug("allocating 4k buffer from session");
             buffer = us_buffer_create(us_testutil_session_allocator, 4096);
-            if ( buffer )
-            {
-                us_log_debug( "testing msg" );
-                r &= do_test_osc_line(
-                         us_testutil_session_allocator,
-                         buffer,
-                         us_stdout
-                     );
-                buffer->destroy( buffer );
-            }
-            else
-            {
-                us_log_error( "error allocating buffer" );
+            if (buffer) {
+                us_log_debug("testing msg");
+                r &= do_test_osc_line(us_testutil_session_allocator, buffer, us_stdout);
+                buffer->destroy(buffer);
+            } else {
+                us_log_error("error allocating buffer");
             }
         }
         us_logger_finish();
         us_testutil_finish();
     }
-    return r ? 0:1;
+    return r ? 0 : 1;
 }
 
 /*@}*/
-

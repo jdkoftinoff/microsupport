@@ -1,7 +1,6 @@
 #ifndef US_WEBAPP_FS_H
 #define US_WEBAPP_FS_H
 
-
 /*
 Copyright (c) 2013, J.D. Koftinoff Software, Ltd.
 All rights reserved.
@@ -34,47 +33,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_http.h"
 #include "us_webapp.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-
-    typedef struct us_webapp_file_ext_mime_map_s
-    {
-        const char *m_extension;
-        const char *m_mime_type;
-    } us_webapp_file_ext_mime_map_t;
+typedef struct us_webapp_file_ext_mime_map_s {
+    const char *m_extension;
+    const char *m_mime_type;
+} us_webapp_file_ext_mime_map_t;
 
 #if US_ENABLE_STDIO
 
-    typedef struct us_webapp_fs_s
-    {
-        us_webapp_t m_base;
-        us_webapp_file_ext_mime_map_t *m_ext_map;
-        const char *m_web_path_prefix;
-        int32_t m_web_path_prefix_len;
-        const char *m_filesystem_path;
-    } us_webapp_fs_t;
+typedef struct us_webapp_fs_s {
+    us_webapp_t m_base;
+    us_webapp_file_ext_mime_map_t *m_ext_map;
+    const char *m_web_path_prefix;
+    int32_t m_web_path_prefix_len;
+    const char *m_filesystem_path;
+} us_webapp_fs_t;
 
-    us_webapp_t *us_webapp_fs_create(
-        us_allocator_t *allocator,
-        us_webapp_file_ext_mime_map_t *ext_map,
-        const char *web_path_prefix,
-        const char *filesystem_path
-    );
+us_webapp_t *us_webapp_fs_create(us_allocator_t *allocator,
+                                 us_webapp_file_ext_mime_map_t *ext_map,
+                                 const char *web_path_prefix,
+                                 const char *filesystem_path);
 
-    void us_webapp_fs_destroy(
-        us_webapp_t *self
-    );
+void us_webapp_fs_destroy(us_webapp_t *self);
 
-    bool us_webapp_fs_path_match(us_webapp_t *self, const char *path );
-    int us_webapp_fs_dispatch(
-        us_webapp_t *self,
-        const us_http_request_header_t *request_header,
-        const us_buffer_t *request_content,
-        us_http_response_header_t *response_header,
-        us_buffer_t *response_content
-    );
+bool us_webapp_fs_path_match(us_webapp_t *self, const char *path);
+int us_webapp_fs_dispatch(us_webapp_t *self,
+                          const us_http_request_header_t *request_header,
+                          const us_buffer_t *request_content,
+                          us_http_response_header_t *response_header,
+                          us_buffer_t *response_content);
 
 #endif
 
@@ -83,4 +72,3 @@ extern "C"
 #endif
 
 #endif
-

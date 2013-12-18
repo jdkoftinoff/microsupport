@@ -33,46 +33,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_print.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    bool us_osc_line_parse(
-        us_allocator_t *allocator,
-        const char *line,
-        size_t line_len,
-        us_osc_msg_t **osc_msg,
-        us_osc_msg_bundle_t **osc_bundle
-    );
+bool us_osc_line_parse(
+    us_allocator_t *allocator, const char *line, size_t line_len, us_osc_msg_t **osc_msg, us_osc_msg_bundle_t **osc_bundle);
 
-    bool us_osc_line_parse_msg(
-        us_allocator_t *allocator,
-        const char *line,
-        size_t line_len,
-        us_osc_msg_t **osc_msg
-    );
+bool us_osc_line_parse_msg(us_allocator_t *allocator, const char *line, size_t line_len, us_osc_msg_t **osc_msg);
 
-    bool us_osc_line_parse_bundle(
-        us_allocator_t *allocator,
-        const char *line,
-        size_t line_len,
-        us_osc_msg_bundle_t **osc_bundle
-    );
+bool us_osc_line_parse_bundle(us_allocator_t *allocator, const char *line, size_t line_len, us_osc_msg_bundle_t **osc_bundle);
 
+bool us_osc_line_gen_msg(const us_osc_msg_t *msg, us_print_t *result);
 
-    bool us_osc_line_gen_msg(
-        const us_osc_msg_t *msg,
-        us_print_t *result
-    );
-
-    bool us_osc_line_gen_bundle(
-        const us_osc_msg_bundle_t *bundle,
-        us_print_t *result
-    );
+bool us_osc_line_gen_bundle(const us_osc_msg_bundle_t *bundle, us_print_t *result);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

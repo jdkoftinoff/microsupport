@@ -1,7 +1,6 @@
 #ifndef US_REACTOR_HANDLER_RAWNET_H
 #define US_REACTOR_HANDLER_RAWNET_H
 
-
 /*
 Copyright (c) 2013, J.D. Koftinoff Software, Ltd.
 All rights reserved.
@@ -35,88 +34,75 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_packet_queue.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    /** \ingroup poll_reactor */
-    /*@{*/
+/** \ingroup poll_reactor */
+/*@{*/
 
-    struct us_reactor_handler_rawnet_s;
+struct us_reactor_handler_rawnet_s;
 
-    /** \addtogroup reactor_handler_rawnet reactor_handler_rawnet
-    */
-    /*@{*/
-    typedef struct us_reactor_handler_rawnet_s
-    {
-        us_reactor_handler_t m_base;
-        us_rawnet_context_t m_rawsock;
-        us_packet_queue_t *m_incoming_packets;
-        us_packet_queue_t *m_outgoing_packets;
-        bool (*tick)(
-            struct us_reactor_handler_rawnet_s *self
-        );
-        bool (*readable)(
-            struct us_reactor_handler_rawnet_s *self
-        );
-        bool (*queue_readable)(
-            struct us_reactor_handler_rawnet_s *self
-        );
-        bool (*packet_received)(
-            struct us_reactor_handler_rawnet_s *self,
-            const us_packet_t *packet,
-            us_packet_queue_t *outgoing_queue
-        );
+/** \addtogroup reactor_handler_rawnet reactor_handler_rawnet
+*/
+/*@{*/
+typedef struct us_reactor_handler_rawnet_s {
+    us_reactor_handler_t m_base;
+    us_rawnet_context_t m_rawsock;
+    us_packet_queue_t *m_incoming_packets;
+    us_packet_queue_t *m_outgoing_packets;
+    bool (*tick)(struct us_reactor_handler_rawnet_s *self);
+    bool (*readable)(struct us_reactor_handler_rawnet_s *self);
+    bool (*queue_readable)(struct us_reactor_handler_rawnet_s *self);
+    bool (*packet_received)(struct us_reactor_handler_rawnet_s *self,
+                            const us_packet_t *packet,
+                            us_packet_queue_t *outgoing_queue);
 
-    } us_reactor_handler_rawnet_t;
+} us_reactor_handler_rawnet_t;
 
-    /**
-    */
-    us_reactor_handler_t * us_reactor_handler_rawnet_create ( us_allocator_t *allocator  );
+/**
+*/
+us_reactor_handler_t *us_reactor_handler_rawnet_create(us_allocator_t *allocator);
 
-    /**
-    */
-    bool us_reactor_handler_rawnet_init (
-        us_reactor_handler_t *self,
-        us_allocator_t *allocator,
-        void *extra,
-        const char *ethernet_port,
-        uint16_t ethertype,
-        const uint8_t multicast_mac[6],
-        size_t input_packets,
-        size_t output_packets
-    );
+/**
+*/
+bool us_reactor_handler_rawnet_init(us_reactor_handler_t *self,
+                                    us_allocator_t *allocator,
+                                    void *extra,
+                                    const char *ethernet_port,
+                                    uint16_t ethertype,
+                                    const uint8_t multicast_mac[6],
+                                    size_t input_packets,
+                                    size_t output_packets);
 
-    /**
-    */
-    void us_reactor_handler_rawnet_destroy ( us_reactor_handler_t *self );
+/**
+*/
+void us_reactor_handler_rawnet_destroy(us_reactor_handler_t *self);
 
-    /**
-      */
-    void us_reactor_handler_rawnet_close( us_reactor_handler_t *self );
+/**
+  */
+void us_reactor_handler_rawnet_close(us_reactor_handler_t *self);
 
-    /**
-     */
-    bool us_reactor_handler_rawnet_tick( us_reactor_handler_t *self );
+/**
+ */
+bool us_reactor_handler_rawnet_tick(us_reactor_handler_t *self);
 
-    /**
-    */
-    bool us_reactor_handler_rawnet_readable( us_reactor_handler_t *self );
+/**
+*/
+bool us_reactor_handler_rawnet_readable(us_reactor_handler_t *self);
 
-    /**
-    */
-    bool us_reactor_handler_rawnet_writable( us_reactor_handler_t *self );
+/**
+*/
+bool us_reactor_handler_rawnet_writable(us_reactor_handler_t *self);
 
-    /**
-      */
-    bool us_reactor_handler_rawnet_queue_readable( us_reactor_handler_rawnet_t  *self );
+/**
+  */
+bool us_reactor_handler_rawnet_queue_readable(us_reactor_handler_rawnet_t *self);
 
-    /*@}*/
-    /*@}*/
+/*@}*/
+/*@}*/
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

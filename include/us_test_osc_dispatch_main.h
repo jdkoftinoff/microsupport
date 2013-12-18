@@ -30,22 +30,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_world.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    /**
-     \addtogroup us_tests Tests
-     */
-    /*@{*/
+/**
+ \addtogroup us_tests Tests
+ */
+/*@{*/
 
+int us_test_osc_dispatch_main(int argc, const char **argv);
 
-
-    int us_test_osc_dispatch_main( int argc, const char **argv );
-
-
-
-    /*@}*/
+/*@}*/
 #ifdef __cplusplus
 }
 #endif

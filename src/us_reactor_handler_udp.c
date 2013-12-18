@@ -27,246 +27,189 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "us_reactor_handler_udp.h"
 
 #include "us_logger.h"
 
-us_reactor_handler_t * us_reactor_handler_udp_create ( us_allocator_t *allocator  )
-{
-    return (us_reactor_handler_t *)us_new( allocator, us_reactor_handler_udp_t );
+us_reactor_handler_t *us_reactor_handler_udp_create(us_allocator_t *allocator) {
+    return (us_reactor_handler_t *)us_new(allocator, us_reactor_handler_udp_t);
 }
-
 
 /**
 */
-bool us_reactor_handler_udp_init_ex (
-    us_reactor_handler_t *self_,
-    us_allocator_t *allocator,
-    void *extra,
-    const char *ethernet_port,
-    struct addrinfo *localaddr,
-    struct addrinfo *multicastaddr,
-    size_t input_packets,
-    size_t output_packets,
-    size_t max_packet_size
-)
-{
-    bool r=false;
+bool us_reactor_handler_udp_init_ex(us_reactor_handler_t *self_,
+                                    us_allocator_t *allocator,
+                                    void *extra,
+                                    const char *ethernet_port,
+                                    struct addrinfo *localaddr,
+                                    struct addrinfo *multicastaddr,
+                                    size_t input_packets,
+                                    size_t output_packets,
+                                    size_t max_packet_size) {
+    bool r = false;
     int fd;
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
 
     self->m_incoming_packets = 0;
     self->m_outgoing_packets = 0;
-    self->tick=0;
-    self->queue_readable=us_reactor_handler_udp_queue_readable;
+    self->tick = 0;
+    self->queue_readable = us_reactor_handler_udp_queue_readable;
     self->packet_received = 0;
-    fd = us_net_create_multicast_tx_udp_socket( localaddr, multicastaddr, ethernet_port );
-    if( fd>=0 )
-    {
+    fd = us_net_create_multicast_tx_udp_socket(localaddr, multicastaddr, ethernet_port);
+    if (fd >= 0) {
         r = us_reactor_handler_init(self_, allocator, fd, extra);
         self_->tick = us_reactor_handler_udp_tick;
         self_->destroy = us_reactor_handler_udp_destroy;
         self_->readable = us_reactor_handler_udp_readable;
         self_->writable = us_reactor_handler_udp_writable;
-        if( r )
-        {
-            self->m_incoming_packets = us_packet_queue_create( allocator, input_packets, max_packet_size );
-            self->m_outgoing_packets = us_packet_queue_create( allocator, output_packets, max_packet_size );
+        if (r) {
+            self->m_incoming_packets = us_packet_queue_create(allocator, input_packets, max_packet_size);
+            self->m_outgoing_packets = us_packet_queue_create(allocator, output_packets, max_packet_size);
             self_->m_wake_on_readable = true;
             self_->m_wake_on_writable = false;
         }
     }
-    if( !r )
-    {
-        us_reactor_handler_udp_destroy( self_ );
+    if (!r) {
+        us_reactor_handler_udp_destroy(self_);
     }
     return r;
 }
 
-bool us_reactor_handler_udp_init (
-    us_reactor_handler_t *self_,
-    us_allocator_t *allocator,
-    int fd,
-    void *extra,
-    size_t max_packet_size
-)
-{
-    bool r=false;
+bool us_reactor_handler_udp_init(
+    us_reactor_handler_t *self_, us_allocator_t *allocator, int fd, void *extra, size_t max_packet_size) {
+    bool r = false;
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
 
     self->m_incoming_packets = 0;
     self->m_outgoing_packets = 0;
-    self->tick=0;
-    self->queue_readable=0;
+    self->tick = 0;
+    self->queue_readable = 0;
     self->packet_received = 0;
-    if( fd>=0 )
-    {
+    if (fd >= 0) {
         r = us_reactor_handler_init(self_, allocator, fd, extra);
         self_->tick = us_reactor_handler_udp_tick;
         self_->destroy = us_reactor_handler_udp_destroy;
         self_->readable = us_reactor_handler_udp_readable;
         self_->writable = us_reactor_handler_udp_writable;
-        if( r )
-        {
-            self->m_incoming_packets = us_packet_queue_create( allocator, 1, max_packet_size );
-            self->m_outgoing_packets = us_packet_queue_create( allocator, 1, max_packet_size );
+        if (r) {
+            self->m_incoming_packets = us_packet_queue_create(allocator, 1, max_packet_size);
+            self->m_outgoing_packets = us_packet_queue_create(allocator, 1, max_packet_size);
             self_->m_wake_on_readable = true;
             self_->m_wake_on_writable = false;
         }
     }
-    if( !r )
-    {
-        us_reactor_handler_udp_destroy( self_ );
+    if (!r) {
+        us_reactor_handler_udp_destroy(self_);
     }
     return r;
 }
 
-void us_reactor_handler_udp_destroy ( us_reactor_handler_t *self_ )
-{
+void us_reactor_handler_udp_destroy(us_reactor_handler_t *self_) {
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
 
-    if( self )
-    {
-        if( self->m_incoming_packets )
-        {
-            self->m_incoming_packets->destroy( self->m_incoming_packets );
+    if (self) {
+        if (self->m_incoming_packets) {
+            self->m_incoming_packets->destroy(self->m_incoming_packets);
         }
-        if( self->m_outgoing_packets )
-        {
-            self->m_outgoing_packets->destroy( self->m_outgoing_packets );
+        if (self->m_outgoing_packets) {
+            self->m_outgoing_packets->destroy(self->m_outgoing_packets);
         }
-        us_reactor_handler_destroy( &self->m_base );
+        us_reactor_handler_destroy(&self->m_base);
     }
 }
 
-
-bool us_reactor_handler_udp_readable( us_reactor_handler_t *self_ )
-{
-    bool r=false;
+bool us_reactor_handler_udp_readable(us_reactor_handler_t *self_) {
+    bool r = false;
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
-    if( self )
-    {
+    if (self) {
         us_packet_queue_t *q = self->m_incoming_packets;
-        if( us_packet_queue_can_write( q ) )
-        {
+        if (us_packet_queue_can_write(q)) {
             us_packet_t *p = us_packet_queue_get_next_in(q);
-            if( p )
-            {
+            if (p) {
                 ssize_t s;
-                socklen_t remote_addrlen = sizeof( struct sockaddr_storage );
+                socklen_t remote_addrlen = sizeof(struct sockaddr_storage);
 
-                us_packet_clear( p );
+                us_packet_clear(p);
                 p->m_src_address.m_type = us_packet_address_tcp;
                 p->m_dest_address.m_type = us_packet_address_none;
 
-                do
-                {
-                    s = recvfrom(
-                            self->m_base.m_fd,
-                            p->m_data,
-                            p->m_max_length,
-                            0,
-                            (struct sockaddr *)&p->m_src_address.tcp.m_addr,
-                            &remote_addrlen
-                        );
-                }
-                while ( s<0 && errno==EINTR );
+                do {
+                    s = recvfrom(self->m_base.m_fd,
+                                 p->m_data,
+                                 p->m_max_length,
+                                 0,
+                                 (struct sockaddr *)&p->m_src_address.tcp.m_addr,
+                                 &remote_addrlen);
+                } while (s < 0 && errno == EINTR);
 
-                if( s>=0 )
-                {
+                if (s >= 0) {
                     p->m_src_address.tcp.m_if_id = -1;
                     p->m_src_address.tcp.m_len = remote_addrlen;
-                    us_packet_queue_next_in( q );
-                    r=true;
+                    us_packet_queue_next_in(q);
+                    r = true;
+                } else {
+                    us_log_error("unable to receive packet");
                 }
-                else
-                {
-                    us_log_error( "unable to receive packet");
-                }
+            } else {
+                us_log_error("unable to get packet space in queue, lost packet");
             }
-            else
-            {
-                us_log_error( "unable to get packet space in queue, lost packet");
-            }
-        }
-        else
-        {
-            us_log_error( "incoming packet queue full, lost packet");
+        } else {
+            us_log_error("incoming packet queue full, lost packet");
         }
     }
     return r;
 }
 
-bool us_reactor_handler_udp_writable( us_reactor_handler_t *self_ )
-{
-    bool r=false;
+bool us_reactor_handler_udp_writable(us_reactor_handler_t *self_) {
+    bool r = false;
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
-    if( self )
-    {
+    if (self) {
         us_packet_queue_t *q = self->m_outgoing_packets;
-        if( us_packet_queue_can_read( q ) )
-        {
+        if (us_packet_queue_can_read(q)) {
             ssize_t len;
-            const us_packet_t *p = us_packet_queue_get_next_out( q );
-            do
-            {
-                len = sendto (
-                          self->m_base.m_fd,
-                          p->m_data,
-                          p->m_length,
-                          0,
-                          (struct sockaddr *)&p->m_dest_address.tcp.m_addr,
-                          p->m_dest_address.tcp.m_len
-                      );
-            }
-            while ( len<0 && errno==EINTR );
+            const us_packet_t *p = us_packet_queue_get_next_out(q);
+            do {
+                len = sendto(self->m_base.m_fd,
+                             p->m_data,
+                             p->m_length,
+                             0,
+                             (struct sockaddr *)&p->m_dest_address.tcp.m_addr,
+                             p->m_dest_address.tcp.m_len);
+            } while (len < 0 && errno == EINTR);
 
-            if( len>=0 )
-            {
+            if (len >= 0) {
                 us_packet_queue_next_out(q);
-                r=true;
-            }
-            else
-            {
-                us_log_error( "Unable to send packet on writable socket");
+                r = true;
+            } else {
+                us_log_error("Unable to send packet on writable socket");
             }
         }
     }
     return r;
 }
 
-bool us_reactor_handler_udp_tick( us_reactor_handler_t *self_ )
-{
-    bool r=true;
+bool us_reactor_handler_udp_tick(us_reactor_handler_t *self_) {
+    bool r = true;
     us_reactor_handler_udp_t *self = (us_reactor_handler_udp_t *)self_;
-    if( self )
-    {
-        if( self->tick )
-        {
-            r = self->tick( self );
+    if (self) {
+        if (self->tick) {
+            r = self->tick(self);
         }
-        if( r )
-        {
-            if( self->queue_readable )
-            {
+        if (r) {
+            if (self->queue_readable) {
                 /* only accept incoming packets if we have space in our incoming queue
                   and we have space in our writable queue for a potential response
                   */
-                if( us_packet_queue_can_write( self->m_incoming_packets )
-                        && us_packet_queue_can_write(( self->m_outgoing_packets )))
-                {
-                    r=self->queue_readable( self );
+                if (us_packet_queue_can_write(self->m_incoming_packets)
+                    && us_packet_queue_can_write((self->m_outgoing_packets))) {
+                    r = self->queue_readable(self);
                 }
             }
 
             /* if we have packets in our outgoing queue, wake on writable */
-            if( us_packet_queue_can_read( self->m_outgoing_packets) )
-            {
+            if (us_packet_queue_can_read(self->m_outgoing_packets)) {
                 self_->m_wake_on_writable = true;
-            }
-            else
-            {
+            } else {
                 self_->m_wake_on_writable = false;
             }
         }
@@ -274,31 +217,19 @@ bool us_reactor_handler_udp_tick( us_reactor_handler_t *self_ )
     return r;
 }
 
-bool us_reactor_handler_udp_queue_readable( us_reactor_handler_udp_t  *self )
-{
-    bool r=false;
-    if( self && self->packet_received )
-    {
+bool us_reactor_handler_udp_queue_readable(us_reactor_handler_udp_t *self) {
+    bool r = false;
+    if (self && self->packet_received) {
         us_packet_queue_t *q = self->m_incoming_packets;
-        while( us_packet_queue_can_read( q ) )
-        {
+        while (us_packet_queue_can_read(q)) {
             const us_packet_t *p = us_packet_queue_get_next_out(q);
-            if( p )
-            {
-                self->packet_received(
-                    self,
-                    p,
-                    self->m_outgoing_packets
-                );
+            if (p) {
+                self->packet_received(self, p, self->m_outgoing_packets);
             }
-            if( !r )
-            {
+            if (!r) {
                 break;
             }
         }
     }
     return r;
 }
-
-
-

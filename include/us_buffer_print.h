@@ -32,39 +32,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_buffer.h"
 
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-
-    /**
-     \addtogroup us_buffer Memory Buffer
-     */
-    /*@{*/
+/**
+ \addtogroup us_buffer Memory Buffer
+ */
+/*@{*/
 
 #if US_ENABLE_PRINTING
 #include "us_print.h"
 
+bool us_buffer_print(us_buffer_t *self, us_print_t *printer);
 
-    bool
-    us_buffer_print (
-        us_buffer_t *self,
-        us_print_t *printer
-    );
-
-    bool
-    us_buffer_print_string (
-        us_buffer_t *self,
-        us_print_t *printer
-    );
-
-
+bool us_buffer_print_string(us_buffer_t *self, us_print_t *printer);
 
 #endif
 
-    /*@}*/
+/*@}*/
 #ifdef __cplusplus
 }
 #endif

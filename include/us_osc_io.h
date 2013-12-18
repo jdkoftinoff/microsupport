@@ -32,218 +32,121 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_osc_msg.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+/**
+   \addtogroup us_osc_io_packet Helper classes for communicating OSC messages over packet based i/o
+*/
 
+/*@{*/
+typedef struct us_osc_io_packet_s {
+    void (*destroy)(struct us_osc_io_packet_s *self);
+    us_allocator_t *m_allocator;
+    us_buffer_t *m_incoming_buffer;
+    us_buffer_t *m_outgoing_buffer;
+} us_osc_io_packet_t;
 
-    /**
-       \addtogroup us_osc_io_packet Helper classes for communicating OSC messages over packet based i/o
-    */
+us_osc_io_packet_t *us_osc_io_packet_create(us_allocator_t *allocator, int max_buf_size);
 
-    /*@{*/
-    typedef struct us_osc_io_packet_s
-    {
-        void (*destroy)( struct us_osc_io_packet_s *self );
-        us_allocator_t *m_allocator;
-        us_buffer_t *m_incoming_buffer;
-        us_buffer_t *m_outgoing_buffer;
-    } us_osc_io_packet_t;
+bool us_osc_io_packet_init(us_osc_io_packet_t *self, us_allocator_t *allocator, int max_buf_size);
 
-    us_osc_io_packet_t *us_osc_io_packet_create(
-        us_allocator_t *allocator,
-        int max_buf_size
-    );
+void us_osc_io_packet_destroy(us_osc_io_packet_t *self);
 
-    bool us_osc_io_packet_init(
-        us_osc_io_packet_t *self,
-        us_allocator_t *allocator,
-        int max_buf_size
-    );
+static inline bool us_osc_io_packet_is_msg(us_osc_io_packet_t *self) { return us_osc_msg_is_msg(self->m_incoming_buffer); }
 
-    void us_osc_io_packet_destroy(
-        us_osc_io_packet_t *self
-    );
+static inline bool us_osc_io_packet_is_msg_bundle(us_osc_io_packet_t *self) {
+    return us_osc_msg_is_msg_bundle(self->m_incoming_buffer);
+}
 
-    static inline bool us_osc_io_packet_is_msg(
-        us_osc_io_packet_t *self
-    )
-    {
-        return us_osc_msg_is_msg( self->m_incoming_buffer );
-    }
+bool us_osc_io_packet_get_msg(us_osc_io_packet_t *self, us_allocator_t *allocator, us_osc_msg_t **msg);
 
-    static inline bool us_osc_io_packet_is_msg_bundle(
-        us_osc_io_packet_t *self
-    )
-    {
-        return us_osc_msg_is_msg_bundle ( self->m_incoming_buffer );
-    }
+bool us_osc_io_packet_get_msg_bundle(us_osc_io_packet_t *self, us_allocator_t *allocator, us_osc_msg_bundle_t **bundle);
 
+bool us_osc_io_packet_put_msg(us_osc_io_packet_t *self, us_osc_msg_t *msg);
 
-    bool us_osc_io_packet_get_msg(
-        us_osc_io_packet_t *self,
-        us_allocator_t *allocator,
-        us_osc_msg_t **msg
-    );
+bool us_osc_io_packet_put_bundle(us_osc_io_packet_t *self, us_osc_msg_bundle_t *bundle);
 
-    bool us_osc_io_packet_get_msg_bundle(
-        us_osc_io_packet_t *self,
-        us_allocator_t *allocator,
-        us_osc_msg_bundle_t **bundle
-    );
+/*@}*/
 
-    bool us_osc_io_packet_put_msg(
-        us_osc_io_packet_t *self,
-        us_osc_msg_t *msg
-    );
+/**
+   \addtogroup us_osc_io_slip_stream Helper classes for communicating OSC messages over slip framed byte streams
+*/
 
-    bool us_osc_io_packet_put_bundle(
-        us_osc_io_packet_t *self,
-        us_osc_msg_bundle_t *bundle
-    );
+/*@{*/
+typedef struct us_osc_io_slip_stream_s {
+    void (*destroy)(struct us_osc_io_slip_stream_s *self);
+    us_allocator_t *m_allocator;
+    us_buffer_t *m_incoming_buffer;
+    us_buffer_t *m_outgoing_buffer;
+} us_osc_io_slip_stream_t;
 
-    /*@}*/
+us_osc_io_slip_stream_t *us_osc_io_slip_stream_create(us_allocator_t *allocator, int max_buf_size);
 
-    /**
-       \addtogroup us_osc_io_slip_stream Helper classes for communicating OSC messages over slip framed byte streams
-    */
+bool us_osc_io_slip_stream_init(us_osc_io_slip_stream_t *self, us_allocator_t *allocator, int max_buf_size);
 
-    /*@{*/
-    typedef struct us_osc_io_slip_stream_s
-    {
-        void (*destroy)( struct us_osc_io_slip_stream_s *self );
-        us_allocator_t *m_allocator;
-        us_buffer_t *m_incoming_buffer;
-        us_buffer_t *m_outgoing_buffer;
-    } us_osc_io_slip_stream_t;
+void us_osc_io_slip_stream_destroy(us_osc_io_packet_t *self);
 
-    us_osc_io_slip_stream_t *us_osc_io_slip_stream_create(
-        us_allocator_t *allocator,
-        int max_buf_size
-    );
+static inline bool us_osc_io_slip_stream_is_msg(us_osc_io_slip_stream_t *self) {
+    return us_osc_msg_is_msg(self->m_incoming_buffer);
+}
 
-    bool us_osc_io_slip_stream_init(
-        us_osc_io_slip_stream_t *self,
-        us_allocator_t *allocator,
-        int max_buf_size
-    );
+static inline bool us_osc_io_slip_stream_is_msg_bundle(us_osc_io_slip_stream_t *self) {
+    return us_osc_msg_is_msg_bundle(self->m_incoming_buffer);
+}
 
-    void us_osc_io_slip_stream_destroy(
-        us_osc_io_packet_t *self
-    );
+bool us_osc_io_slip_stream_get_msg(us_osc_io_slip_stream_t *self, us_allocator_t *allocator, us_osc_msg_t **msg);
 
+bool us_osc_io_slip_stream_get_msg_bundle(us_osc_io_slip_stream_t *self,
+                                          us_allocator_t *allocator,
+                                          us_osc_msg_bundle_t **bundle);
 
-    static inline bool us_osc_io_slip_stream_is_msg(
-        us_osc_io_slip_stream_t *self
-    )
-    {
-        return us_osc_msg_is_msg( self->m_incoming_buffer );
-    }
+bool us_osc_io_slip_stream_put_msg(us_osc_io_slip_stream_t *self, us_osc_msg_t *msg);
 
-    static inline bool us_osc_io_slip_stream_is_msg_bundle(
-        us_osc_io_slip_stream_t *self
-    )
-    {
-        return us_osc_msg_is_msg_bundle ( self->m_incoming_buffer );
-    }
+bool us_osc_io_slip_stream_put_bundle(us_osc_io_slip_stream_t *self, us_osc_msg_bundle_t *bundle);
 
+/*@}*/
 
-    bool us_osc_io_slip_stream_get_msg(
-        us_osc_io_slip_stream_t *self,
-        us_allocator_t *allocator,
-        us_osc_msg_t **msg
-    );
+/**
+   \addtogroup us_osc_io_packet_stream Helper classes for communicating OSC messages over slip framed byte streams
+*/
 
-    bool us_osc_io_slip_stream_get_msg_bundle(
-        us_osc_io_slip_stream_t *self,
-        us_allocator_t *allocator,
-        us_osc_msg_bundle_t **bundle
-    );
+/*@{*/
+typedef struct us_osc_io_packet_stream_s {
+    void (*destroy)(struct us_osc_io_packet_stream_s *self);
+    us_allocator_t *m_allocator;
+    us_buffer_t m_incoming_buffer;
+    us_buffer_t m_outgoing_buffer;
+} us_osc_io_packet_stream_t;
 
-    bool us_osc_io_slip_stream_put_msg(
-        us_osc_io_slip_stream_t *self,
-        us_osc_msg_t *msg
-    );
+us_osc_io_packet_stream_t *us_osc_io_packet_stream_create(us_allocator_t *allocator, int max_buf_size);
 
-    bool us_osc_io_slip_stream_put_bundle(
-        us_osc_io_slip_stream_t *self,
-        us_osc_msg_bundle_t *bundle
-    );
+bool us_osc_io_packet_stream_init(us_osc_io_packet_stream_t *self, us_allocator_t *allocator, int max_buf_size);
 
-    /*@}*/
+void us_osc_io_slip_stream_destroy(us_osc_io_packet_t *self);
 
-    /**
-       \addtogroup us_osc_io_packet_stream Helper classes for communicating OSC messages over slip framed byte streams
-    */
+static inline bool us_osc_io_packet_stream_is_msg(us_osc_io_packet_stream_t *self) {
+    return us_osc_msg_is_msg(&self->m_incoming_buffer);
+}
 
-    /*@{*/
-    typedef struct us_osc_io_packet_stream_s
-    {
-        void (*destroy)( struct us_osc_io_packet_stream_s *self );
-        us_allocator_t *m_allocator;
-        us_buffer_t m_incoming_buffer;
-        us_buffer_t m_outgoing_buffer;
-    } us_osc_io_packet_stream_t;
+static inline bool us_osc_io_packet_stream_is_msg_bundle(us_osc_io_packet_stream_t *self) {
+    return us_osc_msg_is_msg_bundle(&self->m_incoming_buffer);
+}
 
-    us_osc_io_packet_stream_t *us_osc_io_packet_stream_create(
-        us_allocator_t *allocator,
-        int max_buf_size
-    );
+bool us_osc_io_packet_stream_get_msg(us_osc_io_packet_stream_t *self, us_allocator_t *allocator, us_osc_msg_t **msg);
 
-    bool us_osc_io_packet_stream_init(
-        us_osc_io_packet_stream_t *self,
-        us_allocator_t *allocator,
-        int max_buf_size
-    );
+bool us_osc_io_packet_stream_get_msg_bundle(us_osc_io_packet_stream_t *self,
+                                            us_allocator_t *allocator,
+                                            us_osc_msg_bundle_t **bundle);
 
-    void us_osc_io_slip_stream_destroy(
-        us_osc_io_packet_t *self
-    );
+bool us_osc_io_packet_stream_put_msg(us_osc_io_packet_stream_t *self, us_osc_msg_t *msg);
 
+bool us_osc_io_packet_stream_put_bundle(us_osc_io_packet_stream_t *self, us_osc_msg_bundle_t *bundle);
 
-    static inline bool us_osc_io_packet_stream_is_msg(
-        us_osc_io_packet_stream_t *self
-    )
-    {
-        return us_osc_msg_is_msg( &self->m_incoming_buffer );
-    }
-
-    static inline bool us_osc_io_packet_stream_is_msg_bundle(
-        us_osc_io_packet_stream_t *self
-    )
-    {
-        return us_osc_msg_is_msg_bundle ( &self->m_incoming_buffer );
-    }
-
-
-    bool us_osc_io_packet_stream_get_msg(
-        us_osc_io_packet_stream_t *self,
-        us_allocator_t *allocator,
-        us_osc_msg_t **msg
-    );
-
-    bool us_osc_io_packet_stream_get_msg_bundle(
-        us_osc_io_packet_stream_t *self,
-        us_allocator_t *allocator,
-        us_osc_msg_bundle_t **bundle
-    );
-
-    bool us_osc_io_packet_stream_put_msg(
-        us_osc_io_packet_stream_t *self,
-        us_osc_msg_t *msg
-    );
-
-    bool us_osc_io_packet_stream_put_bundle(
-        us_osc_io_packet_stream_t *self,
-        us_osc_msg_bundle_t *bundle
-    );
-
-    /*@}*/
+/*@}*/
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

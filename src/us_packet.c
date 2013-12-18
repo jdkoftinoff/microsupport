@@ -1,7 +1,6 @@
 #include "us_world.h"
 #include "us_packet.h"
 
-
 /*
 Copyright (c) 2012, J.D. Koftinoff Software, Ltd.
 All rights reserved.
@@ -30,35 +29,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-us_packet_t * us_packet_create( us_allocator_t *allocator, size_t max_length )
-{
-    us_packet_t *r=0;
-    us_packet_t *self = us_new( allocator, us_packet_t );
-    if( self )
-    {
+us_packet_t *us_packet_create(us_allocator_t *allocator, size_t max_length) {
+    us_packet_t *r = 0;
+    us_packet_t *self = us_new(allocator, us_packet_t);
+    if (self) {
         self->m_allocator = allocator;
-        self->m_data = us_new_array( allocator, uint8_t, (int32_t)max_length );
-        if( self->m_data )
-        {
+        self->m_data = us_new_array(allocator, uint8_t, (int32_t)max_length);
+        if (self->m_data) {
             self->m_max_length = max_length;
-            us_packet_clear( self );
+            us_packet_clear(self);
             self->destroy = us_packet_destroy;
-            r=self;
+            r = self;
         }
     }
-    if( !r )
-    {
-        us_packet_destroy( self );
+    if (!r) {
+        us_packet_destroy(self);
     }
     return r;
 }
 
-void us_packet_destroy( us_packet_t *self )
-{
-    if( self )
-    {
-        us_delete( self->m_allocator, self->m_data );
-        us_delete( self->m_allocator, self );
+void us_packet_destroy(us_packet_t *self) {
+    if (self) {
+        us_delete(self->m_allocator, self->m_data);
+        us_delete(self->m_allocator, self);
     }
 }
-

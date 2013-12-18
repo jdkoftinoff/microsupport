@@ -34,84 +34,65 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_packet.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+/* \addtogroup packet_queue packet_queue */
+/*@{*/
 
-    /* \addtogroup packet_queue packet_queue */
-    /*@{*/
+typedef struct us_packet_queue_s {
+    us_allocator_t *m_allocator;
+    size_t m_next_in;
+    size_t m_next_out;
+    size_t m_packet_count;
+    size_t m_max_packets;
+    us_packet_t **m_packets;
+    void (*destroy)(struct us_packet_queue_s *self);
+} us_packet_queue_t;
 
-    typedef struct us_packet_queue_s
-    {
-        us_allocator_t *m_allocator;
-        size_t m_next_in;
-        size_t m_next_out;
-        size_t m_packet_count;
-        size_t m_max_packets;
-        us_packet_t **m_packets;
-        void (*destroy)( struct us_packet_queue_s *self );
-    } us_packet_queue_t;
+us_packet_queue_t *us_packet_queue_create(us_allocator_t *allocator, size_t num_packets, size_t max_packet_size);
 
-    us_packet_queue_t * us_packet_queue_create(
-        us_allocator_t *allocator,
-        size_t num_packets,
-        size_t max_packet_size
-    );
+void us_packet_queue_destroy(us_packet_queue_t *self);
 
-    void us_packet_queue_destroy( us_packet_queue_t *self );
+void us_packet_queue_clear(us_packet_queue_t *self);
 
-    void us_packet_queue_clear( us_packet_queue_t *self );
-
-    static inline us_packet_t * us_packet_queue_get_next_in( us_packet_queue_t *self )
-    {
-        us_packet_t *r = 0;
-        if( self->m_packet_count < self->m_max_packets )
-        {
-            r = self->m_packets[ self->m_next_in ];
-        }
-        return r;
+static inline us_packet_t *us_packet_queue_get_next_in(us_packet_queue_t *self) {
+    us_packet_t *r = 0;
+    if (self->m_packet_count < self->m_max_packets) {
+        r = self->m_packets[self->m_next_in];
     }
+    return r;
+}
 
-    static inline const us_packet_t * us_packet_queue_get_next_out( const us_packet_queue_t *self )
-    {
-        us_packet_t *r = 0;
-        if( self->m_packet_count > 0 )
-        {
-            r = self->m_packets[ self->m_next_out ];
-        }
-        return r;
+static inline const us_packet_t *us_packet_queue_get_next_out(const us_packet_queue_t *self) {
+    us_packet_t *r = 0;
+    if (self->m_packet_count > 0) {
+        r = self->m_packets[self->m_next_out];
     }
+    return r;
+}
 
-    static inline size_t us_packet_queue_is_empty( const us_packet_queue_t *self )
-    {
-        return self->m_packet_count == 0 ? true : false;
-    }
+static inline size_t us_packet_queue_is_empty(const us_packet_queue_t *self) {
+    return self->m_packet_count == 0 ? true : false;
+}
 
-    static inline bool us_packet_queue_can_read( const us_packet_queue_t *self )
-    {
-        return self->m_packet_count > 0 ? true : false;
-    }
+static inline bool us_packet_queue_can_read(const us_packet_queue_t *self) { return self->m_packet_count > 0 ? true : false; }
 
-    static inline bool us_packet_queue_can_write( const us_packet_queue_t *self )
-    {
-        return self->m_packet_count < (self->m_max_packets-1) ? true : false;
-    }
+static inline bool us_packet_queue_can_write(const us_packet_queue_t *self) {
+    return self->m_packet_count < (self->m_max_packets - 1) ? true : false;
+}
 
+static inline void us_packet_queue_next_in(us_packet_queue_t *self) {
+    self->m_next_in = (self->m_next_in + 1) % self->m_max_packets;
+    ++self->m_packet_count;
+}
 
-    static inline void us_packet_queue_next_in( us_packet_queue_t *self )
-    {
-        self->m_next_in = (self->m_next_in + 1 ) % self->m_max_packets;
-        ++self->m_packet_count;
-    }
+static inline void us_packet_queue_next_out(us_packet_queue_t *self) {
+    self->m_next_out = (self->m_next_out + 1) % self->m_max_packets;
+    --self->m_packet_count;
+}
 
-    static inline void us_packet_queue_next_out( us_packet_queue_t *self )
-    {
-        self->m_next_out = (self->m_next_out + 1 ) % self->m_max_packets;
-        --self->m_packet_count;
-    }
-
-    /*@}*/
+/*@}*/
 
 #ifdef __cplusplus
 }

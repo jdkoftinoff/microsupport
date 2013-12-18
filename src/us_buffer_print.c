@@ -34,69 +34,42 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if US_ENABLE_PRINTING
 
-bool
-us_buffer_print (
-    us_buffer_t *self,
-    us_print_t *printer
-)
-{
+bool us_buffer_print(us_buffer_t *self, us_print_t *printer) {
     bool r = false;
-    if ( self && printer )
-    {
-        size_t len=us_buffer_readable_count(self);
+    if (self && printer) {
+        size_t len = us_buffer_readable_count(self);
         r = true;
-        r &= printer->printf (
-                 printer,
-                 "length: 0x%x\nContents:\n",
-                 len
-             );
-        if ( r )
-        {
+        r &= printer->printf(printer, "length: 0x%x\nContents:\n", len);
+        if (r) {
             size_t i;
-            for ( i = 0; i < len; ++i )
-            {
-                r &= printer->printf ( printer, "%02x ", us_buffer_peek( self, i ) );
-                if ( !r )
+            for (i = 0; i < len; ++i) {
+                r &= printer->printf(printer, "%02x ", us_buffer_peek(self, i));
+                if (!r)
                     break;
             }
-            r &= printer->printf ( printer, "\n" );
+            r &= printer->printf(printer, "\n");
         }
     }
     return r;
 }
 
-
-
-bool
-us_buffer_print_string (
-    us_buffer_t *self,
-    us_print_t *printer
-)
-{
+bool us_buffer_print_string(us_buffer_t *self, us_print_t *printer) {
     bool r = false;
-    if ( self && printer )
-    {
-        size_t len=us_buffer_readable_count(self);
+    if (self && printer) {
+        size_t len = us_buffer_readable_count(self);
         r = true;
-        r &= printer->printf (
-                 printer,
-                 "length: 0x%x\nContents:\n",
-                 len
-             );
-        if ( r )
-        {
+        r &= printer->printf(printer, "length: 0x%x\nContents:\n", len);
+        if (r) {
             size_t i;
-            for ( i = 0; i < len; ++i )
-            {
-                r &= printer->printf ( printer, "%c", us_buffer_peek(self,i) );
-                if ( !r )
+            for (i = 0; i < len; ++i) {
+                r &= printer->printf(printer, "%c", us_buffer_peek(self, i));
+                if (!r)
                     break;
             }
-            r &= printer->printf ( printer, "\n" );
+            r &= printer->printf(printer, "\n");
         }
     }
     return r;
 }
 
 #endif
-

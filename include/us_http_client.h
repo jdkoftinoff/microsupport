@@ -1,7 +1,6 @@
 #ifndef US_HTTP_CLIENT_H
 #define US_HTTP_CLIENT_H
 
-
 /*
 Copyright (c) 2013, J.D. Koftinoff Software, Ltd.
 All rights reserved.
@@ -36,7 +35,4 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_logger.h"
 #include "us_http.h"
 
-
-
 #endif
-

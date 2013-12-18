@@ -30,25 +30,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_world.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    /**
-     \addtogroup crc32
-     */
-    /*@{*/
+/**
+ \addtogroup crc32
+ */
+/*@{*/
 
-
-    uint32_t us_crc32(
-        uint32_t state_value,
-        const void *buf,
-        size_t len
-    );
+uint32_t us_crc32(uint32_t state_value, const void *buf, size_t len);
 #ifdef __cplusplus
 }
 #endif
 
-
 #endif
-

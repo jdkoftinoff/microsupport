@@ -31,50 +31,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #include "us_logger.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    /**
-     \addtogroup us_logger Logger
-     */
-    /*@{*/
+/**
+ \addtogroup us_logger Logger
+ */
+/*@{*/
 
+#ifndef US_LOGGER_UDP_DEFAULT_DEST_ADDR
+#define US_LOGGER_UDP_DEFAULT_DEST_ADDR "255.255.255.255"
+#endif
 
-# ifndef US_LOGGER_UDP_DEFAULT_DEST_ADDR
-#  define US_LOGGER_UDP_DEFAULT_DEST_ADDR "255.255.255.255"
-# endif
+#ifndef US_LOGGER_UDP_DEFAULT_DEST_SERVICE
+#define US_LOGGER_UDP_DEFAULT_DEST_SERVICE "9001"
+#endif
 
-# ifndef US_LOGGER_UDP_DEFAULT_DEST_SERVICE
-#  define US_LOGGER_UDP_DEFAULT_DEST_SERVICE "9001"
-# endif
+#if US_ENABLE_NETWORK &&US_ENABLE_BSD_SOCKETS &&US_ENABLE_PRINTING
 
+extern int us_logger_udp_socket;
 
-#if US_ENABLE_NETWORK && US_ENABLE_BSD_SOCKETS && US_ENABLE_PRINTING
+extern char us_logger_udp_buffer[1500];
+extern us_print_t *us_logger_udp_printer;
+extern us_printraw_t us_logger_udp_printer_impl;
 
-    extern int us_logger_udp_socket;
+extern struct sockaddr_in us_logger_udp_dest_sockaddr;
 
-    extern char us_logger_udp_buffer[1500];
-    extern us_print_t *us_logger_udp_printer;
-    extern us_printraw_t us_logger_udp_printer_impl;
+void us_log_udp_send();
 
-    extern struct sockaddr_in us_logger_udp_dest_sockaddr;
+bool us_logger_udp_start(const char *dest_addr, const char *service);
+void us_logger_udp_finish(void);
 
-    void us_log_udp_send();
+void us_log_error_udp(const char *fmt, ...);
+void us_log_warn_udp(const char *fmt, ...);
+void us_log_info_udp(const char *fmt, ...);
+void us_log_debug_udp(const char *fmt, ...);
+void us_log_trace_udp(const char *fmt, ...);
 
-    bool us_logger_udp_start ( const char *dest_addr, const char * service );
-    void us_logger_udp_finish ( void );
+#endif
 
-    void us_log_error_udp ( const char *fmt, ... );
-    void us_log_warn_udp ( const char *fmt, ... );
-    void us_log_info_udp ( const char *fmt, ... );
-    void us_log_debug_udp ( const char *fmt, ... );
-    void us_log_trace_udp ( const char *fmt, ... );
-
-
-# endif
-
-    /*@}*/
+/*@}*/
 #ifdef __cplusplus
 }
 #endif

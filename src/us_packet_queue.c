@@ -28,17 +28,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-us_packet_queue_t * us_packet_queue_create(
-    us_allocator_t *allocator,
-    size_t num_packets,
-    size_t max_packet_size
-)
-{
-    us_packet_queue_t *r=0;
-    us_packet_queue_t *self = us_new( allocator, us_packet_queue_t );
-    if( self )
-    {
+us_packet_queue_t *us_packet_queue_create(us_allocator_t *allocator, size_t num_packets, size_t max_packet_size) {
+    us_packet_queue_t *r = 0;
+    us_packet_queue_t *self = us_new(allocator, us_packet_queue_t);
+    if (self) {
         size_t i;
 
         self->m_allocator = allocator;
@@ -48,62 +41,49 @@ us_packet_queue_t * us_packet_queue_create(
         self->m_max_packets = num_packets;
         self->destroy = us_packet_queue_destroy;
 
-        self->m_packets = us_new_array( allocator, us_packet_t *, num_packets );
-        if( self->m_packets )
-        {
-            bool good=true;
-            for( i=0; i<num_packets; ++i )
-            {
+        self->m_packets = us_new_array(allocator, us_packet_t *, num_packets);
+        if (self->m_packets) {
+            bool good = true;
+            for (i = 0; i < num_packets; ++i) {
                 self->m_packets[i] = 0;
             }
-            for ( i=0; i<num_packets; ++i )
-            {
-                self->m_packets[i] = us_packet_create( allocator, max_packet_size );
-                if( !self->m_packets[i] )
-                {
-                    good=false;
+            for (i = 0; i < num_packets; ++i) {
+                self->m_packets[i] = us_packet_create(allocator, max_packet_size);
+                if (!self->m_packets[i]) {
+                    good = false;
                     break;
                 }
             }
-            if( good )
-            {
-                r=self;
+            if (good) {
+                r = self;
             }
         }
     }
-    if( !r )
-    {
-        us_packet_queue_destroy( self );
+    if (!r) {
+        us_packet_queue_destroy(self);
     }
     return r;
 }
 
-void us_packet_queue_destroy( us_packet_queue_t *self )
-{
-    if( self )
-    {
+void us_packet_queue_destroy(us_packet_queue_t *self) {
+    if (self) {
         size_t i;
-        if( self->m_packets )
-        {
-            for ( i=0; i < self->m_max_packets; ++i )
-            {
-                if( self->m_packets[i] )
-                {
-                    self->m_packets[i]->destroy( self->m_packets[i] );
+        if (self->m_packets) {
+            for (i = 0; i < self->m_max_packets; ++i) {
+                if (self->m_packets[i]) {
+                    self->m_packets[i]->destroy(self->m_packets[i]);
                     self->m_packets[i] = 0;
                 }
             }
-            us_delete( self->m_allocator, self->m_packets );
+            us_delete(self->m_allocator, self->m_packets);
             self->m_packets = 0;
         }
-        us_delete( self->m_allocator, self );
+        us_delete(self->m_allocator, self);
     }
 }
 
-void us_packet_queue_clear( us_packet_queue_t *self )
-{
-    self->m_next_in=0;
-    self->m_next_out=0;
-    self->m_packet_count=0;
+void us_packet_queue_clear(us_packet_queue_t *self) {
+    self->m_next_in = 0;
+    self->m_next_out = 0;
+    self->m_packet_count = 0;
 }
-

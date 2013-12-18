@@ -33,36 +33,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_allocator.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    /**
-     \addtogroup us_allocator Memory Allocator
-     */
-    /*@{*/
+/**
+ \addtogroup us_allocator Memory Allocator
+ */
+/*@{*/
 
 #if US_ENABLE_PRINTING
 
 #include "us_print.h"
 
+/** us_simple_allocator_print
 
-    /** us_simple_allocator_print
+    Print the internal details of the allocator to the printbuf
 
-        Print the internal details of the allocator to the printbuf
-
-        @param self allocator to print
-        @param printer us_printbuf_t to print to
-     */
-    bool us_simple_allocator_print (
-        us_simple_allocator_t *self,
-        us_print_t *printer
-    );
-
+    @param self allocator to print
+    @param printer us_printbuf_t to print to
+ */
+bool us_simple_allocator_print(us_simple_allocator_t *self, us_print_t *printer);
 
 #endif
 
-    /*@}*/
+/*@}*/
 #ifdef __cplusplus
 }
 #endif

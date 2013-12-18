@@ -2,7 +2,6 @@
 #include "us_osc_sender_udp.h"
 #include "us_net.h"
 
-
 /*
  Copyright (c) 2013, J.D. Koftinoff Software, Ltd.
  All rights reserved.
@@ -30,61 +29,46 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-bool us_osc_sender_udp_init(
-    us_osc_sender_udp_t *self,
-    struct addrinfo *bind_addr,
-    struct addrinfo *dest_addr
-)
-{
+bool us_osc_sender_udp_init(us_osc_sender_udp_t *self, struct addrinfo *bind_addr, struct addrinfo *dest_addr) {
     self->m_base.destroy = us_osc_sender_udp_destroy;
     self->m_base.can_send = us_osc_sender_udp_can_send;
     self->m_base.send_msg = us_osc_sender_udp_send_msg;
     self->m_base.form_and_send_msg = us_osc_sender_form_and_send_msg;
-    self->m_fd = us_net_create_udp_socket( bind_addr, false );
+    self->m_fd = us_net_create_udp_socket(bind_addr, false);
     self->m_bind_addr = bind_addr;
     self->m_dest_addr = dest_addr;
-    return self->m_fd>=0;
+    return self->m_fd >= 0;
 }
 
-void us_osc_sender_udp_destroy( us_osc_sender_t *self_)
-{
+void us_osc_sender_udp_destroy(us_osc_sender_t *self_) {
     us_osc_sender_udp_t *self = (us_osc_sender_udp_t *)self_;
-    closesocket( self->m_fd );
+    closesocket(self->m_fd);
 }
 
-bool us_osc_sender_udp_send_msg( us_osc_sender_t *self_,  const us_osc_msg_t *msg )
-{
+bool us_osc_sender_udp_send_msg(us_osc_sender_t *self_, const us_osc_msg_t *msg) {
     us_osc_sender_udp_t *self = (us_osc_sender_udp_t *)self_;
     bool r;
     char data[4096];
     us_buffer_t buf;
-    us_buffer_init( &buf, 0, data, sizeof(data) );
-    r = msg->flatten( msg, &buf, 0 );
-    if ( r )
-    {
-        ssize_t len = us_buffer_readable_count( &buf );
+    us_buffer_init(&buf, 0, data, sizeof(data));
+    r = msg->flatten(msg, &buf, 0);
+    if (r) {
+        ssize_t len = us_buffer_readable_count(&buf);
         ssize_t sent;
-        sent = sendto( self->m_fd, data, len, 0, self->m_dest_addr->ai_addr, self->m_dest_addr->ai_addrlen );
-        if ( sent!=len )
-        {
-            r=false;
+        sent = sendto(self->m_fd, data, len, 0, self->m_dest_addr->ai_addr, self->m_dest_addr->ai_addrlen);
+        if (sent != len) {
+            r = false;
         }
-        if ( !r )
-        {
-            us_log_error( "unable to write osc message to UDP socket" );
+        if (!r) {
+            us_log_error("unable to write osc message to UDP socket");
         }
-    }
-    else
-    {
-        us_log_error( "unable to flatten osc msg" );
+    } else {
+        us_log_error("unable to flatten osc msg");
     }
     return r;
 }
 
-bool us_osc_sender_udp_can_send( us_osc_sender_t *self_ )
-{
+bool us_osc_sender_udp_can_send(us_osc_sender_t *self_) {
     us_osc_sender_udp_t *self = (us_osc_sender_udp_t *)self_;
-    return self->m_fd>=0 && self->m_dest_addr!=0;
+    return self->m_fd >= 0 && self->m_dest_addr != 0;
 }
-

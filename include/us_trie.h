@@ -32,243 +32,146 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_allocator.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #define US_TRIE_NODE_EMPTY (int16_t)(-2)
 #define US_TRIE_NODE_NO_VALUE (uint16_t)(0x7fff)
 #define US_TRIE_NODE_END_BIT (uint16_t)(0x8000)
 
-    typedef int8_t us_trie_node_value_t;
-    typedef uint16_t us_trie_node_flags_t;
-    typedef int16_t us_trie_node_id_t;
-    typedef bool ( *us_trie_ignorer_proc ) ( us_trie_node_value_t );
-    typedef int ( *us_trie_db_skip_proc ) ( us_trie_node_value_t );
-    typedef int ( *us_trie_comparator_proc ) ( us_trie_node_value_t, us_trie_node_value_t );
+typedef int8_t us_trie_node_value_t;
+typedef uint16_t us_trie_node_flags_t;
+typedef int16_t us_trie_node_id_t;
+typedef bool (*us_trie_ignorer_proc)(us_trie_node_value_t);
+typedef int (*us_trie_db_skip_proc)(us_trie_node_value_t);
+typedef int (*us_trie_comparator_proc)(us_trie_node_value_t, us_trie_node_value_t);
 
-    bool us_trie_basic_ignorer (
-        us_trie_node_value_t v
-    );
+bool us_trie_basic_ignorer(us_trie_node_value_t v);
 
-    int us_trie_basic_db_skip (
-        us_trie_node_value_t v
-    );
+int us_trie_basic_db_skip(us_trie_node_value_t v);
 
-    int us_trie_basic_comparator (
-        us_trie_node_value_t a,
-        us_trie_node_value_t b
-    );
+int us_trie_basic_comparator(us_trie_node_value_t a, us_trie_node_value_t b);
 
-    typedef struct us_trie_node_s
-    {
-        us_trie_node_id_t m_parent;
-        us_trie_node_id_t m_sibling;
-        us_trie_node_id_t m_child;
-        us_trie_node_value_t m_value;
-        us_trie_node_flags_t m_flags;
-    } us_trie_node_t;
+typedef struct us_trie_node_s {
+    us_trie_node_id_t m_parent;
+    us_trie_node_id_t m_sibling;
+    us_trie_node_id_t m_child;
+    us_trie_node_value_t m_value;
+    us_trie_node_flags_t m_flags;
+} us_trie_node_t;
 
-    static inline void us_trie_node_clear ( us_trie_node_t *self )
-    {
-        self->m_sibling = 0;
-        self->m_child = 0;
-        self->m_parent = US_TRIE_NODE_EMPTY;
-        self->m_flags = 0;
-    }
+static inline void us_trie_node_clear(us_trie_node_t *self) {
+    self->m_sibling = 0;
+    self->m_child = 0;
+    self->m_parent = US_TRIE_NODE_EMPTY;
+    self->m_flags = 0;
+}
 
+static inline bool us_trie_node_is_free(const us_trie_node_t *self) { return (self->m_parent == US_TRIE_NODE_EMPTY); }
 
-    static inline bool us_trie_node_is_free ( const us_trie_node_t *self )
-    {
-        return ( self->m_parent == US_TRIE_NODE_EMPTY );
-    }
+static inline void us_trie_node_release(us_trie_node_t *self) { self->m_parent = US_TRIE_NODE_EMPTY; }
 
+static inline bool us_trie_node_is_end(const us_trie_node_t *self) { return (self->m_flags & US_TRIE_NODE_END_BIT) != 0; }
 
-    static inline void us_trie_node_release ( us_trie_node_t *self )
-    {
-        self->m_parent = US_TRIE_NODE_EMPTY;
-    }
+static inline void us_trie_node_set_end(us_trie_node_t *self) { self->m_flags |= US_TRIE_NODE_END_BIT; }
 
+static inline void us_trie_node_unset_end(us_trie_node_t *self) { self->m_flags &= ~US_TRIE_NODE_END_BIT; }
 
-    static inline bool us_trie_node_is_end ( const us_trie_node_t *self )
-    {
-        return ( self->m_flags & US_TRIE_NODE_END_BIT )!=0;
-    }
+static inline us_trie_node_flags_t us_trie_node_get_flags(const us_trie_node_t *self) {
+    return self->m_flags & (~US_TRIE_NODE_END_BIT);
+}
 
+static inline void us_trie_node_set_flags(us_trie_node_t *self, us_trie_node_flags_t f) {
+    self->m_flags = (self->m_flags & US_TRIE_NODE_END_BIT) | (f & ~US_TRIE_NODE_END_BIT);
+}
 
-    static inline void us_trie_node_set_end ( us_trie_node_t *self )
-    {
-        self->m_flags |= US_TRIE_NODE_END_BIT;
-    }
+typedef struct us_trie_s {
+    us_trie_node_id_t m_max_nodes;
+    us_trie_node_id_t m_num_nodes;
+    us_trie_node_t *m_nodes;
+    us_trie_node_id_t m_first_free;
+    us_trie_ignorer_proc m_query_ignorer;
+    us_trie_ignorer_proc m_db_ignorer;
+    us_trie_db_skip_proc m_db_skip;
+    us_trie_comparator_proc m_comparator;
+} us_trie_t;
 
+typedef struct us_trie_dyn_s {
+    us_trie_t m_base;
+    void (*destroy)(struct us_trie_dyn_s *);
+    us_allocator_t *m_allocator;
+    us_trie_node_t *m_nodes;
+} us_trie_dyn_t;
 
-    static inline void us_trie_node_unset_end ( us_trie_node_t *self )
-    {
-        self->m_flags &= ~US_TRIE_NODE_END_BIT;
-    }
+us_trie_dyn_t *us_trie_dyn_create(us_allocator_t *allocator,
+                                  uint16_t max_nodes,
+                                  us_trie_ignorer_proc query_ignorer,
+                                  us_trie_ignorer_proc db_ignorer,
+                                  us_trie_db_skip_proc db_skip,
+                                  us_trie_comparator_proc comparator);
 
+void us_trie_dyn_destroy(us_trie_dyn_t *self);
 
-    static inline us_trie_node_flags_t us_trie_node_get_flags ( const us_trie_node_t *self )
-    {
-        return self->m_flags & ( ~US_TRIE_NODE_END_BIT );
-    }
+/** Initialize a trie with pre-allocated nodes and us_trie_t structure.
 
+@param self trie to initialize
+@param max_nodes maximum nodes in nodes list
+@param num_nodes current number of active nodes in nodes list
+@param nodes nodes list
+@param ignorer Function to call to test for ignored characters
+@param comparator Function to call to compare characters
 
-    static inline void us_trie_node_set_flags ( us_trie_node_t *self, us_trie_node_flags_t f )
-    {
-        self->m_flags = ( self->m_flags & US_TRIE_NODE_END_BIT ) | ( f & ~US_TRIE_NODE_END_BIT );
-    }
+@return self
+*/
 
+us_trie_t *us_trie_init(us_trie_t *self,
+                        uint16_t max_nodes,
+                        uint16_t num_nodes,
+                        us_trie_node_t *nodes,
+                        us_trie_ignorer_proc query_ignorer,
+                        us_trie_ignorer_proc db_ignorer,
+                        us_trie_db_skip_proc db_skip,
+                        us_trie_comparator_proc comparator);
 
-    typedef struct us_trie_s
-    {
-        us_trie_node_id_t m_max_nodes;
-        us_trie_node_id_t m_num_nodes;
-        us_trie_node_t *m_nodes;
-        us_trie_node_id_t m_first_free;
-        us_trie_ignorer_proc m_query_ignorer;
-        us_trie_ignorer_proc m_db_ignorer;
-        us_trie_db_skip_proc m_db_skip;
-        us_trie_comparator_proc m_comparator;
-    } us_trie_t;
+void us_trie_clear(us_trie_t *self);
 
+int us_trie_count(const us_trie_t *self);
 
-    typedef struct us_trie_dyn_s
-    {
-        us_trie_t m_base;
-        void ( *destroy ) ( struct us_trie_dyn_s * );
-        us_allocator_t *m_allocator;
-        us_trie_node_t *m_nodes;
-    } us_trie_dyn_t;
+static inline const us_trie_node_t *us_trie_get_node(const us_trie_t *self, us_trie_node_id_t num) {
+    return &self->m_nodes[num];
+}
 
-    us_trie_dyn_t *
-    us_trie_dyn_create (
-        us_allocator_t *allocator,
-        uint16_t max_nodes,
-        us_trie_ignorer_proc query_ignorer,
-        us_trie_ignorer_proc db_ignorer,
-        us_trie_db_skip_proc db_skip,
-        us_trie_comparator_proc comparator
-    );
+us_trie_node_id_t
+    us_trie_add_child(us_trie_t *self, us_trie_node_id_t parent_item, us_trie_node_value_t value, us_trie_node_flags_t flags);
 
-    void
-    us_trie_dyn_destroy (
-        us_trie_dyn_t *self
-    );
+us_trie_node_id_t us_trie_add_sibling(us_trie_t *self,
+                                      us_trie_node_id_t last_sibling_item,
+                                      us_trie_node_value_t value,
+                                      us_trie_node_flags_t flags);
 
-    /** Initialize a trie with pre-allocated nodes and us_trie_t structure.
+void us_trie_remove(us_trie_t *self, us_trie_node_id_t item);
 
-    @param self trie to initialize
-    @param max_nodes maximum nodes in nodes list
-    @param num_nodes current number of active nodes in nodes list
-    @param nodes nodes list
-    @param ignorer Function to call to test for ignored characters
-    @param comparator Function to call to compare characters
+us_trie_node_id_t us_trie_find_next_free(us_trie_t *self);
 
-    @return self
-    */
+bool us_trie_find_sibling(const us_trie_t *self,
+                          us_trie_node_id_t first_item,
+                          us_trie_node_value_t value,
+                          us_trie_node_id_t *item);
+void us_trie_add(us_trie_t *self, const us_trie_node_value_t *list, int16_t list_len, us_trie_node_flags_t flags);
 
-    us_trie_t *
-    us_trie_init (
-        us_trie_t *self,
-        uint16_t max_nodes,
-        uint16_t num_nodes,
-        us_trie_node_t *nodes,
-        us_trie_ignorer_proc query_ignorer,
-        us_trie_ignorer_proc db_ignorer,
-        us_trie_db_skip_proc db_skip,
-        us_trie_comparator_proc comparator
-    );
+bool us_trie_find(const us_trie_t *self,
+                  const us_trie_node_value_t *list,
+                  int16_t list_len,
+                  us_trie_node_flags_t *flags,
+                  int16_t *match_len,
+                  us_trie_node_id_t *match_item,
+                  us_trie_node_id_t initial_leaf_pos,
+                  us_trie_node_id_t initial_list_pos);
 
-    void
-    us_trie_clear (
-        us_trie_t *self
-    );
-
-
-    int
-    us_trie_count (
-        const us_trie_t *self
-    );
-
-
-    static inline
-    const us_trie_node_t *
-    us_trie_get_node (
-        const us_trie_t *self,
-        us_trie_node_id_t num
-    )
-    {
-        return &self->m_nodes[num];
-    }
-
-    us_trie_node_id_t
-    us_trie_add_child (
-        us_trie_t *self,
-        us_trie_node_id_t parent_item,
-        us_trie_node_value_t value,
-        us_trie_node_flags_t flags
-    );
-
-    us_trie_node_id_t
-    us_trie_add_sibling (
-        us_trie_t *self,
-        us_trie_node_id_t last_sibling_item,
-        us_trie_node_value_t value,
-        us_trie_node_flags_t flags
-    );
-
-    void
-    us_trie_remove (
-        us_trie_t *self,
-        us_trie_node_id_t item
-    );
-
-
-    us_trie_node_id_t
-    us_trie_find_next_free (
-        us_trie_t *self
-    );
-
-
-    bool
-    us_trie_find_sibling (
-        const us_trie_t *self,
-        us_trie_node_id_t first_item,
-        us_trie_node_value_t value,
-        us_trie_node_id_t *item
-    );
-    void
-    us_trie_add (
-        us_trie_t *self,
-        const us_trie_node_value_t *list,
-        int16_t list_len,
-        us_trie_node_flags_t flags
-    );
-
-    bool
-    us_trie_find (
-        const us_trie_t *self,
-        const us_trie_node_value_t *list,
-        int16_t list_len,
-        us_trie_node_flags_t *flags,
-        int16_t *match_len,
-        us_trie_node_id_t *match_item,
-        us_trie_node_id_t initial_leaf_pos,
-        us_trie_node_id_t initial_list_pos
-    );
-
-    int16_t
-    us_trie_extract (
-        const us_trie_t *self,
-        us_trie_node_value_t *list,
-        int16_t max_len,
-        us_trie_node_id_t end_leaf_index
-    );
+int16_t us_trie_extract(const us_trie_t *self, us_trie_node_value_t *list, int16_t max_len, us_trie_node_id_t end_leaf_index);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

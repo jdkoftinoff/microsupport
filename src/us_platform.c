@@ -27,15 +27,15 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-volatile char us_platform_sigterm_seen=0;
-volatile char us_platform_sigint_seen=0;
+volatile char us_platform_sigterm_seen = 0;
+volatile char us_platform_sigint_seen = 0;
 
 #ifdef _WIN32
 
 #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
-#define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
+#define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
 #else
-#define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
+#define DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
 #endif
 
 #if 0
@@ -46,39 +46,34 @@ struct timezone
 };
 #endif
 
-int gettimeofday ( struct timeval *tv, struct timezone *tz )
-{
+int gettimeofday(struct timeval *tv, struct timezone *tz) {
     FILETIME ft;
     unsigned __int64 tmpres = 0;
     static int tzflag;
-    if ( NULL != tv )
-    {
-        GetSystemTimeAsFileTime ( &ft );
+    if (NULL != tv) {
+        GetSystemTimeAsFileTime(&ft);
         tmpres |= ft.dwHighDateTime;
         tmpres <<= 32;
         tmpres |= ft.dwLowDateTime;
         /*converting file time to unix epoch*/
-        tmpres /= 10;  /*convert into microseconds*/
+        tmpres /= 10; /*convert into microseconds*/
         tmpres -= US_DELTA_EPOCH_IN_MICROSECS;
-        tv->tv_sec = ( long ) ( tmpres / 1000000UL );
-        tv->tv_usec = ( long ) ( tmpres % 1000000UL );
+        tv->tv_sec = (long)(tmpres / 1000000UL);
+        tv->tv_usec = (long)(tmpres % 1000000UL);
     }
     return 0;
 }
 
-bool us_platform_init_sockets ( void )
-{
+bool us_platform_init_sockets(void) {
     WSADATA wsaData;
     WORD version;
     int error;
-    version = MAKEWORD ( 2, 2 );
-    error = WSAStartup ( version, &wsaData );
-    if ( error != 0 )
-    {
+    version = MAKEWORD(2, 2);
+    error = WSAStartup(version, &wsaData);
+    if (error != 0) {
         return false;
     }
-    if ( version != wsaData.wVersion )
-    {
+    if (version != wsaData.wVersion) {
         return false;
     }
     return true;
@@ -86,77 +81,61 @@ bool us_platform_init_sockets ( void )
 
 #elif defined(US_CONFIG_POSIX)
 
-
-static void us_platform_sigterm( int s )
-{
+static void us_platform_sigterm(int s) {
     (void)s;
     us_platform_sigterm_seen = 1;
 }
 
-static void us_platform_sigint( int s )
-{
+static void us_platform_sigint(int s) {
     (void)s;
     us_platform_sigint_seen = 1;
 }
 
-
-bool us_platform_init_sockets ( void )
-{
+bool us_platform_init_sockets(void) {
     struct sigaction act;
-    act.sa_handler=SIG_IGN;
+    act.sa_handler = SIG_IGN;
     sigemptyset(&act.sa_mask);
-    act.sa_flags=0;
+    act.sa_flags = 0;
     sigaction(SIGPIPE, &act, NULL);
-    act.sa_handler=us_platform_sigterm;
+    act.sa_handler = us_platform_sigterm;
     sigemptyset(&act.sa_mask);
-    act.sa_flags=0;
+    act.sa_flags = 0;
     sigaction(SIGTERM, &act, NULL);
-    act.sa_handler=us_platform_sigint;
+    act.sa_handler = us_platform_sigint;
     sigemptyset(&act.sa_mask);
-    act.sa_flags=0;
+    act.sa_flags = 0;
     sigaction(SIGINT, &act, NULL);
     return true;
 }
 
-void us_gettimeofday ( struct timeval *tv )
-{
+void us_gettimeofday(struct timeval *tv) {
     int r;
-    r = gettimeofday ( tv, 0 );
-    if ( r != 0 )
-    {
-        perror ( "gettimeofday" );
+    r = gettimeofday(tv, 0);
+    if (r != 0) {
+        perror("gettimeofday");
         abort();
     }
 }
 
 #elif defined(TARGET_PLATFORM_AVR)
-bool us_platform_init_sockets ( void )
-{
-    /* TODO */
+bool us_platform_init_sockets(void) {/* TODO */
 }
 
-void us_gettimeofday ( struct timeval *tv )
-{
+void us_gettimeofday(struct timeval *tv) {
     /* TODO */
     tv->sec = 0;
     tv->usec = 0;
 }
 
 #else
-bool us_platform_init_sockets ( void )
-{
+bool us_platform_init_sockets(void) {
     /* TODO */
     return true;
 }
 
-void us_gettimeofday ( struct timeval *tv )
-{
+void us_gettimeofday(struct timeval *tv) {
     /* TODO */
     tv->tv_sec = 0;
     tv->tv_usec = 0;
 }
 #endif
-
-
-
-

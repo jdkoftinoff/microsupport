@@ -28,34 +28,28 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #ifndef US_WORLD_H
 #include "us_world.h"
 #endif
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    /** \addtogroup us_serial
-    */
-    /*@{*/
+/** \addtogroup us_serial
+*/
+/*@{*/
 
-    int us_serial_open (
-        const char *serial_device,
-        const char *serial_options
-    );
+int us_serial_open(const char *serial_device, const char *serial_options);
 
-    bool us_serial_setup ( int fd, const char *serial_options );
-    int us_serial_net_open ( const char *serial_device, const char *serial_options );
+bool us_serial_setup(int fd, const char *serial_options);
+int us_serial_net_open(const char *serial_device, const char *serial_options);
 
-    void us_serial_close ( int fd );
+void us_serial_close(int fd);
 
-    /*@}*/
+/*@}*/
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

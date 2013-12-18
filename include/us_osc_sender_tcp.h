@@ -1,7 +1,6 @@
 #ifndef US_OSC_SENDER_TCP_H
 #define US_OSC_SENDER_TCP_H
 
-
 /*
  Copyright (c) 2013, J.D. Koftinoff Software, Ltd.
  All rights reserved.
@@ -29,35 +28,27 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "us_world.h"
 #include "us_osc_sender.h"
 #include "us_reactor_handler_tcp.h"
 #include "us_reactor_handler_udp.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+typedef struct us_osc_sender_tcp_s {
+    us_osc_sender_t m_base;
+    us_reactor_handler_tcp_t *m_handler;
+    size_t m_max_size;
+} us_osc_sender_tcp_t;
 
-    typedef struct us_osc_sender_tcp_s
-    {
-        us_osc_sender_t m_base;
-        us_reactor_handler_tcp_t *m_handler;
-        size_t m_max_size;
-    } us_osc_sender_tcp_t;
-
-    bool us_osc_sender_tcp_init( us_osc_sender_tcp_t *self, us_reactor_handler_tcp_t *handler );
-    bool us_osc_sender_tcp_send_msg(
-        us_osc_sender_t *self,
-        const us_osc_msg_t *msg
-    );
-    bool us_osc_sender_tcp_can_send( us_osc_sender_t *self );
+bool us_osc_sender_tcp_init(us_osc_sender_tcp_t *self, us_reactor_handler_tcp_t *handler);
+bool us_osc_sender_tcp_send_msg(us_osc_sender_t *self, const us_osc_msg_t *msg);
+bool us_osc_sender_tcp_can_send(us_osc_sender_t *self);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

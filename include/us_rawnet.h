@@ -32,58 +32,37 @@
 #include "us_world.h"
 #endif
 
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+/** \addtogroup us_rawnet
+ */
+/*@{*/
 
-    /** \addtogroup us_rawnet
-     */
-    /*@{*/
-
-    typedef struct us_rawnet_context_s
-    {
-        int m_fd;
-        uint16_t m_ethertype;
-        uint8_t m_my_mac[6];
-        int m_interface_id;
+typedef struct us_rawnet_context_s {
+    int m_fd;
+    uint16_t m_ethertype;
+    uint8_t m_my_mac[6];
+    int m_interface_id;
 #if defined(US_ENABLE_PCAP)
-        void *m_pcap;
+    void *m_pcap;
 #endif
-    } us_rawnet_context_t;
+} us_rawnet_context_t;
 
-    int us_rawnet_socket(
-        us_rawnet_context_t *self,
-        uint16_t ethertype,
-        const char *interface_name,
-        const uint8_t join_multicast[6]
-    );
+int us_rawnet_socket(us_rawnet_context_t *self,
+                     uint16_t ethertype,
+                     const char *interface_name,
+                     const uint8_t join_multicast[6]);
 
-    void us_rawnet_close(
-        us_rawnet_context_t *self
-    );
+void us_rawnet_close(us_rawnet_context_t *self);
 
-    ssize_t us_rawnet_send(
-        us_rawnet_context_t *self,
-        const uint8_t dest_mac[6],
-        const void *payload,
-        ssize_t payload_len
-    );
+ssize_t us_rawnet_send(us_rawnet_context_t *self, const uint8_t dest_mac[6], const void *payload, ssize_t payload_len);
 
-    ssize_t us_rawnet_recv(
-        us_rawnet_context_t *self,
-        uint8_t src_mac[6],
-        uint8_t dest_mac[6],
-        void *payload_buf,
-        ssize_t payload_buf_max_size
-    );
+ssize_t us_rawnet_recv(
+    us_rawnet_context_t *self, uint8_t src_mac[6], uint8_t dest_mac[6], void *payload_buf, ssize_t payload_buf_max_size);
 
-    bool us_rawnet_join_multicast(
-        us_rawnet_context_t *self,
-        const uint8_t multicast_mac[6]
-    );
+bool us_rawnet_join_multicast(us_rawnet_context_t *self, const uint8_t multicast_mac[6]);
 
 #ifdef __cplusplus
 }

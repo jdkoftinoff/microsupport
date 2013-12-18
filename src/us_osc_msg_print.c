@@ -32,282 +32,128 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if US_ENABLE_PRINTING
 
-bool
-us_osc_msg_bundle_print(
-    const us_osc_msg_bundle_t *self,
-    us_print_t *printer
-)
-{
-    bool r=false;
-    if ( self && printer)
-    {
+bool us_osc_msg_bundle_print(const us_osc_msg_bundle_t *self, us_print_t *printer) {
+    bool r = false;
+    if (self && printer) {
         us_osc_msg_t *cur = 0;
-        r=true;
-        r&=printer->printf( printer, "msg_bundle_t:  timetag: 0x%08lx%08lx\n", self->m_timetag_high, self->m_timetag_low );
+        r = true;
+        r &= printer->printf(printer, "msg_bundle_t:  timetag: 0x%08lx%08lx\n", self->m_timetag_high, self->m_timetag_low);
         cur = self->m_first_msg;
-        while (cur && r)
-        {
-            r &= cur->print( cur, printer );
+        while (cur && r) {
+            r &= cur->print(cur, printer);
             cur = cur->m_next;
         }
     }
     return r;
 }
 
-
-bool
-us_osc_msg_print(
-    const us_osc_msg_t *self,
-    us_print_t *printer
-)
-{
-    bool r=false;
-    if ( self && printer)
-    {
+bool us_osc_msg_print(const us_osc_msg_t *self, us_print_t *printer) {
+    bool r = false;
+    if (self && printer) {
         us_osc_msg_element_t *cur = 0;
-        r=true;
-        r&=printer->printf( printer, "msg_t: address: '%s'\n", self->m_address );
+        r = true;
+        r &= printer->printf(printer, "msg_t: address: '%s'\n", self->m_address);
         cur = self->m_first_element;
-        while (cur && r)
-        {
-            r &= cur->print( cur, printer );
+        while (cur && r) {
+            r &= cur->print(cur, printer);
             cur = cur->m_next;
         }
     }
     return r;
 }
 
-bool
-us_osc_msg_element_print(
-    const us_osc_msg_element_t *self,
-    us_print_t *printer
-)
-{
-    return printer->printf( printer, "UNKNOWN TYPE: '%c'\n", self->m_code );
+bool us_osc_msg_element_print(const us_osc_msg_element_t *self, us_print_t *printer) {
+    return printer->printf(printer, "UNKNOWN TYPE: '%c'\n", self->m_code);
 }
 
-bool
-us_osc_msg_element_a_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_a_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_a_t *self = (us_osc_msg_element_a_t *)self_;
     return printer->printf(
-               printer,
-               "msg_element_%c_t: 0x%08lx%08lx\n",
-               self->m_base.m_code,
-               self->m_time_high,
-               self->m_time_low
-           );
+        printer, "msg_element_%c_t: 0x%08lx%08lx\n", self->m_base.m_code, self->m_time_high, self->m_time_low);
 }
 
-bool
-us_osc_msg_element_B_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
-    bool r=true;
+bool us_osc_msg_element_B_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
+    bool r = true;
     us_osc_msg_element_B_t *self = (us_osc_msg_element_B_t *)self_;
-    r&=printer->printf(
-           printer,
-           "msg_element_B_t: "
-       );
-    r &= self->m_bundle->print( self->m_bundle, printer );
-    r &=printer->printf( printer, "\n" );
+    r &= printer->printf(printer, "msg_element_B_t: ");
+    r &= self->m_bundle->print(self->m_bundle, printer);
+    r &= printer->printf(printer, "\n");
     return r;
 }
 
-
-bool
-us_osc_msg_element_b_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
-    bool r=true;
+bool us_osc_msg_element_b_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
+    bool r = true;
     int i;
     us_osc_msg_element_b_t *self = (us_osc_msg_element_b_t *)self_;
-    r&=printer->printf(
-           printer,
-           "msg_element_%c_t: data length: %d, data: ",
-           self->m_base.m_code,
-           self->m_length
-       );
-    for ( i=0; i<self->m_length; ++i )
-    {
-        r&=printer->printf( printer, "%02x", self->m_data[i] );
+    r &= printer->printf(printer, "msg_element_%c_t: data length: %d, data: ", self->m_base.m_code, self->m_length);
+    for (i = 0; i < self->m_length; ++i) {
+        r &= printer->printf(printer, "%02x", self->m_data[i]);
     }
-    r&=printer->printf( printer, "\n" );
+    r &= printer->printf(printer, "\n");
     return r;
 }
 
-bool
-us_osc_msg_element_d_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_d_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_d_t *self = (us_osc_msg_element_d_t *)self_;
-    return printer->printf(
-               printer,
-               "msg_element_%c_t: %g\n",
-               self->m_base.m_code,
-               self->m_value
-           );
+    return printer->printf(printer, "msg_element_%c_t: %g\n", self->m_base.m_code, self->m_value);
 }
 
-bool
-us_osc_msg_element_f_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_f_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_f_t *self = (us_osc_msg_element_f_t *)self_;
-    return printer->printf(
-               printer,
-               "msg_element_%c_t: %f\n",
-               self->m_base.m_code,
-               self->m_value
-           );
+    return printer->printf(printer, "msg_element_%c_t: %f\n", self->m_base.m_code, self->m_value);
 }
 
-bool
-us_osc_msg_element_h_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_h_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_h_t *self = (us_osc_msg_element_h_t *)self_;
     return printer->printf(
-               printer,
-               "msg_element_%c_t: 0x%08lx%08lx\n",
-               self->m_base.m_code,
-               self->m_value_high,
-               self->m_value_low
-           );
+        printer, "msg_element_%c_t: 0x%08lx%08lx\n", self->m_base.m_code, self->m_value_high, self->m_value_low);
 }
 
-bool
-us_osc_msg_element_i_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_i_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_i_t *self = (us_osc_msg_element_i_t *)self_;
-    return printer->printf(
-               printer,
-               "msg_element_%c_t: %d\n",
-               self->m_base.m_code,
-               self->m_value
-           );
+    return printer->printf(printer, "msg_element_%c_t: %d\n", self->m_base.m_code, self->m_value);
 }
 
-bool
-us_osc_msg_element_s_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
-    bool r=true;
+bool us_osc_msg_element_s_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
+    bool r = true;
     int i;
     us_osc_msg_element_s_t *self = (us_osc_msg_element_s_t *)self_;
-    r&=printer->printf(
-           printer,
-           "msg_element_%c_t: string length: %d, value: '",
-           self->m_base.m_code,
-           self->m_length
-       );
-    for ( i=0; i<self->m_length; ++i )
-    {
-        r&=printer->printf(
-               printer,
-               "%c",
-               self->m_value[i]
-           );
+    r &= printer->printf(printer, "msg_element_%c_t: string length: %d, value: '", self->m_base.m_code, self->m_length);
+    for (i = 0; i < self->m_length; ++i) {
+        r &= printer->printf(printer, "%c", self->m_value[i]);
     }
-    r&=printer->printf( printer, "'\n" );
+    r &= printer->printf(printer, "'\n");
     return r;
 }
 
-
-bool
-us_osc_msg_element_t_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_t_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_t_t *self = (us_osc_msg_element_t_t *)self_;
     return printer->printf(
-               printer,
-               "msg_element_%c_t: 0x%08lx%08lx\n",
-               self->m_base.m_code,
-               self->m_time_high,
-               self->m_time_low
-           );
+        printer, "msg_element_%c_t: 0x%08lx%08lx\n", self->m_base.m_code, self->m_time_high, self->m_time_low);
 }
 
-bool
-us_osc_msg_element_T_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_T_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_T_t *self = (us_osc_msg_element_T_t *)self_;
-    return printer->printf(
-               printer,
-               "msg_element_%c_t:\n",
-               self->m_base.m_code
-           );
+    return printer->printf(printer, "msg_element_%c_t:\n", self->m_base.m_code);
 }
 
-bool
-us_osc_msg_element_F_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_F_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_F_t *self = (us_osc_msg_element_F_t *)self_;
-    return printer->printf(
-               printer,
-               "msg_element_%c_t:\n",
-               self->m_base.m_code
-           );
+    return printer->printf(printer, "msg_element_%c_t:\n", self->m_base.m_code);
 }
 
-
-bool
-us_osc_msg_element_M_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
-    bool r=true;
+bool us_osc_msg_element_M_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
+    bool r = true;
     us_osc_msg_element_M_t *self = (us_osc_msg_element_M_t *)self_;
-    r&=printer->printf(
-           printer,
-           "msg_element_M_t: "
-       );
-    r &= self->m_msg->print( self->m_msg, printer );
-    r &=printer->printf( printer, "\n" );
+    r &= printer->printf(printer, "msg_element_M_t: ");
+    r &= self->m_msg->print(self->m_msg, printer);
+    r &= printer->printf(printer, "\n");
     return r;
 }
 
-
-bool
-us_osc_msg_element_N_print(
-    const us_osc_msg_element_t *self_,
-    us_print_t *printer
-)
-{
+bool us_osc_msg_element_N_print(const us_osc_msg_element_t *self_, us_print_t *printer) {
     us_osc_msg_element_N_t *self = (us_osc_msg_element_N_t *)self_;
-    return printer->printf(
-               printer,
-               "msg_element_%c_t:\n",
-               self->m_base.m_code
-           );
+    return printer->printf(printer, "msg_element_%c_t:\n", self->m_base.m_code);
 }
 
 #endif
-

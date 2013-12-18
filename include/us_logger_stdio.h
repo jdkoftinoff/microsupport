@@ -31,33 +31,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #include "us_logger.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    /**
-     \addtogroup us_logger Logger
-     */
-    /*@{*/
+/**
+ \addtogroup us_logger Logger
+ */
+/*@{*/
 
+extern bool us_logger_stdio_files;
+extern FILE *us_logger_stdio_out;
+extern FILE *us_logger_stdio_err;
 
-    extern bool us_logger_stdio_files;
-    extern FILE *us_logger_stdio_out;
-    extern FILE *us_logger_stdio_err;
+bool us_logger_stdio_start(FILE *outfile, FILE *errfile);
+void us_logger_stdio_finish(void);
 
-    bool us_logger_stdio_start ( FILE *outfile, FILE *errfile );
-    void us_logger_stdio_finish ( void );
+bool us_logger_init_stdio_files(const char *outfilename, const char *errfilename);
 
-    bool us_logger_init_stdio_files ( const char *outfilename, const char *errfilename );
+void us_log_error_stdio(const char *fmt, ...);
+void us_log_warn_stdio(const char *fmt, ...);
+void us_log_info_stdio(const char *fmt, ...);
+void us_log_debug_stdio(const char *fmt, ...);
+void us_log_trace_stdio(const char *fmt, ...);
 
-    void us_log_error_stdio ( const char *fmt, ... );
-    void us_log_warn_stdio ( const char *fmt, ... );
-    void us_log_info_stdio ( const char *fmt, ... );
-    void us_log_debug_stdio ( const char *fmt, ... );
-    void us_log_trace_stdio ( const char *fmt, ... );
-
-
-    /*@}*/
+/*@}*/
 #ifdef __cplusplus
 }
 #endif

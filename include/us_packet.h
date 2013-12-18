@@ -1,7 +1,6 @@
 #ifndef US_PACKET_H
 #define US_PACKET_H
 
-
 /*
 Copyright (c) 2012, J.D. Koftinoff Software, Ltd.
 All rights reserved.
@@ -34,128 +33,93 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_allocator.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* \addtogroup packet packet*/
 /*@{*/
 
-typedef enum us_packet_address_type_e
-{
+typedef enum us_packet_address_type_e {
     us_packet_address_none = 0,
     us_packet_address_mac48,
     us_packet_address_tcp
-}
-us_packet_address_type_t;
+} us_packet_address_type_t;
 
-typedef struct us_packet_address_mac48_s
-{
+typedef struct us_packet_address_mac48_s {
     uint8_t m_mac[6];
     int m_if_id;
 } us_packet_address_mac48_t;
 
-typedef struct us_packet_address_tcp_s
-{
+typedef struct us_packet_address_tcp_s {
     socklen_t m_len;
     struct sockaddr_storage m_addr;
     int m_if_id;
 } us_packet_address_tcp_t;
 
-typedef struct us_packet_address_s
-{
+typedef struct us_packet_address_s {
     us_packet_address_type_t m_type;
     us_packet_address_mac48_t mac48;
     us_packet_address_tcp_t tcp;
 } us_packet_address_t;
 
-typedef struct us_packet_s
-{
+typedef struct us_packet_s {
     us_allocator_t *m_allocator;
     uint8_t *m_data;
     size_t m_max_length;
     size_t m_length;
     us_packet_address_t m_src_address;
     us_packet_address_t m_dest_address;
-    void (*destroy)( struct us_packet_s *self );
+    void (*destroy)(struct us_packet_s *self);
 } us_packet_t;
 
-
-us_packet_t * us_packet_create( us_allocator_t *allocator, size_t max_size );
-static inline void us_packet_clear( us_packet_t *self )
-{
+us_packet_t *us_packet_create(us_allocator_t *allocator, size_t max_size);
+static inline void us_packet_clear(us_packet_t *self) {
     self->m_length = 0;
     self->m_src_address.m_type = us_packet_address_none;
     self->m_dest_address.m_type = us_packet_address_none;
 }
-void us_packet_destroy( us_packet_t *self );
+void us_packet_destroy(us_packet_t *self);
 
+static inline uint8_t *us_packet_data(us_packet_t *self) { return self->m_data; }
 
-static inline uint8_t *us_packet_data( us_packet_t *self )
-{
-    return self->m_data;
-}
+static inline const uint8_t *us_packet_get_data(const us_packet_t *self) { return self->m_data; }
 
-static inline const uint8_t *us_packet_get_data( const us_packet_t *self )
-{
-    return self->m_data;
-}
+static inline size_t us_packet_get_max_length(const us_packet_t *self) { return self->m_max_length; }
 
-static inline size_t us_packet_get_max_length( const us_packet_t *self )
-{
-    return self->m_max_length;
-}
+static inline size_t us_packet_get_length(const us_packet_t *self) { return self->m_length; }
 
-static inline size_t us_packet_get_length( const us_packet_t *self )
-{
-    return self->m_length;
-}
-
-static inline bool us_packet_set_length( us_packet_t *self, size_t new_length )
-{
-    bool r=false;
-    if( new_length <= self->m_max_length)
-    {
+static inline bool us_packet_set_length(us_packet_t *self, size_t new_length) {
+    bool r = false;
+    if (new_length <= self->m_max_length) {
         self->m_length = new_length;
-        r=true;
+        r = true;
     }
     return r;
 }
 
-static inline bool us_packet_copy(
-    us_packet_t *self,
-    const uint8_t *raw_data,
-    size_t raw_data_length,
-    const us_packet_address_t *src_address,
-    const us_packet_address_t *dest_address
-    )
-{
-    bool r=false;
-    if( raw_data_length <= self->m_max_length )
-    {
-        memcpy( self->m_data, raw_data, raw_data_length );
+static inline bool us_packet_copy(us_packet_t *self,
+                                  const uint8_t *raw_data,
+                                  size_t raw_data_length,
+                                  const us_packet_address_t *src_address,
+                                  const us_packet_address_t *dest_address) {
+    bool r = false;
+    if (raw_data_length <= self->m_max_length) {
+        memcpy(self->m_data, raw_data, raw_data_length);
         self->m_length = raw_data_length;
-        if( src_address )
-        {
+        if (src_address) {
             self->m_src_address = *src_address;
-        }
-        else
-        {
+        } else {
             self->m_src_address.m_type = us_packet_address_none;
         }
-        if( dest_address )
-        {
+        if (dest_address) {
             self->m_dest_address = *dest_address;
-        }
-        else
-        {
+        } else {
             self->m_dest_address.m_type = us_packet_address_none;
         }
-        r=true;
+        r = true;
     }
     return r;
 }
-
 
 /*@}*/
 
@@ -163,6 +127,4 @@ static inline bool us_packet_copy(
 }
 #endif
 
-
 #endif
-

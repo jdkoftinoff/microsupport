@@ -36,8 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 us_print_t *us_logger_printer_out = 0;
 us_print_t *us_logger_printer_err = 0;
 
-bool us_logger_printer_start ( us_print_t *out_printer, us_print_t *err_printer )
-{
+bool us_logger_printer_start(us_print_t *out_printer, us_print_t *err_printer) {
     us_logger_printer_out = out_printer;
     us_logger_printer_err = err_printer;
     us_log_error_proc = us_log_error_printer;
@@ -49,8 +48,7 @@ bool us_logger_printer_start ( us_print_t *out_printer, us_print_t *err_printer 
     return true;
 }
 
-void us_logger_printer_finish ( void )
-{
+void us_logger_printer_finish(void) {
     us_log_error_proc = us_log_null;
     us_log_warn_proc = us_log_null;
     us_log_info_proc = us_log_null;
@@ -58,70 +56,59 @@ void us_logger_printer_finish ( void )
     us_logger_finish = us_logger_null_finish;
 }
 
-void us_log_error_printer ( const char *fmt, ... )
-{
+void us_log_error_printer(const char *fmt, ...) {
     va_list ap;
-    va_start ( ap, fmt );
-    if ( us_logger_printer_err )
-    {
-        us_logger_printer_err->printf ( us_logger_printer_err, "ERROR:\t" );
-        us_logger_printer_err->vprintf ( us_logger_printer_err, fmt, ap );
-        us_logger_printer_err->printf ( us_logger_printer_err, "\n" );
+    va_start(ap, fmt);
+    if (us_logger_printer_err) {
+        us_logger_printer_err->printf(us_logger_printer_err, "ERROR:\t");
+        us_logger_printer_err->vprintf(us_logger_printer_err, fmt, ap);
+        us_logger_printer_err->printf(us_logger_printer_err, "\n");
     }
-    va_end ( ap );
+    va_end(ap);
 }
 
-void us_log_warn_printer ( const char *fmt, ... )
-{
+void us_log_warn_printer(const char *fmt, ...) {
     va_list ap;
-    va_start ( ap, fmt );
-    if ( us_logger_printer_err )
-    {
-        us_logger_printer_err->printf ( us_logger_printer_err, "WARNING:\t" );
-        us_logger_printer_err->vprintf ( us_logger_printer_err, fmt, ap );
-        us_logger_printer_err->printf ( us_logger_printer_err, "\n" );
+    va_start(ap, fmt);
+    if (us_logger_printer_err) {
+        us_logger_printer_err->printf(us_logger_printer_err, "WARNING:\t");
+        us_logger_printer_err->vprintf(us_logger_printer_err, fmt, ap);
+        us_logger_printer_err->printf(us_logger_printer_err, "\n");
     }
-    va_end ( ap );
+    va_end(ap);
 }
 
-void us_log_info_printer ( const char *fmt, ... )
-{
+void us_log_info_printer(const char *fmt, ...) {
     va_list ap;
-    va_start ( ap, fmt );
-    if ( us_logger_printer_out )
-    {
-        us_logger_printer_out->printf ( us_logger_printer_out, "INFO:\t" );
-        us_logger_printer_out->vprintf ( us_logger_printer_out, fmt, ap );
-        us_logger_printer_out->printf ( us_logger_printer_out, "\n" );
+    va_start(ap, fmt);
+    if (us_logger_printer_out) {
+        us_logger_printer_out->printf(us_logger_printer_out, "INFO:\t");
+        us_logger_printer_out->vprintf(us_logger_printer_out, fmt, ap);
+        us_logger_printer_out->printf(us_logger_printer_out, "\n");
     }
-    va_end ( ap );
+    va_end(ap);
 }
 
-void us_log_debug_printer ( const char *fmt, ... )
-{
+void us_log_debug_printer(const char *fmt, ...) {
     va_list ap;
-    va_start ( ap, fmt );
-    if ( us_logger_printer_out )
-    {
-        us_logger_printer_out->printf ( us_logger_printer_out, "DEBUG:\t" );
-        us_logger_printer_out->vprintf ( us_logger_printer_out, fmt, ap );
-        us_logger_printer_out->printf ( us_logger_printer_out, "\n" );
+    va_start(ap, fmt);
+    if (us_logger_printer_out) {
+        us_logger_printer_out->printf(us_logger_printer_out, "DEBUG:\t");
+        us_logger_printer_out->vprintf(us_logger_printer_out, fmt, ap);
+        us_logger_printer_out->printf(us_logger_printer_out, "\n");
     }
-    va_end ( ap );
+    va_end(ap);
 }
 
-void us_log_trace_printer ( const char *fmt, ... )
-{
+void us_log_trace_printer(const char *fmt, ...) {
     va_list ap;
-    va_start ( ap, fmt );
-    if ( us_logger_printer_out )
-    {
-        us_logger_printer_out->printf ( us_logger_printer_out, "TRACE:\t" );
-        us_logger_printer_out->vprintf ( us_logger_printer_out, fmt, ap );
-        us_logger_printer_out->printf ( us_logger_printer_out, "\n" );
+    va_start(ap, fmt);
+    if (us_logger_printer_out) {
+        us_logger_printer_out->printf(us_logger_printer_out, "TRACE:\t");
+        us_logger_printer_out->vprintf(us_logger_printer_out, fmt, ap);
+        us_logger_printer_out->printf(us_logger_printer_out, "\n");
     }
-    va_end ( ap );
+    va_end(ap);
 }
 
 #endif
-

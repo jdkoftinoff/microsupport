@@ -1,7 +1,6 @@
 #ifndef US_MDNS_AVAHI_H
 #define US_MDNS_AVAHI_H
 
-
 /*
  Copyright (c) 2013, J.D. Koftinoff Software, Ltd.
  All rights reserved.
@@ -32,48 +31,40 @@
 #include "us_world.h"
 #include "us_allocator.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-
 
 #if US_ENABLE_STDIO
 
-    typedef struct us_mdns_txt_record_s
-    {
-        const char *m_key;
-        const char *m_value;
-        struct us_mdns_txt_record_s *m_next;
-    } us_mdns_txt_record_t;
+typedef struct us_mdns_txt_record_s {
+    const char *m_key;
+    const char *m_value;
+    struct us_mdns_txt_record_s *m_next;
+} us_mdns_txt_record_t;
 
-    typedef struct us_mdns_avahi_s
-    {
-        const char *m_name;
-        const char *m_type;
-        int16_t m_port;
-        const char *m_fname;
-        const us_mdns_txt_record_t *m_txt;
-        struct us_mdns_avahi_s *m_next;
-    } us_mdns_avahi_t;
+typedef struct us_mdns_avahi_s {
+    const char *m_name;
+    const char *m_type;
+    int16_t m_port;
+    const char *m_fname;
+    const us_mdns_txt_record_t *m_txt;
+    struct us_mdns_avahi_s *m_next;
+} us_mdns_avahi_t;
 
-    bool us_mdns_avahi_create_service_file( us_mdns_avahi_t *description );
-    void us_mdns_avahi_atexit(void);
+bool us_mdns_avahi_create_service_file(us_mdns_avahi_t *description);
+void us_mdns_avahi_atexit(void);
 
-    bool us_mdns_avahi_write_xml(
-        const char *avahi_services_dir,
-        const char *fname,
-        const char *service_name,
-        const char *udp_service_type,
-        const char *udp_port,
-        const char *tcp_service_type,
-        const char *tcp_port
-    );
+bool us_mdns_avahi_write_xml(const char *avahi_services_dir,
+                             const char *fname,
+                             const char *service_name,
+                             const char *udp_service_type,
+                             const char *udp_port,
+                             const char *tcp_service_type,
+                             const char *tcp_port);
 
 #endif
 #ifdef __cplusplus
 }
 #endif
 
-
 #endif
-

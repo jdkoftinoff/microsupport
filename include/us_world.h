@@ -28,65 +28,63 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /**
  \addtogroup US_world Platform Specific Configuration
  */
 /*@{*/
 
 #ifdef US_FIRST_HEADER
-# include US_FIRST_HEADER
+#include US_FIRST_HEADER
 #endif
 
 #if defined(TARGET_PLATFORM_POSIX)
-# define US_CONFIG_POSIX
+#define US_CONFIG_POSIX
 #elif defined(TARGET_PLATFORM_LINUX)
-# define US_CONFIG_POSIX
-# define US_CONFIG_LINUX
+#define US_CONFIG_POSIX
+#define US_CONFIG_LINUX
 #elif defined(TARGET_PLATFORM_MACOSX)
-# undef US_CONFIG_POSIX
-# define US_CONFIG_POSIX
-# undef US_CONFIG_MACOSX
-# define US_CONFIG_MACOSX
+#undef US_CONFIG_POSIX
+#define US_CONFIG_POSIX
+#undef US_CONFIG_MACOSX
+#define US_CONFIG_MACOSX
 #endif
-
 
 #if defined(__AVR__)
-# define US_CONFIG_MICROCONTROLLER
-# undef US_CONFIG_POSIX
+#define US_CONFIG_MICROCONTROLLER
+#undef US_CONFIG_POSIX
 #elif defined(__APPLE__)
-# undef US_CONFIG_MACOSX
-# define US_CONFIG_MACOSX
-# undef US_CONFIG_POSIX
-# define US_CONFIG_POSIX
+#undef US_CONFIG_MACOSX
+#define US_CONFIG_MACOSX
+#undef US_CONFIG_POSIX
+#define US_CONFIG_POSIX
 #elif defined(__linux__)
-# undef US_CONFIG_LINUX
-# define US_CONFIG_LINUX
-# undef US_CONFIG_POSIX
-# define US_CONFIG_POSIX
+#undef US_CONFIG_LINUX
+#define US_CONFIG_LINUX
+#undef US_CONFIG_POSIX
+#define US_CONFIG_POSIX
 #elif defined(__CYGWIN__)
-# undef US_CONFIG_POSIX
-# define US_CONFIG_POSIX
-#elif defined(WIN32) || defined(_WIN32) || defined( _MSC_VER )
-# undef US_CONFIG_WIN32
-# define US_CONFIG_WIN32
+#undef US_CONFIG_POSIX
+#define US_CONFIG_POSIX
+#elif defined(WIN32) || defined(_WIN32) || defined(_MSC_VER)
+#undef US_CONFIG_WIN32
+#define US_CONFIG_WIN32
 #ifndef _CRT_SECURE_NO_DEPRECATE
-# define _CRT_SECURE_NO_DEPRECATE 1
+#define _CRT_SECURE_NO_DEPRECATE 1
 #endif
 #ifndef _WIN32_WINNT
-# define _WIN32_WINNT 0x0600
-# undef WINVER
-# define WINVER _WIN32_WINNT
+#define _WIN32_WINNT 0x0600
+#undef WINVER
+#define WINVER _WIN32_WINNT
 #endif
 #ifndef _SCL_SECURE_NO_DEPRECATE
-# define _SCL_SECURE_NO_DEPRECATE 1
+#define _SCL_SECURE_NO_DEPRECATE 1
 #endif
 #endif
 
 #include "us_options.h"
 
-#if defined( _MSC_VER )
-# pragma warning( disable : 4267 )
+#if defined(_MSC_VER)
+#pragma warning(disable : 4267)
 #endif
 
 #if defined(US_CONFIG_WIN32)
@@ -94,21 +92,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define inline __inline
 #endif
 
-
-# include <winsock2.h>
-# include <ws2tcpip.h>
-# include <mswsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <mswsock.h>
 
 #include <errno.h>
-# ifndef EADDRINUSE
-#  define EADDRINUSE 112  /* Address already in use */
-# endif
+#ifndef EADDRINUSE
+#define EADDRINUSE 112 /* Address already in use */
+#endif
 
-# include <windows.h>
-# include <io.h>
-# include <fcntl.h>
+#include <windows.h>
+#include <io.h>
+#include <fcntl.h>
 
-# include <process.h>
+#include <process.h>
 
 typedef long ssize_t;
 
@@ -125,39 +122,38 @@ typedef unsigned char uint8_t;
 
 #endif
 
-
 #if defined(US_CONFIG_POSIX)
 #ifndef _BSD_SOURCE
-# define _BSD_SOURCE
+#define _BSD_SOURCE
 #endif
 #ifndef _POSIX_SOURCE
-# define _POSIX_SOURCE 1
+#define _POSIX_SOURCE 1
 #endif
 #ifndef _POSIX_C_SOURCE
-# define _POSIX_C_SOURCE 1
+#define _POSIX_C_SOURCE 1
 #endif
 #ifndef _DARWIN_C_SOURCE
-# define _DARWIN_C_SOURCE 1
+#define _DARWIN_C_SOURCE 1
 #endif
-# include <locale.h>
-# include <fcntl.h>
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <sys/select.h>
-# include <unistd.h>
-# include <pthread.h>
-# include <signal.h>
-# include <sys/stat.h>
-# include <sys/time.h>
-# include <unistd.h>
-# include <netdb.h>
-# include <netinet/in.h>
-# include <netinet/tcp.h>
-# include <arpa/inet.h>
-# include <sys/poll.h>
-# include <errno.h>
-# include <strings.h>
-# include <net/if.h>
+#include <locale.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <signal.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <sys/poll.h>
+#include <errno.h>
+#include <strings.h>
+#include <net/if.h>
 #endif
 
 #include <limits.h>
@@ -172,78 +168,70 @@ typedef unsigned char uint8_t;
 #include <stdarg.h>
 
 #if defined(_WIN32)
-# include <io.h>
+#include <io.h>
 #endif
 
 #ifndef __cplusplus
-# if __STDC_VERSION__ >= 199901L
-#  include <stdbool.h>
-# else
-#  if !defined(bool) && (defined(BOOLEAN) || defined(_WIN32))
-#   define bool BOOLEAN
-#  endif
-#  if !defined(true) && defined(TRUE)
-#   define true TRUE
-#  endif
-#  if !defined(false) && defined(FALSE)
-#   define false FALSE
-#  endif
-#  if !defined(bool)
-#   define bool int
-#  endif
-#  if !defined(true)
-#   define true (1)
-#  endif
-#  if !defined(false)
-#   define false (0)
-#  endif
-# endif
+#if __STDC_VERSION__ >= 199901L
+#include <stdbool.h>
+#else
+#if !defined(bool)&&(defined(BOOLEAN) || defined(_WIN32))
+#define bool BOOLEAN
+#endif
+#if !defined(true) && defined(TRUE)
+#define true TRUE
+#endif
+#if !defined(false) && defined(FALSE)
+#define false FALSE
+#endif
+#if !defined(bool)
+#define bool int
+#endif
+#if !defined(true)
+#define true(1)
+#endif
+#if !defined(false)
+#define false(0)
+#endif
+#endif
 #endif
 
 #ifndef us_min
-# define us_min(a,b) (a) < (b) ? (a) : (b)
+#define us_min(a, b) (a) < (b) ? (a) : (b)
 #endif
 
 #ifndef us_max
-# define us_max(a,b) (a) < (b) ? (b) : (a)
+#define us_max(a, b) (a) < (b) ? (b) : (a)
 #endif
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-
-    static inline bool us_strncpy( char *dest, const char *src, size_t dest_buf_size )
-    {
-        bool r=false;
-        if ( dest && src && dest_buf_size>2 )
-        {
-            size_t src_len = strlen(src);
-            if ( src_len<dest_buf_size-1)
-            {
-                strncpy( dest, src, dest_buf_size-1 );
-                r=true;
-            }
+static inline bool us_strncpy(char *dest, const char *src, size_t dest_buf_size) {
+    bool r = false;
+    if (dest && src && dest_buf_size > 2) {
+        size_t src_len = strlen(src);
+        if (src_len < dest_buf_size - 1) {
+            strncpy(dest, src, dest_buf_size - 1);
+            r = true;
         }
-        return r;
     }
+    return r;
+}
 
-    static inline bool us_strncat( char *dest, const char *src, size_t dest_buf_size )
-    {
-        bool r=false;
-        if ( dest && src && dest_buf_size>2 )
-        {
-            size_t src_len = strlen(src);
-            size_t dest_len = strlen(dest);
-            if ( (src_len+dest_len)<dest_buf_size-1)
-            {
-                strncat( dest, src, dest_buf_size-1 );
-                r=true;
-            }
+static inline bool us_strncat(char *dest, const char *src, size_t dest_buf_size) {
+    bool r = false;
+    if (dest && src && dest_buf_size > 2) {
+        size_t src_len = strlen(src);
+        size_t dest_len = strlen(dest);
+        if ((src_len + dest_len) < dest_buf_size - 1) {
+            strncat(dest, src, dest_buf_size - 1);
+            r = true;
         }
-        return r;
     }
+    return r;
+}
 
 #ifdef __cplusplus
 }

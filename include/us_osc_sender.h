@@ -1,7 +1,6 @@
 #ifndef US_OSC_SENDER_H
 #define US_OSC_SENDER_H
 
-
 /*
  Copyright (c) 2013, J.D. Koftinoff Software, Ltd.
  All rights reserved.
@@ -29,70 +28,51 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "us_world.h"
 #include "us_osc_msg.h"
 #include "us_reactor.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+typedef struct us_osc_sender_s {
+    void (*destroy)(struct us_osc_sender_s *self);
+    bool (*can_send)(struct us_osc_sender_s *self);
+    bool (*send_msg)(struct us_osc_sender_s *self, const us_osc_msg_t *msg);
+    bool (*form_and_send_msg)(struct us_osc_sender_s *self, const char *address, const char *typetags, ...);
+} us_osc_sender_t;
 
-    typedef struct us_osc_sender_s
-    {
-        void (*destroy)(
-            struct us_osc_sender_s *self
-        );
-        bool (*can_send)(
-            struct us_osc_sender_s *self
-        );
-        bool (*send_msg)(
-            struct us_osc_sender_s *self,
-            const us_osc_msg_t *msg
-        );
-        bool (*form_and_send_msg)(
-            struct us_osc_sender_s *self,
-            const char *address,
-            const char *typetags,
-            ...
-        );
-    } us_osc_sender_t;
+us_osc_sender_t *us_osc_sender_create(void);
+bool us_osc_sender_init(us_osc_sender_t *self, void *US_UNUSED(extra));
+void us_osc_sender_destroy(us_osc_sender_t *US_UNUSED(self));
+bool us_osc_sender_send_msg(us_osc_sender_t *US_UNUSED(self), const us_osc_msg_t *US_UNUSED(msg));
+bool us_osc_sender_can_send(us_osc_sender_t *US_UNUSED(self));
+bool us_osc_sender_form_and_send_msg(us_osc_sender_t *self, const char *address, const char *typetags, ...);
 
-    us_osc_sender_t *us_osc_sender_create( void );
-    bool us_osc_sender_init( us_osc_sender_t *self, void *US_UNUSED(extra) );
-    void us_osc_sender_destroy( us_osc_sender_t *US_UNUSED(self) );
-    bool us_osc_sender_send_msg( us_osc_sender_t *US_UNUSED(self), const us_osc_msg_t *US_UNUSED(msg) );
-    bool us_osc_sender_can_send( us_osc_sender_t *US_UNUSED(self) );
-    bool us_osc_sender_form_and_send_msg( us_osc_sender_t *self, const char *address, const char *typetags, ... );
-
-
-    typedef struct us_osc_multisender_item_s
-    {
-        us_osc_sender_t *m_sender;
-        struct us_osc_multisender_item_s *m_next;
-        struct us_osc_multisender_item_s *m_prev;
-    } us_osc_multisender_item_t;
+typedef struct us_osc_multisender_item_s {
+    us_osc_sender_t *m_sender;
+    struct us_osc_multisender_item_s *m_next;
+    struct us_osc_multisender_item_s *m_prev;
+} us_osc_multisender_item_t;
 
 #define US_OSC_MULTISENDER_MAX_ITEMS (16)
 
-    typedef struct us_osc_multisender_s
-    {
-        us_osc_sender_t m_base;
-        us_allocator_t *m_allocator;
-        us_osc_multisender_item_t *m_first_item;
-        us_osc_multisender_item_t *m_last_item;
-        us_osc_multisender_item_t *m_first_empty_item;
-        us_osc_multisender_item_t m_items[US_OSC_MULTISENDER_MAX_ITEMS];
-    } us_osc_multisender_t;
+typedef struct us_osc_multisender_s {
+    us_osc_sender_t m_base;
+    us_allocator_t *m_allocator;
+    us_osc_multisender_item_t *m_first_item;
+    us_osc_multisender_item_t *m_last_item;
+    us_osc_multisender_item_t *m_first_empty_item;
+    us_osc_multisender_item_t m_items[US_OSC_MULTISENDER_MAX_ITEMS];
+} us_osc_multisender_t;
 
-    us_osc_multisender_t *us_osc_multisender_create( us_allocator_t *allocator );
-    bool us_osc_multisender_init( us_osc_multisender_t *self );
-    void us_osc_multisender_destroy( us_osc_sender_t *self );
-    bool us_osc_multisender_send_msg( us_osc_sender_t *self, const us_osc_msg_t *msg );
-    bool us_osc_multisender_can_send( us_osc_sender_t *self );
-    bool us_osc_multisender_add_sender( us_osc_multisender_t *self, us_osc_sender_t *item );
-    bool us_osc_multisender_remove_sender( us_osc_multisender_t *self, us_osc_sender_t *item );
+us_osc_multisender_t *us_osc_multisender_create(us_allocator_t *allocator);
+bool us_osc_multisender_init(us_osc_multisender_t *self);
+void us_osc_multisender_destroy(us_osc_sender_t *self);
+bool us_osc_multisender_send_msg(us_osc_sender_t *self, const us_osc_msg_t *msg);
+bool us_osc_multisender_can_send(us_osc_sender_t *self);
+bool us_osc_multisender_add_sender(us_osc_multisender_t *self, us_osc_sender_t *item);
+bool us_osc_multisender_remove_sender(us_osc_multisender_t *self, us_osc_sender_t *item);
 
 #ifdef __cplusplus
 }

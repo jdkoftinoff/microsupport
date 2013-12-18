@@ -30,24 +30,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_world.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+/**
+ \addtogroup us_parse Parse
+ */
+/*@{*/
 
-    /**
-     \addtogroup us_parse Parse
-     */
-    /*@{*/
-
-
-    bool us_parse_hexdig ( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos );
-    bool us_parse_hexoctet ( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos );
+bool us_parse_hexdig(uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos);
+bool us_parse_hexoctet(uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 /*@}*/
 

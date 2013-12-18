@@ -31,216 +31,153 @@
 #include "us_world.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+/**
+   \addtogroup us_allocator Memory Allocator
+*/
+/*@{*/
+
+/** us_new
+
+    A define which simulates c++ new() operator, except it accepts an
+    allocator to allocate from.
+    No initializers of the objects are called.
+*/
+
+#define us_new(ALLOCATOR, T) (T *)((ALLOCATOR)->alloc((ALLOCATOR), (int32_t)sizeof(T), 1))
+
+#define us_delete(ALLOCATOR, PTR)                                                                                              \
+    do {                                                                                                                       \
+        if ((ALLOCATOR) != 0 && (PTR) != 0)                                                                                    \
+            (ALLOCATOR)->free((ALLOCATOR), (PTR));                                                                             \
+    } while (false)
+
+/** us_new_array
+
+    A define which simulates c++ new [] operator, except it accepts an
+    allocator to allocate from.
+*/
+
+#define us_new_array(ALLOCATOR, T, COUNT) (T *)((ALLOCATOR)->alloc((ALLOCATOR), (int32_t)sizeof(T), (int32_t)(COUNT)))
+
+/** us_round_size
+
+    Calculate size in bytes rounded up to the nearest 32bit word size.
+*/
+#define us_round_size(VALUE) (((VALUE) + (uint32_t)(sizeof(uint32_t)) - 1) & (uint32_t) ~(sizeof(uint32_t) - 1))
+
+/** us_allocator_t
+
+    The us_allocator implements a
+    simple growing stack of allocations within a fixed buffer size
+*/
+typedef struct us_allocator_s {
     /**
-       \addtogroup us_allocator Memory Allocator
-    */
-    /*@{*/
-
-
-    /** us_new
-
-        A define which simulates c++ new() operator, except it accepts an
-        allocator to allocate from.
-        No initializers of the objects are called.
+       Destroy the allocator.
     */
 
-#define us_new( ALLOCATOR, T )                                      \
-    (T *)((ALLOCATOR)->alloc( (ALLOCATOR), (int32_t)sizeof( T ), 1 ))
-
-#define us_delete( ALLOCATOR, PTR )             \
-    do { if( (ALLOCATOR)!=0 && (PTR)!=0 ) (ALLOCATOR)->free( (ALLOCATOR), (PTR)); } while(false)
-
-
-    /** us_new_array
-
-        A define which simulates c++ new [] operator, except it accepts an
-        allocator to allocate from.
-    */
-
-#define us_new_array( ALLOCATOR, T, COUNT )                             \
-    (T *)((ALLOCATOR)->alloc( (ALLOCATOR), (int32_t)sizeof( T ), (int32_t)(COUNT) ))
-
-    /** us_round_size
-
-        Calculate size in bytes rounded up to the nearest 32bit word size.
-    */
-#define us_round_size( VALUE )                                          \
-    (((VALUE) + (uint32_t)(sizeof (uint32_t))-1) & (uint32_t)~(sizeof (uint32_t)-1))
-
-
-    /** us_allocator_t
-
-        The us_allocator implements a
-        simple growing stack of allocations within a fixed buffer size
-    */
-    typedef struct us_allocator_s
-    {
-        /**
-           Destroy the allocator.
-        */
-
-        void ( *destroy ) (
-            struct us_allocator_s *self
-        );
-
-        /**
-           Allocate memory from the allocator.
-        */
-        void * ( *alloc ) (
-            struct us_allocator_s *self,
-            int32_t length,
-            int32_t count
-        );
-
-
-        /**
-           reallocate memory from the allocator.
-        */
-        void * ( *realloc ) (
-            struct us_allocator_s *self,
-            const void *orig_ptr,
-            int32_t length,
-            int32_t count
-        );
-
-        void ( *free ) (
-            struct us_allocator_s *self,
-            const void *ptr
-        );
-    } us_allocator_t;
-
-    typedef struct us_simple_allocator_s
-    {
-        us_allocator_t m_base;
-        /** pointer to the raw memory pool to allocate from */
-        void *m_raw_memory;
-
-        /** length of the raw memory pool */
-        int32_t m_raw_memory_length;
-
-        /** the current position in the raw memory pool */
-        int32_t m_current_position;
-    } us_simple_allocator_t;
+    void (*destroy)(struct us_allocator_s *self);
 
     /**
-       us_simple_allocator_init
-       Initialize an us_allocator_t object, attaching it to a block of memory
-       with a specific size in bytes
-
-       @param self object to initialize
-       @param raw_memory pointer to raw memory
-       @param raw_memory_length size of raw memory in bytes
-       @returns pointer initialized object
+       Allocate memory from the allocator.
     */
+    void *(*alloc)(struct us_allocator_s *self, int32_t length, int32_t count);
 
-    us_allocator_t *
-    us_simple_allocator_init (
-        us_simple_allocator_t *self,
-        void *raw_memory,
-        int32_t raw_memory_length
-    );
-
-    void
-    us_simple_allocator_reset (
-        us_simple_allocator_t *self
-    );
-
-    /** us_simple_allocator_destroy
-        simple allocators are allocated from raw memory and have no need to
-        do anything to destroy the pool of memory
+    /**
+       reallocate memory from the allocator.
     */
+    void *(*realloc)(struct us_allocator_s *self, const void *orig_ptr, int32_t length, int32_t count);
 
-    void us_simple_allocator_destroy (
-        struct us_allocator_s *self
-    );
+    void (*free)(struct us_allocator_s *self, const void *ptr);
+} us_allocator_t;
 
-    /** us_simple_allocator_alloc
+typedef struct us_simple_allocator_s {
+    us_allocator_t m_base;
+    /** pointer to the raw memory pool to allocate from */
+    void *m_raw_memory;
 
-        allocate some memory from the allocator's memory pool.
+    /** length of the raw memory pool */
+    int32_t m_raw_memory_length;
 
-        @param self allocator to allocate from
-        @param length in bytes of object to allocate
-        @param count count of objects to allocate
-        @returns memory void * or NULL if error
-    */
-    void *us_simple_allocator_alloc (
-        struct us_allocator_s *self,
-        int32_t length,
-        int32_t count
-    );
+    /** the current position in the raw memory pool */
+    int32_t m_current_position;
+} us_simple_allocator_t;
 
-    void *us_simple_allocator_realloc (
-        struct us_allocator_s *self,
-        const void *orig_ptr,
-        int32_t length,
-        int32_t count
-    );
+/**
+   us_simple_allocator_init
+   Initialize an us_allocator_t object, attaching it to a block of memory
+   with a specific size in bytes
 
-    void us_simple_allocator_free (
-        struct us_allocator_s *self,
-        const void *ptr
-    );
+   @param self object to initialize
+   @param raw_memory pointer to raw memory
+   @param raw_memory_length size of raw memory in bytes
+   @returns pointer initialized object
+*/
+
+us_allocator_t *us_simple_allocator_init(us_simple_allocator_t *self, void *raw_memory, int32_t raw_memory_length);
+
+void us_simple_allocator_reset(us_simple_allocator_t *self);
+
+/** us_simple_allocator_destroy
+    simple allocators are allocated from raw memory and have no need to
+    do anything to destroy the pool of memory
+*/
+
+void us_simple_allocator_destroy(struct us_allocator_s *self);
+
+/** us_simple_allocator_alloc
+
+    allocate some memory from the allocator's memory pool.
+
+    @param self allocator to allocate from
+    @param length in bytes of object to allocate
+    @param count count of objects to allocate
+    @returns memory void * or NULL if error
+*/
+void *us_simple_allocator_alloc(struct us_allocator_s *self, int32_t length, int32_t count);
+
+void *us_simple_allocator_realloc(struct us_allocator_s *self, const void *orig_ptr, int32_t length, int32_t count);
+
+void us_simple_allocator_free(struct us_allocator_s *self, const void *ptr);
 
 #if US_ENABLE_MALLOC
 
-    typedef struct us_malloc_allocator_s
-    {
-        us_allocator_t m_base;
-    } us_malloc_allocator_t;
+typedef struct us_malloc_allocator_s {
+    us_allocator_t m_base;
+} us_malloc_allocator_t;
 
-    /**
-       us_malloc_allocator_init
-       simple wrapper of malloc/free
+/**
+   us_malloc_allocator_init
+   simple wrapper of malloc/free
 
-       @param self object to initialize
-       @returns pointer initialized object
-    */
+   @param self object to initialize
+   @returns pointer initialized object
+*/
 
-    us_allocator_t *
-    us_malloc_allocator_init (
-        struct us_malloc_allocator_s *self
-    );
+us_allocator_t *us_malloc_allocator_init(struct us_malloc_allocator_s *self);
 
-    /** us_malloc_allocator_destroy
-        simple allocators are allocated from raw memory and have no need to
-        do anything to destroy the pool of memory
-    */
+/** us_malloc_allocator_destroy
+    simple allocators are allocated from raw memory and have no need to
+    do anything to destroy the pool of memory
+*/
 
-    void us_malloc_allocator_destroy (
-        struct us_allocator_s *self
-    );
+void us_malloc_allocator_destroy(struct us_allocator_s *self);
 
+void *us_malloc_allocator_alloc(struct us_allocator_s *self, int32_t length, int32_t count);
 
-    void *us_malloc_allocator_alloc (
-        struct us_allocator_s *self,
-        int32_t length,
-        int32_t count
-    );
+void *us_malloc_allocator_realloc(struct us_allocator_s *self, const void *orig_ptr, int32_t length, int32_t count);
 
-    void *us_malloc_allocator_realloc (
-        struct us_allocator_s *self,
-        const void *orig_ptr,
-        int32_t length,
-        int32_t count
-    );
-
-    void us_malloc_allocator_free (
-        struct us_allocator_s *self,
-        const void *ptr
-    );
-
+void us_malloc_allocator_free(struct us_allocator_s *self, const void *ptr);
 
 #endif
 
-    char * us_strdup ( struct us_allocator_s *allocator, const char *src );
+char *us_strdup(struct us_allocator_s *allocator, const char *src);
 
-    char * us_strndup ( struct us_allocator_s *allocator, const char *src, int chars_to_copy );
+char *us_strndup(struct us_allocator_s *allocator, const char *src, int chars_to_copy);
 
-    /*@}*/
+/*@}*/
 
 #ifdef __cplusplus
 }

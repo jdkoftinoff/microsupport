@@ -35,138 +35,67 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if US_ENABLE_PRINTING
 #include "us_print.h"
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+/**
+ \addtogroup us_osc_msg OSC Message and Bundle Objects
+ */
+/*@{*/
 
-    /**
-     \addtogroup us_osc_msg OSC Message and Bundle Objects
-     */
-    /*@{*/
+/**
+ Print an OSC Message Bundle object
 
-    /**
-     Print an OSC Message Bundle object
+ @param self ptr to bundle
+ @param printer to print to
+ @return bool true on success
+ */
+bool us_osc_msg_bundle_print(const us_osc_msg_bundle_t *self, us_print_t *printer);
 
-     @param self ptr to bundle
-     @param printer to print to
-     @return bool true on success
-     */
-    bool
-    us_osc_msg_bundle_print(
-        const us_osc_msg_bundle_t *self,
-        us_print_t *printer
-    );
+/**
+ Print an OSC Message Message object
 
-    /**
-     Print an OSC Message Message object
+ @param self ptr to msg
+ @param printer to print to
+ @return bool true on success
+ */
+bool us_osc_msg_print(const us_osc_msg_t *self, us_print_t *printer);
 
-     @param self ptr to msg
-     @param printer to print to
-     @return bool true on success
-     */
-    bool
-    us_osc_msg_print(
-        const us_osc_msg_t *self,
-        us_print_t *printer
-    );
+/**
+ Print an OSC Message Message Element object
 
+ @param self ptr to message element
+ @param printer to print to
+ @return bool true on success
+ */
+bool us_osc_msg_element_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    /**
-     Print an OSC Message Message Element object
+bool us_osc_msg_element_a_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-     @param self ptr to message element
-     @param printer to print to
-     @return bool true on success
-     */
-    bool
-    us_osc_msg_element_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_B_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
+bool us_osc_msg_element_b_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_a_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_d_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_B_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_f_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
+bool us_osc_msg_element_h_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_b_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_i_print(const us_osc_msg_element_t *self, us_print_t *printer);
+bool us_osc_msg_element_s_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_d_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_t_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_f_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_T_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_h_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_F_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_i_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
-    bool
-    us_osc_msg_element_s_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_M_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_t_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
+bool us_osc_msg_element_N_print(const us_osc_msg_element_t *self, us_print_t *printer);
 
-    bool
-    us_osc_msg_element_T_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
-
-    bool
-    us_osc_msg_element_F_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
-
-    bool
-    us_osc_msg_element_M_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
-
-    bool
-    us_osc_msg_element_N_print(
-        const us_osc_msg_element_t *self,
-        us_print_t *printer
-    );
-
-
-    /*@}*/
-
+/*@}*/
 
 #ifdef __cplusplus
 }
