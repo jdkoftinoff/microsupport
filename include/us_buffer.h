@@ -568,6 +568,36 @@ extern "C"
     );
 
     bool
+    us_buffer_append_int16 (
+                            us_buffer_t *self,
+                            int16_t value
+                            );
+
+    static inline bool
+    us_buffer_append_uint16 (
+                             us_buffer_t *self,
+                             uint16_t value
+                             )
+    {
+        return us_buffer_append_int16(self,(int16_t)value);
+    }
+
+    bool
+    us_buffer_read_int16 (
+                          us_buffer_t *self,
+                          int16_t *value_ptr
+                          );
+
+    static inline bool
+    us_buffer_read_uint16 (
+                           us_buffer_t *self,
+                           uint16_t *value_ptr
+                           )
+    {
+        return us_buffer_read_int16( self, (int16_t *)value_ptr );
+    }
+
+    bool
     us_buffer_append_int32 (
         us_buffer_t *self,
         int32_t value

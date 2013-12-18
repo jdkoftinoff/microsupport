@@ -275,6 +275,36 @@ bool us_buffer_read_rounded_string (
 }
 
 
+bool us_buffer_append_int16 (
+                             us_buffer_t *self,
+                             int16_t value
+                             )
+{
+    bool r = true;
+    r &= us_buffer_append_byte ( self, US_GET_BYTE_1 ( value ) );
+    r &= us_buffer_append_byte ( self, US_GET_BYTE_0 ( value ) );
+    return r;
+}
+
+bool us_buffer_read_int16 (
+                           us_buffer_t *self,
+                           int16_t *value_ptr
+                           )
+{
+    bool r = false;
+    int16_t value = 0;
+    if ( us_buffer_readable_count(self)>=2 )
+    {
+        value = ( ( int16_t ) us_buffer_read_byte(self) ) << 8;
+        value |= ( ( int16_t ) us_buffer_read_byte(self) ) << 0;
+        *value_ptr = value;
+        r = true;
+    }
+    return r;
+}
+
+
+
 bool us_buffer_append_int32 (
     us_buffer_t *self,
     int32_t value
