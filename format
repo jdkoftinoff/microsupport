@@ -1,2 +1,2 @@
-clang-format -i include/*.h include/*/*.h src/*.c tools-dev/*/*.c tools-dev/*/*/h 
+clang-format -i include/*.h include/*/*.h src/*.c tools-dev/*/*.c tools-dev/*/*/*.h  tests/*.c tests/*.cpp examples/*.c examples/*.cpp src/*.cpp
 

@@ -28,8 +28,4 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #include "us_test_packet_queue_main.h"
 
-int main( int argc, const char **argv )
-{
-    return us_test_packet_queue_main( argc, argv );
-}
-
+int main(int argc, const char **argv) { return us_test_packet_queue_main(argc, argv); }
