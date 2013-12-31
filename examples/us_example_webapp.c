@@ -32,119 +32,225 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 /** \addtogroup us_test_net */
 /*@{*/
 
 bool global_quit = false;
 
-bool us_example_webapp(us_allocator_t *allocator);
+bool us_example_webapp ( us_allocator_t *allocator );
 
-bool us_example_http_server(us_allocator_t *allocator);
+bool us_example_http_server ( us_allocator_t *allocator );
 
-bool us_example_http_server_handler_init(us_reactor_handler_t *self_, us_allocator_t *allocator, int fd, void *extra);
+bool us_example_http_server_handler_init (
+    us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
 
-bool us_example_http_server_init(us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra);
+bool us_example_http_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
 
-bool us_example_reactor_quitter_server_init(us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra);
+bool us_example_reactor_quitter_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
 
-us_reactor_handler_t *us_example_quitter_create(us_allocator_t *allocator);
+us_reactor_handler_t * us_example_quitter_create ( us_allocator_t *allocator );
 
-bool us_example_quitter_init(us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra);
+bool us_example_quitter_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+);
 
-bool us_example_quitter_readable(us_reactor_handler_tcp_t *self);
+bool us_example_quitter_readable (
+    us_reactor_handler_tcp_t *self
+);
 
-bool us_example_http_server_handler_init(us_reactor_handler_t *self_, us_allocator_t *allocator, int fd, void *extra) {
+
+bool us_example_http_server_handler_init (
+    us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+)
+{
     bool r;
-    r = us_http_server_handler_init(self_, allocator, fd, extra, 16384, (us_webapp_director_t *)extra);
+    r = us_http_server_handler_init(
+            self_,
+            allocator,
+            fd,
+            extra,
+            16384,
+            (us_webapp_director_t *)extra
+        );
     return r;
 }
 
-bool us_example_http_server_init(us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra) {
-    return us_reactor_handler_tcp_server_init(
-        self, allocator, fd, extra, us_http_server_handler_create, us_example_http_server_handler_init);
+bool us_example_http_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+)
+{
+    return us_reactor_handler_tcp_server_init (
+               self,
+               allocator,
+               fd,
+               extra,
+               us_http_server_handler_create,
+               us_example_http_server_handler_init
+           );
 }
 
-bool us_example_reactor_quitter_server_init(us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra) {
-    return us_reactor_handler_tcp_server_init(self, allocator, fd, extra, us_example_quitter_create, us_example_quitter_init);
+
+
+bool us_example_reactor_quitter_server_init (
+    us_reactor_handler_t *self,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+)
+{
+    return us_reactor_handler_tcp_server_init (
+               self,
+               allocator,
+               fd,
+               extra,
+               us_example_quitter_create,
+               us_example_quitter_init
+           );
 }
 
-us_reactor_handler_t *us_example_quitter_create(us_allocator_t *allocator) { return us_reactor_handler_tcp_create(allocator); }
 
-bool us_example_quitter_init(us_reactor_handler_t *self_, us_allocator_t *allocator, int fd, void *extra) {
-    us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
+us_reactor_handler_t *
+us_example_quitter_create ( us_allocator_t *allocator )
+{
+    return us_reactor_handler_tcp_create( allocator );
+}
+
+bool us_example_quitter_init (
+    us_reactor_handler_t *self_,
+    us_allocator_t *allocator,
+    int fd,
+    void *extra
+)
+{
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     bool r;
-    r = us_reactor_handler_tcp_init(&self->m_base, allocator, fd, extra, 1024);
+    r = us_reactor_handler_tcp_init (
+            &self->m_base,
+            allocator,
+            fd,
+            extra,
+            1024
+        );
     self->readable = us_example_quitter_readable;
     self->tick = 0;
     return r;
 }
 
-bool us_example_quitter_readable(us_reactor_handler_tcp_t *self_) {
-    us_reactor_handler_tcp_t *self = (us_reactor_handler_tcp_t *)self_;
+bool us_example_quitter_readable (
+    us_reactor_handler_tcp_t *self_
+)
+{
+    us_reactor_handler_tcp_t *self = ( us_reactor_handler_tcp_t * ) self_;
     /* wait for the letter Q, then signal a quit flag */
-    while (us_buffer_can_read_byte(&self->m_incoming_queue)) {
-        char c = (char)us_buffer_read_byte(&self->m_incoming_queue);
-        if (c == 'Q') {
+    while ( us_buffer_can_read_byte ( &self->m_incoming_queue ) )
+    {
+        char c = ( char ) us_buffer_read_byte ( &self->m_incoming_queue );
+        if ( c == 'Q' )
+        {
             global_quit = true;
         }
     }
     return true;
 }
 
-bool us_example_webapp(us_allocator_t *allocator) {
+
+bool us_example_webapp ( us_allocator_t *allocator )
+{
     bool r = false;
     us_webapp_director_t director;
-    us_webapp_director_init(&director, allocator);
+    us_webapp_director_init( &director, allocator );
     us_reactor_t reactor;
-    r = us_reactor_init(&reactor, allocator, 16 /* max simultaneous sockets, including server sockets and connections */
-                        );
-    if (r) {
-        r = us_reactor_create_server(&reactor,
-                                     allocator,
-                                     0,
-                                     "8080",
-                                     SOCK_STREAM,
-                                     (void *)&director,
-                                     us_reactor_handler_tcp_server_create,
-                                     us_example_http_server_init);
+    r = us_reactor_init (
+            &reactor,
+            allocator,
+            16 /* max simultaneous sockets, including server sockets and connections */
+        );
+    if ( r )
+    {
+        r = us_reactor_create_server (
+                &reactor,
+                allocator,
+                0, "8080",
+                SOCK_STREAM,
+                (void *)&director,
+                us_reactor_handler_tcp_server_create,
+                us_example_http_server_init
+            );
     }
-    if (r) {
-        r = us_reactor_create_server(&reactor,
-                                     allocator,
-                                     0,
-                                     "8988",
-                                     SOCK_STREAM,
-                                     0,
-                                     us_reactor_handler_tcp_server_create,
-                                     us_example_reactor_quitter_server_init);
+    if ( r )
+    {
+        r = us_reactor_create_server (
+                &reactor,
+                allocator,
+                0, "8988",
+                SOCK_STREAM,
+                0,
+                us_reactor_handler_tcp_server_create,
+                us_example_reactor_quitter_server_init
+            );
     }
-    if (r) {
-        while (!global_quit && reactor.poll(&reactor, 2000)) {
-            fprintf(stdout, "tick\n");
+    if ( r )
+    {
+        while ( !global_quit && reactor.poll ( &reactor, 2000 ) )
+        {
+            fprintf ( stdout, "tick\n" );
         }
-        reactor.destroy(&reactor);
+        reactor.destroy ( &reactor );
         r = true;
     }
-    director.destroy(&director);
+    director.destroy( &director );
     return r;
 }
 
-int main(int argc, char **argv) {
+int main ( int argc, char **argv )
+{
     bool r;
     us_malloc_allocator_t allocator;
-    us_malloc_allocator_init(&allocator);
+    us_malloc_allocator_init( &allocator );
 #if US_ENABLE_LOGGING
-    us_logger_stdio_start(stdout, stderr);
+    us_logger_stdio_start ( stdout, stderr );
 #endif
-    us_log_set_level(US_LOG_LEVEL_TRACE);
-    us_log_info("Hello world from %s compiled on %s", __FILE__, __DATE__);
-    r = us_example_webapp(&allocator.m_base);
-    us_malloc_allocator_destroy(&allocator.m_base);
-    if (r) {
+    us_log_set_level ( US_LOG_LEVEL_TRACE );
+    us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+    r=us_example_webapp( &allocator.m_base );
+    us_malloc_allocator_destroy( &allocator.m_base );
+    if ( r )
+    {
         return 0;
-    } else {
+    }
+    else
+    {
         return 1;
     }
 }
 
+
 /*@}*/
+
+
+
+

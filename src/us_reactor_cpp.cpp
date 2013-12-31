@@ -3,4 +3,8 @@
 
 #include "us_reactor.hpp"
 
-namespace microsupport {}
+namespace microsupport
+{
+
+
+}

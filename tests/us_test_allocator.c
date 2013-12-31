@@ -28,4 +28,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_world.h"
 #include "us_test_allocator_main.h"
 
-int main(int argc, const char **argv) { return us_test_allocator_main(argc, argv); }
+int main( int argc, const char **argv )
+{
+    return us_test_allocator_main( argc, argv );
+}
+
