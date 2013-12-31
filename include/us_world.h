@@ -177,10 +177,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define bool int
 #endif
 #if !defined(true)
-#define true(1)
+#define true 1
 #endif
 #if !defined(false)
-#define false(0)
+#define false 0
 #endif
 #endif
 #endif
