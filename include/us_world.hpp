@@ -33,10 +33,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 #include <stdexcept>
 #include <vector>
-#include "us_packet.hpp"
-#include "us_packet_queue.hpp"
-#include "us_reactor.hpp"
-
 
 #endif
 
