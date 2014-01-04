@@ -50,7 +50,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_slip.h"
 #include "us_testutil.h"
 #include "us_time.h"
-
+#include "us_rawnet.h"
+#include "us_rawnet_multi.h"
 #include "us_print.h"
 #include "us_allocator_print.h"
 #include "us_buffer_print.h"
