@@ -51,29 +51,32 @@ bool us_rawnet_multi_open(
                 && cur->ifa_addr->sa_family == AF_LINK
                 && cur->ifa_data!=0 ) {
                 struct if_data64 *d = (struct if_data64 *)cur->ifa_data;
-                if( d->ifi_type == IFT_ETHER && d->ifi_mtu==1500) {
+                if( d->ifi_type == IFT_ETHER && d->ifi_mtu==1500)
+                {
 #elif defined(__linux__)
             if( cur->ifa_addr
                 && cur->ifa_addr->sa_family == AF_PACKET
                 && cur->ifa_name[0] == 'e'
                 && cur->ifa_name[1] == 't'
                 && cur->ifa_name[2] == 'h' ) {
+                {
 #endif
-                us_log_debug("Trying to open ethernet port %s", cur->ifa_name);
+                    us_log_debug("Trying to open ethernet port %s", cur->ifa_name);
 
-                // found one, try to open a rawnet socket
-                if( us_rawnet_socket(
-                            &self->ethernet_ports[ self->ethernet_port_count ],
-                            ethertype,
-                            cur->ifa_name,
-                            multicast_address1 )>=0 ) {
-                    // success! join the secondary multicast address if necessary
-                    if( multicast_address2 ) {
-                        us_rawnet_join_multicast(&self->ethernet_ports[self->ethernet_port_count], multicast_address2 );
+                    // found one, try to open a rawnet socket
+                    if( us_rawnet_socket(
+                                &self->ethernet_ports[ self->ethernet_port_count ],
+                                ethertype,
+                                cur->ifa_name,
+                                multicast_address1 )>=0 ) {
+                        // success! join the secondary multicast address if necessary
+                        if( multicast_address2 ) {
+                            us_rawnet_join_multicast(&self->ethernet_ports[self->ethernet_port_count], multicast_address2 );
+                        }
+                        // count it in our opened port count
+                        self->ethernet_port_count++;
+                        us_log_debug("Opened ethernet port %s", cur->ifa_name);
                     }
-                    // count it in our opened port count
-                    self->ethernet_port_count++;
-                    us_log_debug("Opened ethernet port %s", cur->ifa_name);
                 }
             }
 
