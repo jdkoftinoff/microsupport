@@ -28,7 +28,11 @@
 #include "us_world.h"
 #include "us_rawnet_multi.h"
 
-#if defined(__APPLE__)
+#if defined(__linux__)
+#include <linux/if_link.h>
+#endif
+
+#if defined(__APPLE__) || defined(__linux__)
 bool us_rawnet_multi_open(
         us_rawnet_multi_t *self,
         uint16_t ethertype,
@@ -42,30 +46,37 @@ bool us_rawnet_multi_open(
         // iterate through them
         while ( cur && self->ethernet_port_count<US_RAWNET_MULTI_MAX ) {
             // we are only interested in the network interfaces that provide link layer packets
+#if defined(__APPLE__)
             if( cur->ifa_addr
                 && cur->ifa_addr->sa_family == AF_LINK
-                && cur->ifa_data!=0
-                ) {
+                && cur->ifa_data!=0 ) {
                 struct if_data64 *d = (struct if_data64 *)cur->ifa_data;
                 if( d->ifi_type == IFT_ETHER && d->ifi_mtu==1500) {
-                    us_log_debug("Trying to open ethernet port %s", cur->ifa_name);
+#elif defined(__linux__)
+            if( cur->ifa_addr
+                && cur->ifa_addr->sa_family == AF_PACKET
+                && cur->ifa_name[0] == 'e'
+                && cur->ifa_name[1] == 't'
+                && cur->ifa_name[2] == 'h' ) {
+#endif
+                us_log_debug("Trying to open ethernet port %s", cur->ifa_name);
 
-                    // found one, try to open a rawnet socket
-                    if( us_rawnet_socket(
+                // found one, try to open a rawnet socket
+                if( us_rawnet_socket(
                             &self->ethernet_ports[ self->ethernet_port_count ],
                             ethertype,
                             cur->ifa_name,
                             multicast_address1 )>=0 ) {
-                        // success! join the secondary multicast address if necessary
-                        if( multicast_address2 ) {
-                            us_rawnet_join_multicast(&self->ethernet_ports[self->ethernet_port_count], multicast_address2 );
-                        }
-                        // count it in our opened port count
-                        self->ethernet_port_count++;
-                        us_log_debug("Opened ethernet port %s", cur->ifa_name);
+                    // success! join the secondary multicast address if necessary
+                    if( multicast_address2 ) {
+                        us_rawnet_join_multicast(&self->ethernet_ports[self->ethernet_port_count], multicast_address2 );
                     }
+                    // count it in our opened port count
+                    self->ethernet_port_count++;
+                    us_log_debug("Opened ethernet port %s", cur->ifa_name);
                 }
             }
+
             // find the next interface in the list
             cur=cur->ifa_next;
         }

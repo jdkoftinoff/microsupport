@@ -45,6 +45,11 @@ extern "C" {
 #include <net/if_types.h>
 #endif
 
+#if defined(__linux__)
+#include <ifaddrs.h>
+#endif
+
+
 #ifndef US_RAWNET_MULTI_MAX
 #define US_RAWNET_MULTI_MAX (16)
 #endif
