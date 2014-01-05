@@ -162,7 +162,11 @@ us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *inte
 
 void us_rawnet_close(us_rawnet_context_t *self) {
     if (self->m_fd >= 0) {
+#if defined(WIN32)
+        _close(self->m_fd);
+#else
         close(self->m_fd);
+#endif
         self->m_fd = -1;
     }
 
@@ -201,7 +205,7 @@ ssize_t us_rawnet_recv(
         struct pcap_pkthdr *header;
         int e = pcap_next_ex(m_pcap, &header, &data);
 
-        if (e == 1 && (header->caplen - 14) <= payload_buf_max_size) {
+        if (e == 1 && ((ssize_t)header->caplen - 14) <= payload_buf_max_size) {
             r = header->caplen - 14;
             memcpy(payload_buf, &data[14], r);
             if (src_mac) {

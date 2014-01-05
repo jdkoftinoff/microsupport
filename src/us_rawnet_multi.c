@@ -195,6 +195,7 @@ void us_rawnet_multi_route_update_or_add(
     int last_seen_interface,
     time_t last_seen_time )
 {
+    void *p;
     // create a routing table item to compare with
     us_rawnet_multi_mac_item_t lhs;
     lhs.last_seen_interface=0;
@@ -202,7 +203,7 @@ void us_rawnet_multi_route_update_or_add(
     lhs.last_changed_time=0;
     memcpy( lhs.mac, mac, 6 );
     // try find it
-    void *p = bsearch(
+    p = bsearch(
                 &lhs,
                 self->routing_table,
                 self->routing_table_count,
@@ -245,6 +246,7 @@ int us_rawnet_multi_route_find(
 
     // is the mac address unicast? multicast always goes out all ports.
     if( (mac[0]&1)==0 ) {
+        void *p;
         // yes, it is unicast. We will look it up.
         // create a routing table item to compare with
         us_rawnet_multi_mac_item_t lhs;
@@ -252,7 +254,7 @@ int us_rawnet_multi_route_find(
         lhs.last_seen_time=0;
         memcpy( lhs.mac, mac, 6 );
         // try find it
-        void *p = bsearch(
+        p = bsearch(
                     &lhs,
                     self->routing_table,
                     self->routing_table_count,
