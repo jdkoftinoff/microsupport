@@ -64,6 +64,16 @@ int gettimeofday(struct timeval *tv, struct timezone *tz) {
     return 0;
 }
 
+void us_gettimeofday(struct timeval *tv) {
+    int r;
+    r = gettimeofday(tv, 0);
+    if (r != 0) {
+        perror("gettimeofday");
+        abort();
+    }
+}
+
+
 bool us_platform_init_sockets(void) {
     WSADATA wsaData;
     WORD version;
