@@ -237,7 +237,10 @@ int us_rawnet_multi_open(
 
 
 void us_rawnet_multi_close(us_rawnet_multi_t *self) {
-
+    int i;
+    for( i=0; i<self->ethernet_port_count; ++i ) {
+        us_rawnet_close(&self->ethernet_ports[i]);
+    }
 }
 #endif
 
