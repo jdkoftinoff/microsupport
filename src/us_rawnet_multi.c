@@ -404,17 +404,16 @@ int us_rawnet_multi_route_cleanup(
             // is the item inactive or did the timeout expire?
             if( item->last_seen_interface==-1 ||
                 (cur_time - item->last_seen_time) > US_RAWNET_MULTI_MAC_ROUTE_EXPIRY_TIME_IN_SECONDS ) {
-                // yes, mark it inactive
-                item->last_seen_interface=-1;
-                // count how many we marked inactive
-                expired_items++;
                 us_log_debug(
                     "expiring routing for MAC: %02x:%02x:%02x:%02x:%02x:%02x if=%2d time=%u",
                     item->mac[0], item->mac[1], item->mac[2], item->mac[3], item->mac[4], item->mac[5],
                     item->last_seen_interface,
                     item->last_seen_time
                     );
-
+                // yes, mark it inactive
+                item->last_seen_interface=-1;
+                // count how many we marked inactive
+                expired_items++;
             }
         }
 
