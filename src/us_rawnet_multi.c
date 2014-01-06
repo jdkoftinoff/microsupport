@@ -28,6 +28,10 @@
 #include "us_world.h"
 #include "us_rawnet_multi.h"
 
+#if defined(WIN32)
+#include <iphlpapi.h>
+#endif
+
 #if defined(__linux__)
 #include <linux/if_link.h>
 #endif
@@ -113,14 +117,124 @@ void us_rawnet_multi_close(us_rawnet_multi_t *self) {
     }
 }
 #elif defined(WIN32)
-// TODO: windows version
+#define WORKING_BUFFER_SIZE (15000)
+#define MAX_TRIES 3
+
 int us_rawnet_multi_open(
         us_rawnet_multi_t *self,
         uint16_t ethertype,
         uint8_t const *multicast_address1,
         uint8_t const *multicast_address2) {
-    return 0;
+
+    /* Declare and initialize variables */
+
+    DWORD dwSize = 0;
+    DWORD dwRetVal = 0;
+
+    unsigned int i = 0;
+
+    // Set the flags to pass to GetAdaptersAddresses
+    ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
+
+    // default to unspecified address family (both)
+    ULONG family = AF_UNSPEC;
+
+    LPVOID lpMsgBuf = NULL;
+
+    PIP_ADAPTER_ADDRESSES pAddresses = NULL;
+    ULONG outBufLen = 0;
+    LONG Iterations = 0;
+
+    PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
+    PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
+    PIP_ADAPTER_ANYCAST_ADDRESS pAnycast = NULL;
+    PIP_ADAPTER_MULTICAST_ADDRESS pMulticast = NULL;
+    IP_ADAPTER_DNS_SERVER_ADDRESS *pDnServer = NULL;
+    IP_ADAPTER_PREFIX *pPrefix = NULL;
+
+    family = AF_INET;
+    
+    // Allocate a 15 KB buffer to start with.
+    outBufLen = WORKING_BUFFER_SIZE;
+
+    do {
+
+        pAddresses = (IP_ADAPTER_ADDRESSES *) HeapAlloc(GetProcessHeap(), 0, outBufLen);
+        if (pAddresses == NULL) {
+            printf
+                ("Memory allocation failed for IP_ADAPTER_ADDRESSES struct\n");
+            return 0;
+        }
+
+        dwRetVal =
+            GetAdaptersAddresses(family, flags, NULL, pAddresses, &outBufLen);
+
+        if (dwRetVal == ERROR_BUFFER_OVERFLOW) {
+            HeapFree(GetProcessHeap(), 0, pAddresses);
+            pAddresses = NULL;
+        } else {
+            break;
+        }
+
+        Iterations++;
+
+    } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (Iterations < MAX_TRIES));
+
+    if (dwRetVal == NO_ERROR) {
+        // If successful, output some information from the data we received
+        pCurrAddresses = pAddresses;
+        while (pCurrAddresses) {
+            
+            if( pCurrAddresses->PhysicalAddressLength == 6 ) {
+                char device_name[4096];
+                us_log_debug("Trying to open ethernet port %s", pCurrAddresses->FriendlyName);
+                // found one, try to open a rawnet socket
+                sprintf(device_name,"\\Device\\NPF_%s", pCurrAddresses->AdapterName);
+                if( us_rawnet_socket(
+                    &self->ethernet_ports[ self->ethernet_port_count ],
+                    ethertype,
+                    device_name,
+                    multicast_address1 )>=0 ) {
+                        // success! join the secondary multicast address if necessary
+                        if( multicast_address2 ) {
+                            us_rawnet_join_multicast(&self->ethernet_ports[self->ethernet_port_count], multicast_address2 );
+                        }
+                        // count it in our opened port count
+                        self->ethernet_port_count++;
+                        us_log_debug("Opened ethernet port %s", pCurrAddresses->FriendlyName);
+                }
+            }
+
+            pCurrAddresses = pCurrAddresses->Next;
+        }
+    } else {
+        us_log_error("Call to GetAdaptersAddresses failed with error: %d\n",
+               dwRetVal);
+        if (dwRetVal == ERROR_NO_DATA) {
+            us_log_error("No addresses were found for the requested parameters\n");
+        } else {
+            if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                    FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, 
+                    NULL, dwRetVal, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),   
+                    // Default language
+                    (LPTSTR) & lpMsgBuf, 0, NULL)) {
+                us_log_error("Error: %s", lpMsgBuf);
+                LocalFree(lpMsgBuf);
+                if (pAddresses) {
+                    HeapFree(GetProcessHeap(), 0, pAddresses);
+                }
+                return 0;
+            }
+        }
+    }
+
+    if (pAddresses) { 
+        HeapFree(GetProcessHeap(), 0, pAddresses);
+    }
+
+    return self->ethernet_port_count;
 }
+
 
 void us_rawnet_multi_close(us_rawnet_multi_t *self) {
 
@@ -130,7 +244,7 @@ void us_rawnet_multi_close(us_rawnet_multi_t *self) {
 void us_rawnet_multi_join_multicast(us_rawnet_multi_t *self, uint8_t const mac[6] ) {
     int i;
     for( i=0; i<self->ethernet_port_count; ++i ) {
-        us_rawnet_join_multicast(&self->ethernet_ports[i], mac);
+        us_rawnet_join_multicast(&self->ethernet_ports[i], (uint8_t *)mac);
     }
 }
 

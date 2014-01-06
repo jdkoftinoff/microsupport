@@ -32,6 +32,9 @@ volatile char us_platform_sigint_seen = 0;
 
 #ifdef _WIN32
 
+#pragma comment(lib, "IPHLPAPI.lib")
+#pragma comment(lib, "Ws2_32.lib")
+
 #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
 #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
 #else
