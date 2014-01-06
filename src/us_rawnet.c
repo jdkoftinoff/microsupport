@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_allocator.h"
 #include "us_rawnet.h"
 #include "us_logger.h"
+#include "us_net.h"
 
 #if defined(__linux__)
 #include <linux/if_packet.h>
@@ -156,6 +157,8 @@ us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *inte
             pcap_close(p);
             self->m_pcap = 0;
         }
+    } else {
+        us_net_set_socket_nonblocking(r);
     }
     return r;
 }
