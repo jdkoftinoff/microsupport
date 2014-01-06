@@ -255,6 +255,7 @@ bool us_rawnet_join_multicast(us_rawnet_context_t *self, const uint8_t multicast
 #include <linux/if_ether.h>
 /* #include <linux/if_arp.h> for ARPHRD_ETHER -- cant include this here because linux headers are broken.  */
 
+
 int
 us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *interface_name, const uint8_t join_multicast[6]) {
     int fd = socket(AF_PACKET, SOCK_RAW, htons(ethertype));
@@ -279,6 +280,7 @@ us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *inte
         if (join_multicast) {
             us_rawnet_join_multicast(self, join_multicast);
         }
+        us_net_set_socket_nonblocking(fd);
     }
     return fd;
 }
@@ -313,7 +315,7 @@ ssize_t us_rawnet_send(us_rawnet_context_t *self, const uint8_t dest_mac[6], con
     memcpy(data, payload, payload_len);
     do {
         sent_len = sendto(self->m_fd, buffer, payload_len + 14, 0, (struct sockaddr *)&socket_address, sizeof(socket_address));
-    } while (sent_len < 0 && (errno == EINTR || errno == EAGAIN));
+    } while (sent_len < 0 && (errno == EINTR ));
     if (sent_len >= 0) {
         r = sent_len - 14;
     }
@@ -329,7 +331,7 @@ ssize_t us_rawnet_recv(
 
     do {
         buf_len = recv(self->m_fd, buf, sizeof(buf), 0);
-    } while (buf_len < 0 && (errno == EINTR || errno == EAGAIN));
+    } while (buf_len < 0 && (errno == EINTR ));
 
     if (buf_len >= 0) {
         if (src_mac) {

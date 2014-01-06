@@ -399,7 +399,7 @@ int us_net_wait_readable(int timeout_ms, int fd_count, ...) {
     }
     do {
         n = select(max_fd + 1, &readable_set, 0, 0, timeout_ms < 0 ? 0 : &tv_timeout);
-    } while (n < 0 && (errno == EINTR || errno == EAGAIN));
+    } while (n < 0 && (errno == EINTR ));
 
     va_end(ap);
 
@@ -450,7 +450,7 @@ int us_net_wait_readable_list(struct timeval *cur_time,
     }
     do {
         n = select(max_fd + 1, &readable_set, 0, 0, &tv_timeout);
-    } while (n < 0 && (errno == EINTR || errno == EAGAIN));
+    } while (n < 0 && (errno == EINTR ));
 
     gettimeofday(cur_time, 0);
 
@@ -473,5 +473,40 @@ int us_net_wait_readable_list(struct timeval *cur_time,
 
     return r;
 }
+
+void us_net_set_socket_nonblocking(int fd) {
+#if defined(US_CONFIG_POSIX)
+	int val;
+	int flags;
+	val = fcntl(fd, F_GETFL, 0);
+	flags = O_NONBLOCK;
+	val |= flags;
+	fcntl(fd,F_SETFL,val);
+#elif defined(WIN32)
+    u_long mode=1;
+    if( ioctlsocket(fd,FIOBIO,&mode)!=NO_ERROR) {
+        us_log_error("fcntl F_SETFL O_NONBLOCK failed");
+    }
+#endif
+}
+
+void us_net_set_socket_blocking(int fd) { 
+#if defined(US_CONFIG_POSIX)
+	int val;
+	int flags;
+	val = fcntl(fd, F_GETFL, 0);
+	flags = O_NONBLOCK;
+	val &= ~flags;
+	fcntl(fd,F_SETFL,val);
+#elif defined(WIN32)
+    u_long mode=0;
+    if( ioctlsocket(fd,FIOBIO,&mode)!=NO_ERROR) {
+        us_log_error("fcntl F_SETFL O_NONBLOCK failed");
+    }
+#endif
+}
+
+
+
 
 #endif

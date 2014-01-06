@@ -102,6 +102,9 @@ int us_net_wait_readable_list(struct timeval *cur_time,
                               int fd_count,
                               const int *fds);
 
+void us_net_set_socket_nonblocking(int fd);
+void us_net_set_socket_blocking(int fd);
+
 #endif
 #ifdef __cplusplus
 }
