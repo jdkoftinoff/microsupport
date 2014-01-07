@@ -46,6 +46,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma comment(lib, "IPHLPAPI.lib")
 #endif
 
+static pcap_if_t *us_rawnet_alldevs = 0;
+static void us_rawnet_cleanup(void);
+
+static void us_rawnet_cleanup(void) {
+    if( us_rawnet_alldevs ) {
+        pcap_freealldevs(us_rawnet_alldevs);
+    }
+}
+
 int
 us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *interface_name, const uint8_t join_multicast[6]) {
     int r = -1;
@@ -65,14 +74,18 @@ us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *inte
         if (dl != DLT_EN10MB && dl != DLT_IEEE802_11) {
             us_log_error("Interface %s is not an Ethernet or wireless interface", interface_name);
         } else {
-            pcap_if_t *alldevs;
-            pcap_if_t *d;
-
+            pcap_if_t *d=0;
             self->m_interface_id = -1;
-            if (pcap_findalldevs(&alldevs, errbuf) != 0) {
-                us_log_error("pcap_findalldevs failed");
-            } else {
-                for (d = alldevs; d != NULL; d = d->next) {
+            if( us_rawnet_alldevs==0 ) {
+                if (pcap_findalldevs(&us_rawnet_alldevs, errbuf) != 0 || us_rawnet_alldevs==0) {
+                    us_log_error("pcap_findalldevs failed");
+                    pcap_close(p);
+                    return -1;
+                }
+                atexit(us_rawnet_cleanup);
+            }
+            {
+                for (d = us_rawnet_alldevs; d != NULL; d = d->next) {
                     self->m_interface_id++;
 
                     /* find the interface by name */
@@ -123,11 +136,13 @@ us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *inte
                                     /* newer mac os x */
                                     memcpy(self->m_my_mac, &mac[1], 6);
                                 }
+                                break;
                             }
 #elif defined(__linux__)
                             if (a->addr->sa_family == AF_PACKET) {
                                 struct sockaddr_ll *link = (struct sockaddr_ll *)a->addr;
                                 memcpy(self->m_my_mac, link->sll_addr, 6);
+                                break;
                             }
 #endif
                         }
