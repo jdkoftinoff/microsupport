@@ -28,6 +28,7 @@
 #include "us_world.h"
 #include "us_rawnet_multi.h"
 
+#if defined(US_ENABLE_RAW_ETHERNET)
 #if defined(WIN32)
 #include <iphlpapi.h>
 #endif
@@ -153,7 +154,7 @@ int us_rawnet_multi_open(
     IP_ADAPTER_PREFIX *pPrefix = NULL;
 
     family = AF_INET;
-    
+
     // Allocate a 15 KB buffer to start with.
     outBufLen = WORKING_BUFFER_SIZE;
 
@@ -184,7 +185,7 @@ int us_rawnet_multi_open(
         // If successful, output some information from the data we received
         pCurrAddresses = pAddresses;
         while (pCurrAddresses) {
-            
+
             if( pCurrAddresses->PhysicalAddressLength == 6 ) {
                 char device_name[4096];
                 us_log_debug("Trying to open ethernet port %s", pCurrAddresses->FriendlyName);
@@ -214,8 +215,8 @@ int us_rawnet_multi_open(
             us_log_error("No addresses were found for the requested parameters\n");
         } else {
             if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                    FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, 
-                    NULL, dwRetVal, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),   
+                    FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                    NULL, dwRetVal, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                     // Default language
                     (LPTSTR) & lpMsgBuf, 0, NULL)) {
                 us_log_error("Error: %s", lpMsgBuf);
@@ -228,7 +229,7 @@ int us_rawnet_multi_open(
         }
     }
 
-    if (pAddresses) { 
+    if (pAddresses) {
         HeapFree(GetProcessHeap(), 0, pAddresses);
     }
 
@@ -590,3 +591,6 @@ void us_rawnet_multi_rawnet_poll_incoming(
         }
     }
 }
+
+#endif
+

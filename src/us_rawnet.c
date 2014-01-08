@@ -44,6 +44,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if defined(_WIN32)
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
+#pragma comment(lib, "wpcap.lib")
+#pragma comment(lib, "Ws2_32.lib")
 #endif
 
 static pcap_if_t *us_rawnet_alldevs = 0;
