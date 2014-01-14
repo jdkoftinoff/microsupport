@@ -42,7 +42,7 @@
 extern "C" {
 #endif
 
-/** \addtogroup us_socket_collection
+/** \addtogroup us_socket_collection us_socket_collection_t Socket Collections
  */
 /*@{*/
 
@@ -56,18 +56,17 @@ extern "C" {
 /// of US_SOCKET_COLLECTION_MAX_SOCKETS at a time, along with
 /// a context pointer for each
 typedef struct us_socket_collection_s {
+    /// The current number of active sockets
+    int num_sockets;
+
+    /// The flag to trigger an immediate tick again without waiting
+    bool do_early_tick;
 
     /// The list of context pointters for each socket
     void *socket_context[ US_SOCKET_COLLECTION_MAX_SOCKETS ];
 
     /// The list of file descriptors for each socket
     int socket_fd[ US_SOCKET_COLLECTION_MAX_SOCKETS ];
-
-    /// The current number of active sockets
-    int num_sockets;
-
-    /// The flag to trigger an immediate tick again without waiting
-    bool do_early_tick;
 
     /// The function to call in order to send data to a socket in this collection
     void (*send_data)(
@@ -308,6 +307,61 @@ static inline int us_socket_collection_add_rawnet(
     return fd;
 }
 #endif
+
+/*@}*/
+
+
+/** \addtogroup us_socket_collection us_socket_collection_t Socket Collection Groups
+ */
+/*@{*/
+
+#ifndef US_SOCKET_COLLECTION_GROUP_MAX_COLLECTIONS
+# define US_SOCKET_COLLECTION_GROUP_MAX_COLLECTIONS (8)
+#endif
+
+/// The us_socket_collection_group manages a group of socket collections
+typedef struct us_socket_collection_group_s {
+    int num_collections;
+    us_socket_collection_t *collection[US_SOCKET_COLLECTION_GROUP_MAX_COLLECTIONS];
+} us_socket_collection_group_t;
+
+/// Initialize the socket collection group
+void us_socket_collection_group_init( us_socket_collection_group_t *self );
+
+/// Destroy the socket collection group and all of the socket collections within
+void us_socket_collection_group_destroy( us_socket_collection_group_t *self );
+
+/// Add a reference to the specified socket collection to the group.
+/// Returns false if the collection group is full
+bool us_socket_collection_group_add(
+    us_socket_collection_group_t *self,
+    us_socket_collection_t *c );
+
+/// Clean up all closed sockets in all socket collections
+void us_socket_collection_group_cleanup(
+    us_socket_collection_group_t *self );
+
+/// Fill the readable and writable fd_sets based on the requirements of all the sockets
+/// in all the socket collections.  Returns the largest file descriptor of them all
+int us_socket_collection_group_fill_sets(
+    us_socket_collection_group_t *self,
+    fd_set *readable,
+    fd_set *writable,
+    int largest_fd );
+
+/// Send a tick message to all of the socket collections for each socket
+/// Automatically calls cleanup() afterwards
+void us_socket_collection_group_tick(
+    us_socket_collection_group_t *self,
+    uint64_t current_time_in_ms );
+
+/// Handle any readable or writable sockets within the contained socket groups.
+/// Automatically calls cleanup() aftwards
+void us_socket_collection_group_handle_sets(
+    us_socket_collection_group_t *self,
+    fd_set const *readable,
+    fd_set const *writable,
+    uint64_t current_time_in_ms );
 
 /*@}*/
 
