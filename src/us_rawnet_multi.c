@@ -80,7 +80,7 @@ int us_rawnet_multi_open(
                 && cur->ifa_name[2] == 'h' ) {
                 {
 #endif
-                    us_log_debug("Trying to open ethernet port %s", cur->ifa_name);
+                    //us_log_debug("Trying to open ethernet port %s", cur->ifa_name);
 
                     // found one, try to open a rawnet socket
                     if( us_rawnet_socket(
@@ -94,7 +94,7 @@ int us_rawnet_multi_open(
                         }
                         // count it in our opened port count
                         self->ethernet_port_count++;
-                        us_log_debug("Opened ethernet port %s", cur->ifa_name);
+                        //us_log_debug("Opened ethernet port %s", cur->ifa_name);
                     }
                 }
             }
