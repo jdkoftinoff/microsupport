@@ -198,6 +198,12 @@ int us_net_create_multicast_rx_udp_socket(struct addrinfo *listenaddr,
             closesocket(s);
             return -1;
         }
+        if (setsockopt(s, IPPROTO_IPV6, IPV6_MULTICAST_IF, &if_index, sizeof(if_index)) < 0) {
+            us_log_error(
+                "socket: %d unable to IPV6_MULTICAST_IF for multicast via interface %s (%d)", s, interface_name, if_index);
+            closesocket(s);
+            return -1;
+        }
     } else {
         if (multicastgroup->ai_family == PF_INET) {
             struct in_addr in_local;
@@ -209,6 +215,11 @@ int us_net_create_multicast_rx_udp_socket(struct addrinfo *listenaddr,
             multicast_request.imr_interface.s_addr = in_local.s_addr;
             if (setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&multicast_request, sizeof(multicast_request)) != 0) {
                 us_log_error("setsockopt IP_ADD_MEMBERSHIP: %s", strerror(errno));
+                closesocket(s);
+                return -1;
+            }
+            if (setsockopt(s, IPPROTO_IP, IP_MULTICAST_IF, (char *)&in_local, sizeof(in_local)) != 0) {
+                us_log_error("setsockopt IP_MULTICAST_IF %s", strerror(errno));
                 closesocket(s);
                 return -1;
             }

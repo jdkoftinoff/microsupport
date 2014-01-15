@@ -309,7 +309,7 @@ int us_socket_collection_add_multicast_udp(
 
     local_addr = us_net_get_addrinfo(local_addr_name, local_port_name, SOCK_DGRAM, true );
     multicast_addr = us_net_get_addrinfo(multicast_addr_name, multicast_port_name, SOCK_DGRAM, false );
-    fd = us_net_create_multicast_tx_udp_socket(
+    fd = us_net_create_multicast_rx_udp_socket(
                               local_addr,
                               multicast_addr,
                               network_port_name);
