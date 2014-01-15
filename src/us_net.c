@@ -183,6 +183,13 @@ int us_net_create_multicast_rx_udp_socket(struct addrinfo *listenaddr,
             closesocket(s);
             return -1;
         }
+#if defined(SO_REUSEPORT)
+        if (setsockopt(s, SOL_SOCKET, SO_REUSEPORT, (const char *)&on, sizeof(on)) == -1) {
+            us_log_error("setsockopt SO_REUSEPORT: %s", strerror(errno));
+            closesocket(s);
+            return -1;
+        }
+#endif
     }
     if (bind(s, listenaddr->ai_addr, listenaddr->ai_addrlen) != 0) {
         closesocket(s);
