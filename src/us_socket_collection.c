@@ -318,6 +318,11 @@ int us_socket_collection_add_multicast_udp(
         if( !us_socket_collection_add_fd(self, fd, context ) ) {
             closesocket(fd);
             fd=-1;
+        } else {
+            us_log_debug(
+                "opened multicast_udp socket in collection: %d [%s]:%s [%s]:%s",
+                fd, local_addr_name, local_port_name,
+                multicast_addr_name, multicast_port_name );
         }
     }
     return fd;
