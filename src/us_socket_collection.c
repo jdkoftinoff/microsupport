@@ -318,11 +318,6 @@ int us_socket_collection_add_multicast_udp(
         if( !us_socket_collection_add_fd(self, fd, context ) ) {
             closesocket(fd);
             fd=-1;
-        } else {
-            us_log_debug(
-                "opened multicast_udp socket in collection: %d [%s]:%s [%s]:%s",
-                fd, local_addr_name, local_port_name,
-                multicast_addr_name, multicast_port_name );
         }
     }
     return fd;
@@ -440,6 +435,7 @@ static void tcp_client_close(
         struct us_socket_collection_s *self,
         int fd,
         void * context ) {
+    (void)context;
     closesocket(fd);
     us_socket_collection_remove_fd(self, fd);
 }
@@ -453,6 +449,10 @@ static ssize_t tcp_client_receive_data(
         size_t buflen,
         struct sockaddr *from_addr,
         socklen_t *from_addrlen) {
+    (void)self;
+    (void)context;
+    (void)from_addr;
+    (void)from_addrlen;
     return recv(fd, buf, buflen, 0 );
 }
 
@@ -465,6 +465,10 @@ static ssize_t tcp_client_send_data(
         uint8_t const *buf,
         size_t len ) {
     ssize_t r=0;
+    (void)self;
+    (void)context;
+    (void)to_addr;
+    (void)to_addrlen;
 
     r = send(fd, buf, len, 0);
     return r;
@@ -484,6 +488,7 @@ static void tcp_server_close(
         int fd,
         void * context ) {
     closesocket(fd);
+    (void)context;
     us_socket_collection_remove_fd(self, fd);
 }
 
@@ -493,6 +498,9 @@ static bool tcp_server_interested_in_reading(
         void * context,
         int fd
         ) {
+    (void)self;
+    (void)context;
+    (void)fd;
     return true;
 }
 
@@ -504,6 +512,13 @@ static ssize_t tcp_server_receive_data(
         size_t buflen,
         struct sockaddr *from_addr,
         socklen_t *from_addrlen) {
+    (void)self;
+    (void)context;
+    (void)fd;
+    (void)buf;
+    (void)buflen;
+    (void)from_addr;
+    (void)from_addrlen;
     return 0;
 }
 
@@ -535,6 +550,9 @@ static bool udp_unicast_interested_in_reading(
         void * context,
         int fd
         ) {
+    (void)self;
+    (void)context;
+    (void)fd;
     return true;
 }
 
@@ -546,6 +564,9 @@ static ssize_t udp_unicast_receive_data(
         size_t buflen,
         struct sockaddr *from_addr,
         socklen_t *from_addrlen) {
+    (void)self;
+    (void)context;
+
     return recvfrom(fd, buf, buflen, 0, from_addr, from_addrlen);
 }
 
@@ -559,6 +580,7 @@ static ssize_t udp_unicast_send_data(
         size_t len ) {
     struct addrinfo *destaddr = (struct addrinfo *)context;
     ssize_t r=0;
+    (void)self;
 
     if( to_addr==0 || to_addrlen==0 ) {
         if( destaddr ) {
@@ -603,6 +625,10 @@ static bool udp_multicast_interested_in_reading(
         void * context,
         int fd
         ) {
+    (void)self;
+    (void)context;
+    (void)fd;
+
     return true;
 }
 
@@ -614,6 +640,9 @@ static ssize_t udp_multicast_receive_data(
         size_t buflen,
         struct sockaddr *from_addr,
         socklen_t *from_addrlen) {
+    (void)self;
+    (void)context;
+
     return recvfrom(fd, buf, buflen, 0, from_addr, from_addrlen);
 }
 
@@ -627,7 +656,7 @@ static ssize_t udp_multicast_send_data(
         size_t len ) {
     struct addrinfo *destaddr = (struct addrinfo *)context;
     ssize_t r=0;
-
+    (void)self;
     if( to_addr==0 || to_addrlen==0 ) {
         if( destaddr ) {
             to_addr = destaddr->ai_addr;
@@ -669,6 +698,10 @@ static bool rawnet_interested_in_reading(
         void * context,
         int fd
         ) {
+    (void)self;
+    (void)context;
+    (void)fd;
+
     return true;
 }
 
@@ -685,7 +718,8 @@ static ssize_t rawnet_receive_data(
     uint8_t * buf = (uint8_t *)buf_;
     uint8_t srcmac[6];
     uint8_t destmac[6];
-
+    (void)self;
+    (void)fd;
     r=us_rawnet_recv(
         rawnet,
         srcmac,
@@ -715,6 +749,8 @@ static ssize_t rawnet_send_data(
     uint8_t * buf = (uint8_t *)buf_;
     uint8_t const * destaddr = 0;
 
+    (void)self;
+    (void)fd;
     if( to_addr !=0 && to_addrlen==sizeof(struct sockaddr) ) {
         if( to_addr->sa_family == AF_LINK ) {
             destaddr = (uint8_t *)to_addr->sa_data;
