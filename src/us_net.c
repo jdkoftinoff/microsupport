@@ -62,7 +62,7 @@ struct addrinfo *us_net_get_addrinfo(const char *ip_addr, const char *ip_port, i
     } while (e == EAI_AGAIN);
 
     if (e != 0) {
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(e));
+        us_log_error("getaddrinfo: %s", gai_strerror(e));
         ai = 0;
     }
 
