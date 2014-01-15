@@ -4,6 +4,7 @@
 #include <pwd.h>
 
 #if defined(US_CONFIG_POSIX)
+#include <unistd.h>
 
 static char us_daemon_pid_file_name[1024];
 static int us_daemon_pid_fd=-1;
@@ -50,9 +51,15 @@ void us_daemon_daemonize(
     const char * new_uid
 )
 {
-    /* remember the pid file name */
-    us_strncpy( us_daemon_pid_file_name, pid_file, 1024 );
-    if( strlen(home_dir)>0 )
+    (void)identity;
+    if( pid_file ) {
+        /* remember the pid file name */
+        us_strncpy( us_daemon_pid_file_name, pid_file, 1024 );
+    } else {
+        *us_daemon_pid_file_name = 0;
+    }
+
+    if( home_dir && strlen(home_dir)>0 )
     {
         mkdir(home_dir,0750);
         chdir(home_dir);
@@ -71,7 +78,7 @@ void us_daemon_daemonize(
             break;
         };
     }
-    if( strlen(new_uid)>0 )
+    if( new_uid && strlen(new_uid)>0 )
     {
         us_daemon_drop_root(new_uid);
     }
