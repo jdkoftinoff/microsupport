@@ -56,20 +56,31 @@ extern "C" {
 /// of US_SOCKET_COLLECTION_MAX_SOCKETS at a time, along with
 /// a context pointer for each
 typedef struct us_socket_collection_s {
+
     /// The current number of active sockets
     int num_sockets;
 
     /// The flag to trigger an immediate tick again without waiting
     bool do_early_tick;
 
+    /// The user defined flag
+    int user_flag;
+
+    /// The user defined context
+    void *user_context;
+
     /// The list of context pointters for each socket
     void *socket_context[ US_SOCKET_COLLECTION_MAX_SOCKETS ];
 
-    /// The list of file descriptors for each socket
-    int socket_fd[ US_SOCKET_COLLECTION_MAX_SOCKETS ];
+    /// The function that is called in order to close a socket in this
+    /// collection and free associated information
+    void (*close)(
+            struct us_socket_collection_s *self,
+            int fd,
+            void * context);
 
     /// The function to call in order to send data to a socket in this collection
-    void (*send_data)(
+    ssize_t (*send_data)(
             struct us_socket_collection_s *self,
             void * context,
             int fd,
@@ -130,15 +141,22 @@ typedef struct us_socket_collection_s {
             uint64_t current_time_in_milliseconds
             );
 
+    /// The list of file descriptors for each socket
+    int socket_fd[ US_SOCKET_COLLECTION_MAX_SOCKETS ];
+
+
 } us_socket_collection_t;
 
 /// Initialize a socket collection. It is up to the caller to set the
 /// send_data, receive_data, interested_in_reading, interested_in_writing,
-/// readable, writable, and tick function pointers
+/// readable, writable, and tick function pointers and user_context
 void us_socket_collection_init( us_socket_collection_t *self );
 
 /// Destroy a socket collection by calling closesocket on each active socket handler
 void us_socket_collection_destroy( us_socket_collection_t *self );
+
+/// Close a plain socket in this collection, with no additional info
+void us_socket_collection_close_plain_socket( us_socket_collection_t *self, int fd, void *socket_context );
 
 /// Cleanup any sockets scheduled to be removed
 void us_socket_collection_cleanup( us_socket_collection_t *self );
@@ -174,138 +192,44 @@ void us_socket_collection_handle_writable_set(
     uint64_t current_time_in_milliseconds );
 
 /// Create a TCP server socket, bound to a local address on a specific network port
-static inline int us_socket_collection_add_tcp_server(
+int us_socket_collection_add_tcp_server(
     us_socket_collection_t *self,
     const char *local_addr_name,
     const char *local_port_name,
-    void * context ) {
-    int fd;
-
-    fd = us_net_create_tcp_socket_host(local_addr_name, local_port_name, true );
-    if( fd!=-1 ) {
-        us_net_set_socket_nonblocking(fd);
-        if( !us_socket_collection_add_fd(self, fd, context ) ) {
-            closesocket(fd);
-            fd=-1;
-        }
-    }
-    return fd;
-}
+    void * context );
 
 /// Create a TCP client socket, trying to initiate a non-blocking connect to the specified remote address
-static inline int us_socket_collection_add_tcp_client(
+int us_socket_collection_add_tcp_client(
     us_socket_collection_t *self,
     const char *remote_addr_name,
     const char *remote_port_name,
-    void * context ) {
-    int fd=-1;
-
-    // make sure we have room before trying anything
-    if( self->num_sockets < US_SOCKET_COLLECTION_MAX_SOCKETS ) {
-        // get the address of the remote
-        struct addrinfo *remote_addr;
-        remote_addr = us_net_get_addrinfo(remote_addr_name, remote_port_name, SOCK_STREAM, false );
-
-        // create the tcp client socket for this kind of address
-        fd = us_net_create_tcp_socket(remote_addr, false);
-
-        // did it work?
-        if( fd!=-1 ) {
-            // yes, try initiate a connect
-            int con_result;
-
-            // we are doing a non blocking connect
-            us_net_set_socket_nonblocking(fd);
-
-            // try connect, ignore signals during this time
-            do {
-                con_result = connect(fd, remote_addr->ai_addr, remote_addr->ai_addrlen);
-            } while( con_result==-1 && errno == EINTR );
-
-            // If the connect succeeded or it is in progress, then track this fd
-            if( con_result==0 || (con_result==-1 && errno==EINPROGRESS) ) {
-                // Add the fd to the collection
-                if( !us_socket_collection_add_fd(self, fd, context ) ) {
-                    // unable to add the fd to the collection, close the socket
-                    closesocket(fd);
-                    fd=-1;
-                }
-            }
-        }
-    }
-    return fd;
-}
-
+    void * context );
 
 /// Create a UDP socket, bound to a local address on a specific network port
-static inline int us_socket_collection_add_udp(
+int us_socket_collection_add_udp(
     us_socket_collection_t *self,
     const char *local_addr_name,
     const char *local_port_name,
-    void * context ) {
-    struct addrinfo *local_addr;
-    int fd;
-
-    local_addr = us_net_get_addrinfo(local_addr_name, local_port_name, SOCK_DGRAM, true );
-    fd = us_net_create_udp_socket(local_addr, true );
-    if( fd!=-1 ) {
-        us_net_set_socket_nonblocking(fd);
-        if( !us_socket_collection_add_fd(self, fd, context ) ) {
-            closesocket(fd);
-            fd=-1;
-        }
-    }
-    return fd;
-}
-
+    void * context );
 
 /// Create a UDP socket, bound to a local address on a specific network port, that also joins
 /// the stated multicast address
-static inline int us_socket_collection_add_multicast_udp(
+int us_socket_collection_add_multicast_udp(
     us_socket_collection_t *self,
     const char *local_addr_name,
     const char *local_port_name,
     const char *multicast_addr_name,
     const char *multicast_port_name,
     const char *network_port_name,
-    void * context ) {
-    struct addrinfo *local_addr;
-    struct addrinfo *multicast_addr;
-    int fd;
-
-    local_addr = us_net_get_addrinfo(local_addr_name, local_port_name, SOCK_DGRAM, true );
-    multicast_addr = us_net_get_addrinfo(multicast_addr_name, multicast_port_name, SOCK_DGRAM, false );
-    fd = us_net_create_multicast_rx_udp_socket(
-                              local_addr,
-                              multicast_addr,
-                              network_port_name);
-    if( fd!=-1 ) {
-        us_net_set_socket_nonblocking(fd);
-        if( !us_socket_collection_add_fd(self, fd, context ) ) {
-            closesocket(fd);
-            fd=-1;
-        }
-    }
-    return fd;
-}
+    void * context );
 
 #if defined(US_ENABLE_RAW_ETHERNET)
 /// Given a rawnet context, add it to the collection and set the context pointer to the rawnet_context
 /// If unable to add it to the collection, it closes the rawnet socket and returns -1
-static inline int us_socket_collection_add_rawnet(
+int us_socket_collection_add_rawnet(
     us_socket_collection_t *self,
     us_rawnet_context_t *rawnet_context
-    ) {
-    int fd = rawnet_context->m_fd;
-
-    if( fd!=-1 ) {
-        if( !us_socket_collection_add_fd(self, fd, rawnet_context ) ) {
-            us_rawnet_close(rawnet_context);
-            fd=-1;
-        }
-    }
-    return fd;
-}
+    );
 #endif
 
 /*@}*/
@@ -330,6 +254,9 @@ void us_socket_collection_group_init( us_socket_collection_group_t *self );
 
 /// Destroy the socket collection group and all of the socket collections within
 void us_socket_collection_group_destroy( us_socket_collection_group_t *self );
+
+/// Count the total number of active sockets managed by all collections
+int us_socket_collection_group_count_sockets( us_socket_collection_group_t *self );
 
 /// Add a reference to the specified socket collection to the group.
 /// Returns false if the collection group is full
@@ -363,7 +290,30 @@ void us_socket_collection_group_handle_sets(
     fd_set const *writable,
     uint64_t current_time_in_ms );
 
+/// Scan through all socket collections and find out if an early tick is requested by any
+bool us_socket_collection_group_wants_early_tick( us_socket_collection_group_t *self );
+
 /*@}*/
+
+void us_socket_collection_init_tcp_server(
+    us_socket_collection_t *self );
+
+void us_socket_collection_init_tcp_client(
+    us_socket_collection_t *self );
+
+void us_socket_collection_init_udp_unicast(
+    us_socket_collection_t *self );
+
+void us_socket_collection_init_udp_multicast(
+    us_socket_collection_t *self );
+
+void us_socket_collection_init_rawnet(
+    us_socket_collection_t *self );
+
+bool us_socket_collections_group_select(
+    us_socket_collection_group_t *self,
+    uint64_t cur_time,
+    uint64_t max_sleep_time_in_ms );
 
 #ifdef __cplusplus
 }

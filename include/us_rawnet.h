@@ -44,7 +44,9 @@ typedef struct us_rawnet_context_s {
     int m_fd;
     uint16_t m_ethertype;
     uint8_t m_my_mac[6];
+    uint8_t m_default_dest_mac[6];
     int m_interface_id;
+    void *m_additional;
 #if defined(US_ENABLE_PCAP)
     void *m_pcap;
 #endif

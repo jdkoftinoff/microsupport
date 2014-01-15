@@ -64,6 +64,9 @@ us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *inte
     pcap_t *p;
 
     self->m_ethertype = ethertype;
+    if( join_multicast ) {
+        memcpy( self->m_default_dest_mac, join_multicast, 6 );
+    }
 
     p = pcap_open_live(interface_name, 65536, 1, 1, errbuf);
     self->m_pcap = (void *)p;
@@ -203,7 +206,11 @@ ssize_t us_rawnet_send(us_rawnet_context_t *self, const uint8_t dest_mac[6], con
     if (m_pcap) {
         uint8_t buffer[2048];
         uint8_t *data = buffer + 14;
-        memcpy((void *)buffer, (void *)dest_mac, 6);
+        if( dest_mac ) {
+            memcpy((void *)buffer, (void *)dest_mac, 6);
+        } else {
+            memcpy((void *)buffer, (void *)self->m_default_dest_mac, 6);
+        }
         memcpy((void *)(buffer + 6), (void *)self->m_my_mac, 6);
         buffer[12] = US_GET_BYTE_1(self->m_ethertype);
         buffer[13] = US_GET_BYTE_0(self->m_ethertype);
@@ -279,6 +286,11 @@ bool us_rawnet_join_multicast(us_rawnet_context_t *self, const uint8_t multicast
 int
 us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *interface_name, const uint8_t join_multicast[6]) {
     int fd = socket(AF_PACKET, SOCK_RAW, htons(ethertype));
+
+    if( join_multicast ) {
+        memcpy( self->m_default_dest_mac, join_multicast, 6 );
+    }
+
     if (fd >= 0 && interface_name) {
         int i;
         struct ifreq ifr;
@@ -329,7 +341,13 @@ ssize_t us_rawnet_send(us_rawnet_context_t *self, const uint8_t dest_mac[6], con
     memcpy(socket_address.sll_addr, self->m_my_mac, ETH_ALEN);
     socket_address.sll_addr[6] = 0x00;
     socket_address.sll_addr[7] = 0x00;
-    memcpy((void *)buffer, (void *)dest_mac, ETH_ALEN);
+
+    if( dest_mac ) {
+        memcpy((void *)buffer, (void *)dest_mac, ETH_ALEN);
+    } else {
+        memcpy((void *)buffer, (void *)self->m_default_dest_mac, 6);
+    }
+
     memcpy((void *)(buffer + ETH_ALEN), (void *)self->m_my_mac, ETH_ALEN);
     eh->h_proto = htons(self->m_ethertype);
     memcpy(data, payload, payload_len);
