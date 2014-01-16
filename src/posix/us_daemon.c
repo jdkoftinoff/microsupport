@@ -85,10 +85,9 @@ void us_daemon_daemonize(
     if( real_daemon )
     {
         int fd;
-        for( fd=0; fd<getdtablesize(); ++fd )
-        {
-            close(fd);
-        }
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDOUT_FILENO);
         fd = open("/dev/null", O_RDWR );
         dup2(fd, STDIN_FILENO);
         dup2(fd, STDOUT_FILENO);

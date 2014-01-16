@@ -33,7 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <syslog.h>
 
 bool us_logger_syslog_start(const char *ident) {
-    openlog(ident, 0, LOG_DAEMON);
+    openlog(ident, (LOG_CONS|LOG_PERROR|LOG_PID), LOG_DAEMON);
+    setlogmask(LOG_UPTO(LOG_DEBUG));
     us_log_error_proc = us_log_error_syslog;
     us_log_warn_proc = us_log_warn_syslog;
     us_log_info_proc = us_log_info_syslog;
@@ -55,7 +56,7 @@ void us_logger_syslog_finish() {
 void us_log_error_syslog(const char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
-    syslog(LOG_ERR, fmt, ap);
+    syslog(LOG_ALERT, fmt, ap);
     va_end(ap);
 }
 
