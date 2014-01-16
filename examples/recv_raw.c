@@ -6,6 +6,7 @@
 
 int main(int argc, const char **argv )
 {
+    int result = 255;
 #if US_ENABLE_RAW_ETHERNET==1
     uint8_t multicast_mac[6] = { 0x91, 0xe0, 0xf0, 0x01, 0x00, 0x00 };
     uint16_t ethertype=0x22f0;
@@ -27,6 +28,7 @@ int main(int argc, const char **argv )
         uint8_t pkt_dest_mac[6];
         uint8_t buf[2048];
         ssize_t buf_len=0;
+        result=0;
         do
         {
             buf_len=us_rawnet_recv(
@@ -57,5 +59,6 @@ int main(int argc, const char **argv )
         while( true );
     }
 #endif
+    return result;
 }
 

@@ -5,6 +5,7 @@
 
 int main( int argc, char **argv )
 {
+    int result=255;
 #if US_ENABLE_RAW_ETHERNET==1
 #if defined (WIN32)
 #define sleep(x) Sleep(x*1000)
@@ -24,6 +25,7 @@ int main( int argc, char **argv )
     {
         int i=0;
         int rep=0;
+        result=0;
         for( rep=0; rep<10; ++rep )
         {
             uint8_t buf[1500];
@@ -40,6 +42,6 @@ int main( int argc, char **argv )
         }
     }
 #endif
-
+    return result;
 }
 
