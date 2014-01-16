@@ -99,7 +99,7 @@ bool us_net_convert_sockaddr_to_string(
     char servbuf[512];
 
     *buf=0;
-    if( addr ) {
+    if( addr && addrlen>6) {
 #if US_ENABLE_RAW_ETHERNET
         if( addr->sa_family == US_AF_LINK ) {
             if( addr->sa_family == US_AF_LINK ) {
