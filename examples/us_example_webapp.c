@@ -230,6 +230,8 @@ int main ( int argc, char **argv )
 {
     bool r;
     us_malloc_allocator_t allocator;
+    (void)argc;
+    (void)argv;
     us_malloc_allocator_init( &allocator );
 #if US_ENABLE_LOGGING
     us_logger_stdio_start ( stdout, stderr );

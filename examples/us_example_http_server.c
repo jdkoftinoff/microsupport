@@ -102,6 +102,7 @@ void us_webapp_json_test_destroy(
 bool us_webapp_json_test_path_match(us_webapp_t *self_, const char *path )
 {
     static char p[] =  "/cgi-bin/json_test";
+    (void)self_;
     if ( strncmp( path, p, sizeof(p) )==0 )
         return true;
     else
@@ -119,6 +120,9 @@ int us_webapp_json_test_dispatch(
     bool r=true;
     char json[4096];
     static int cnt=1;
+    (void)self_;
+    (void)request_header;
+    (void)request_content;
     sprintf( json, "{ \"time\" : \%ld, \"access_count\" = %d }", (long)time(0), (int)cnt++ );
     r&=us_buffer_append_string( response_content, json );
     r&=us_http_response_header_init_ok( response_header, 200, "application/json", us_buffer_readable_count( response_content ),true);
@@ -217,6 +221,8 @@ int main ( int argc, char **argv )
 {
     bool r;
     us_malloc_allocator_t allocator;
+    (void)argc;
+    (void)argv;
     us_malloc_allocator_init( &allocator );
 #if US_ENABLE_LOGGING
     us_logger_stdio_start ( stdout, stderr );

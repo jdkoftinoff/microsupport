@@ -104,6 +104,8 @@ static void print_indention()
 
 static int print ( void* ctx, int type, const us_json_value_t* value )
 {
+    (void)ctx;
+
     switch ( type )
     {
     case US_JSON_T_ARRAY_BEGIN:

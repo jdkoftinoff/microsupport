@@ -130,6 +130,9 @@ bool us_tool_create_trie_f (
     bool r = false;
     func_name_list_t *func_names = 0;
     us_trie_dyn_t *trie =  us_tool_read_trie ( input_file, &func_names, 2048 );
+    (void)input_filename;
+    (void)output_c_filename;
+    (void)output_h_file;
     if ( trie && func_names )
     {
         int item;

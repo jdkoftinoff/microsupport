@@ -46,6 +46,8 @@ bool us_example_http_client ( int argc, const char **argv )
 {
     /* TODO: */
     bool r = false;
+    (void)argc;
+    (void)argv;
     return r;
 }
 

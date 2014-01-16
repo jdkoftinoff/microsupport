@@ -41,6 +41,9 @@ static bool do_test_osc_line(us_allocator_t *allocator, us_buffer_t *buffer, us_
 
 static bool do_test_osc_line(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer) {
     /* TODO: */
+    (void)allocator;
+    (void)buffer;
+    (void)printer;
     return false;
 }
 

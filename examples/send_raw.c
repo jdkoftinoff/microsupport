@@ -27,7 +27,7 @@ int main( int argc, char **argv )
         for( rep=0; rep<10; ++rep )
         {
             uint8_t buf[1500];
-            size_t buflen=sizeof(buf);
+            ssize_t buflen=sizeof(buf);
             for( i=0; i<buflen; ++i )
             {
                 buf[i] = (uint8_t)i&0xff;

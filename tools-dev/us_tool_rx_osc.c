@@ -58,6 +58,8 @@ bool us_tool_rx_osc_udp_packet_received(
     us_osc_msg_t *msg;
     us_osc_msg_bundle_t *bundle;
 
+    (void)outgoing_queue;
+
     buf = us_buffer_init( &buf_, (us_allocator_t *)0, (void *)packet->m_data, packet->m_max_length );
     buf->m_next_in = packet->m_length;
     r = us_osc_parse(self->m_base.m_allocator, &msg, &bundle, buf, us_buffer_readable_count(buf),0);

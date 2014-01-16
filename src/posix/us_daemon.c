@@ -107,7 +107,7 @@ void us_daemon_daemonize(
                 abort();
             }
             sprintf( tmpbuf, "%ld\n", (long)getpid() );
-            size_t len = strlen(tmpbuf);
+            ssize_t len = strlen(tmpbuf);
             if( write( us_daemon_pid_fd, tmpbuf, len)!=len )
             {
                 us_log_error( "Error writing pid file: %s", us_daemon_pid_file_name );

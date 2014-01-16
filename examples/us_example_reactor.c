@@ -311,6 +311,7 @@ bool us_example_reactor_handler_echo_connected (
     bool r = false;
     char host[NI_MAXHOST];
     char serv[NI_MAXSERV];
+    (void)self;
     if ( getnameinfo (
                 addr,
                 addrlen,
@@ -332,6 +333,7 @@ bool us_example_reactor_handler_echo_tick (
     us_reactor_handler_tcp_t *self
 )
 {
+    (void)self;
     return true;
 }
 
@@ -414,6 +416,8 @@ int main ( int argc, char **argv )
 {
     us_malloc_allocator_t allocator;
     bool r;
+    (void)argc;
+    (void)argv;
 #if US_ENABLE_LOGGING
     us_logger_stdio_start ( stdout, stderr );
 #endif
