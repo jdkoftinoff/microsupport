@@ -100,6 +100,7 @@ bool us_platform_init_sockets(void);
 extern volatile char us_platform_sigterm_seen;
 extern volatile char us_platform_sigint_seen;
 
+
 #ifdef __cplusplus
 }
 #endif

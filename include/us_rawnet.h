@@ -32,6 +32,15 @@
 #include "us_world.h"
 #endif
 
+
+#if US_ENABLE_RAW_ETHERNET==1
+# if defined(__APPLE__)
+#  include <net/if_dl.h>  
+# elif defined(__linux__)
+#  include <linux/if_packet.h>
+# endif
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -39,6 +48,64 @@ extern "C" {
 /** \addtogroup us_rawnet
  */
 /*@{*/
+
+#ifdef __linux__
+# define US_AF_LINK AF_PACKET
+# define US_PF_LINK PF_PACKET
+typedef struct sockaddr_ll us_sockaddr_dl;
+static inline void us_sockaddr_dl_set_mac( struct sockaddr *addr, uint8_t const mac[6] ) {
+	us_sockaddr_dl *dl = (us_sockaddr_dl *)addr;
+    dl->sll_family=US_AF_LINK; 
+	dl->sll_protocol=0; 
+	dl->sll_ifindex=0; 
+	dl->sll_hatype=0; 
+	dl->sll_pkttype=0; 
+	dl->sll_halen=6; 
+	memcpy( dl->sll_addr, mac, 6 ); 
+}
+static inline uint8_t const *us_sockaddr_dl_get_mac( struct sockaddr const *addr ) {
+	us_sockaddr_dl const *dl = (us_sockaddr_dl const *)addr;
+	return dl->sll_addr;
+}
+#elif defined(__APPLE__) 
+# define US_AF_LINK AF_LINK
+# define US_PF_LINK PF_LINK
+  typedef struct sockaddr_dl us_sockaddr_dl;
+static inline void us_sockaddr_dl_set_mac( struct sockaddr *addr, uint8_t const mac[6] ) {
+	us_sockaddr_dl *dl = (us_sockaddr_dl *)addr;
+	dl->sdl_len=sizeof(us_sockaddr_dl);
+	dl->sdl_family=US_AF_LINK;
+	dl->sdl_index=0; 
+	dl->sdl_type=0; 
+	dl->sdl_alen=6; 
+	dl->sdl_nlen=0; 
+	dl->sdl_slen=0; 
+	memcpy( dl->sdl_addr + dl->sdl_nlen, mac, 6 ); 
+}
+static inline uint8_t const *us_sockaddr_dl_get_mac( struct sockaddr const *addr ) {
+	us_sockaddr_dl const *dl = (us_sockaddr_dl const *)addr;
+	return dl->sdl_addr + dl->sdl_nlen;
+}
+#else
+# define US_AF_LINK AF_LINK
+# define US_PF_LINK PF_LINK
+  typedef struct sockaddr_dl us_sockaddr_dl;
+static inline void us_sockaddr_dl_set_mac( struct sockaddr *addr, uint8_t const mac[6] ) {
+	us_sockaddr_dl *dl = (us_sockaddr_dl *)addr;
+	dl->sdl_len=sizeof(us_sockaddr_dl);
+	dl->sdl_family=US_AF_LINK;
+	dl->sdl_index=0; 
+	dl->sdl_type=0; 
+	dl->sdl_alen=6; 
+	dl->sdl_nlen=0; 
+	dl->sdl_slen=0; 
+	memcpy( dl->sdl_addr + dl->sdl_nlen, mac, 6 ); 
+}
+static inline uint8_t const *us_sockaddr_dl_get_mac( struct sockaddr const *addr ) {
+	us_sockaddr_dl const *dl = (us_sockaddr_dl const *)addr;
+	return dl->sdl_addr + dl->sdl_nlen;
+}
+#endif
 
 typedef struct us_rawnet_context_s {
     int m_fd;

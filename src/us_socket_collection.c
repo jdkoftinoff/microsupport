@@ -727,11 +727,9 @@ static ssize_t rawnet_receive_data(
         buf,
         buflen);
 
-    if (r>0 && from_addr!=0 && *from_addrlen>=sizeof(struct sockaddr) ) {
-        memcpy(from_addr->sa_data,srcmac,6);
-        from_addr->sa_family = AF_LINK;
-        from_addr->sa_len = sizeof(struct sockaddr);
-        *from_addrlen = 6;
+    if (r>0 && from_addr!=0 && *from_addrlen>=sizeof(us_sockaddr_dl) ) {
+		us_sockaddr_dl_set_mac(from_addr,srcmac);
+        *from_addrlen = sizeof(us_sockaddr_dl);
     }
 
     return r;
@@ -751,9 +749,9 @@ static ssize_t rawnet_send_data(
 
     (void)self;
     (void)fd;
-    if( to_addr !=0 && to_addrlen==sizeof(struct sockaddr) ) {
-        if( to_addr->sa_family == AF_LINK ) {
-            destaddr = (uint8_t *)to_addr->sa_data;
+    if( to_addr !=0 && to_addrlen>=sizeof(us_sockaddr_dl) ) {
+        if( to_addr->sa_family == US_AF_LINK ) {
+			destaddr = us_sockaddr_dl_get_mac( to_addr );
         }
     }
 
