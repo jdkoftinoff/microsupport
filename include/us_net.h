@@ -48,6 +48,11 @@ struct addrinfo *us_net_get_addrinfo(const char *ip_addr, const char *ip_port, i
 
 bool us_net_get_nameinfo(struct addrinfo *ai, char *hostname_buf, int hostname_buf_len, char *serv_buf, int serv_buf_len);
 
+bool us_net_convert_sockaddr_to_string(
+    struct sockaddr const *addr,
+    char *buf,
+    size_t buflen );
+
 int us_net_create_udp_socket(const struct addrinfo *ai, bool do_bind);
 
 int us_net_create_udp_socket_host(const char *localaddr_host, const char *localaddr_port, bool do_bind);

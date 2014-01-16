@@ -29,6 +29,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if US_ENABLE_RAW_ETHERNET
+#include "us_rawnet.h"
+#endif
+
 #if US_ENABLE_BSD_SOCKETS
 
 struct addrinfo *us_net_get_addrinfo(const char *ip_addr, const char *ip_port, int type, bool for_server) {
@@ -82,6 +86,54 @@ bool us_net_get_nameinfo(struct addrinfo *ai, char *hostname_buf, int hostname_b
     }
     return r;
 }
+
+
+bool us_net_convert_sockaddr_to_string(
+    struct sockaddr const *addr,
+    char *buf,
+    size_t buflen ) {
+
+    bool r=false;
+    char hostbuf[512];
+    char servbuf[512];
+
+    *buf=0;
+    if( addr ) {
+#if US_ENABLE_RAW_ETHERNET
+        if( addr->sa_family == AF_LINK ) {
+            if( addr->sa_family == AF_LINK ) {
+                uint8_t mac[6];
+                memcpy(mac,us_sockaddr_dl_get_mac(addr),6);
+                snprintf(buf,buflen-1,"[%02x:%02x:%02x:%02x:%02x:%02x]",
+                    mac[0],
+                    mac[1],
+                    mac[2],
+                    mac[3],
+                    mac[4],
+                    mac[5]);
+                r=true;
+            }
+        }
+        else
+#endif
+        {
+            int e = getnameinfo(
+                    addr,
+                    addr->sa_len,
+                    hostbuf, sizeof(hostbuf),
+                    servbuf, sizeof(servbuf), NI_NUMERICHOST | NI_NUMERICSERV | NI_DGRAM );
+
+            if( e==0 ) {
+                snprintf(buf, buflen-1, "[%s]:%s", hostbuf,servbuf );
+                r=true;
+            } else {
+                us_log_error( "getnameinfo sa_family %d error: %s", addr->sa_family, gai_strerror(e) );
+            }
+        }
+    }
+    return r;
+}
+
 
 int us_net_create_udp_socket(const struct addrinfo *ai, bool do_bind) {
     int r = -1;

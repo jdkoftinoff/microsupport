@@ -149,7 +149,7 @@ void us_socket_collection_handle_readable_set(
         if( fd!=-1 ) {
             if( FD_ISSET(fd,readable_set)) {
                 uint8_t buf[4096];
-                struct sockaddr fromaddr;
+                struct sockaddr_storage fromaddr;
                 socklen_t fromaddrlen = sizeof(fromaddr);
                 ssize_t recvlen;
 
