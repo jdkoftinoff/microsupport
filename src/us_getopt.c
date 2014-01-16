@@ -672,12 +672,17 @@ bool us_getopt_parse_args(us_getopt_t *self, const char **argv) {
     bool r = true;
     while (*argv) {
         if ((*argv)[0] == '-' && (*argv)[1] == '-') {
+            bool p;
             const char *pos_equals = strchr(*argv, '=');
             const char *pos_name = (*argv) + 2;
             int name_len = (pos_equals != 0 ? (int32_t)(pos_equals - pos_name) : (int32_t)strlen(pos_name));
             const char *pos_value = (pos_equals ? pos_equals + 1 : 0);
             int value_len = (pos_value ? (int32_t)strlen(pos_value) : 0);
-            r &= us_getopt_parse_one(self, pos_name, name_len, pos_value, value_len);
+            p = us_getopt_parse_one(self, pos_name, name_len, pos_value, value_len);
+            if(!p) {
+                us_log_error("Unable to parse option: %s", *argv );
+            }
+            r &= p;
         } else {
             if (!us_getopt_parse_file(self, *argv)) {
                 us_log_error("Unable to parse options file: %s", *argv);
