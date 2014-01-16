@@ -126,8 +126,7 @@ us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *inte
                         alladdrs = d->addresses;
                         for (a = alladdrs; a != NULL; a = a->next) {
                             if( a->addr->sa_family == US_AF_LINK ) {
-                                uint8_t mac[6];
-                                memcpy(mac,us_sockaddr_dl_get_mac(a->addr),6);
+                                memcpy(self->m_my_mac,us_sockaddr_dl_get_mac(a->addr),6);
                             }
                         }
 #endif
