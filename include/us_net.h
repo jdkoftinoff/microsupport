@@ -50,6 +50,7 @@ bool us_net_get_nameinfo(struct addrinfo *ai, char *hostname_buf, int hostname_b
 
 bool us_net_convert_sockaddr_to_string(
     struct sockaddr const *addr,
+	socklen_t addrlen,
     char *buf,
     size_t buflen );
 

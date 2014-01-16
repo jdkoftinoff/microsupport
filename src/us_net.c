@@ -90,6 +90,7 @@ bool us_net_get_nameinfo(struct addrinfo *ai, char *hostname_buf, int hostname_b
 
 bool us_net_convert_sockaddr_to_string(
     struct sockaddr const *addr,
+    socklen_t addrlen,
     char *buf,
     size_t buflen ) {
 
@@ -100,8 +101,8 @@ bool us_net_convert_sockaddr_to_string(
     *buf=0;
     if( addr ) {
 #if US_ENABLE_RAW_ETHERNET
-        if( addr->sa_family == AF_LINK ) {
-            if( addr->sa_family == AF_LINK ) {
+        if( addr->sa_family == US_AF_LINK ) {
+            if( addr->sa_family == US_AF_LINK ) {
                 uint8_t mac[6];
                 memcpy(mac,us_sockaddr_dl_get_mac(addr),6);
                 snprintf(buf,buflen-1,"[%02x:%02x:%02x:%02x:%02x:%02x]",
@@ -119,7 +120,7 @@ bool us_net_convert_sockaddr_to_string(
         {
             int e = getnameinfo(
                     addr,
-                    addr->sa_len,
+                    addrlen,
                     hostbuf, sizeof(hostbuf),
                     servbuf, sizeof(servbuf), NI_NUMERICHOST | NI_NUMERICSERV | NI_DGRAM );
 
