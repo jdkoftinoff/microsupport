@@ -125,31 +125,10 @@ us_rawnet_socket(us_rawnet_context_t *self, uint16_t ethertype, const char *inte
                         pcap_addr_t *a;
                         alladdrs = d->addresses;
                         for (a = alladdrs; a != NULL; a = a->next) {
-#if defined(__APPLE__)
-                            /* Apple AF_LINK format depends on osx version */
-
-                            if (a->addr->sa_family == AF_LINK && a->addr->sa_data != NULL) {
-                                struct sockaddr_dl *link = (struct sockaddr_dl *)a->addr->sa_data;
-
-                                uint8_t mac[link->sdl_alen];
-                                memcpy(mac, LLADDR(link), link->sdl_alen);
-
-                                if (link->sdl_alen == 6) {
-                                    /* older mac os x */
-                                    memcpy(self->m_my_mac, &mac[0], 6);
-                                } else if (link->sdl_alen > 6) {
-                                    /* newer mac os x */
-                                    memcpy(self->m_my_mac, &mac[1], 6);
-                                }
-                                break;
+                            if( a->addr->sa_family == US_AF_LINK ) {
+                                uint8_t mac[6];
+                                memcpy(mac,us_sockaddr_dl_get_mac(a->addr),6);
                             }
-#elif defined(__linux__)
-                            if (a->addr->sa_family == AF_PACKET) {
-                                struct sockaddr_ll *link = (struct sockaddr_ll *)a->addr;
-                                memcpy(self->m_my_mac, link->sll_addr, 6);
-                                break;
-                            }
-#endif
                         }
 #endif
                         break;
