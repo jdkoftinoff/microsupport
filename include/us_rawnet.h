@@ -80,11 +80,11 @@ static inline void us_sockaddr_dl_set_mac( struct sockaddr *addr, uint8_t const 
 	dl->sdl_alen=6; 
 	dl->sdl_nlen=0; 
 	dl->sdl_slen=0; 
-	memcpy( dl->sdl_addr + dl->sdl_nlen, mac, 6 ); 
+	memcpy( dl->sdl_data + dl->sdl_nlen, mac, 6 ); 
 }
 static inline uint8_t const *us_sockaddr_dl_get_mac( struct sockaddr const *addr ) {
 	us_sockaddr_dl const *dl = (us_sockaddr_dl const *)addr;
-	return dl->sdl_addr + dl->sdl_nlen;
+	return (uint8_t const *)dl->sdl_data + dl->sdl_nlen;
 }
 #else
 # define US_AF_LINK AF_LINK
@@ -99,11 +99,11 @@ static inline void us_sockaddr_dl_set_mac( struct sockaddr *addr, uint8_t const 
 	dl->sdl_alen=6; 
 	dl->sdl_nlen=0; 
 	dl->sdl_slen=0; 
-	memcpy( dl->sdl_addr + dl->sdl_nlen, mac, 6 ); 
+	memcpy( dl->sdl_data + dl->sdl_nlen, mac, 6 ); 
 }
 static inline uint8_t const *us_sockaddr_dl_get_mac( struct sockaddr const *addr ) {
 	us_sockaddr_dl const *dl = (us_sockaddr_dl const *)addr;
-	return dl->sdl_addr + dl->sdl_nlen;
+	return (uint8_t const *)dl->sdl_data + dl->sdl_nlen;
 }
 #endif
 

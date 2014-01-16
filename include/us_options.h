@@ -120,7 +120,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef US_ENABLE_SYSLOG
-#define US_ENABLE_SYSLOG (0)
+# if defined(US_CONFIG_POSIX)
+#  define US_ENABLE_SYSLOG (1)
+# else
+#  define US_ENABLE_SYSLOG (0)
+# endif
+#endif
+
+#ifndef US_ENABLE_DAEMON
+# if defined(US_CONFIG_POSIX)
+#  define US_ENABLE_DAEMON (1)
+# else
+#  define US_ENABLE_DAEMON (0)
+# endif
 #endif
 
 #ifndef US_ENABLE_STDIO
