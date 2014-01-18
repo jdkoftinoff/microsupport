@@ -72,6 +72,12 @@ typedef struct us_socket_collection_s {
     /// The list of context pointters for each socket
     void *socket_context[ US_SOCKET_COLLECTION_MAX_SOCKETS ];
 
+
+    /// The function to call to destroy this collection
+    void (*destroy)(
+            struct us_socket_collection_s *self);
+
+
     /// The function that is called in order to close a socket in this
     /// collection and free associated information
     void (*close)(
@@ -94,6 +100,7 @@ typedef struct us_socket_collection_s {
             struct us_socket_collection_s *self,
             void * context,
             int fd,
+            uint64_t current_time_in_milliseconds,
             void *buf,
             size_t buflen,
             struct sockaddr *from_addr,
@@ -295,21 +302,38 @@ bool us_socket_collection_group_wants_early_tick( us_socket_collection_group_t *
 
 /*@}*/
 
+/// Initialize a socket collection used for managing tcp server sockets
 void us_socket_collection_init_tcp_server(
     us_socket_collection_t *self );
 
+/// Initialize a socket collection used for managing tcp client sockets
 void us_socket_collection_init_tcp_client(
     us_socket_collection_t *self );
 
+/// Initialize a socket collection used for managing udp unicast sockets
 void us_socket_collection_init_udp_unicast(
     us_socket_collection_t *self );
 
+/// Initialize a socket collection used for managing udp multicast sockets
 void us_socket_collection_init_udp_multicast(
     us_socket_collection_t *self );
 
+/// Initialize a socket collection used for managing rawnet sockets
 void us_socket_collection_init_rawnet(
     us_socket_collection_t *self );
 
+/// A subclass of socket_collection for managing a rawnet_multi object. Adds the rawnet_multi pointer.
+typedef struct us_socket_collection_rawnet_multi_s {
+    us_socket_collection_t base;
+    us_rawnet_multi_t *rawnet_multi;
+} us_socket_collection_rawnet_multi_t;
+
+/// Initialize a socket collection of rawnet sockets based on the rawnet_multi object
+void us_socket_collection_init_rawnet_multi(
+        us_socket_collection_rawnet_multi_t *self,
+        us_rawnet_multi_t *rawnet_multi );
+
+/// Scan through all active sockets in all groups and call select()
 bool us_socket_collections_group_select(
     us_socket_collection_group_t *self,
     uint64_t cur_time,

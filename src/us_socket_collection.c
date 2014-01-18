@@ -39,6 +39,7 @@ void us_socket_collection_init( us_socket_collection_t *self ) {
     self->writable = 0;
     self->tick = 0;
     self->close = us_socket_collection_close_plain_socket;
+    self->destroy = us_socket_collection_destroy;
 }
 
 void us_socket_collection_destroy( us_socket_collection_t *self ) {
@@ -157,6 +158,7 @@ void us_socket_collection_handle_readable_set(
                     self,
                     self->socket_context[i],
                     fd,
+                    current_time_in_milliseconds,
                     buf,
                     sizeof(buf),
                     (struct sockaddr *)&fromaddr,
@@ -348,7 +350,8 @@ void us_socket_collection_group_init( us_socket_collection_group_t *self ) {
 void us_socket_collection_group_destroy( us_socket_collection_group_t *self ) {
     int i;
     for( i=0; i<self->num_collections; ++i ) {
-        us_socket_collection_destroy(self->collection[i]);
+        us_socket_collection_t *c = self->collection[i];
+        c->destroy(c);
     }
 }
 
@@ -445,6 +448,7 @@ static ssize_t tcp_client_receive_data(
         struct us_socket_collection_s *self,
         void * context,
         int fd,
+        uint64_t current_time_in_milliseconds,
         void *buf,
         size_t buflen,
         struct sockaddr *from_addr,
@@ -508,6 +512,7 @@ static ssize_t tcp_server_receive_data(
         struct us_socket_collection_s *self,
         void * context,
         int fd,
+        uint64_t current_time_in_milliseconds,
         void *buf,
         size_t buflen,
         struct sockaddr *from_addr,
@@ -560,6 +565,7 @@ static ssize_t udp_unicast_receive_data(
         struct us_socket_collection_s *self,
         void * context,
         int fd,
+        uint64_t current_time_in_milliseconds,
         void *buf,
         size_t buflen,
         struct sockaddr *from_addr,
@@ -636,6 +642,7 @@ static ssize_t udp_multicast_receive_data(
         struct us_socket_collection_s *self,
         void * context,
         int fd,
+        uint64_t current_time_in_milliseconds,
         void *buf,
         size_t buflen,
         struct sockaddr *from_addr,
@@ -709,6 +716,7 @@ static ssize_t rawnet_receive_data(
         struct us_socket_collection_s *self,
         void * context,
         int fd,
+        uint64_t current_time_in_milliseconds,
         void *buf_,
         size_t buflen,
         struct sockaddr *from_addr,
@@ -728,7 +736,7 @@ static ssize_t rawnet_receive_data(
         buflen);
 
     if (r>0 && from_addr!=0 && *from_addrlen>=sizeof(us_sockaddr_dl) ) {
-		us_sockaddr_dl_set_mac(from_addr,srcmac);
+        us_sockaddr_dl_set_mac(from_addr,srcmac);
         *from_addrlen = sizeof(us_sockaddr_dl);
     }
 
@@ -751,7 +759,7 @@ static ssize_t rawnet_send_data(
     (void)fd;
     if( to_addr !=0 && to_addrlen>=sizeof(us_sockaddr_dl) ) {
         if( to_addr->sa_family == US_AF_LINK ) {
-			destaddr = us_sockaddr_dl_get_mac( to_addr );
+            destaddr = us_sockaddr_dl_get_mac( to_addr );
         }
     }
 
@@ -771,6 +779,132 @@ void us_socket_collection_init_rawnet(
     self->send_data = rawnet_send_data;
     self->close = rawnet_close;
 }
+
+
+static void rawnet_multi_close(
+        struct us_socket_collection_s *self,
+        int fd,
+        void * context ) {
+    us_rawnet_context_t *rawnet_context = (us_rawnet_context_t *)context;
+    us_rawnet_close(rawnet_context);
+    us_socket_collection_remove_fd(self, fd);
+}
+
+static bool rawnet_multi_interested_in_reading(
+        struct us_socket_collection_s *self,
+        void * context,
+        int fd
+        ) {
+    (void)self;
+    (void)context;
+    (void)fd;
+
+    return true;
+}
+
+static ssize_t rawnet_multi_receive_data(
+        struct us_socket_collection_s *self,
+        void * context,
+        int fd,
+        uint64_t current_time_in_milliseconds,
+        void *buf_,
+        size_t buflen,
+        struct sockaddr *from_addr,
+        socklen_t *from_addrlen) {
+    ssize_t r=0;
+    us_socket_collection_rawnet_multi_t *self_multi = (us_socket_collection_rawnet_multi_t *)self;
+    us_rawnet_multi_t *rawnet_multi = self_multi->rawnet_multi;
+    us_rawnet_context_t *rawnet = (us_rawnet_context_t *)context;
+    uint8_t * buf = (uint8_t *)buf_;
+    uint8_t srcmac[6];
+    uint8_t destmac[6];
+    (void)self;
+    (void)fd;
+    // receive the raw frame
+    r=us_rawnet_recv(
+        rawnet,
+        srcmac,
+        destmac,
+        buf,
+        buflen);
+
+    // if we were asked to remember where it came from, then do so
+    if (r>0 && from_addr!=0 && *from_addrlen>=sizeof(us_sockaddr_dl) ) {
+        us_sockaddr_dl_set_mac(from_addr,srcmac);
+        *from_addrlen = sizeof(us_sockaddr_dl);
+    }
+
+    // update the rawnet_multi router if we recieved a frame
+    if( r>0 ) {
+        us_rawnet_multi_route_update_or_add(
+            rawnet_multi,
+            srcmac,
+            rawnet->m_interface_id,
+            current_time_in_milliseconds);
+    }
+
+    return r;
+}
+
+static ssize_t rawnet_multi_send_data(
+        struct us_socket_collection_s *self,
+        void * context,
+        int fd,
+        struct sockaddr const *to_addr,
+        socklen_t to_addrlen,
+        uint8_t const *buf_,
+        size_t len ) {
+
+    us_socket_collection_rawnet_multi_t *self_multi = (us_socket_collection_rawnet_multi_t *)self;
+    us_rawnet_context_t *rawnet = (us_rawnet_context_t *)context;
+    uint8_t * buf = (uint8_t *)buf_;
+    uint8_t const * destaddr = 0;
+    int destination_if=-1;
+    ssize_t r=-1;
+
+    (void)self;
+    (void)fd;
+
+    // if we were asked to send this to a specific address, then get the address
+    if( to_addr !=0 && to_addrlen>=sizeof(us_sockaddr_dl) ) {
+        if( to_addr->sa_family == US_AF_LINK ) {
+            destaddr = us_sockaddr_dl_get_mac( to_addr );
+        }
+        // look up the interface to use
+        destination_if = us_rawnet_multi_route_find(self_multi->rawnet_multi,destaddr);
+    }
+
+    // only actually send it if it is either the correct interface to use or the message is multicast
+    if( destination_if==-1 || destination_if==rawnet->m_interface_id) {
+        r=us_rawnet_send(
+                    rawnet,
+                    destaddr,
+                    buf,
+                    len);
+    }
+    return r;
+}
+
+void us_socket_collection_init_rawnet_multi(
+        us_socket_collection_rawnet_multi_t *self,
+        us_rawnet_multi_t *rawnet_multi ) {
+
+    int i;
+    us_socket_collection_init(&self->base);
+    self->rawnet_multi = rawnet_multi;
+    self->base.interested_in_reading = rawnet_multi_interested_in_reading;
+    self->base.receive_data = rawnet_multi_receive_data;
+    self->base.send_data = rawnet_multi_send_data;
+    self->base.close = rawnet_multi_close;
+
+    for( i=0; i<rawnet_multi->ethernet_port_count; ++i ) {
+        us_rawnet_context_t *c = &rawnet_multi->ethernet_ports[i];
+        us_socket_collection_add_rawnet(
+            &self->base,
+            c);
+    }
+}
+
 #endif
 
 
