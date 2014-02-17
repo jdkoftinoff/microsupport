@@ -86,6 +86,8 @@ static inline uint8_t const *us_sockaddr_dl_get_mac( struct sockaddr const *addr
 	us_sockaddr_dl const *dl = (us_sockaddr_dl const *)addr;
 	return (uint8_t const *)dl->sdl_data + dl->sdl_nlen;
 }
+#elif defined(WIN32)
+//#warning TODO: AF_LINK for Win32
 #else
 # define US_AF_LINK AF_LINK
 # define US_PF_LINK PF_LINK

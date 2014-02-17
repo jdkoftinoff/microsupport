@@ -87,9 +87,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma warning(disable : 4267)
 #endif
 
-#if defined(US_CONFIG_WIN32)
+#if defined(US_CONFIG_WIN32) 
+
+#if _MSC_VER < 1800
+#if !defined(__cplusplus)
 #ifndef inline
 #define inline __inline
+#endif
+#endif
+
 #endif
 
 #include <winsock2.h>

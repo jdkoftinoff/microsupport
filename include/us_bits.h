@@ -319,6 +319,10 @@ extern "C" {
         us_bits_set_octlet_bit(base, octet_offset_of_octlet, bit, new_field_value ? true : false);                             \
     }
 
+#include "us_msstdint.h"
+
+extern uint8_t value;
+
 static inline uint8_t us_bits_get_octet(const void *base, uint16_t offset) {
     const uint8_t *data = (const uint8_t *)base;
     return data[offset];

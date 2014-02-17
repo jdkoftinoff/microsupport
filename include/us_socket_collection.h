@@ -322,6 +322,8 @@ void us_socket_collection_init_udp_multicast(
 void us_socket_collection_init_rawnet(
     us_socket_collection_t *self );
 
+#if defined(US_ENABLE_RAW_ETHERNET)
+
 /// A subclass of socket_collection for managing a rawnet_multi object. Adds the rawnet_multi pointer.
 typedef struct us_socket_collection_rawnet_multi_s {
     us_socket_collection_t base;
@@ -332,6 +334,7 @@ typedef struct us_socket_collection_rawnet_multi_s {
 void us_socket_collection_init_rawnet_multi(
         us_socket_collection_rawnet_multi_t *self,
         us_rawnet_multi_t *rawnet_multi );
+#endif
 
 /// Scan through all active sockets in all groups and call select()
 bool us_socket_collections_group_select(
