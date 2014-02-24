@@ -33,12 +33,10 @@
 #endif
 
 
-#if US_ENABLE_RAW_ETHERNET==1
-# if defined(__APPLE__)
-#  include <net/if_dl.h>  
-# elif defined(__linux__)
-#  include <linux/if_packet.h>
-# endif
+#if defined(__APPLE__)
+# include <net/if_dl.h>  
+#elif defined(__linux__)
+# include <linux/if_packet.h>
 #endif
 
 #ifdef __cplusplus
