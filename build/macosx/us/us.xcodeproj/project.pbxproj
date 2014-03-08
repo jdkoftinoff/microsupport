@@ -427,16 +427,6 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				BF41E5A118CBC24100611518 /* us_socket_collection.c */,
-				BF41E5A218CBC24100611518 /* us_packet_cpp.cpp */,
-				BF41E5A318CBC24100611518 /* us_packet_queue_cpp.cpp */,
-				BF41E5A418CBC24100611518 /* us_packet_queue.c */,
-				BF41E5A518CBC24100611518 /* us_packet.c */,
-				BF41E5A618CBC24100611518 /* us_rawnet_multi.c */,
-				BF41E5A718CBC24100611518 /* us_reactor_cpp.cpp */,
-				BF41E5A818CBC24100611518 /* us_reactor_handler_rawnet.c */,
-				BF41E5A918CBC24100611518 /* us_reactor_handler_tcp.c */,
-				BF41E5AA18CBC24100611518 /* us_reactor_handler_udp.c */,
 				BF0D28511386D32A0053A342 /* us_allocator.c */,
 				BF0D284F1386D32A0053A342 /* us_allocator_heap.c */,
 				BF0D28501386D32A0053A342 /* us_allocator_print.c */,
@@ -471,14 +461,24 @@
 				BF0D286B1386D32A0053A342 /* us_osc_sender.c */,
 				BF0D28691386D32A0053A342 /* us_osc_sender_tcp.c */,
 				BF0D286A1386D32A0053A342 /* us_osc_sender_udp.c */,
+				BF41E5A518CBC24100611518 /* us_packet.c */,
+				BF41E5A218CBC24100611518 /* us_packet_cpp.cpp */,
+				BF41E5A418CBC24100611518 /* us_packet_queue.c */,
+				BF41E5A318CBC24100611518 /* us_packet_queue_cpp.cpp */,
 				BF0D286D1386D32A0053A342 /* us_parse.c */,
 				BF0D286E1386D32A0053A342 /* us_platform.c */,
 				BF0D286F1386D32A0053A342 /* us_print.c */,
 				BF0D28701386D32A0053A342 /* us_queue.c */,
 				BF0D28711386D32A0053A342 /* us_rawnet.c */,
+				BF41E5A618CBC24100611518 /* us_rawnet_multi.c */,
 				BF0D28721386D32A0053A342 /* us_reactor.c */,
+				BF41E5A718CBC24100611518 /* us_reactor_cpp.cpp */,
+				BF41E5A818CBC24100611518 /* us_reactor_handler_rawnet.c */,
+				BF41E5A918CBC24100611518 /* us_reactor_handler_tcp.c */,
+				BF41E5AA18CBC24100611518 /* us_reactor_handler_udp.c */,
 				BF0D28731386D32A0053A342 /* us_serial.c */,
 				BF0D28741386D32A0053A342 /* us_slip.c */,
+				BF41E5A118CBC24100611518 /* us_socket_collection.c */,
 				BF0D28751386D32A0053A342 /* us_test_allocator_heap_main.c */,
 				BF0D28761386D32A0053A342 /* us_test_allocator_main.c */,
 				BF0D28771386D32A0053A342 /* us_test_buffer_main.c */,
@@ -924,6 +924,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = US_ENABLE_RAW_ETHERNET;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = us;
 			};
@@ -935,6 +936,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = US_ENABLE_RAW_ETHERNET;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = us;
 			};

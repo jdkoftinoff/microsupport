@@ -360,7 +360,7 @@ void us_rawnet_multi_route_update_or_add(
 int us_rawnet_multi_route_find(
     us_rawnet_multi_t *self,
     uint8_t const mac[6] ) {
-    int port=-1;
+    ptrdiff_t port=-1;
 
     // is the mac address unicast? multicast always goes out all ports.
     if( (mac[0]&1)==0 ) {
@@ -383,7 +383,7 @@ int us_rawnet_multi_route_find(
             port =  item - self->routing_table;
         }
     }
-    return port;
+    return (int)port;
 }
 
 int us_rawnet_multi_route_cleanup(
@@ -441,7 +441,7 @@ int us_rawnet_multi_receive(
     int i;
     for( i=0; i<self->ethernet_port_count; ++i ) {
         uint8_t data[1514];
-        int r = us_rawnet_recv(
+        ssize_t r = us_rawnet_recv(
                 &self->ethernet_ports[i],
                 &data[6],
                 &data[0],
