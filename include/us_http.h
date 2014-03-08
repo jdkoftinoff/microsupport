@@ -144,7 +144,7 @@ bool us_http_response_header_set_version(us_http_response_header_t *self, const 
 
 bool us_http_response_header_set_versionn(us_http_response_header_t *self, const char *version, int len);
 
-bool us_http_response_header_set_content_length(us_http_response_header_t *self, int32_t content_length);
+bool us_http_response_header_set_content_length(us_http_response_header_t *self, ssize_t content_length);
 
 bool us_http_response_header_set_connection_close(us_http_response_header_t *self);
 
@@ -168,7 +168,7 @@ bool us_http_response_header_init_redirect(us_http_response_header_t *self,
 bool us_http_response_header_init_ok(us_http_response_header_t *self,
                                      int32_t http_ok_code,
                                      const char *content_type,
-                                     uint32_t content_length,
+                                     ssize_t content_length,
                                      bool connection_close);
 
 bool us_http_response_header_create_ok(us_http_response_header_t *self,

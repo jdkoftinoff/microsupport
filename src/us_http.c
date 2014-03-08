@@ -323,7 +323,7 @@ bool us_http_response_header_set_connection_close(us_http_response_header_t *sel
     return self->m_items->add(self->m_items, "Connection", "close") != 0;
 }
 
-bool us_http_response_header_set_content_length(us_http_response_header_t *self, int32_t content_length) {
+bool us_http_response_header_set_content_length(us_http_response_header_t *self, ssize_t content_length) {
     bool r = true;
     char content_length_str[32];
     if (content_length != -1) {
@@ -373,7 +373,7 @@ const char *us_http_response_header_get_content_type(const us_http_response_head
 bool us_http_response_header_init_ok(us_http_response_header_t *self,
                                      int32_t http_ok_code,
                                      const char *content_type,
-                                     uint32_t content_length,
+                                     ssize_t content_length,
                                      bool connection_close) {
     bool r = true;
     self->m_code = http_ok_code;

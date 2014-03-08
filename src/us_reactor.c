@@ -330,7 +330,7 @@ bool us_reactor_remove_item(us_reactor_t *self, us_reactor_handler_t *item) {
 bool us_reactor_create_tcp_client(us_reactor_t *self,
                                   us_allocator_t *allocator,
                                   void *extra,
-                                  int queue_buf_size,
+                                  ssize_t queue_buf_size,
                                   const char *server_host,
                                   const char *server_port,
                                   bool keep_open,

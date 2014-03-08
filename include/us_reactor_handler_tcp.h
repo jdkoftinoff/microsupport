@@ -47,7 +47,7 @@ typedef bool (*us_reactor_handler_tcp_client_init_proc_t)(us_reactor_handler_t *
                                                           us_allocator_t *allocator,
                                                           int fd,
                                                           void *extra,
-                                                          int queue_buf_size,
+                                                          ssize_t queue_buf_size,
                                                           const char *client_host,
                                                           const char *client_port,
                                                           bool keep_open);
@@ -55,7 +55,7 @@ typedef bool (*us_reactor_handler_tcp_client_init_proc_t)(us_reactor_handler_t *
 bool us_reactor_create_tcp_client(us_reactor_t *self,
                                   us_allocator_t *allocator,
                                   void *extra,
-                                  int queue_buf_size,
+                                  ssize_t queue_buf_size,
                                   const char *server_host,
                                   const char *server_port,
                                   bool keep_open,
