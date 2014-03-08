@@ -102,6 +102,87 @@
 		BF2C545D18CBB2D6002D5B9C /* us_world.hpp in Headers */ = {isa = PBXBuildFile; fileRef = BF2C544C18CBB2D6002D5B9C /* us_world.hpp */; };
 		BF2C546018CBB306002D5B9C /* us_daemon.c in Sources */ = {isa = PBXBuildFile; fileRef = BF2C545E18CBB306002D5B9C /* us_daemon.c */; };
 		BF2C546118CBB306002D5B9C /* us_net_router.c in Sources */ = {isa = PBXBuildFile; fileRef = BF2C545F18CBB306002D5B9C /* us_net_router.c */; };
+		BF41E55A18CBC1FD00611518 /* us.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29101386D3530053A342 /* us.h */; };
+		BF41E55B18CBC1FD00611518 /* us_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D21386D3530053A342 /* us_allocator.h */; };
+		BF41E55C18CBC1FD00611518 /* us_allocator_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D01386D3530053A342 /* us_allocator_heap.h */; };
+		BF41E55D18CBC1FD00611518 /* us_allocator_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D11386D3530053A342 /* us_allocator_print.h */; };
+		BF41E55E18CBC1FD00611518 /* us_bits.h in Headers */ = {isa = PBXBuildFile; fileRef = BF541239144DE7BB00B4B13C /* us_bits.h */; };
+		BF41E55F18CBC1FD00611518 /* us_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D41386D3530053A342 /* us_buffer.h */; };
+		BF41E56018CBC1FD00611518 /* us_buffer_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D31386D3530053A342 /* us_buffer_print.h */; };
+		BF41E56118CBC1FD00611518 /* us_cgi.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D51386D3530053A342 /* us_cgi.h */; };
+		BF41E56218CBC1FD00611518 /* us_crc32.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D61386D3530053A342 /* us_crc32.h */; };
+		BF41E56318CBC1FD00611518 /* us_getopt.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D71386D3530053A342 /* us_getopt.h */; };
+		BF41E56418CBC1FD00611518 /* us_http.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28DA1386D3530053A342 /* us_http.h */; };
+		BF41E56518CBC1FD00611518 /* us_http_client.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D81386D3530053A342 /* us_http_client.h */; };
+		BF41E56618CBC1FD00611518 /* us_http_server.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28D91386D3530053A342 /* us_http_server.h */; };
+		BF41E56718CBC1FD00611518 /* us_json.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28DC1386D3530053A342 /* us_json.h */; };
+		BF41E56818CBC1FD00611518 /* us_json_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28DB1386D3530053A342 /* us_json_parser.h */; };
+		BF41E56918CBC1FD00611518 /* us_line_parse.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28DD1386D3530053A342 /* us_line_parse.h */; };
+		BF41E56A18CBC1FD00611518 /* us_logger.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E21386D3530053A342 /* us_logger.h */; };
+		BF41E56B18CBC1FD00611518 /* us_logger_printer.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28DE1386D3530053A342 /* us_logger_printer.h */; };
+		BF41E56C18CBC1FD00611518 /* us_logger_stdio.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28DF1386D3530053A342 /* us_logger_stdio.h */; };
+		BF41E56D18CBC1FD00611518 /* us_logger_syslog.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E01386D3530053A342 /* us_logger_syslog.h */; };
+		BF41E56E18CBC1FD00611518 /* us_logger_udp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E11386D3530053A342 /* us_logger_udp.h */; };
+		BF41E56F18CBC1FD00611518 /* us_mdns_avahi.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E31386D3530053A342 /* us_mdns_avahi.h */; };
+		BF41E57018CBC1FD00611518 /* us_midi.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E41386D3530053A342 /* us_midi.h */; };
+		BF41E57118CBC1FD00611518 /* us_mtc.h in Headers */ = {isa = PBXBuildFile; fileRef = BFCE66FA140FFD5A00AF7DE6 /* us_mtc.h */; };
+		BF41E57218CBC1FD00611518 /* us_mtc_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = BFCE66F9140FFD5A00AF7DE6 /* us_mtc_parser.h */; };
+		BF41E57318CBC1FD00611518 /* us_net.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E51386D3530053A342 /* us_net.h */; };
+		BF41E57418CBC1FD00611518 /* us_options.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E61386D3530053A342 /* us_options.h */; };
+		BF41E57518CBC1FD00611518 /* us_osc_dispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E71386D3530053A342 /* us_osc_dispatch.h */; };
+		BF41E57618CBC1FD00611518 /* us_osc_io.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E81386D3530053A342 /* us_osc_io.h */; };
+		BF41E57718CBC1FD00611518 /* us_osc_line.h in Headers */ = {isa = PBXBuildFile; fileRef = BFB3F88C1458A0AC00E90D3C /* us_osc_line.h */; };
+		BF41E57818CBC1FD00611518 /* us_osc_msg.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28EA1386D3530053A342 /* us_osc_msg.h */; };
+		BF41E57918CBC1FD00611518 /* us_osc_msg_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28E91386D3530053A342 /* us_osc_msg_print.h */; };
+		BF41E57A18CBC1FD00611518 /* us_osc_sender.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28ED1386D3530053A342 /* us_osc_sender.h */; };
+		BF41E57B18CBC1FD00611518 /* us_osc_sender_tcp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28EB1386D3530053A342 /* us_osc_sender_tcp.h */; };
+		BF41E57C18CBC1FD00611518 /* us_osc_sender_udp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28EC1386D3530053A342 /* us_osc_sender_udp.h */; };
+		BF41E57D18CBC1FD00611518 /* us_parse.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28EE1386D3530053A342 /* us_parse.h */; };
+		BF41E57E18CBC1FD00611518 /* us_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28EF1386D3530053A342 /* us_platform.h */; };
+		BF41E57F18CBC1FE00611518 /* us_print.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F01386D3530053A342 /* us_print.h */; };
+		BF41E58018CBC1FE00611518 /* us_queue.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F11386D3530053A342 /* us_queue.h */; };
+		BF41E58118CBC1FE00611518 /* us_rawnet.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F21386D3530053A342 /* us_rawnet.h */; };
+		BF41E58218CBC1FE00611518 /* us_reactor.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F31386D3530053A342 /* us_reactor.h */; };
+		BF41E58318CBC1FE00611518 /* us_serial.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F41386D3530053A342 /* us_serial.h */; };
+		BF41E58418CBC1FE00611518 /* us_slip.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F51386D3530053A342 /* us_slip.h */; };
+		BF41E58518CBC1FE00611518 /* us_test_allocator_heap_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F61386D3530053A342 /* us_test_allocator_heap_main.h */; };
+		BF41E58618CBC1FE00611518 /* us_test_allocator_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F71386D3530053A342 /* us_test_allocator_main.h */; };
+		BF41E58718CBC1FE00611518 /* us_test_buffer_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F81386D3530053A342 /* us_test_buffer_main.h */; };
+		BF41E58818CBC1FE00611518 /* us_test_getopt_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28F91386D3530053A342 /* us_test_getopt_main.h */; };
+		BF41E58918CBC1FE00611518 /* us_test_http_client_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28FA1386D3530053A342 /* us_test_http_client_main.h */; };
+		BF41E58A18CBC1FE00611518 /* us_test_http_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28FB1386D3530053A342 /* us_test_http_main.h */; };
+		BF41E58B18CBC1FE00611518 /* us_test_http_server_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28FC1386D3530053A342 /* us_test_http_server_main.h */; };
+		BF41E58C18CBC1FE00611518 /* us_test_json_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28FD1386D3530053A342 /* us_test_json_main.h */; };
+		BF41E58D18CBC1FE00611518 /* us_test_line_parse_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28FE1386D3530053A342 /* us_test_line_parse_main.h */; };
+		BF41E58E18CBC1FE00611518 /* us_test_midi_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D28FF1386D3530053A342 /* us_test_midi_main.h */; };
+		BF41E58F18CBC1FE00611518 /* us_test_mtc_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BFB3F88D1458A0AC00E90D3C /* us_test_mtc_main.h */; };
+		BF41E59018CBC1FE00611518 /* us_test_net_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29001386D3530053A342 /* us_test_net_main.h */; };
+		BF41E59118CBC1FE00611518 /* us_test_osc_dispatch_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29011386D3530053A342 /* us_test_osc_dispatch_main.h */; };
+		BF41E59218CBC1FF00611518 /* us_test_osc_io_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29021386D3530053A342 /* us_test_osc_io_main.h */; };
+		BF41E59318CBC1FF00611518 /* us_test_osc_line_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BFB3F88E1458A0AC00E90D3C /* us_test_osc_line_main.h */; };
+		BF41E59418CBC1FF00611518 /* us_test_osc_msg_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29031386D3530053A342 /* us_test_osc_msg_main.h */; };
+		BF41E59518CBC1FF00611518 /* us_test_queue_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29041386D3530053A342 /* us_test_queue_main.h */; };
+		BF41E59618CBC1FF00611518 /* us_test_slip_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29051386D3530053A342 /* us_test_slip_main.h */; };
+		BF41E59718CBC1FF00611518 /* us_test_trie_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29061386D3530053A342 /* us_test_trie_main.h */; };
+		BF41E59818CBC1FF00611518 /* us_test_webapp_main.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29071386D3530053A342 /* us_test_webapp_main.h */; };
+		BF41E59918CBC1FF00611518 /* us_testutil.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29081386D3530053A342 /* us_testutil.h */; };
+		BF41E59A18CBC1FF00611518 /* us_time.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D29091386D3530053A342 /* us_time.h */; };
+		BF41E59B18CBC1FF00611518 /* us_trie.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D290B1386D3530053A342 /* us_trie.h */; };
+		BF41E59C18CBC1FF00611518 /* us_trie_dump.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D290A1386D3530053A342 /* us_trie_dump.h */; };
+		BF41E59D18CBC1FF00611518 /* us_webapp.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D290E1386D3530053A342 /* us_webapp.h */; };
+		BF41E59E18CBC1FF00611518 /* us_webapp_fs.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D290C1386D3530053A342 /* us_webapp_fs.h */; };
+		BF41E59F18CBC1FF00611518 /* us_webapp_json.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D290D1386D3530053A342 /* us_webapp_json.h */; };
+		BF41E5A018CBC20000611518 /* us_world.h in Headers */ = {isa = PBXBuildFile; fileRef = BF0D290F1386D3530053A342 /* us_world.h */; };
+		BF41E5AB18CBC24100611518 /* us_socket_collection.c in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A118CBC24100611518 /* us_socket_collection.c */; };
+		BF41E5AC18CBC24100611518 /* us_packet_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A218CBC24100611518 /* us_packet_cpp.cpp */; };
+		BF41E5AD18CBC24100611518 /* us_packet_queue_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A318CBC24100611518 /* us_packet_queue_cpp.cpp */; };
+		BF41E5AE18CBC24100611518 /* us_packet_queue.c in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A418CBC24100611518 /* us_packet_queue.c */; };
+		BF41E5AF18CBC24100611518 /* us_packet.c in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A518CBC24100611518 /* us_packet.c */; };
+		BF41E5B018CBC24100611518 /* us_rawnet_multi.c in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A618CBC24100611518 /* us_rawnet_multi.c */; };
+		BF41E5B118CBC24100611518 /* us_reactor_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A718CBC24100611518 /* us_reactor_cpp.cpp */; };
+		BF41E5B218CBC24100611518 /* us_reactor_handler_rawnet.c in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A818CBC24100611518 /* us_reactor_handler_rawnet.c */; };
+		BF41E5B318CBC24100611518 /* us_reactor_handler_tcp.c in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5A918CBC24100611518 /* us_reactor_handler_tcp.c */; };
+		BF41E5B418CBC24100611518 /* us_reactor_handler_udp.c in Sources */ = {isa = PBXBuildFile; fileRef = BF41E5AA18CBC24100611518 /* us_reactor_handler_udp.c */; };
 		BFB3F8931458A0CE00E90D3C /* us_osc_line.c in Sources */ = {isa = PBXBuildFile; fileRef = BFB3F8901458A0CE00E90D3C /* us_osc_line.c */; };
 		BFB3F8941458A0CE00E90D3C /* us_test_mtc_main.c in Sources */ = {isa = PBXBuildFile; fileRef = BFB3F8911458A0CE00E90D3C /* us_test_mtc_main.c */; };
 		BFB3F8951458A0CE00E90D3C /* us_test_osc_line_main.c in Sources */ = {isa = PBXBuildFile; fileRef = BFB3F8921458A0CE00E90D3C /* us_test_osc_line_main.c */; };
@@ -289,6 +370,16 @@
 		BF2C544C18CBB2D6002D5B9C /* us_world.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = us_world.hpp; path = ../../../include/us_world.hpp; sourceTree = "<group>"; };
 		BF2C545E18CBB306002D5B9C /* us_daemon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_daemon.c; path = ../../../src/posix/us_daemon.c; sourceTree = "<group>"; };
 		BF2C545F18CBB306002D5B9C /* us_net_router.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_net_router.c; path = ../../../src/us_net_router.c; sourceTree = "<group>"; };
+		BF41E5A118CBC24100611518 /* us_socket_collection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_socket_collection.c; path = ../../../src/us_socket_collection.c; sourceTree = "<group>"; };
+		BF41E5A218CBC24100611518 /* us_packet_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = us_packet_cpp.cpp; path = ../../../src/us_packet_cpp.cpp; sourceTree = "<group>"; };
+		BF41E5A318CBC24100611518 /* us_packet_queue_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = us_packet_queue_cpp.cpp; path = ../../../src/us_packet_queue_cpp.cpp; sourceTree = "<group>"; };
+		BF41E5A418CBC24100611518 /* us_packet_queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_packet_queue.c; path = ../../../src/us_packet_queue.c; sourceTree = "<group>"; };
+		BF41E5A518CBC24100611518 /* us_packet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_packet.c; path = ../../../src/us_packet.c; sourceTree = "<group>"; };
+		BF41E5A618CBC24100611518 /* us_rawnet_multi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_rawnet_multi.c; path = ../../../src/us_rawnet_multi.c; sourceTree = "<group>"; };
+		BF41E5A718CBC24100611518 /* us_reactor_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = us_reactor_cpp.cpp; path = ../../../src/us_reactor_cpp.cpp; sourceTree = "<group>"; };
+		BF41E5A818CBC24100611518 /* us_reactor_handler_rawnet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_reactor_handler_rawnet.c; path = ../../../src/us_reactor_handler_rawnet.c; sourceTree = "<group>"; };
+		BF41E5A918CBC24100611518 /* us_reactor_handler_tcp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_reactor_handler_tcp.c; path = ../../../src/us_reactor_handler_tcp.c; sourceTree = "<group>"; };
+		BF41E5AA18CBC24100611518 /* us_reactor_handler_udp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = us_reactor_handler_udp.c; path = ../../../src/us_reactor_handler_udp.c; sourceTree = "<group>"; };
 		BF541239144DE7BB00B4B13C /* us_bits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_bits.h; path = ../../../include/us_bits.h; sourceTree = "<group>"; };
 		BFB3F88C1458A0AC00E90D3C /* us_osc_line.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_osc_line.h; path = ../../../include/us_osc_line.h; sourceTree = "<group>"; };
 		BFB3F88D1458A0AC00E90D3C /* us_test_mtc_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = us_test_mtc_main.h; path = ../../../include/us_test_mtc_main.h; sourceTree = "<group>"; };
@@ -336,6 +427,16 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				BF41E5A118CBC24100611518 /* us_socket_collection.c */,
+				BF41E5A218CBC24100611518 /* us_packet_cpp.cpp */,
+				BF41E5A318CBC24100611518 /* us_packet_queue_cpp.cpp */,
+				BF41E5A418CBC24100611518 /* us_packet_queue.c */,
+				BF41E5A518CBC24100611518 /* us_packet.c */,
+				BF41E5A618CBC24100611518 /* us_rawnet_multi.c */,
+				BF41E5A718CBC24100611518 /* us_reactor_cpp.cpp */,
+				BF41E5A818CBC24100611518 /* us_reactor_handler_rawnet.c */,
+				BF41E5A918CBC24100611518 /* us_reactor_handler_tcp.c */,
+				BF41E5AA18CBC24100611518 /* us_reactor_handler_udp.c */,
 				BF0D28511386D32A0053A342 /* us_allocator.c */,
 				BF0D284F1386D32A0053A342 /* us_allocator_heap.c */,
 				BF0D28501386D32A0053A342 /* us_allocator_print.c */,
@@ -584,6 +685,77 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF41E55A18CBC1FD00611518 /* us.h in Headers */,
+				BF41E55B18CBC1FD00611518 /* us_allocator.h in Headers */,
+				BF41E55C18CBC1FD00611518 /* us_allocator_heap.h in Headers */,
+				BF41E55D18CBC1FD00611518 /* us_allocator_print.h in Headers */,
+				BF41E55E18CBC1FD00611518 /* us_bits.h in Headers */,
+				BF41E55F18CBC1FD00611518 /* us_buffer.h in Headers */,
+				BF41E56018CBC1FD00611518 /* us_buffer_print.h in Headers */,
+				BF41E56118CBC1FD00611518 /* us_cgi.h in Headers */,
+				BF41E56218CBC1FD00611518 /* us_crc32.h in Headers */,
+				BF41E56318CBC1FD00611518 /* us_getopt.h in Headers */,
+				BF41E56418CBC1FD00611518 /* us_http.h in Headers */,
+				BF41E56518CBC1FD00611518 /* us_http_client.h in Headers */,
+				BF41E56618CBC1FD00611518 /* us_http_server.h in Headers */,
+				BF41E56718CBC1FD00611518 /* us_json.h in Headers */,
+				BF41E56818CBC1FD00611518 /* us_json_parser.h in Headers */,
+				BF41E56918CBC1FD00611518 /* us_line_parse.h in Headers */,
+				BF41E56A18CBC1FD00611518 /* us_logger.h in Headers */,
+				BF41E56B18CBC1FD00611518 /* us_logger_printer.h in Headers */,
+				BF41E56C18CBC1FD00611518 /* us_logger_stdio.h in Headers */,
+				BF41E56D18CBC1FD00611518 /* us_logger_syslog.h in Headers */,
+				BF41E56E18CBC1FD00611518 /* us_logger_udp.h in Headers */,
+				BF41E56F18CBC1FD00611518 /* us_mdns_avahi.h in Headers */,
+				BF41E57018CBC1FD00611518 /* us_midi.h in Headers */,
+				BF41E57118CBC1FD00611518 /* us_mtc.h in Headers */,
+				BF41E57218CBC1FD00611518 /* us_mtc_parser.h in Headers */,
+				BF41E57318CBC1FD00611518 /* us_net.h in Headers */,
+				BF41E57418CBC1FD00611518 /* us_options.h in Headers */,
+				BF41E57518CBC1FD00611518 /* us_osc_dispatch.h in Headers */,
+				BF41E57618CBC1FD00611518 /* us_osc_io.h in Headers */,
+				BF41E57718CBC1FD00611518 /* us_osc_line.h in Headers */,
+				BF41E57818CBC1FD00611518 /* us_osc_msg.h in Headers */,
+				BF41E57918CBC1FD00611518 /* us_osc_msg_print.h in Headers */,
+				BF41E57A18CBC1FD00611518 /* us_osc_sender.h in Headers */,
+				BF41E57B18CBC1FD00611518 /* us_osc_sender_tcp.h in Headers */,
+				BF41E57C18CBC1FD00611518 /* us_osc_sender_udp.h in Headers */,
+				BF41E57D18CBC1FD00611518 /* us_parse.h in Headers */,
+				BF41E57E18CBC1FD00611518 /* us_platform.h in Headers */,
+				BF41E57F18CBC1FE00611518 /* us_print.h in Headers */,
+				BF41E58018CBC1FE00611518 /* us_queue.h in Headers */,
+				BF41E58118CBC1FE00611518 /* us_rawnet.h in Headers */,
+				BF41E58218CBC1FE00611518 /* us_reactor.h in Headers */,
+				BF41E58318CBC1FE00611518 /* us_serial.h in Headers */,
+				BF41E58418CBC1FE00611518 /* us_slip.h in Headers */,
+				BF41E58518CBC1FE00611518 /* us_test_allocator_heap_main.h in Headers */,
+				BF41E58618CBC1FE00611518 /* us_test_allocator_main.h in Headers */,
+				BF41E58718CBC1FE00611518 /* us_test_buffer_main.h in Headers */,
+				BF41E58818CBC1FE00611518 /* us_test_getopt_main.h in Headers */,
+				BF41E58918CBC1FE00611518 /* us_test_http_client_main.h in Headers */,
+				BF41E58A18CBC1FE00611518 /* us_test_http_main.h in Headers */,
+				BF41E58B18CBC1FE00611518 /* us_test_http_server_main.h in Headers */,
+				BF41E58C18CBC1FE00611518 /* us_test_json_main.h in Headers */,
+				BF41E58D18CBC1FE00611518 /* us_test_line_parse_main.h in Headers */,
+				BF41E58E18CBC1FE00611518 /* us_test_midi_main.h in Headers */,
+				BF41E58F18CBC1FE00611518 /* us_test_mtc_main.h in Headers */,
+				BF41E59018CBC1FE00611518 /* us_test_net_main.h in Headers */,
+				BF41E59118CBC1FE00611518 /* us_test_osc_dispatch_main.h in Headers */,
+				BF41E59218CBC1FF00611518 /* us_test_osc_io_main.h in Headers */,
+				BF41E59318CBC1FF00611518 /* us_test_osc_line_main.h in Headers */,
+				BF41E59418CBC1FF00611518 /* us_test_osc_msg_main.h in Headers */,
+				BF41E59518CBC1FF00611518 /* us_test_queue_main.h in Headers */,
+				BF41E59618CBC1FF00611518 /* us_test_slip_main.h in Headers */,
+				BF41E59718CBC1FF00611518 /* us_test_trie_main.h in Headers */,
+				BF41E59818CBC1FF00611518 /* us_test_webapp_main.h in Headers */,
+				BF41E59918CBC1FF00611518 /* us_testutil.h in Headers */,
+				BF41E59A18CBC1FF00611518 /* us_time.h in Headers */,
+				BF41E59B18CBC1FF00611518 /* us_trie.h in Headers */,
+				BF41E59C18CBC1FF00611518 /* us_trie_dump.h in Headers */,
+				BF41E59D18CBC1FF00611518 /* us_webapp.h in Headers */,
+				BF41E59E18CBC1FF00611518 /* us_webapp_fs.h in Headers */,
+				BF41E59F18CBC1FF00611518 /* us_webapp_json.h in Headers */,
+				BF41E5A018CBC20000611518 /* us_world.h in Headers */,
 				BF2C545418CBB2D6002D5B9C /* us_packet.h in Headers */,
 				BF2C545518CBB2D6002D5B9C /* us_packet.hpp in Headers */,
 				BF2C545018CBB2D6002D5B9C /* us_msstdint.h in Headers */,
@@ -663,10 +835,13 @@
 				BF0D28921386D32A0053A342 /* us_buffer_print.c in Sources */,
 				BF0D28931386D32A0053A342 /* us_buffer.c in Sources */,
 				BF0D28941386D32A0053A342 /* us_cgi.c in Sources */,
+				BF41E5B118CBC24100611518 /* us_reactor_cpp.cpp in Sources */,
 				BF0D28951386D32A0053A342 /* us_crc32.c in Sources */,
 				BF0D28961386D32A0053A342 /* us_getopt.c in Sources */,
 				BF0D28971386D32A0053A342 /* us_http_client.c in Sources */,
 				BF0D28981386D32A0053A342 /* us_http_server.c in Sources */,
+				BF41E5AB18CBC24100611518 /* us_socket_collection.c in Sources */,
+				BF41E5AF18CBC24100611518 /* us_packet.c in Sources */,
 				BF0D28991386D32A0053A342 /* us_http.c in Sources */,
 				BF2C546018CBB306002D5B9C /* us_daemon.c in Sources */,
 				BF0D289A1386D32A0053A342 /* us_json_parser.c in Sources */,
@@ -698,18 +873,22 @@
 				BF0D28B51386D32A0053A342 /* us_test_allocator_heap_main.c in Sources */,
 				BF0D28B61386D32A0053A342 /* us_test_allocator_main.c in Sources */,
 				BF0D28B71386D32A0053A342 /* us_test_buffer_main.c in Sources */,
+				BF41E5B418CBC24100611518 /* us_reactor_handler_udp.c in Sources */,
+				BF41E5B018CBC24100611518 /* us_rawnet_multi.c in Sources */,
 				BF0D28B81386D32A0053A342 /* us_test_getopt_main.c in Sources */,
 				BF0D28B91386D32A0053A342 /* us_test_http_client_main.c in Sources */,
 				BF0D28BA1386D32A0053A342 /* us_test_http_main.c in Sources */,
 				BF0D28BB1386D32A0053A342 /* us_test_http_server_main.c in Sources */,
 				BF0D28BC1386D32A0053A342 /* us_test_json_main.c in Sources */,
 				BF0D28BD1386D32A0053A342 /* us_test_line_parse_main.c in Sources */,
+				BF41E5B318CBC24100611518 /* us_reactor_handler_tcp.c in Sources */,
 				BF2C546118CBB306002D5B9C /* us_net_router.c in Sources */,
 				BF0D28BE1386D32A0053A342 /* us_test_midi_main.c in Sources */,
 				BF0D28BF1386D32A0053A342 /* us_test_net_main.c in Sources */,
 				BF0D28C01386D32A0053A342 /* us_test_osc_dispatch_main.c in Sources */,
 				BF0D28C11386D32A0053A342 /* us_test_osc_msg_main.c in Sources */,
 				BF0D28C21386D32A0053A342 /* us_test_queue_main.c in Sources */,
+				BF41E5B218CBC24100611518 /* us_reactor_handler_rawnet.c in Sources */,
 				BF0D28C31386D32A0053A342 /* us_test_slip_main.c in Sources */,
 				BF0D28C41386D32A0053A342 /* us_test_trie_main.c in Sources */,
 				BF0D28C51386D32A0053A342 /* us_test_webapp_main.c in Sources */,
@@ -721,12 +900,15 @@
 				BF0D28CB1386D32A0053A342 /* us_webapp_fs.c in Sources */,
 				BF0D28CC1386D32A0053A342 /* us_webapp_json.c in Sources */,
 				BF0D28CD1386D32A0053A342 /* us_webapp.c in Sources */,
+				BF41E5AC18CBC24100611518 /* us_packet_cpp.cpp in Sources */,
 				BF0D28CE1386D32A0053A342 /* us_world.c in Sources */,
 				BFCE66FD140FFD7300AF7DE6 /* us_mtc_parser.c in Sources */,
 				BFCE66FE140FFD7300AF7DE6 /* us_mtc.c in Sources */,
 				BFBBC802142A23E4007E3332 /* us_test_osc_io_main.c in Sources */,
 				BFB3F8931458A0CE00E90D3C /* us_osc_line.c in Sources */,
+				BF41E5AD18CBC24100611518 /* us_packet_queue_cpp.cpp in Sources */,
 				BFB3F8941458A0CE00E90D3C /* us_test_mtc_main.c in Sources */,
+				BF41E5AE18CBC24100611518 /* us_packet_queue.c in Sources */,
 				BFB3F8951458A0CE00E90D3C /* us_test_osc_line_main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
