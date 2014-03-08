@@ -88,7 +88,7 @@ bool us_net_timeout_calc(struct timeval *result, const struct timeval *cur_time,
 
 bool us_net_timeout_hit(const struct timeval *cur_time, const struct timeval *next_time);
 
-bool us_net_blocking_send(int sock, const void *data, int32_t len);
+bool us_net_blocking_send(int sock, const void *data, ssize_t len);
 
 /** us_net_wait_readable
  *

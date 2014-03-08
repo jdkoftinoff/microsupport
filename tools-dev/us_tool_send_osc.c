@@ -159,7 +159,7 @@ static us_osc_msg_t * us_tool_gen_osc(
                         e = us_osc_msg_element_b_create(
                                 allocator,
                                 valbuf,
-                                octet_count
+                                (int32_t)octet_count
                             );
                         osc_values++;
                     }
@@ -240,7 +240,7 @@ static us_osc_msg_t * us_tool_gen_osc(
                     r=0;
                     break;
                 }
-                v = strtol( *osc_values, 0, 10 );
+                v = (int32_t)strtol( *osc_values, 0, 10 );
                 e = us_osc_msg_element_i_create( allocator, v );
                 osc_values++;
             }
@@ -334,7 +334,7 @@ static bool us_tool_send_osc_udp(
     int s = socket( src_addr->ai_family, src_addr->ai_socktype, 0 );
     if ( s>=0 )
     {
-        int len = us_buffer_readable_count(buf);
+        size_t len = us_buffer_readable_count(buf);
         if ( sendto(s, buf->m_buffer, len, 0, dest_addr->ai_addr, dest_addr->ai_addrlen)== len )
         {
             r=true;
@@ -360,7 +360,7 @@ static bool us_tool_send_osc_tcp(
         if ( connect(s, dest_addr->ai_addr, dest_addr->ai_addrlen)>=0 )
         {
             uint8_t length[4];
-            int len=us_buffer_readable_count( buf );
+            size_t len=us_buffer_readable_count( buf );
             r=true;
             length[0] = US_GET_BYTE_3( len );
             length[1] = US_GET_BYTE_2( len );
@@ -394,7 +394,7 @@ static bool us_tool_send_osc_tcpslip(
     bool r=false;
     int s;
     uint8_t slipped_mem[4096];
-    int l;
+    size_t l;
     us_buffer_t slipped_buffer;
     us_buffer_init(&slipped_buffer, 0, slipped_mem, sizeof( slipped_mem ) );
     us_slip_encode(&slipped_buffer, buf);
