@@ -93,9 +93,8 @@ bool us_mdns_avahi_write_xml(const char *avahi_services_dir,
     bool r = true;
     FILE *f;
     char path[2048];
-    strncpy(path, avahi_services_dir, sizeof(path) - 1);
-    strncat(path, "/", sizeof(path) - 1);
-    strncat(path, fname, sizeof(path) - 1);
+    snprintf(path, sizeof(path), "%s/%s", avahi_services_dir, fname );
+
     f = fopen(path, "wt");
     if (f) {
         fprintf(f,
