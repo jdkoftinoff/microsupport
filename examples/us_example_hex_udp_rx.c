@@ -47,7 +47,7 @@ int main ( int argc, char **argv )
             char hostname_buf[NI_MAXHOST];
             char serv_buf[NI_MAXSERV];
             uint8_t pkt_buf[1536];
-            int pkt_len;
+            ssize_t pkt_len;
             int i;
             int e;
             do
@@ -83,7 +83,7 @@ int main ( int argc, char **argv )
                 fprintf( stderr, "getnameinfo failed: %s\n",gai_strerror( e ));
                 break;
             }
-            fprintf( stdout, "Packet Length: %d bytes\n", pkt_len );
+            fprintf( stdout, "Packet Length: %d bytes\n", (int)pkt_len );
             fprintf( stdout, "Contents: " );
             for ( i = 0; i < pkt_len; ++i )
             {

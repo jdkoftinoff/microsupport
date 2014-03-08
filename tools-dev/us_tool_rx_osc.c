@@ -130,7 +130,7 @@ bool us_tool_rx_osc_tcp_handler_readable (
         }
         if ( !self->m_in_header )
         {
-            int32_t readable = us_buffer_readable_count(incoming);
+            ssize_t readable = us_buffer_readable_count(incoming);
             /* we are expecting todo_count data. Wait until queue contains it all */
             if ( (size_t)readable>=self->m_todo_count )
             {

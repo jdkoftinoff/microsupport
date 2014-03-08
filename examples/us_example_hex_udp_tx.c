@@ -65,7 +65,7 @@ int main ( int argc, char **argv )
     src_ai = us_net_get_addrinfo ( src_host, src_port, SOCK_DGRAM, false );
     if ( dest_ai && src_ai )
     {
-        int e;
+        ssize_t e;
         int outgoing_sock_fd;
         outgoing_sock_fd = us_net_create_udp_socket ( src_ai, true );
         if ( outgoing_sock_fd == -1 )
