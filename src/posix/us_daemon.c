@@ -62,7 +62,11 @@ void us_daemon_daemonize(
     if( home_dir && strlen(home_dir)>0 )
     {
         mkdir(home_dir,0750);
-        chdir(home_dir);
+        if( chdir(home_dir)!=0 )
+        {
+            perror("unable to chdir");
+            exit(1);
+        }
     }
     if( real_daemon )
     {
