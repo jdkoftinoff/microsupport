@@ -28,11 +28,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if 0 
+#if 0
 bool us_osc_line_parse(
     us_allocator_t *allocator, const char *line, size_t line_len, us_osc_msg_t **osc_msg, us_osc_msg_bundle_t **osc_bundle) {
 	// TODO:
-		
+
     return false;
 }
 
@@ -149,6 +149,6 @@ bool us_osc_line_gen_msg(const us_osc_msg_t *msg, us_print_t *result) {
     return r;
 }
 
-#if 0
+#if 1
 bool us_osc_line_gen_bundle(const us_osc_msg_bundle_t *bundle, us_print_t *result) { return false; }
 #endif
