@@ -928,8 +928,8 @@ bool us_socket_collections_group_select(
                                         &writable,
                                         largest_fd);
 
-    tv.tv_sec = (long)(max_sleep_time_in_ms / 1000);
-    tv.tv_usec = (long)((max_sleep_time_in_ms % 1000) * 1000);
+    tv.tv_sec = (int32_t)(max_sleep_time_in_ms / 1000);
+    tv.tv_usec = (int32_t)((max_sleep_time_in_ms % 1000) * 1000);
 
     if( us_socket_collection_group_wants_early_tick(self) ) {
         tv.tv_sec = 0;
