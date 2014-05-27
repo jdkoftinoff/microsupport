@@ -2,10 +2,11 @@
 #include "us_net.h"
 #include "us_serial.h"
 
-
 #if defined(US_CONFIG_POSIX)
 #include <termios.h>
-
+#include <sys/ioctl.h>
+//#include <fcntl.h>
+#include <linux/serial.h>
 /*
 Copyright (c) 2010, Meyer Sound Laboratories, Inc.
 All rights reserved.
@@ -36,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 bool us_serial_setup ( int fd, const char *serial_options )
 {
+    us_log_set_level ( US_LOG_LEVEL_TRACE );
     uint32_t requested_baud = 9600;
     uint32_t baud_code;
     const char *serial_fmt = 0;
@@ -204,6 +206,19 @@ bool us_serial_setup ( int fd, const char *serial_options )
     }
     do
     {
+        struct serial_struct serinfo;
+        if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0)
+        {
+            return false;
+        }
+
+        serinfo.flags &= ~ASYNC_SPD_MASK;
+
+        if (ioctl(fd, TIOCSSERIAL, &serinfo) < 0)
+        {
+            return false;
+        }       
+
         e = tcsetattr ( fd, TCSANOW, &term );
     }
     while ( e < 0 && errno == EINTR );
@@ -221,6 +236,38 @@ bool us_serial_setup ( int fd, const char *serial_options )
     {
         us_log_error( "fcntl F_SETFL O_NONBLOCK failed" );
         return false;
+    }
+    if ( baud_code == 0 )
+    {
+        struct serial_struct serinfo;
+        struct termios term_opts;
+	serinfo.reserved_char[0] = 0;
+
+	if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0)
+        {
+	    return false;
+        }
+
+	serinfo.flags &= ~ASYNC_SPD_MASK;
+	serinfo.flags |= ASYNC_SPD_CUST;
+	serinfo.custom_divisor = 250;
+
+	if (ioctl(fd, TIOCSSERIAL, &serinfo) < 0)
+        {
+	    return false;
+        }
+	if (ioctl(fd, TIOCGSERIAL, &serinfo) < 0)
+        {
+	    return false;
+        }
+
+        tcgetattr(fd, &term_opts);
+        cfsetspeed ( &term_opts, B38400 );
+
+        if (tcsetattr(fd, TCSANOW, &term_opts) != 0)
+        {
+            return false;
+        }
     }
     return true;
 }
