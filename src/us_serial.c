@@ -37,7 +37,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 bool us_serial_setup ( int fd, const char *serial_options )
 {
-    us_log_set_level ( US_LOG_LEVEL_TRACE );
     uint32_t requested_baud = 9600;
     uint32_t baud_code;
     const char *serial_fmt = 0;
