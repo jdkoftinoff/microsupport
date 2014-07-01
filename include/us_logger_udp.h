@@ -59,14 +59,14 @@ extern struct sockaddr_in us_logger_udp_dest_sockaddr;
 
 void us_log_udp_send();
 
-bool us_logger_udp_start(const char *dest_addr, const char *service);
-void us_logger_udp_finish(void);
+bool us_logger_udp_start( const char *dest_addr, const char *service );
+void us_logger_udp_finish( void );
 
-void us_log_error_udp(const char *fmt, ...);
-void us_log_warn_udp(const char *fmt, ...);
-void us_log_info_udp(const char *fmt, ...);
-void us_log_debug_udp(const char *fmt, ...);
-void us_log_trace_udp(const char *fmt, ...);
+void us_log_error_udp( const char *fmt, ... );
+void us_log_warn_udp( const char *fmt, ... );
+void us_log_info_udp( const char *fmt, ... );
+void us_log_debug_udp( const char *fmt, ... );
+void us_log_trace_udp( const char *fmt, ... );
 
 #endif
 

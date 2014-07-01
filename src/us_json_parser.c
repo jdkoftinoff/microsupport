@@ -63,12 +63,12 @@
 #include "us_json_parser.h"
 
 #ifdef _MSC_VER
-#if _MSC_VER >= 1400            /* Visual Studio 2005 and up */
-#pragma warning(disable : 4996) /* unsecure sscanf */
+#if _MSC_VER >= 1400              /* Visual Studio 2005 and up */
+#pragma warning( disable : 4996 ) /* unsecure sscanf */
 #endif
 #endif
 
-#define __ (-1) /* the universal error code */
+#define __ ( -1 ) /* the universal error code */
 
 /* values chosen so that the object size is approx equal to one page (4K) */
 #ifndef US_JSON_PARSER_STACK_SIZE
@@ -81,7 +81,8 @@
 
 typedef unsigned short UTF16;
 
-struct us_json_parser_struct {
+struct us_json_parser_struct
+{
     us_allocator_t *allocator;
     us_json_parser_callback callback;
     void *ctx;
@@ -105,7 +106,8 @@ struct us_json_parser_struct {
   a significant reduction in the size of the state transition table.
 */
 
-enum classes {
+enum classes
+{
     C_SPACE, /* space */
     C_WHITE, /* other whitespace */
     C_LCURB, /* {  */
@@ -161,7 +163,8 @@ static int ascii_class[128] = {
 /*
   The state codes.
 */
-enum states {
+enum states
+{
     GO, /* start    */
     OK, /* ok       */
     OB, /* object   */
@@ -201,7 +204,8 @@ enum states {
     NR_STATES
 };
 
-enum actions {
+enum actions
+{
     CB = -10, /* comment begin */
     CE = -11, /* comment end */
     FA = -12, /* false */
@@ -302,32 +306,42 @@ static int state_transition_table[NR_STATES][NR_CLASSES] = {
 /*
   These modes can be pushed on the stack.
 */
-enum modes {
+enum modes
+{
     MODE_ARRAY = 1,
     MODE_DONE = 2,
     MODE_KEY = 3,
     MODE_OBJECT = 4
 };
 
-static int push(us_json_parser_t jc, int mode) {
+static int push( us_json_parser_t jc, int mode )
+{
     /*
       Push a mode onto the stack. Return false if there is overflow.
     */
     jc->top += 1;
-    if (jc->depth < 0) {
-        if (jc->top >= jc->stack_capacity) {
+    if ( jc->depth < 0 )
+    {
+        if ( jc->top >= jc->stack_capacity )
+        {
             size_t bytes_to_allocate;
             jc->stack_capacity *= 2;
-            bytes_to_allocate = jc->stack_capacity * sizeof(jc->static_stack[0]);
-            if (jc->stack == &jc->static_stack[0]) {
-                jc->stack = (signed char *)jc->allocator->alloc(jc->allocator, (int32_t)bytes_to_allocate, 1);
-                memcpy(jc->stack, jc->static_stack, sizeof(jc->static_stack));
-            } else {
-                jc->stack = (signed char *)jc->allocator->realloc(jc->allocator, jc->stack, (int32_t)bytes_to_allocate, 1);
+            bytes_to_allocate = jc->stack_capacity * sizeof( jc->static_stack[0] );
+            if ( jc->stack == &jc->static_stack[0] )
+            {
+                jc->stack = (signed char *)jc->allocator->alloc( jc->allocator, (int32_t)bytes_to_allocate, 1 );
+                memcpy( jc->stack, jc->static_stack, sizeof( jc->static_stack ) );
+            }
+            else
+            {
+                jc->stack = (signed char *)jc->allocator->realloc( jc->allocator, jc->stack, (int32_t)bytes_to_allocate, 1 );
             }
         }
-    } else {
-        if (jc->top >= jc->depth) {
+    }
+    else
+    {
+        if ( jc->top >= jc->depth )
+        {
             return false;
         }
     }
@@ -335,44 +349,53 @@ static int push(us_json_parser_t jc, int mode) {
     return true;
 }
 
-static int pop(us_json_parser_t jc, int mode) {
+static int pop( us_json_parser_t jc, int mode )
+{
     /*
       Pop the stack, assuring that the current mode matches the expectation.
       Return false if there is underflow or if the modes mismatch.
     */
-    if (jc->top < 0 || jc->stack[jc->top] != mode) {
+    if ( jc->top < 0 || jc->stack[jc->top] != mode )
+    {
         return false;
     }
     jc->top -= 1;
     return true;
 }
 
-#define parse_buffer_clear(jc)                                                                                                 \
-    do {                                                                                                                       \
+#define parse_buffer_clear( jc )                                                                                               \
+    do                                                                                                                         \
+    {                                                                                                                          \
         jc->parse_buffer_count = 0;                                                                                            \
         jc->parse_buffer[0] = 0;                                                                                               \
-    } while (0)
+    } while ( 0 )
 
-#define parse_buffer_pop_back_char(jc)                                                                                         \
-    do {                                                                                                                       \
-        assert(jc->parse_buffer_count >= 1);                                                                                   \
+#define parse_buffer_pop_back_char( jc )                                                                                       \
+    do                                                                                                                         \
+    {                                                                                                                          \
+        assert( jc->parse_buffer_count >= 1 );                                                                                 \
         --jc->parse_buffer_count;                                                                                              \
         jc->parse_buffer[jc->parse_buffer_count] = 0;                                                                          \
-    } while (0)
+    } while ( 0 )
 
-void us_json_parser_destroy(us_json_parser_t jc) {
-    if (jc) {
-        if (jc->stack != &jc->static_stack[0]) {
-            jc->allocator->free(jc->allocator, (void *)jc->stack);
+void us_json_parser_destroy( us_json_parser_t jc )
+{
+    if ( jc )
+    {
+        if ( jc->stack != &jc->static_stack[0] )
+        {
+            jc->allocator->free( jc->allocator, (void *)jc->stack );
         }
-        if (jc->parse_buffer != &jc->static_parse_buffer[0]) {
-            jc->allocator->free(jc->allocator, (void *)jc->parse_buffer);
+        if ( jc->parse_buffer != &jc->static_parse_buffer[0] )
+        {
+            jc->allocator->free( jc->allocator, (void *)jc->parse_buffer );
         }
-        jc->allocator->free(jc->allocator, (void *)jc);
+        jc->allocator->free( jc->allocator, (void *)jc );
     }
 }
 
-us_json_parser_t us_json_parser_create(us_allocator_t *allocator, us_json_config_t *config) {
+us_json_parser_t us_json_parser_create( us_allocator_t *allocator, us_json_config_t *config )
+{
     /*
       new_json_parser starts the checking process by constructing a us_json_parser
       object. It takes a depth parameter that restricts the level of maximum
@@ -384,42 +407,50 @@ us_json_parser_t us_json_parser_create(us_allocator_t *allocator, us_json_config
     */
     int depth = 0;
     us_json_config_t default_config;
-    us_json_parser_t jc = us_new(allocator, struct us_json_parser_struct);
-    memset(jc, 0, sizeof(*jc));
+    us_json_parser_t jc = us_new( allocator, struct us_json_parser_struct );
+    memset( jc, 0, sizeof( *jc ) );
     jc->allocator = allocator;
     /* initialize configuration */
-    us_json_config_init(&default_config);
+    us_json_config_init( &default_config );
     /* set to default configuration if none was provided */
-    if (config == NULL) {
+    if ( config == NULL )
+    {
         config = &default_config;
     }
     depth = config->depth;
     /* We need to be able to push at least one object */
-    if (depth == 0) {
+    if ( depth == 0 )
+    {
         depth = 1;
     }
     jc->state = GO;
     jc->top = -1;
     /* Do we want non-bound stack? */
-    if (depth > 0) {
+    if ( depth > 0 )
+    {
         jc->stack_capacity = depth;
         jc->depth = depth;
-        if (depth <= (int)US_COUNTOF(jc->static_stack)) {
+        if ( depth <= (int)US_COUNTOF( jc->static_stack ) )
+        {
             jc->stack = &jc->static_stack[0];
-        } else {
-            jc->stack = (signed char *)malloc(jc->stack_capacity * sizeof(jc->static_stack[0]));
         }
-    } else {
-        jc->stack_capacity = US_COUNTOF(jc->static_stack);
+        else
+        {
+            jc->stack = (signed char *)malloc( jc->stack_capacity * sizeof( jc->static_stack[0] ) );
+        }
+    }
+    else
+    {
+        jc->stack_capacity = US_COUNTOF( jc->static_stack );
         jc->depth = -1;
         jc->stack = &jc->static_stack[0];
     }
     /* set parser to start */
-    push(jc, MODE_DONE);
+    push( jc, MODE_DONE );
     /* set up the parse buffer */
     jc->parse_buffer = &jc->static_parse_buffer[0];
-    jc->parse_buffer_capacity = US_COUNTOF(jc->static_parse_buffer);
-    parse_buffer_clear(jc);
+    jc->parse_buffer_capacity = US_COUNTOF( jc->static_parse_buffer );
+    parse_buffer_clear( jc );
     /* set up callback, comment & float handling */
     jc->callback = config->callback;
     jc->ctx = config->callback_ctx;
@@ -431,49 +462,61 @@ us_json_parser_t us_json_parser_create(us_allocator_t *allocator, us_json_config
     return jc;
 }
 
-static void us_json_grow_parse_buffer(us_json_parser_t jc) {
+static void us_json_grow_parse_buffer( us_json_parser_t jc )
+{
     size_t bytes_to_allocate;
     jc->parse_buffer_capacity *= 2;
-    bytes_to_allocate = jc->parse_buffer_capacity * sizeof(jc->parse_buffer[0]);
-    if (jc->parse_buffer == &jc->static_parse_buffer[0]) {
-        jc->parse_buffer = (char *)malloc(bytes_to_allocate);
-        memcpy(jc->parse_buffer, jc->static_parse_buffer, jc->parse_buffer_count);
-    } else {
-        jc->parse_buffer = (char *)realloc(jc->parse_buffer, bytes_to_allocate);
+    bytes_to_allocate = jc->parse_buffer_capacity * sizeof( jc->parse_buffer[0] );
+    if ( jc->parse_buffer == &jc->static_parse_buffer[0] )
+    {
+        jc->parse_buffer = (char *)malloc( bytes_to_allocate );
+        memcpy( jc->parse_buffer, jc->static_parse_buffer, jc->parse_buffer_count );
+    }
+    else
+    {
+        jc->parse_buffer = (char *)realloc( jc->parse_buffer, bytes_to_allocate );
     }
 }
 
-#define us_json_parse_buffer_push_back_char(jc, c)                                                                             \
-    do {                                                                                                                       \
-        if (jc->parse_buffer_count + 1 >= jc->parse_buffer_capacity)                                                           \
-            us_json_grow_parse_buffer(jc);                                                                                     \
+#define us_json_parse_buffer_push_back_char( jc, c )                                                                           \
+    do                                                                                                                         \
+    {                                                                                                                          \
+        if ( jc->parse_buffer_count + 1 >= jc->parse_buffer_capacity )                                                         \
+            us_json_grow_parse_buffer( jc );                                                                                   \
         jc->parse_buffer[jc->parse_buffer_count++] = c;                                                                        \
         jc->parse_buffer[jc->parse_buffer_count] = 0;                                                                          \
-    } while (0)
+    } while ( 0 )
 
-#define us_json_assert_is_non_container_type(jc)                                                                               \
-    assert(jc->type == US_JSON_T_NULL || jc->type == US_JSON_T_FALSE || jc->type == US_JSON_T_TRUE                             \
-           || jc->type == US_JSON_T_FLOAT || jc->type == US_JSON_T_INTEGER || jc->type == US_JSON_T_STRING)
+#define us_json_assert_is_non_container_type( jc )                                                                             \
+    assert( jc->type == US_JSON_T_NULL || jc->type == US_JSON_T_FALSE || jc->type == US_JSON_T_TRUE                            \
+            || jc->type == US_JSON_T_FLOAT || jc->type == US_JSON_T_INTEGER || jc->type == US_JSON_T_STRING )
 
-static int parse_parse_buffer(us_json_parser_t jc) {
-    if (jc->callback) {
+static int parse_parse_buffer( us_json_parser_t jc )
+{
+    if ( jc->callback )
+    {
         us_json_value_t value, *arg = NULL;
-        if (jc->type != US_JSON_T_NONE) {
-            us_json_assert_is_non_container_type(jc);
-            switch (jc->type) {
+        if ( jc->type != US_JSON_T_NONE )
+        {
+            us_json_assert_is_non_container_type( jc );
+            switch ( jc->type )
+            {
             case US_JSON_T_FLOAT:
                 arg = &value;
-                if (jc->handle_floats_manually) {
+                if ( jc->handle_floats_manually )
+                {
                     value.vu.str.value = jc->parse_buffer;
                     value.vu.str.length = jc->parse_buffer_count;
-                } else {
+                }
+                else
+                {
                     /* not checking with end pointer b/c there may be trailing ws */
-                    value.vu.float_value = strtod(jc->parse_buffer, NULL);
+                    value.vu.float_value = strtod( jc->parse_buffer, NULL );
                 }
                 break;
             case US_JSON_T_INTEGER:
                 arg = &value;
-                sscanf(jc->parse_buffer, US_JSON_PARSER_INTEGER_SSCANF_TOKEN, &value.vu.integer_value);
+                sscanf( jc->parse_buffer, US_JSON_PARSER_INTEGER_SSCANF_TOKEN, &value.vu.integer_value );
                 break;
             case US_JSON_T_STRING:
                 arg = &value;
@@ -481,108 +524,134 @@ static int parse_parse_buffer(us_json_parser_t jc) {
                 value.vu.str.length = jc->parse_buffer_count;
                 break;
             }
-            if (!(*jc->callback)(jc->ctx, jc->type, arg)) {
+            if ( !( *jc->callback )( jc->ctx, jc->type, arg ) )
+            {
                 return false;
             }
         }
     }
-    parse_buffer_clear(jc);
+    parse_buffer_clear( jc );
     return true;
 }
 
-#define US_UTF_IS_HIGH_SURROGATE(uc) (((uc) & 0xFC00) == 0xD800)
-#define US_UTF_IS_LOW_SURROGATE(uc) (((uc) & 0xFC00) == 0xDC00)
-#define US_UTF_DECODE_SURROGATE_PAIR(hi, lo) ((((hi) & 0x3FF) << 10) + ((lo) & 0x3FF) + 0x10000)
+#define US_UTF_IS_HIGH_SURROGATE( uc ) ( ( ( uc ) & 0xFC00 ) == 0xD800 )
+#define US_UTF_IS_LOW_SURROGATE( uc ) ( ( ( uc ) & 0xFC00 ) == 0xDC00 )
+#define US_UTF_DECODE_SURROGATE_PAIR( hi, lo ) ( ( ( ( hi ) & 0x3FF ) << 10 ) + ( ( lo ) & 0x3FF ) + 0x10000 )
 static unsigned char us_utf8_lead_bits[4] = {0x00, 0xC0, 0xE0, 0xF0};
 
-static int us_utf_decode_unicode_char(us_json_parser_t jc) {
+static int us_utf_decode_unicode_char( us_json_parser_t jc )
+{
     int i;
     unsigned uc = 0;
     char *p;
     int trail_bytes;
-    assert(jc->parse_buffer_count >= 6);
+    assert( jc->parse_buffer_count >= 6 );
     p = &jc->parse_buffer[jc->parse_buffer_count - 4];
-    for (i = 12; i >= 0; i -= 4, ++p) {
+    for ( i = 12; i >= 0; i -= 4, ++p )
+    {
         unsigned x = *p;
-        if (x >= 'a') {
-            x -= ('a' - 10);
-        } else if (x >= 'A') {
-            x -= ('A' - 10);
-        } else {
+        if ( x >= 'a' )
+        {
+            x -= ( 'a' - 10 );
+        }
+        else if ( x >= 'A' )
+        {
+            x -= ( 'A' - 10 );
+        }
+        else
+        {
             x &= ~0x30u;
         }
-        assert(x < 16);
+        assert( x < 16 );
         uc |= x << i;
     }
     /* clear UTF-16 char from buffer */
     jc->parse_buffer_count -= 6;
     jc->parse_buffer[jc->parse_buffer_count] = 0;
     /* attempt decoding ... */
-    if (jc->utf16_high_surrogate) {
-        if (US_UTF_IS_LOW_SURROGATE(uc)) {
-            uc = US_UTF_DECODE_SURROGATE_PAIR(jc->utf16_high_surrogate, uc);
+    if ( jc->utf16_high_surrogate )
+    {
+        if ( US_UTF_IS_LOW_SURROGATE( uc ) )
+        {
+            uc = US_UTF_DECODE_SURROGATE_PAIR( jc->utf16_high_surrogate, uc );
             trail_bytes = 3;
             jc->utf16_high_surrogate = 0;
-        } else {
+        }
+        else
+        {
             /* high surrogate without a following low surrogate */
             return false;
         }
-    } else {
-        if (uc < 0x80) {
+    }
+    else
+    {
+        if ( uc < 0x80 )
+        {
             trail_bytes = 0;
-        } else if (uc < 0x800) {
+        }
+        else if ( uc < 0x800 )
+        {
             trail_bytes = 1;
-        } else if (US_UTF_IS_HIGH_SURROGATE(uc)) {
+        }
+        else if ( US_UTF_IS_HIGH_SURROGATE( uc ) )
+        {
             /* save the high surrogate and wait for the low surrogate */
             jc->utf16_high_surrogate = uc;
             return true;
-        } else if (US_UTF_IS_LOW_SURROGATE(uc)) {
+        }
+        else if ( US_UTF_IS_LOW_SURROGATE( uc ) )
+        {
             /* low surrogate without a preceding high surrogate */
             return false;
-        } else {
+        }
+        else
+        {
             trail_bytes = 2;
         }
     }
-    jc->parse_buffer[jc->parse_buffer_count++] = (char)((uc >> (trail_bytes * 6)) | us_utf8_lead_bits[trail_bytes]);
-    for (i = trail_bytes * 6 - 6; i >= 0; i -= 6) {
-        jc->parse_buffer[jc->parse_buffer_count++] = (char)(((uc >> i) & 0x3F) | 0x80);
+    jc->parse_buffer[jc->parse_buffer_count++] = (char)( ( uc >> ( trail_bytes * 6 ) ) | us_utf8_lead_bits[trail_bytes] );
+    for ( i = trail_bytes * 6 - 6; i >= 0; i -= 6 )
+    {
+        jc->parse_buffer[jc->parse_buffer_count++] = (char)( ( ( uc >> i ) & 0x3F ) | 0x80 );
     }
     jc->parse_buffer[jc->parse_buffer_count] = 0;
     return true;
 }
 
-static int us_json_add_escaped_char_to_parse_buffer(us_json_parser_t jc, int next_char) {
+static int us_json_add_escaped_char_to_parse_buffer( us_json_parser_t jc, int next_char )
+{
     jc->escaped = 0;
     /* remove the backslash */
-    parse_buffer_pop_back_char(jc);
-    switch (next_char) {
+    parse_buffer_pop_back_char( jc );
+    switch ( next_char )
+    {
     case 'b':
-        us_json_parse_buffer_push_back_char(jc, '\b');
+        us_json_parse_buffer_push_back_char( jc, '\b' );
         break;
     case 'f':
-        us_json_parse_buffer_push_back_char(jc, '\f');
+        us_json_parse_buffer_push_back_char( jc, '\f' );
         break;
     case 'n':
-        us_json_parse_buffer_push_back_char(jc, '\n');
+        us_json_parse_buffer_push_back_char( jc, '\n' );
         break;
     case 'r':
-        us_json_parse_buffer_push_back_char(jc, '\r');
+        us_json_parse_buffer_push_back_char( jc, '\r' );
         break;
     case 't':
-        us_json_parse_buffer_push_back_char(jc, '\t');
+        us_json_parse_buffer_push_back_char( jc, '\t' );
         break;
     case '"':
-        us_json_parse_buffer_push_back_char(jc, '"');
+        us_json_parse_buffer_push_back_char( jc, '"' );
         break;
     case '\\':
-        us_json_parse_buffer_push_back_char(jc, '\\');
+        us_json_parse_buffer_push_back_char( jc, '\\' );
         break;
     case '/':
-        us_json_parse_buffer_push_back_char(jc, '/');
+        us_json_parse_buffer_push_back_char( jc, '/' );
         break;
     case 'u':
-        us_json_parse_buffer_push_back_char(jc, '\\');
-        us_json_parse_buffer_push_back_char(jc, 'u');
+        us_json_parse_buffer_push_back_char( jc, '\\' );
+        us_json_parse_buffer_push_back_char( jc, 'u' );
         break;
     default:
         return false;
@@ -590,25 +659,32 @@ static int us_json_add_escaped_char_to_parse_buffer(us_json_parser_t jc, int nex
     return true;
 }
 
-#define us_json_add_char_to_parse_buffer(jc, next_char, next_class)                                                            \
-    do {                                                                                                                       \
-        if (jc->escaped) {                                                                                                     \
-            if (!us_json_add_escaped_char_to_parse_buffer(jc, next_char))                                                      \
+#define us_json_add_char_to_parse_buffer( jc, next_char, next_class )                                                          \
+    do                                                                                                                         \
+    {                                                                                                                          \
+        if ( jc->escaped )                                                                                                     \
+        {                                                                                                                      \
+            if ( !us_json_add_escaped_char_to_parse_buffer( jc, next_char ) )                                                  \
                 return false;                                                                                                  \
-        } else if (!jc->comment) {                                                                                             \
-            if ((jc->type != US_JSON_T_NONE) | !((next_class == C_SPACE) | (next_class == C_WHITE)) /* non-white-space */) {   \
-                us_json_parse_buffer_push_back_char(jc, (char)next_char);                                                      \
+        }                                                                                                                      \
+        else if ( !jc->comment )                                                                                               \
+        {                                                                                                                      \
+            if ( ( jc->type != US_JSON_T_NONE )                                                                                \
+                 | !( ( next_class == C_SPACE ) | ( next_class == C_WHITE ) ) /* non-white-space */ )                          \
+            {                                                                                                                  \
+                us_json_parse_buffer_push_back_char( jc, (char)next_char );                                                    \
             }                                                                                                                  \
         }                                                                                                                      \
-    } while (0)
+    } while ( 0 )
 
-#define us_json_assert_type_isnt_string_null_or_bool(jc)                                                                       \
-    assert(jc->type != US_JSON_T_FALSE);                                                                                       \
-    assert(jc->type != US_JSON_T_TRUE);                                                                                        \
-    assert(jc->type != US_JSON_T_NULL);                                                                                        \
-    assert(jc->type != US_JSON_T_STRING)
+#define us_json_assert_type_isnt_string_null_or_bool( jc )                                                                     \
+    assert( jc->type != US_JSON_T_FALSE );                                                                                     \
+    assert( jc->type != US_JSON_T_TRUE );                                                                                      \
+    assert( jc->type != US_JSON_T_NULL );                                                                                      \
+    assert( jc->type != US_JSON_T_STRING )
 
-int us_json_parser_char(us_json_parser_t jc, int next_char) {
+int us_json_parser_char( us_json_parser_t jc, int next_char )
+{
     /*
       After calling new_json_parser, call this function for each character (or
       partial character) in your JSON text. It can accept UTF-8, UTF-16, or
@@ -619,41 +695,54 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
     /*
       Determine the character's class.
     */
-    if (next_char < 0) {
+    if ( next_char < 0 )
+    {
         return false;
     }
-    if (next_char >= 128) {
+    if ( next_char >= 128 )
+    {
         next_class = C_ETC;
-    } else {
+    }
+    else
+    {
         next_class = ascii_class[next_char];
-        if (next_class <= __) {
+        if ( next_class <= __ )
+        {
             return false;
         }
     }
-    us_json_add_char_to_parse_buffer(jc, next_char, next_class);
+    us_json_add_char_to_parse_buffer( jc, next_char, next_class );
     /*
       Get the next state from the state transition table.
     */
     next_state = state_transition_table[jc->state][next_class];
-    if (next_state >= 0) {
+    if ( next_state >= 0 )
+    {
         /*
           Change the state.
         */
         jc->state = next_state;
-    } else {
+    }
+    else
+    {
         /*
           Or perform one of the actions.
         */
-        switch (next_state) {
+        switch ( next_state )
+        {
         /* Unicode character */
         case UC:
-            if (!us_utf_decode_unicode_char(jc)) {
+            if ( !us_utf_decode_unicode_char( jc ) )
+            {
                 return false;
             }
             /* check if we need to read a second UTF-16 char */
-            if (jc->utf16_high_surrogate) {
+            if ( jc->utf16_high_surrogate )
+            {
                 jc->state = D1;
-            } else {
+            }
+            else
+            {
                 jc->state = ST;
             }
             break;
@@ -679,19 +768,20 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
             break;
         /* floating point number detected by exponent*/
         case DE:
-            us_json_assert_type_isnt_string_null_or_bool(jc);
+            us_json_assert_type_isnt_string_null_or_bool( jc );
             jc->type = US_JSON_T_FLOAT;
             jc->state = E1;
             break;
         /* floating point number detected by fraction */
         case DF:
-            us_json_assert_type_isnt_string_null_or_bool(jc);
-            if (!jc->handle_floats_manually) {
+            us_json_assert_type_isnt_string_null_or_bool( jc );
+            if ( !jc->handle_floats_manually )
+            {
                 /*
                   Some versions of strtod (which underlies sscanf) don't support converting
                   C-locale formated floating point values.
                 */
-                assert(jc->parse_buffer[jc->parse_buffer_count - 1] == '.');
+                assert( jc->parse_buffer[jc->parse_buffer_count - 1] == '.' );
                 jc->parse_buffer[jc->parse_buffer_count - 1] = jc->decimal_point;
             }
             jc->type = US_JSON_T_FLOAT;
@@ -699,51 +789,55 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
             break;
         /* string begin " */
         case SB:
-            parse_buffer_clear(jc);
-            assert(jc->type == US_JSON_T_NONE);
+            parse_buffer_clear( jc );
+            assert( jc->type == US_JSON_T_NONE );
             jc->type = US_JSON_T_STRING;
             jc->state = ST;
             break;
         /* n */
         case NU:
-            assert(jc->type == US_JSON_T_NONE);
+            assert( jc->type == US_JSON_T_NONE );
             jc->type = US_JSON_T_NULL;
             jc->state = N1;
             break;
         /* f */
         case FA:
-            assert(jc->type == US_JSON_T_NONE);
+            assert( jc->type == US_JSON_T_NONE );
             jc->type = US_JSON_T_FALSE;
             jc->state = F1;
             break;
         /* t */
         case TR:
-            assert(jc->type == US_JSON_T_NONE);
+            assert( jc->type == US_JSON_T_NONE );
             jc->type = US_JSON_T_TRUE;
             jc->state = T1;
             break;
         /* closing comment */
         case CE:
             jc->comment = 0;
-            assert(jc->parse_buffer_count == 0);
-            assert(jc->type == US_JSON_T_NONE);
+            assert( jc->parse_buffer_count == 0 );
+            assert( jc->type == US_JSON_T_NONE );
             jc->state = jc->before_comment_state;
             break;
         /* opening comment  */
         case CB:
-            if (!jc->allow_comments) {
+            if ( !jc->allow_comments )
+            {
                 return false;
             }
-            parse_buffer_pop_back_char(jc);
-            if (!parse_parse_buffer(jc)) {
+            parse_buffer_pop_back_char( jc );
+            if ( !parse_parse_buffer( jc ) )
+            {
                 return false;
             }
-            assert(jc->parse_buffer_count == 0);
-            assert(jc->type != US_JSON_T_STRING);
-            switch (jc->stack[jc->top]) {
+            assert( jc->parse_buffer_count == 0 );
+            assert( jc->type != US_JSON_T_STRING );
+            switch ( jc->stack[jc->top] )
+            {
             case MODE_ARRAY:
             case MODE_OBJECT:
-                switch (jc->state) {
+                switch ( jc->state )
+                {
                 case VA:
                 case AR:
                     jc->before_comment_state = jc->state;
@@ -763,25 +857,30 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
             break;
         /* empty closing curly brace */
         case -9:
-            parse_buffer_clear(jc);
-            if (jc->callback && !(*jc->callback)(jc->ctx, US_JSON_T_OBJECT_END, NULL)) {
+            parse_buffer_clear( jc );
+            if ( jc->callback && !( *jc->callback )( jc->ctx, US_JSON_T_OBJECT_END, NULL ) )
+            {
                 return false;
             }
-            if (!pop(jc, MODE_KEY)) {
+            if ( !pop( jc, MODE_KEY ) )
+            {
                 return false;
             }
             jc->state = OK;
             break;
         /* closing curly brace */
         case -8:
-            parse_buffer_pop_back_char(jc);
-            if (!parse_parse_buffer(jc)) {
+            parse_buffer_pop_back_char( jc );
+            if ( !parse_parse_buffer( jc ) )
+            {
                 return false;
             }
-            if (jc->callback && !(*jc->callback)(jc->ctx, US_JSON_T_OBJECT_END, NULL)) {
+            if ( jc->callback && !( *jc->callback )( jc->ctx, US_JSON_T_OBJECT_END, NULL ) )
+            {
                 return false;
             }
-            if (!pop(jc, MODE_OBJECT)) {
+            if ( !pop( jc, MODE_OBJECT ) )
+            {
                 return false;
             }
             jc->type = US_JSON_T_NONE;
@@ -789,14 +888,17 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
             break;
         /* closing square bracket */
         case -7:
-            parse_buffer_pop_back_char(jc);
-            if (!parse_parse_buffer(jc)) {
+            parse_buffer_pop_back_char( jc );
+            if ( !parse_parse_buffer( jc ) )
+            {
                 return false;
             }
-            if (jc->callback && !(*jc->callback)(jc->ctx, US_JSON_T_ARRAY_END, NULL)) {
+            if ( jc->callback && !( *jc->callback )( jc->ctx, US_JSON_T_ARRAY_END, NULL ) )
+            {
                 return false;
             }
-            if (!pop(jc, MODE_ARRAY)) {
+            if ( !pop( jc, MODE_ARRAY ) )
+            {
                 return false;
             }
             jc->type = US_JSON_T_NONE;
@@ -804,50 +906,58 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
             break;
         /* open curly brace */
         case -6:
-            parse_buffer_pop_back_char(jc);
-            if (jc->callback && !(*jc->callback)(jc->ctx, US_JSON_T_OBJECT_BEGIN, NULL)) {
+            parse_buffer_pop_back_char( jc );
+            if ( jc->callback && !( *jc->callback )( jc->ctx, US_JSON_T_OBJECT_BEGIN, NULL ) )
+            {
                 return false;
             }
-            if (!push(jc, MODE_KEY)) {
+            if ( !push( jc, MODE_KEY ) )
+            {
                 return false;
             }
-            assert(jc->type == US_JSON_T_NONE);
+            assert( jc->type == US_JSON_T_NONE );
             jc->state = OB;
             break;
         /* open square bracket */
         case -5:
-            parse_buffer_pop_back_char(jc);
-            if (jc->callback && !(*jc->callback)(jc->ctx, US_JSON_T_ARRAY_BEGIN, NULL)) {
+            parse_buffer_pop_back_char( jc );
+            if ( jc->callback && !( *jc->callback )( jc->ctx, US_JSON_T_ARRAY_BEGIN, NULL ) )
+            {
                 return false;
             }
-            if (!push(jc, MODE_ARRAY)) {
+            if ( !push( jc, MODE_ARRAY ) )
+            {
                 return false;
             }
-            assert(jc->type == US_JSON_T_NONE);
+            assert( jc->type == US_JSON_T_NONE );
             jc->state = AR;
             break;
         /* string end " */
         case -4:
-            parse_buffer_pop_back_char(jc);
-            switch (jc->stack[jc->top]) {
+            parse_buffer_pop_back_char( jc );
+            switch ( jc->stack[jc->top] )
+            {
             case MODE_KEY:
-                assert(jc->type == US_JSON_T_STRING);
+                assert( jc->type == US_JSON_T_STRING );
                 jc->type = US_JSON_T_NONE;
                 jc->state = CO;
-                if (jc->callback) {
+                if ( jc->callback )
+                {
                     us_json_value_t value;
                     value.vu.str.value = jc->parse_buffer;
                     value.vu.str.length = jc->parse_buffer_count;
-                    if (!(*jc->callback)(jc->ctx, US_JSON_T_KEY, &value)) {
+                    if ( !( *jc->callback )( jc->ctx, US_JSON_T_KEY, &value ) )
+                    {
                         return false;
                     }
                 }
-                parse_buffer_clear(jc);
+                parse_buffer_clear( jc );
                 break;
             case MODE_ARRAY:
             case MODE_OBJECT:
-                assert(jc->type == US_JSON_T_STRING);
-                if (!parse_parse_buffer(jc)) {
+                assert( jc->type == US_JSON_T_STRING );
+                if ( !parse_parse_buffer( jc ) )
+                {
                     return false;
                 }
                 jc->type = US_JSON_T_NONE;
@@ -859,24 +969,27 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
             break;
         /* , */
         case -3:
-            parse_buffer_pop_back_char(jc);
-            if (!parse_parse_buffer(jc)) {
+            parse_buffer_pop_back_char( jc );
+            if ( !parse_parse_buffer( jc ) )
+            {
                 return false;
             }
-            switch (jc->stack[jc->top]) {
+            switch ( jc->stack[jc->top] )
+            {
             case MODE_OBJECT:
                 /*
                   A comma causes a flip from object mode to key mode.
                 */
-                if (!pop(jc, MODE_OBJECT) || !push(jc, MODE_KEY)) {
+                if ( !pop( jc, MODE_OBJECT ) || !push( jc, MODE_KEY ) )
+                {
                     return false;
                 }
-                assert(jc->type != US_JSON_T_STRING);
+                assert( jc->type != US_JSON_T_STRING );
                 jc->type = US_JSON_T_NONE;
                 jc->state = KE;
                 break;
             case MODE_ARRAY:
-                assert(jc->type != US_JSON_T_STRING);
+                assert( jc->type != US_JSON_T_STRING );
                 jc->type = US_JSON_T_NONE;
                 jc->state = VA;
                 break;
@@ -889,11 +1002,12 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
             /*
               A colon causes a flip from key mode to object mode.
             */
-            parse_buffer_pop_back_char(jc);
-            if (!pop(jc, MODE_KEY) || !push(jc, MODE_OBJECT)) {
+            parse_buffer_pop_back_char( jc );
+            if ( !pop( jc, MODE_KEY ) || !push( jc, MODE_OBJECT ) )
+            {
                 return false;
             }
-            assert(jc->type == US_JSON_T_NONE);
+            assert( jc->type == US_JSON_T_NONE );
             jc->state = VA;
             break;
         /*
@@ -906,32 +1020,40 @@ int us_json_parser_char(us_json_parser_t jc, int next_char) {
     return true;
 }
 
-int us_json_parser_done(us_json_parser_t jc) {
-    const int result = jc->state == OK && pop(jc, MODE_DONE);
+int us_json_parser_done( us_json_parser_t jc )
+{
+    const int result = jc->state == OK && pop( jc, MODE_DONE );
     return result;
 }
 
-int us_json_parser_is_legal_white_space_string(const char *s) {
+int us_json_parser_is_legal_white_space_string( const char *s )
+{
     int c, char_class;
-    if (s == NULL) {
+    if ( s == NULL )
+    {
         return false;
     }
-    for (; *s; ++s) {
+    for ( ; *s; ++s )
+    {
         c = *s;
-        if (c < 0 || c >= 128) {
+        if ( c < 0 || c >= 128 )
+        {
             return false;
         }
         char_class = ascii_class[c];
-        if (char_class != C_SPACE && char_class != C_WHITE) {
+        if ( char_class != C_SPACE && char_class != C_WHITE )
+        {
             return false;
         }
     }
     return true;
 }
 
-void us_json_config_init(us_json_config_t *config) {
-    if (config) {
-        memset(config, 0, sizeof(*config));
+void us_json_config_init( us_json_config_t *config )
+{
+    if ( config )
+    {
+        memset( config, 0, sizeof( *config ) );
         config->depth = US_JSON_PARSER_STACK_SIZE - 1;
     }
 }

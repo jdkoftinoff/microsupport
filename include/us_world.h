@@ -37,35 +37,35 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include US_FIRST_HEADER
 #endif
 
-#if defined(TARGET_PLATFORM_POSIX)
+#if defined( TARGET_PLATFORM_POSIX )
 #define US_CONFIG_POSIX
-#elif defined(TARGET_PLATFORM_LINUX)
+#elif defined( TARGET_PLATFORM_LINUX )
 #define US_CONFIG_POSIX
 #define US_CONFIG_LINUX
-#elif defined(TARGET_PLATFORM_MACOSX)
+#elif defined( TARGET_PLATFORM_MACOSX )
 #undef US_CONFIG_POSIX
 #define US_CONFIG_POSIX
 #undef US_CONFIG_MACOSX
 #define US_CONFIG_MACOSX
 #endif
 
-#if defined(__AVR__)
+#if defined( __AVR__ )
 #define US_CONFIG_MICROCONTROLLER
 #undef US_CONFIG_POSIX
-#elif defined(__APPLE__)
+#elif defined( __APPLE__ )
 #undef US_CONFIG_MACOSX
 #define US_CONFIG_MACOSX
 #undef US_CONFIG_POSIX
 #define US_CONFIG_POSIX
-#elif defined(__linux__)
+#elif defined( __linux__ )
 #undef US_CONFIG_LINUX
 #define US_CONFIG_LINUX
 #undef US_CONFIG_POSIX
 #define US_CONFIG_POSIX
-#elif defined(__CYGWIN__)
+#elif defined( __CYGWIN__ )
 #undef US_CONFIG_POSIX
 #define US_CONFIG_POSIX
-#elif defined(WIN32) || defined(_WIN32) || defined(_MSC_VER)
+#elif defined( WIN32 ) || defined( _WIN32 ) || defined( _MSC_VER )
 #undef US_CONFIG_WIN32
 #define US_CONFIG_WIN32
 #ifndef _CRT_SECURE_NO_DEPRECATE
@@ -83,14 +83,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "us_options.h"
 
-#if defined(_MSC_VER)
-#pragma warning(disable : 4267)
+#if defined( _MSC_VER )
+#pragma warning( disable : 4267 )
 #endif
 
-#if defined(US_CONFIG_WIN32) 
+#if defined( US_CONFIG_WIN32 )
 
 #if _MSC_VER < 1800
-#if !defined(__cplusplus)
+#if !defined( __cplusplus )
 #ifndef inline
 #define inline __inline
 #endif
@@ -117,7 +117,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #endif
 
-#if defined(US_CONFIG_POSIX)
+#if defined( US_CONFIG_POSIX )
 #ifndef _BSD_SOURCE
 #define _BSD_SOURCE
 #endif
@@ -162,7 +162,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <stdarg.h>
 
-#if defined(_WIN32)
+#if defined( _WIN32 )
 #include <io.h>
 #endif
 
@@ -170,58 +170,64 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if __STDC_VERSION__ >= 199901L
 #include <stdbool.h>
 #else
-#if !defined(bool)&&(defined(BOOLEAN) || defined(_WIN32))
+#if !defined(bool)&&( defined( BOOLEAN ) || defined( _WIN32 ) )
 #define bool BOOLEAN
 #endif
-#if !defined(true) && defined(TRUE)
+#if !defined( true ) && defined( TRUE )
 #define true TRUE
 #endif
-#if !defined(false) && defined(FALSE)
+#if !defined( false ) && defined( FALSE )
 #define false FALSE
 #endif
-#if !defined(bool)
+#if !defined( bool )
 #define bool int
 #endif
-#if !defined(true)
+#if !defined( true )
 #define true 1
 #endif
-#if !defined(false)
+#if !defined( false )
 #define false 0
 #endif
 #endif
 #endif
 
 #ifndef us_min
-#define us_min(a, b) (a) < (b) ? (a) : (b)
+#define us_min( a, b ) ( a ) < ( b ) ? ( a ) : ( b )
 #endif
 
 #ifndef us_max
-#define us_max(a, b) (a) < (b) ? (b) : (a)
+#define us_max( a, b ) ( a ) < ( b ) ? ( b ) : ( a )
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static inline bool us_strncpy(char *dest, const char *src, size_t dest_buf_size) {
+static inline bool us_strncpy( char *dest, const char *src, size_t dest_buf_size )
+{
     bool r = false;
-    if (dest && src && dest_buf_size > 2) {
-        size_t src_len = strlen(src);
-        if (src_len < dest_buf_size - 1) {
-            strncpy(dest, src, dest_buf_size - 1);
+    if ( dest && src && dest_buf_size > 2 )
+    {
+        size_t src_len = strlen( src );
+        if ( src_len < dest_buf_size - 1 )
+        {
+            strncpy( dest, src, dest_buf_size - 1 );
             r = true;
         }
     }
     return r;
 }
 
-static inline bool us_strncat(char *dest, const char *src, size_t dest_buf_size) {
+static inline bool us_strncat( char *dest, const char *src, size_t dest_buf_size )
+{
     bool r = false;
-    if (dest && src && dest_buf_size > 2) {
-        size_t src_len = strlen(src);
-        size_t dest_len = strlen(dest);
-        if ((src_len + dest_len) < dest_buf_size - 1) {
-            strncat(dest, src, dest_buf_size - 1);
+    if ( dest && src && dest_buf_size > 2 )
+    {
+        size_t src_len = strlen( src );
+        size_t dest_len = strlen( dest );
+        if ( ( src_len + dest_len ) < dest_buf_size - 1 )
+        {
+            strncat( dest, src, dest_buf_size - 1 );
             r = true;
         }
     }

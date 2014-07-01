@@ -12,7 +12,8 @@ extern "C" {
  */
 /*@{*/
 
-typedef struct us_mtc_parser_s {
+typedef struct us_mtc_parser_s
+{
     uint8_t m_nibbles[8];
 
     int m_first_nibble;
@@ -28,15 +29,15 @@ typedef struct us_mtc_parser_s {
     bool m_valid;
 } us_mtc_parser_t;
 
-void us_mtc_parser_init(us_mtc_parser_t *self);
+void us_mtc_parser_init( us_mtc_parser_t *self );
 bool us_mtc_parser_parse(
-    us_mtc_parser_t *self, const struct timeval *cur_time, const us_midi_msg_t *m, const us_midi_sysex_t *e, us_mtc_t *t);
+    us_mtc_parser_t *self, const struct timeval *cur_time, const us_midi_msg_t *m, const us_midi_sysex_t *e, us_mtc_t *t );
 
-bool us_mtc_parser_poll(us_mtc_parser_t *self, const struct timeval *cur_time, us_mtc_t *t);
+bool us_mtc_parser_poll( us_mtc_parser_t *self, const struct timeval *cur_time, us_mtc_t *t );
 
-bool us_mtc_parser_parse_qf(us_mtc_parser_t *self, const struct timeval *cur_time, uint8_t qf_value, us_mtc_t *t);
+bool us_mtc_parser_parse_qf( us_mtc_parser_t *self, const struct timeval *cur_time, uint8_t qf_value, us_mtc_t *t );
 
-bool us_mtc_parser_parse_sysex(us_mtc_parser_t *self, const struct timeval *cur_time, const us_midi_sysex_t *e, us_mtc_t *t);
+bool us_mtc_parser_parse_sysex( us_mtc_parser_t *self, const struct timeval *cur_time, const us_midi_sysex_t *e, us_mtc_t *t );
 
 /*@}*/
 

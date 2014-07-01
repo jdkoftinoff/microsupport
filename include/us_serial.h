@@ -39,12 +39,12 @@ extern "C" {
 */
 /*@{*/
 
-int us_serial_open(const char *serial_device, const char *serial_options);
+int us_serial_open( const char *serial_device, const char *serial_options );
 
-bool us_serial_setup(int fd, const char *serial_options);
-int us_serial_net_open(const char *serial_device, const char *serial_options);
+bool us_serial_setup( int fd, const char *serial_options );
+int us_serial_net_open( const char *serial_device, const char *serial_options );
 
-void us_serial_close(int fd);
+void us_serial_close( int fd );
 
 /*@}*/
 

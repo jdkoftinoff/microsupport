@@ -40,60 +40,70 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup us_osc_msg_test_msg */
 /*@{*/
 
-static bool do_test_osc_msg(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer);
+static bool do_test_osc_msg( us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer );
 
-static bool do_test_osc_msg_bundle(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer);
+static bool do_test_osc_msg_bundle( us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer );
 
-static bool test_unflatten(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer);
+static bool test_unflatten( us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer );
 
-static bool test_unflatten(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer) {
+static bool test_unflatten( us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer )
+{
     bool r = false;
     us_log_probe();
-    us_log_info("unflattening message");
-    if (us_osc_msg_is_msg_bundle(buffer)) {
+    us_log_info( "unflattening message" );
+    if ( us_osc_msg_is_msg_bundle( buffer ) )
+    {
         us_osc_msg_bundle_t *bundle;
-        us_log_info("unflattening bundle");
-        bundle = us_osc_msg_bundle_unflatten(allocator, buffer, us_buffer_readable_count(buffer), 0);
-        if (bundle) {
+        us_log_info( "unflattening bundle" );
+        bundle = us_osc_msg_bundle_unflatten( allocator, buffer, us_buffer_readable_count( buffer ), 0 );
+        if ( bundle )
+        {
             r = true;
 #if US_ENABLE_PRINTING
-            printer->printf(printer, "Parsed bundle: \n");
-            bundle->print(bundle, printer);
-            printer->printf(printer, "\n");
+            printer->printf( printer, "Parsed bundle: \n" );
+            bundle->print( bundle, printer );
+            printer->printf( printer, "\n" );
 #endif
             {
-                us_buffer_t *second_buffer = us_buffer_create(allocator, 4096);
-                if (second_buffer) {
-                    if (bundle->flatten(bundle, second_buffer, 0)) {
+                us_buffer_t *second_buffer = us_buffer_create( allocator, 4096 );
+                if ( second_buffer )
+                {
+                    if ( bundle->flatten( bundle, second_buffer, 0 ) )
+                    {
 #if US_ENABLE_PRINTING
                         {
-                            printer->printf(printer, "Flattened message buffer contents:\n");
-                            us_buffer_print(second_buffer, printer);
+                            printer->printf( printer, "Flattened message buffer contents:\n" );
+                            us_buffer_print( second_buffer, printer );
                         }
 #endif
                     }
                 }
             }
         }
-    } else if (us_osc_msg_is_msg(buffer)) {
+    }
+    else if ( us_osc_msg_is_msg( buffer ) )
+    {
         us_osc_msg_t *msg;
-        us_log_info("unflattening message");
-        msg = us_osc_msg_unflatten(allocator, buffer, 0);
-        if (msg) {
+        us_log_info( "unflattening message" );
+        msg = us_osc_msg_unflatten( allocator, buffer, 0 );
+        if ( msg )
+        {
             r = true;
 #if US_ENABLE_PRINTING
-            printer->printf(printer, "Parsed message: \n");
-            msg->print(msg, printer);
-            printer->printf(printer, "\n");
+            printer->printf( printer, "Parsed message: \n" );
+            msg->print( msg, printer );
+            printer->printf( printer, "\n" );
 #endif
             {
-                us_buffer_t *second_buffer = us_buffer_create(allocator, 4096);
-                if (second_buffer) {
-                    if (msg->flatten(msg, second_buffer, 0)) {
+                us_buffer_t *second_buffer = us_buffer_create( allocator, 4096 );
+                if ( second_buffer )
+                {
+                    if ( msg->flatten( msg, second_buffer, 0 ) )
+                    {
 #if US_ENABLE_PRINTING
                         {
-                            printer->printf(printer, "Flattened message buffer contents:\n");
-                            us_buffer_print(second_buffer, printer);
+                            printer->printf( printer, "Flattened message buffer contents:\n" );
+                            us_buffer_print( second_buffer, printer );
                         }
 #endif
                     }
@@ -104,11 +114,12 @@ static bool test_unflatten(us_allocator_t *allocator, us_buffer_t *buffer, us_pr
     return r;
 }
 
-static bool do_test_osc_msg(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer) {
+static bool do_test_osc_msg( us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer )
+{
     bool r = false;
     us_osc_msg_t *msg;
     us_log_probe();
-    us_log_info("creating test message");
+    us_log_info( "creating test message" );
 #if 0
     msg = us_osc_msg_form(
               allocator,
@@ -126,96 +137,111 @@ static bool do_test_osc_msg(us_allocator_t *allocator, us_buffer_t *buffer, us_p
           );
 #endif
 #if 1
-    msg = us_osc_msg_form(allocator, "/out/1/gain/db", ",fs", 20.0f, "some string");
+    msg = us_osc_msg_form( allocator, "/out/1/gain/db", ",fs", 20.0f, "some string" );
 #endif
-    if (msg) {
+    if ( msg )
+    {
 #if US_ENABLE_PRINTING
-        us_osc_msg_print(msg, printer);
+        us_osc_msg_print( msg, printer );
 #endif
-        if (buffer) {
-            us_log_debug("flattening test message");
-            if (msg->flatten(msg, buffer, 0)) {
+        if ( buffer )
+        {
+            us_log_debug( "flattening test message" );
+            if ( msg->flatten( msg, buffer, 0 ) )
+            {
 #if US_ENABLE_PRINTING
                 {
-                    printer->printf(printer, "Flattened message buffer contents:\n");
-                    us_buffer_print(buffer, printer);
+                    printer->printf( printer, "Flattened message buffer contents:\n" );
+                    us_buffer_print( buffer, printer );
                 }
 #endif
-                r = test_unflatten(allocator, buffer, printer);
+                r = test_unflatten( allocator, buffer, printer );
             }
         }
     }
 #if US_ENABLE_PRINTING
-    printer->printf(printer, "\nResult: %d\n\n", r);
+    printer->printf( printer, "\nResult: %d\n\n", r );
 #endif
     return r;
 }
 
-static bool do_test_osc_msg_bundle(us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer) {
+static bool do_test_osc_msg_bundle( us_allocator_t *allocator, us_buffer_t *buffer, us_print_t *printer )
+{
     bool r = false;
     us_osc_msg_bundle_t *bundle;
     us_log_probe();
-    us_log_info("creating test bundle");
-    bundle = us_osc_msg_bundle_create(allocator, 0, 0);
-    bundle->append(bundle, us_osc_msg_form(allocator, "/in/1/level/db", ",fs", -10.0f, "some string"));
-    bundle->append(bundle, us_osc_msg_form(allocator, "/out/1/level/db", ",fs", 40.0, "another string"));
-    if (bundle) {
+    us_log_info( "creating test bundle" );
+    bundle = us_osc_msg_bundle_create( allocator, 0, 0 );
+    bundle->append( bundle, us_osc_msg_form( allocator, "/in/1/level/db", ",fs", -10.0f, "some string" ) );
+    bundle->append( bundle, us_osc_msg_form( allocator, "/out/1/level/db", ",fs", 40.0, "another string" ) );
+    if ( bundle )
+    {
 #if US_ENABLE_PRINTING
-        us_osc_msg_bundle_print(bundle, printer);
+        us_osc_msg_bundle_print( bundle, printer );
 #endif
-        if (buffer) {
-            if (bundle->flatten(bundle, buffer, 0)) {
+        if ( buffer )
+        {
+            if ( bundle->flatten( bundle, buffer, 0 ) )
+            {
 #if US_ENABLE_PRINTING
-                int32_t bundle_size = (int32_t)us_buffer_readable_count(buffer);
+                int32_t bundle_size = (int32_t)us_buffer_readable_count( buffer );
                 {
-                    printer->printf(printer, "bundle size: %ld\n", bundle_size);
-                    printer->printf(printer, "Flattened message bundle buffer contents:\n");
-                    us_buffer_print(buffer, printer);
+                    printer->printf( printer, "bundle size: %ld\n", bundle_size );
+                    printer->printf( printer, "Flattened message bundle buffer contents:\n" );
+                    us_buffer_print( buffer, printer );
                 }
 #endif
-                r = test_unflatten(allocator, buffer, printer);
+                r = test_unflatten( allocator, buffer, printer );
             }
         }
     }
 #if US_ENABLE_PRINTING
-    printer->printf(printer, "\nResult: %d\n\n", r);
+    printer->printf( printer, "\nResult: %d\n\n", r );
 #endif
     return r;
 }
 
-int us_test_osc_msg_main(int argc, const char **argv) {
+int us_test_osc_msg_main( int argc, const char **argv )
+{
     bool r = true;
-    r = us_testutil_start(8192, 8192, argc, argv);
-    if (r) {
+    r = us_testutil_start( 8192, 8192, argc, argv );
+    if ( r )
+    {
 #if US_ENABLE_LOGGING
-        us_logger_printer_start(us_testutil_printer_stdout, us_testutil_printer_stderr);
+        us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-        us_log_info("Hello world from %s compiled on %s", __FILE__, __DATE__);
+        us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
         {
             us_buffer_t *buffer = 0;
-            us_log_debug("resetting session allocator");
-            us_log_debug("allocating 4k buffer from session");
-            buffer = us_buffer_create(us_testutil_session_allocator, 4096);
-            if (buffer) {
-                us_log_debug("testing msg");
-                r &= do_test_osc_msg(us_testutil_session_allocator, buffer, us_stdout);
-                buffer->destroy(buffer);
-            } else {
-                us_log_error("error allocating buffer");
+            us_log_debug( "resetting session allocator" );
+            us_log_debug( "allocating 4k buffer from session" );
+            buffer = us_buffer_create( us_testutil_session_allocator, 4096 );
+            if ( buffer )
+            {
+                us_log_debug( "testing msg" );
+                r &= do_test_osc_msg( us_testutil_session_allocator, buffer, us_stdout );
+                buffer->destroy( buffer );
+            }
+            else
+            {
+                us_log_error( "error allocating buffer" );
             }
         }
         {
             us_buffer_t *buffer = 0;
-            us_log_debug("resetting session allocator");
-            us_simple_allocator_reset(&us_testutil_session_allocator_impl);
-            us_log_debug("allocating 4k buffer from session");
-            buffer = us_buffer_create(us_testutil_session_allocator, 4096);
-            if (buffer) {
-                us_log_debug("testing bundle");
-                r &= do_test_osc_msg_bundle(us_testutil_session_allocator, buffer, us_stdout);
-                buffer->destroy(buffer);
-            } else {
-                us_log_error("error allocating buffer");
+            us_log_debug( "resetting session allocator" );
+            us_simple_allocator_reset( &us_testutil_session_allocator_impl );
+            us_log_debug( "allocating 4k buffer from session" );
+            buffer = us_buffer_create( us_testutil_session_allocator, 4096 );
+            if ( buffer )
+            {
+                us_log_debug( "testing bundle" );
+                r &= do_test_osc_msg_bundle( us_testutil_session_allocator, buffer, us_stdout );
+                buffer->destroy( buffer );
+            }
+            else
+            {
+                us_log_error( "error allocating buffer" );
             }
         }
         us_logger_finish();

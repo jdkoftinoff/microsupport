@@ -27,17 +27,13 @@
 
 #include "us_world.h"
 #include "us_net_router.h"
-#if defined(US_ENABLE_RAW_ETHERNET)
+#if defined( US_ENABLE_RAW_ETHERNET )
 #include "us_rawnet.h"
 #endif
 
 void us_net_router_item_init(
-        us_net_router_item_t *self,
-        void *context,
-        int tag,
-        struct sockaddr *addr,
-        socklen_t addrlen,
-        time_t cur_time ) {
+    us_net_router_item_t *self, void *context, int tag, struct sockaddr *addr, socklen_t addrlen, time_t cur_time )
+{
     self->context = context;
     self->tag = tag;
 
@@ -47,65 +43,80 @@ void us_net_router_item_init(
     self->last_changed_time = cur_time;
 }
 
-int us_net_router_item_compare(
-        void const *lhs_,
-        void const *rhs_ ) {
+int us_net_router_item_compare( void const *lhs_, void const *rhs_ )
+{
 
-    int cmp=0;
+    int cmp = 0;
     us_net_router_item_t const *lhs = (us_net_router_item_t const *)lhs_;
     us_net_router_item_t const *rhs = (us_net_router_item_t const *)rhs_;
 
     // when the item is not active, push it to the end so it can be garbage collected.
-    if( lhs->address_length == 0 ) {
-        cmp=1;
-    } else if( rhs->address_length==0 ) {
-        cmp=-1;
-    } else {
+    if ( lhs->address_length == 0 )
+    {
+        cmp = 1;
+    }
+    else if ( rhs->address_length == 0 )
+    {
+        cmp = -1;
+    }
+    else
+    {
         // both are active, so then we compare the actual address
         // First compare address length.
-        if( lhs->address_length > rhs->address_length ) {
-            cmp=1;
-        } else if( lhs->address_length < rhs->address_length ) {
-            cmp=-1;
-        } else {
+        if ( lhs->address_length > rhs->address_length )
+        {
+            cmp = 1;
+        }
+        else if ( lhs->address_length < rhs->address_length )
+        {
+            cmp = -1;
+        }
+        else
+        {
             // The address_length is the same. Compare address family
-            if( lhs->address.ss_family > rhs->address.ss_family ) {
-                cmp=1;
-            } else if( lhs->address.ss_family < rhs->address_length ) {
-                cmp=-1;
-            } else {
+            if ( lhs->address.ss_family > rhs->address.ss_family )
+            {
+                cmp = 1;
+            }
+            else if ( lhs->address.ss_family < rhs->address_length )
+            {
+                cmp = -1;
+            }
+            else
+            {
                 // The ss_family is the same. Now compare the actual destination address.
-                switch( lhs->address.ss_family ) {
-                    case AF_INET:
-                        {
-                            // compare just the ipv4 address portion
-                            struct sockaddr_in const *lhsin = (struct sockaddr_in const *)lhs;
-                            struct sockaddr_in const *rhsin = (struct sockaddr_in const *)rhs;
-                            cmp = memcmp(&lhsin->sin_addr,&rhsin->sin_addr,sizeof(lhsin->sin_addr));
-                        }
-                        break;
-                    case AF_INET6:
-                        {
-                            // compare just the ipv6 address portion
-                            struct sockaddr_in6 const *lhsin6 = (struct sockaddr_in6 const *)lhs;
-                            struct sockaddr_in6 const *rhsin6 = (struct sockaddr_in6 const *)rhs;
-                            cmp = memcmp(&lhsin6->sin6_addr,&rhsin6->sin6_addr,sizeof(lhsin6->sin6_addr));
-                        }
-                        break;
-#if defined(US_ENABLE_RAW_ETHERNET)
-                    case US_AF_LINK:
-                        {
-                            // Use portability function to extract ethernet mac address portably
-                            uint8_t const *lhsmac = us_sockaddr_dl_get_mac((struct sockaddr const *)&lhs->address);
-                            uint8_t const *rhsmac = us_sockaddr_dl_get_mac((struct sockaddr const *)&rhs->address);
-                            cmp = memcmp(lhsmac,rhsmac,6);
-                        }
-                        break;
+                switch ( lhs->address.ss_family )
+                {
+                case AF_INET:
+                {
+                    // compare just the ipv4 address portion
+                    struct sockaddr_in const *lhsin = (struct sockaddr_in const *)lhs;
+                    struct sockaddr_in const *rhsin = (struct sockaddr_in const *)rhs;
+                    cmp = memcmp( &lhsin->sin_addr, &rhsin->sin_addr, sizeof( lhsin->sin_addr ) );
+                }
+                break;
+                case AF_INET6:
+                {
+                    // compare just the ipv6 address portion
+                    struct sockaddr_in6 const *lhsin6 = (struct sockaddr_in6 const *)lhs;
+                    struct sockaddr_in6 const *rhsin6 = (struct sockaddr_in6 const *)rhs;
+                    cmp = memcmp( &lhsin6->sin6_addr, &rhsin6->sin6_addr, sizeof( lhsin6->sin6_addr ) );
+                }
+                break;
+#if defined( US_ENABLE_RAW_ETHERNET )
+                case US_AF_LINK:
+                {
+                    // Use portability function to extract ethernet mac address portably
+                    uint8_t const *lhsmac = us_sockaddr_dl_get_mac( (struct sockaddr const *)&lhs->address );
+                    uint8_t const *rhsmac = us_sockaddr_dl_get_mac( (struct sockaddr const *)&rhs->address );
+                    cmp = memcmp( lhsmac, rhsmac, 6 );
+                }
+                break;
 #endif
-                    default:
-                        // unrecognized address format, just memcmp the whole thing to allow stable sort
-                        cmp = memcmp(&lhs->address,&rhs->address,lhs->address_length);
-                        break;
+                default:
+                    // unrecognized address format, just memcmp the whole thing to allow stable sort
+                    cmp = memcmp( &lhs->address, &rhs->address, lhs->address_length );
+                    break;
                 }
             }
         }
@@ -113,51 +124,35 @@ int us_net_router_item_compare(
     return cmp;
 }
 
-
-void us_net_router_init( us_net_router_t *self ) {
+void us_net_router_init( us_net_router_t *self )
+{
     // TODO
-
 }
 
-void us_net_router_tick( us_net_router_t *self, time_t cur_time ) {
+void us_net_router_tick( us_net_router_t *self, time_t cur_time )
+{
     // TODO
-
 }
 
 void us_net_router_add(
-        us_net_router_t *self,
-        void *context,
-        int tag,
-        struct sockaddr *addr,
-        socklen_t addrlen,
-        time_t cur_time ) {
+    us_net_router_t *self, void *context, int tag, struct sockaddr *addr, socklen_t addrlen, time_t cur_time )
+{
     // TODO
-
 }
 
 void us_net_router_update_or_add(
-        us_net_router_t *self,
-        void *context,
-        int tag,
-        struct sockaddr *addr,
-        socklen_t addrlen,
-        time_t cur_time ) {
+    us_net_router_t *self, void *context, int tag, struct sockaddr *addr, socklen_t addrlen, time_t cur_time )
+{
     // TODO
-
 }
 
-us_net_router_item_t * us_net_router_find(
-        us_net_router_t *self,
-        struct sockaddr *addr,
-        socklen_t addrlen ) {
+us_net_router_item_t *us_net_router_find( us_net_router_t *self, struct sockaddr *addr, socklen_t addrlen )
+{
     // TODO
     return 0;
 }
 
-void us_net_router_cleanup(
-        us_net_router_t *self,
-        time_t cur_time ) {
+void us_net_router_cleanup( us_net_router_t *self, time_t cur_time )
+{
     // TODO
-
 }
-

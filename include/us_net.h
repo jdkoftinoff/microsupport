@@ -43,52 +43,48 @@ extern "C" {
 /** \addtogroup us_net
  */
 /*@{*/
-#if defined(US_CONFIG_POSIX) || defined(US_CONFIG_WIN32)
-struct addrinfo *us_net_get_addrinfo(const char *ip_addr, const char *ip_port, int type, bool for_server);
+#if defined( US_CONFIG_POSIX ) || defined( US_CONFIG_WIN32 )
+struct addrinfo *us_net_get_addrinfo( const char *ip_addr, const char *ip_port, int type, bool for_server );
 
-bool us_net_get_nameinfo(struct addrinfo *ai, char *hostname_buf, int hostname_buf_len, char *serv_buf, int serv_buf_len);
+bool us_net_get_nameinfo( struct addrinfo *ai, char *hostname_buf, int hostname_buf_len, char *serv_buf, int serv_buf_len );
 
-bool us_net_convert_sockaddr_to_string(
-    struct sockaddr const *addr,
-	socklen_t addrlen,
-    char *buf,
-    size_t buflen );
+bool us_net_convert_sockaddr_to_string( struct sockaddr const *addr, socklen_t addrlen, char *buf, size_t buflen );
 
-int us_net_create_udp_socket(const struct addrinfo *ai, bool do_bind);
+int us_net_create_udp_socket( const struct addrinfo *ai, bool do_bind );
 
-int us_net_create_udp_socket_host(const char *localaddr_host, const char *localaddr_port, bool do_bind);
+int us_net_create_udp_socket_host( const char *localaddr_host, const char *localaddr_port, bool do_bind );
 
-int us_net_create_tcp_socket(const struct addrinfo *ai, bool do_bind);
+int us_net_create_tcp_socket( const struct addrinfo *ai, bool do_bind );
 
-int us_net_create_tcp_socket_host(const char *localaddr_host, const char *localaddr_port, bool do_bind);
+int us_net_create_tcp_socket_host( const char *localaddr_host, const char *localaddr_port, bool do_bind );
 
-int us_net_create_multicast_rx_udp_socket(struct addrinfo *listenaddr,
-                                          const struct addrinfo *multicastgroup,
-                                          const char *interface_name);
+int us_net_create_multicast_rx_udp_socket( struct addrinfo *listenaddr,
+                                           const struct addrinfo *multicastgroup,
+                                           const char *interface_name );
 
-int us_net_create_multicast_tx_udp_socket(struct addrinfo *localaddr,
-                                          const struct addrinfo *multicastgroup,
-                                          const char *interface_name);
+int us_net_create_multicast_tx_udp_socket( struct addrinfo *localaddr,
+                                           const struct addrinfo *multicastgroup,
+                                           const char *interface_name );
 
-int us_net_create_multicast_udp_socket(struct addrinfo *localaddr,
-                                       const struct addrinfo *multicastgroup,
-                                       const char *interface_name,
-                                       bool tx);
+int us_net_create_multicast_udp_socket( struct addrinfo *localaddr,
+                                        const struct addrinfo *multicastgroup,
+                                        const char *interface_name,
+                                        bool tx );
 
-int us_net_create_multicast_udp_socket_host(const char *localaddr_host,
-                                            const char *localaddr_port,
-                                            const char *multicast_host,
-                                            const char *multicast_port,
-                                            const char *interface_name,
-                                            bool tx);
+int us_net_create_multicast_udp_socket_host( const char *localaddr_host,
+                                             const char *localaddr_port,
+                                             const char *multicast_host,
+                                             const char *multicast_port,
+                                             const char *interface_name,
+                                             bool tx );
 
-void us_net_timeout_add(struct timeval *result, const struct timeval *cur_time, uint32_t microseconds_to_add);
+void us_net_timeout_add( struct timeval *result, const struct timeval *cur_time, uint32_t microseconds_to_add );
 
-bool us_net_timeout_calc(struct timeval *result, const struct timeval *cur_time, const struct timeval *next_time);
+bool us_net_timeout_calc( struct timeval *result, const struct timeval *cur_time, const struct timeval *next_time );
 
-bool us_net_timeout_hit(const struct timeval *cur_time, const struct timeval *next_time);
+bool us_net_timeout_hit( const struct timeval *cur_time, const struct timeval *next_time );
 
-bool us_net_blocking_send(int sock, const void *data, ssize_t len);
+bool us_net_blocking_send( int sock, const void *data, ssize_t len );
 
 /** us_net_wait_readable
  *
@@ -100,16 +96,16 @@ bool us_net_blocking_send(int sock, const void *data, ssize_t len);
  *  return value is -1 if timeout is hit.
  *  return value is -2 if error occurred
  */
-int us_net_wait_readable(int timeout_ms, int fd_count, ...);
+int us_net_wait_readable( int timeout_ms, int fd_count, ... );
 
-int us_net_wait_readable_list(struct timeval *cur_time,
-                              struct timeval *wake_up_time,
-                              uint32_t next_wake_up_delta_time_milliseconds,
-                              int fd_count,
-                              const int *fds);
+int us_net_wait_readable_list( struct timeval *cur_time,
+                               struct timeval *wake_up_time,
+                               uint32_t next_wake_up_delta_time_milliseconds,
+                               int fd_count,
+                               const int *fds );
 
-void us_net_set_socket_nonblocking(int fd);
-void us_net_set_socket_blocking(int fd);
+void us_net_set_socket_nonblocking( int fd );
+void us_net_set_socket_blocking( int fd );
 
 #endif
 #ifdef __cplusplus

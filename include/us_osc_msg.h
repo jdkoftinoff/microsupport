@@ -37,8 +37,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-#define US_OSC_MSG_MAX_ADDRESS_LENGTH (256)
-#define US_OSC_MSG_MAX_TYPETAGS (128)
+#define US_OSC_MSG_MAX_ADDRESS_LENGTH ( 256 )
+#define US_OSC_MSG_MAX_TYPETAGS ( 128 )
 
 /**
  \addtogroup us_osc_msg OSC Message and Bundle Objects
@@ -50,14 +50,15 @@ typedef struct us_osc_msg_element_s us_osc_msg_element_t;
 
 /**
  */
-typedef struct us_osc_msg_s {
-    void (*destroy)(struct us_osc_msg_s *self);
+typedef struct us_osc_msg_s
+{
+    void ( *destroy )( struct us_osc_msg_s *self );
 
-    us_osc_msg_element_t *(*append)(struct us_osc_msg_s *self, us_osc_msg_element_t *element);
+    us_osc_msg_element_t *( *append )( struct us_osc_msg_s *self, us_osc_msg_element_t *element );
 
-    bool (*print)(const struct us_osc_msg_s *self, us_print_t *printer);
+    bool ( *print )( const struct us_osc_msg_s *self, us_print_t *printer );
 
-    bool (*flatten)(const struct us_osc_msg_s *self, us_buffer_t *buf, int32_t *length);
+    bool ( *flatten )( const struct us_osc_msg_s *self, us_buffer_t *buf, int32_t *length );
 
     us_allocator_t *m_allocator;
     char *m_address;
@@ -67,24 +68,24 @@ typedef struct us_osc_msg_s {
     struct us_osc_msg_s *m_next;
 } us_osc_msg_t;
 
-us_osc_msg_t *us_osc_msg_create(us_allocator_t *allocator, const char *address);
+us_osc_msg_t *us_osc_msg_create( us_allocator_t *allocator, const char *address );
 
-us_osc_msg_t *us_osc_msg_create_code(us_allocator_t *allocator, uint32_t address_code);
+us_osc_msg_t *us_osc_msg_create_code( us_allocator_t *allocator, uint32_t address_code );
 
-void us_osc_msg_destroy(us_osc_msg_t *self);
+void us_osc_msg_destroy( us_osc_msg_t *self );
 
-us_osc_msg_t *us_osc_msg_form(us_allocator_t *allocator, const char *address, const char *typetags, ...);
+us_osc_msg_t *us_osc_msg_form( us_allocator_t *allocator, const char *address, const char *typetags, ... );
 
-us_osc_msg_t *us_osc_msg_vform(us_allocator_t *allocator, const char *address, const char *typetags, va_list args);
+us_osc_msg_t *us_osc_msg_vform( us_allocator_t *allocator, const char *address, const char *typetags, va_list args );
 
-us_osc_msg_element_t *us_osc_msg_append(us_osc_msg_t *self, us_osc_msg_element_t *element);
+us_osc_msg_element_t *us_osc_msg_append( us_osc_msg_t *self, us_osc_msg_element_t *element );
 
-bool us_osc_msg_flatten(const us_osc_msg_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_flatten( const us_osc_msg_t *self, us_buffer_t *buf, int32_t *length );
 
-typedef const char *(*us_osc_msg_addrcode_typetag_map_proc)(uint32_t addrcode);
+typedef const char *( *us_osc_msg_addrcode_typetag_map_proc )( uint32_t addrcode );
 
 us_osc_msg_t *
-    us_osc_msg_unflatten(us_allocator_t *allocator, us_buffer_t *buf, us_osc_msg_addrcode_typetag_map_proc addrcode_mapper);
+    us_osc_msg_unflatten( us_allocator_t *allocator, us_buffer_t *buf, us_osc_msg_addrcode_typetag_map_proc addrcode_mapper );
 
 /*@}*/
 
@@ -93,14 +94,15 @@ us_osc_msg_t *
  */
 /*{*/
 
-typedef struct us_osc_msg_bundle_s {
-    void (*destroy)(struct us_osc_msg_bundle_s *self);
+typedef struct us_osc_msg_bundle_s
+{
+    void ( *destroy )( struct us_osc_msg_bundle_s *self );
 
-    us_osc_msg_t *(*append)(struct us_osc_msg_bundle_s *self, us_osc_msg_t *msg);
+    us_osc_msg_t *( *append )( struct us_osc_msg_bundle_s *self, us_osc_msg_t *msg );
 
-    bool (*print)(const struct us_osc_msg_bundle_s *self, us_print_t *printer);
+    bool ( *print )( const struct us_osc_msg_bundle_s *self, us_print_t *printer );
 
-    bool (*flatten)(const struct us_osc_msg_bundle_s *self, us_buffer_t *buf, int32_t *length);
+    bool ( *flatten )( const struct us_osc_msg_bundle_s *self, us_buffer_t *buf, int32_t *length );
 
     uint32_t m_timetag_high;
     uint32_t m_timetag_low;
@@ -109,18 +111,18 @@ typedef struct us_osc_msg_bundle_s {
     us_osc_msg_t *m_last_msg;
 } us_osc_msg_bundle_t;
 
-us_osc_msg_bundle_t *us_osc_msg_bundle_create(us_allocator_t *allocator, uint32_t timetag_high, uint32_t timetag_low);
+us_osc_msg_bundle_t *us_osc_msg_bundle_create( us_allocator_t *allocator, uint32_t timetag_high, uint32_t timetag_low );
 
-void us_osc_msg_bundle_destroy(us_osc_msg_bundle_t *self);
+void us_osc_msg_bundle_destroy( us_osc_msg_bundle_t *self );
 
-us_osc_msg_t *us_osc_msg_bundle_append(us_osc_msg_bundle_t *self, us_osc_msg_t *msg);
+us_osc_msg_t *us_osc_msg_bundle_append( us_osc_msg_bundle_t *self, us_osc_msg_t *msg );
 
-bool us_osc_msg_bundle_flatten(const us_osc_msg_bundle_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_bundle_flatten( const us_osc_msg_bundle_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_bundle_t *us_osc_msg_bundle_unflatten(us_allocator_t *allocator,
-                                                 us_buffer_t *buf,
-                                                 size_t bundle_size,
-                                                 us_osc_msg_addrcode_typetag_map_proc addrmapper);
+us_osc_msg_bundle_t *us_osc_msg_bundle_unflatten( us_allocator_t *allocator,
+                                                  us_buffer_t *buf,
+                                                  size_t bundle_size,
+                                                  us_osc_msg_addrcode_typetag_map_proc addrmapper );
 
 /*@}*/
 
@@ -128,12 +130,13 @@ us_osc_msg_bundle_t *us_osc_msg_bundle_unflatten(us_allocator_t *allocator,
  \addtogroup us_osc_msg_element Message element base class
  */
 /*@{*/
-struct us_osc_msg_element_s {
-    void (*destroy)(struct us_osc_msg_element_s *self, us_allocator_t *allocator);
+struct us_osc_msg_element_s
+{
+    void ( *destroy )( struct us_osc_msg_element_s *self, us_allocator_t *allocator );
 
-    bool (*print)(const struct us_osc_msg_element_s *self, us_print_t *printer);
+    bool ( *print )( const struct us_osc_msg_element_s *self, us_print_t *printer );
 
-    bool (*flatten)(const struct us_osc_msg_element_s *self, us_buffer_t *buf, int32_t *length);
+    bool ( *flatten )( const struct us_osc_msg_element_s *self, us_buffer_t *buf, int32_t *length );
 
     struct us_osc_msg_element_s *m_next;
     char m_code;
@@ -146,13 +149,13 @@ struct us_osc_msg_element_s {
  * @param code ascii code to initialize with
  * @return ptr to element that was initialized, or 0 upon error
  */
-us_osc_msg_element_t *us_osc_msg_element_init(us_osc_msg_element_t *self, int code);
+us_osc_msg_element_t *us_osc_msg_element_init( us_osc_msg_element_t *self, int code );
 
 /**
  * Destroy a message element
  */
 
-void us_osc_msg_element_destroy(us_osc_msg_element_t *self, us_allocator_t *allocator);
+void us_osc_msg_element_destroy( us_osc_msg_element_t *self, us_allocator_t *allocator );
 
 /**
  * Flatten a message element structure into a buffer
@@ -162,7 +165,7 @@ void us_osc_msg_element_destroy(us_osc_msg_element_t *self, us_allocator_t *allo
  * @param length ptr to int32_t to store length of flattened image
  * @return bool true if no errors occurred
  */
-bool us_osc_msg_element_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
 /**
  * Unflatten a message element structure from a buffer,
@@ -174,7 +177,7 @@ bool us_osc_msg_element_flatten(const us_osc_msg_element_t *self, us_buffer_t *b
  * @return ptr to element or 0 upon any error
  */
 
-us_osc_msg_element_t *us_osc_msg_element_unflatten(us_allocator_t *allocator, us_buffer_t *buf, char typetag);
+us_osc_msg_element_t *us_osc_msg_element_unflatten( us_allocator_t *allocator, us_buffer_t *buf, char typetag );
 
 /*@}*/
 
@@ -192,17 +195,18 @@ struct us_osc_msg_element_s;
 
 /**
  */
-typedef struct us_osc_msg_element_a_s {
+typedef struct us_osc_msg_element_a_s
+{
     us_osc_msg_element_t m_base;
     uint32_t m_time_high;
     uint32_t m_time_low;
 } us_osc_msg_element_a_t;
 
-us_osc_msg_element_t *us_osc_msg_element_a_create(us_allocator_t *allocator, uint32_t time_high, uint32_t time_low);
+us_osc_msg_element_t *us_osc_msg_element_a_create( us_allocator_t *allocator, uint32_t time_high, uint32_t time_low );
 
-bool us_osc_msg_element_a_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_a_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_a_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_a_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -211,22 +215,23 @@ us_osc_msg_element_t *us_osc_msg_element_a_unflatten(us_allocator_t *allocator, 
  */
 /*@{*/
 
-typedef struct us_osc_msg_element_B_s {
+typedef struct us_osc_msg_element_B_s
+{
     us_osc_msg_element_t m_base;
     us_osc_msg_bundle_t *m_bundle;
 } us_osc_msg_element_B_t;
 
-us_osc_msg_element_t *us_osc_msg_element_B_create(us_allocator_t *allocator, us_osc_msg_bundle_t *m_msg);
+us_osc_msg_element_t *us_osc_msg_element_B_create( us_allocator_t *allocator, us_osc_msg_bundle_t *m_msg );
 
 /**
  * Destroy a message element B
  */
 
-void us_osc_msg_element_B_destroy(us_osc_msg_element_t *self, us_allocator_t *allocator);
+void us_osc_msg_element_B_destroy( us_osc_msg_element_t *self, us_allocator_t *allocator );
 
-bool us_osc_msg_element_B_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_B_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_B_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_B_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -235,23 +240,24 @@ us_osc_msg_element_t *us_osc_msg_element_B_unflatten(us_allocator_t *allocator, 
  */
 /*@{*/
 
-typedef struct us_osc_msg_element_b_s {
+typedef struct us_osc_msg_element_b_s
+{
     us_osc_msg_element_t m_base;
     uint8_t *m_data;
     int32_t m_length;
 } us_osc_msg_element_b_t;
 
-us_osc_msg_element_t *us_osc_msg_element_b_create(us_allocator_t *allocator, const uint8_t *data, int32_t length);
+us_osc_msg_element_t *us_osc_msg_element_b_create( us_allocator_t *allocator, const uint8_t *data, int32_t length );
 
 /**
  * Destroy a message element b
  */
 
-void us_osc_msg_element_b_destroy(us_osc_msg_element_t *self, us_allocator_t *allocator);
+void us_osc_msg_element_b_destroy( us_osc_msg_element_t *self, us_allocator_t *allocator );
 
-bool us_osc_msg_element_b_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_b_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_b_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_b_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -260,16 +266,17 @@ us_osc_msg_element_t *us_osc_msg_element_b_unflatten(us_allocator_t *allocator, 
  */
 /*@{*/
 #if US_ENABLE_DOUBLE
-typedef struct us_osc_msg_element_d_s {
+typedef struct us_osc_msg_element_d_s
+{
     us_osc_msg_element_t m_base;
     double m_value;
 } us_osc_msg_element_d_t;
 
-us_osc_msg_element_t *us_osc_msg_element_d_create(us_allocator_t *allocator, double value);
+us_osc_msg_element_t *us_osc_msg_element_d_create( us_allocator_t *allocator, double value );
 
-bool us_osc_msg_element_d_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_d_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_d_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_d_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 #endif
 /*@}*/
@@ -279,15 +286,16 @@ us_osc_msg_element_t *us_osc_msg_element_d_unflatten(us_allocator_t *allocator, 
  */
 /*@{*/
 
-typedef struct us_osc_msg_element_F_s {
+typedef struct us_osc_msg_element_F_s
+{
     us_osc_msg_element_t m_base;
 } us_osc_msg_element_F_t;
 
-us_osc_msg_element_t *us_osc_msg_element_F_create(us_allocator_t *allocator);
+us_osc_msg_element_t *us_osc_msg_element_F_create( us_allocator_t *allocator );
 
-bool us_osc_msg_element_F_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_F_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_F_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_F_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -296,16 +304,17 @@ us_osc_msg_element_t *us_osc_msg_element_F_unflatten(us_allocator_t *allocator, 
  */
 /*@{*/
 #if US_ENABLE_FLOAT
-typedef struct us_osc_msg_element_f_s {
+typedef struct us_osc_msg_element_f_s
+{
     us_osc_msg_element_t m_base;
     float m_value;
 } us_osc_msg_element_f_t;
 
-us_osc_msg_element_t *us_osc_msg_element_f_create(us_allocator_t *allocator, float value);
+us_osc_msg_element_t *us_osc_msg_element_f_create( us_allocator_t *allocator, float value );
 
-bool us_osc_msg_element_f_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_f_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_f_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_f_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 #endif
 /*@}*/
@@ -317,17 +326,18 @@ us_osc_msg_element_t *us_osc_msg_element_f_unflatten(us_allocator_t *allocator, 
 
 /**
  */
-typedef struct us_osc_msg_element_h_s {
+typedef struct us_osc_msg_element_h_s
+{
     us_osc_msg_element_t m_base;
     uint32_t m_value_high;
     uint32_t m_value_low;
 } us_osc_msg_element_h_t;
 
-us_osc_msg_element_t *us_osc_msg_element_h_create(us_allocator_t *allocator, uint32_t value_high, uint32_t value_low);
+us_osc_msg_element_t *us_osc_msg_element_h_create( us_allocator_t *allocator, uint32_t value_high, uint32_t value_low );
 
-bool us_osc_msg_element_h_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_h_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_h_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_h_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -336,15 +346,16 @@ us_osc_msg_element_t *us_osc_msg_element_h_unflatten(us_allocator_t *allocator, 
  */
 /*@{*/
 
-typedef struct us_osc_msg_element_I_s {
+typedef struct us_osc_msg_element_I_s
+{
     us_osc_msg_element_t m_base;
 } us_osc_msg_element_I_t;
 
-us_osc_msg_element_t *us_osc_msg_element_I_create(us_allocator_t *allocator);
+us_osc_msg_element_t *us_osc_msg_element_I_create( us_allocator_t *allocator );
 
-bool us_osc_msg_element_I_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_I_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_I_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_I_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -355,16 +366,17 @@ us_osc_msg_element_t *us_osc_msg_element_I_unflatten(us_allocator_t *allocator, 
 
 /**
  */
-typedef struct us_osc_msg_element_i_s {
+typedef struct us_osc_msg_element_i_s
+{
     us_osc_msg_element_t m_base;
     int32_t m_value;
 } us_osc_msg_element_i_t;
 
-us_osc_msg_element_t *us_osc_msg_element_i_create(us_allocator_t *allocator, int32_t value);
+us_osc_msg_element_t *us_osc_msg_element_i_create( us_allocator_t *allocator, int32_t value );
 
-bool us_osc_msg_element_i_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_i_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_i_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_i_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -373,22 +385,23 @@ us_osc_msg_element_t *us_osc_msg_element_i_unflatten(us_allocator_t *allocator, 
  */
 /*@{*/
 
-typedef struct us_osc_msg_element_M_s {
+typedef struct us_osc_msg_element_M_s
+{
     us_osc_msg_element_t m_base;
     us_osc_msg_t *m_msg;
 } us_osc_msg_element_M_t;
 
-us_osc_msg_element_t *us_osc_msg_element_M_create(us_allocator_t *allocator, us_osc_msg_t *m_msg);
+us_osc_msg_element_t *us_osc_msg_element_M_create( us_allocator_t *allocator, us_osc_msg_t *m_msg );
 
 /**
  * Destroy a message element M
  */
 
-void us_osc_msg_element_M_destroy(us_osc_msg_element_t *self, us_allocator_t *allocator);
+void us_osc_msg_element_M_destroy( us_osc_msg_element_t *self, us_allocator_t *allocator );
 
-bool us_osc_msg_element_M_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_M_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_M_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_M_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -399,15 +412,16 @@ us_osc_msg_element_t *us_osc_msg_element_M_unflatten(us_allocator_t *allocator, 
 
 /**
  */
-typedef struct us_osc_msg_element_N_s {
+typedef struct us_osc_msg_element_N_s
+{
     us_osc_msg_element_t m_base;
 } us_osc_msg_element_N_t;
 
-us_osc_msg_element_t *us_osc_msg_element_N_create(us_allocator_t *allocator);
+us_osc_msg_element_t *us_osc_msg_element_N_create( us_allocator_t *allocator );
 
-bool us_osc_msg_element_N_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_N_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_N_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_N_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -415,7 +429,8 @@ us_osc_msg_element_t *us_osc_msg_element_N_unflatten(us_allocator_t *allocator, 
  \addtogroup us_osc_msg_element_s 's': string message element
  */
 /*@{*/
-typedef struct us_osc_msg_element_s_s {
+typedef struct us_osc_msg_element_s_s
+{
     us_osc_msg_element_t m_base;
     char *m_value;
     int32_t m_length;
@@ -423,17 +438,17 @@ typedef struct us_osc_msg_element_s_s {
 
 /**
  */
-us_osc_msg_element_t *us_osc_msg_element_s_create(us_allocator_t *allocator, const char *value);
+us_osc_msg_element_t *us_osc_msg_element_s_create( us_allocator_t *allocator, const char *value );
 
 /**
  * Destroy a message element s
  */
 
-void us_osc_msg_element_s_destroy(us_osc_msg_element_t *self, us_allocator_t *allocator);
+void us_osc_msg_element_s_destroy( us_osc_msg_element_t *self, us_allocator_t *allocator );
 
-bool us_osc_msg_element_s_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_s_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_s_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_s_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -444,15 +459,16 @@ us_osc_msg_element_t *us_osc_msg_element_s_unflatten(us_allocator_t *allocator, 
 
 /**
  */
-typedef struct us_osc_msg_element_T_s {
+typedef struct us_osc_msg_element_T_s
+{
     us_osc_msg_element_t m_base;
 } us_osc_msg_element_T_t;
 
-us_osc_msg_element_t *us_osc_msg_element_T_create(us_allocator_t *allocator);
+us_osc_msg_element_t *us_osc_msg_element_T_create( us_allocator_t *allocator );
 
-bool us_osc_msg_element_T_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_T_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_T_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_T_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -463,17 +479,18 @@ us_osc_msg_element_t *us_osc_msg_element_T_unflatten(us_allocator_t *allocator, 
 
 /**
  */
-typedef struct us_osc_msg_element_t_s {
+typedef struct us_osc_msg_element_t_s
+{
     us_osc_msg_element_t m_base;
     uint32_t m_time_high;
     uint32_t m_time_low;
 } us_osc_msg_element_t_t;
 
-us_osc_msg_element_t *us_osc_msg_element_t_create(us_allocator_t *allocator, uint32_t time_high, uint32_t time_low);
+us_osc_msg_element_t *us_osc_msg_element_t_create( us_allocator_t *allocator, uint32_t time_high, uint32_t time_low );
 
-bool us_osc_msg_element_t_flatten(const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length);
+bool us_osc_msg_element_t_flatten( const us_osc_msg_element_t *self, us_buffer_t *buf, int32_t *length );
 
-us_osc_msg_element_t *us_osc_msg_element_t_unflatten(us_allocator_t *allocator, us_buffer_t *buf);
+us_osc_msg_element_t *us_osc_msg_element_t_unflatten( us_allocator_t *allocator, us_buffer_t *buf );
 
 /*@}*/
 
@@ -488,7 +505,7 @@ us_osc_msg_element_t *us_osc_msg_element_t_unflatten(us_allocator_t *allocator, 
  @param buffer buffer to check
  @return bool true if it is a valid OSC Bundle (multiple messages)
  */
-bool us_osc_msg_is_msg_bundle(const us_buffer_t *buffer);
+bool us_osc_msg_is_msg_bundle( const us_buffer_t *buffer );
 
 /**
  Check if buffer contains an OSC Message
@@ -496,7 +513,7 @@ bool us_osc_msg_is_msg_bundle(const us_buffer_t *buffer);
  @param buffer buffer to check
  @return bool true if it is a valid OSC Message
  */
-bool us_osc_msg_is_msg(const us_buffer_t *buffer);
+bool us_osc_msg_is_msg( const us_buffer_t *buffer );
 
 /**
  Check if buffer contains an OSC message with quadlet address-code
@@ -505,7 +522,7 @@ bool us_osc_msg_is_msg(const us_buffer_t *buffer);
  @return bool true if it is a valid OSC Message with address-code
  */
 
-bool us_osc_msg_is_msg_code(const us_buffer_t *buffer);
+bool us_osc_msg_is_msg_code( const us_buffer_t *buffer );
 
 /**
  Check if address code has the flag that says the message has a typetag string
@@ -513,7 +530,10 @@ bool us_osc_msg_is_msg_code(const us_buffer_t *buffer);
  @param uint32_t address code
  @return bool true if it is an address code with a typetag
  */
-static inline bool us_osc_msg_address_has_typetags(uint32_t address_code) { return (address_code & 0xc0000000) == 0xc0000000; }
+static inline bool us_osc_msg_address_has_typetags( uint32_t address_code )
+{
+    return ( address_code & 0xc0000000 ) == 0xc0000000;
+}
 
 /**
  Parse either a bundle or an OSC message
@@ -524,12 +544,12 @@ static inline bool us_osc_msg_address_has_typetags(uint32_t address_code) { retu
  @param buffer pointer to buffer to parse
  @return bool true if msg or bundle was parsed. One of msg or bundle will be non-zero
  */
-bool us_osc_parse(us_allocator_t *allocator,
-                  us_osc_msg_t **msg,
-                  us_osc_msg_bundle_t **bundle,
-                  us_buffer_t *buffer,
-                  size_t packet_size,
-                  us_osc_msg_addrcode_typetag_map_proc addrmapper);
+bool us_osc_parse( us_allocator_t *allocator,
+                   us_osc_msg_t **msg,
+                   us_osc_msg_bundle_t **bundle,
+                   us_buffer_t *buffer,
+                   size_t packet_size,
+                   us_osc_msg_addrcode_typetag_map_proc addrmapper );
 
 /*@}*/
 
@@ -538,7 +558,7 @@ bool us_osc_parse(us_allocator_t *allocator,
  * an int value where non zero is true
  */
 
-bool us_osc_msg_element_get_bool(us_osc_msg_element_t *element);
+bool us_osc_msg_element_get_bool( us_osc_msg_element_t *element );
 
 /*@}*/
 #ifdef __cplusplus

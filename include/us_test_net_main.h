@@ -38,7 +38,7 @@ extern "C" {
  */
 /*@{*/
 
-int us_test_net_main(int argc, const char **argv);
+int us_test_net_main( int argc, const char **argv );
 
 /*@}*/
 #ifdef __cplusplus

@@ -37,10 +37,10 @@
 extern "C" {
 #endif
 
-bool us_cgi_is_escapable(char c);
+bool us_cgi_is_escapable( char c );
 
-bool us_cgi_unescape(const char *src, int src_len, us_buffer_t *dest_buf);
-bool us_cgi_escape(const char *src, int src_len, us_buffer_t *dest_buf);
+bool us_cgi_unescape( const char *src, int src_len, us_buffer_t *dest_buf );
+bool us_cgi_escape( const char *src, int src_len, us_buffer_t *dest_buf );
 
 extern const char us_cgi_tohexdigit[16];
 extern char const *const us_cgi_rfc3986_reserved_chars;

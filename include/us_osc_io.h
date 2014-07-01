@@ -40,32 +40,37 @@ extern "C" {
 */
 
 /*@{*/
-typedef struct us_osc_io_packet_s {
-    void (*destroy)(struct us_osc_io_packet_s *self);
+typedef struct us_osc_io_packet_s
+{
+    void ( *destroy )( struct us_osc_io_packet_s *self );
     us_allocator_t *m_allocator;
     us_buffer_t *m_incoming_buffer;
     us_buffer_t *m_outgoing_buffer;
 } us_osc_io_packet_t;
 
-us_osc_io_packet_t *us_osc_io_packet_create(us_allocator_t *allocator, int max_buf_size);
+us_osc_io_packet_t *us_osc_io_packet_create( us_allocator_t *allocator, int max_buf_size );
 
-bool us_osc_io_packet_init(us_osc_io_packet_t *self, us_allocator_t *allocator, int max_buf_size);
+bool us_osc_io_packet_init( us_osc_io_packet_t *self, us_allocator_t *allocator, int max_buf_size );
 
-void us_osc_io_packet_destroy(us_osc_io_packet_t *self);
+void us_osc_io_packet_destroy( us_osc_io_packet_t *self );
 
-static inline bool us_osc_io_packet_is_msg(us_osc_io_packet_t *self) { return us_osc_msg_is_msg(self->m_incoming_buffer); }
-
-static inline bool us_osc_io_packet_is_msg_bundle(us_osc_io_packet_t *self) {
-    return us_osc_msg_is_msg_bundle(self->m_incoming_buffer);
+static inline bool us_osc_io_packet_is_msg( us_osc_io_packet_t *self )
+{
+    return us_osc_msg_is_msg( self->m_incoming_buffer );
 }
 
-bool us_osc_io_packet_get_msg(us_osc_io_packet_t *self, us_allocator_t *allocator, us_osc_msg_t **msg);
+static inline bool us_osc_io_packet_is_msg_bundle( us_osc_io_packet_t *self )
+{
+    return us_osc_msg_is_msg_bundle( self->m_incoming_buffer );
+}
 
-bool us_osc_io_packet_get_msg_bundle(us_osc_io_packet_t *self, us_allocator_t *allocator, us_osc_msg_bundle_t **bundle);
+bool us_osc_io_packet_get_msg( us_osc_io_packet_t *self, us_allocator_t *allocator, us_osc_msg_t **msg );
 
-bool us_osc_io_packet_put_msg(us_osc_io_packet_t *self, us_osc_msg_t *msg);
+bool us_osc_io_packet_get_msg_bundle( us_osc_io_packet_t *self, us_allocator_t *allocator, us_osc_msg_bundle_t **bundle );
 
-bool us_osc_io_packet_put_bundle(us_osc_io_packet_t *self, us_osc_msg_bundle_t *bundle);
+bool us_osc_io_packet_put_msg( us_osc_io_packet_t *self, us_osc_msg_t *msg );
+
+bool us_osc_io_packet_put_bundle( us_osc_io_packet_t *self, us_osc_msg_bundle_t *bundle );
 
 /*@}*/
 
@@ -74,36 +79,39 @@ bool us_osc_io_packet_put_bundle(us_osc_io_packet_t *self, us_osc_msg_bundle_t *
 */
 
 /*@{*/
-typedef struct us_osc_io_slip_stream_s {
-    void (*destroy)(struct us_osc_io_slip_stream_s *self);
+typedef struct us_osc_io_slip_stream_s
+{
+    void ( *destroy )( struct us_osc_io_slip_stream_s *self );
     us_allocator_t *m_allocator;
     us_buffer_t *m_incoming_buffer;
     us_buffer_t *m_outgoing_buffer;
 } us_osc_io_slip_stream_t;
 
-us_osc_io_slip_stream_t *us_osc_io_slip_stream_create(us_allocator_t *allocator, int max_buf_size);
+us_osc_io_slip_stream_t *us_osc_io_slip_stream_create( us_allocator_t *allocator, int max_buf_size );
 
-bool us_osc_io_slip_stream_init(us_osc_io_slip_stream_t *self, us_allocator_t *allocator, int max_buf_size);
+bool us_osc_io_slip_stream_init( us_osc_io_slip_stream_t *self, us_allocator_t *allocator, int max_buf_size );
 
-void us_osc_io_slip_stream_destroy(us_osc_io_packet_t *self);
+void us_osc_io_slip_stream_destroy( us_osc_io_packet_t *self );
 
-static inline bool us_osc_io_slip_stream_is_msg(us_osc_io_slip_stream_t *self) {
-    return us_osc_msg_is_msg(self->m_incoming_buffer);
+static inline bool us_osc_io_slip_stream_is_msg( us_osc_io_slip_stream_t *self )
+{
+    return us_osc_msg_is_msg( self->m_incoming_buffer );
 }
 
-static inline bool us_osc_io_slip_stream_is_msg_bundle(us_osc_io_slip_stream_t *self) {
-    return us_osc_msg_is_msg_bundle(self->m_incoming_buffer);
+static inline bool us_osc_io_slip_stream_is_msg_bundle( us_osc_io_slip_stream_t *self )
+{
+    return us_osc_msg_is_msg_bundle( self->m_incoming_buffer );
 }
 
-bool us_osc_io_slip_stream_get_msg(us_osc_io_slip_stream_t *self, us_allocator_t *allocator, us_osc_msg_t **msg);
+bool us_osc_io_slip_stream_get_msg( us_osc_io_slip_stream_t *self, us_allocator_t *allocator, us_osc_msg_t **msg );
 
-bool us_osc_io_slip_stream_get_msg_bundle(us_osc_io_slip_stream_t *self,
-                                          us_allocator_t *allocator,
-                                          us_osc_msg_bundle_t **bundle);
+bool us_osc_io_slip_stream_get_msg_bundle( us_osc_io_slip_stream_t *self,
+                                           us_allocator_t *allocator,
+                                           us_osc_msg_bundle_t **bundle );
 
-bool us_osc_io_slip_stream_put_msg(us_osc_io_slip_stream_t *self, us_osc_msg_t *msg);
+bool us_osc_io_slip_stream_put_msg( us_osc_io_slip_stream_t *self, us_osc_msg_t *msg );
 
-bool us_osc_io_slip_stream_put_bundle(us_osc_io_slip_stream_t *self, us_osc_msg_bundle_t *bundle);
+bool us_osc_io_slip_stream_put_bundle( us_osc_io_slip_stream_t *self, us_osc_msg_bundle_t *bundle );
 
 /*@}*/
 
@@ -112,36 +120,39 @@ bool us_osc_io_slip_stream_put_bundle(us_osc_io_slip_stream_t *self, us_osc_msg_
 */
 
 /*@{*/
-typedef struct us_osc_io_packet_stream_s {
-    void (*destroy)(struct us_osc_io_packet_stream_s *self);
+typedef struct us_osc_io_packet_stream_s
+{
+    void ( *destroy )( struct us_osc_io_packet_stream_s *self );
     us_allocator_t *m_allocator;
     us_buffer_t m_incoming_buffer;
     us_buffer_t m_outgoing_buffer;
 } us_osc_io_packet_stream_t;
 
-us_osc_io_packet_stream_t *us_osc_io_packet_stream_create(us_allocator_t *allocator, int max_buf_size);
+us_osc_io_packet_stream_t *us_osc_io_packet_stream_create( us_allocator_t *allocator, int max_buf_size );
 
-bool us_osc_io_packet_stream_init(us_osc_io_packet_stream_t *self, us_allocator_t *allocator, int max_buf_size);
+bool us_osc_io_packet_stream_init( us_osc_io_packet_stream_t *self, us_allocator_t *allocator, int max_buf_size );
 
-void us_osc_io_slip_stream_destroy(us_osc_io_packet_t *self);
+void us_osc_io_slip_stream_destroy( us_osc_io_packet_t *self );
 
-static inline bool us_osc_io_packet_stream_is_msg(us_osc_io_packet_stream_t *self) {
-    return us_osc_msg_is_msg(&self->m_incoming_buffer);
+static inline bool us_osc_io_packet_stream_is_msg( us_osc_io_packet_stream_t *self )
+{
+    return us_osc_msg_is_msg( &self->m_incoming_buffer );
 }
 
-static inline bool us_osc_io_packet_stream_is_msg_bundle(us_osc_io_packet_stream_t *self) {
-    return us_osc_msg_is_msg_bundle(&self->m_incoming_buffer);
+static inline bool us_osc_io_packet_stream_is_msg_bundle( us_osc_io_packet_stream_t *self )
+{
+    return us_osc_msg_is_msg_bundle( &self->m_incoming_buffer );
 }
 
-bool us_osc_io_packet_stream_get_msg(us_osc_io_packet_stream_t *self, us_allocator_t *allocator, us_osc_msg_t **msg);
+bool us_osc_io_packet_stream_get_msg( us_osc_io_packet_stream_t *self, us_allocator_t *allocator, us_osc_msg_t **msg );
 
-bool us_osc_io_packet_stream_get_msg_bundle(us_osc_io_packet_stream_t *self,
-                                            us_allocator_t *allocator,
-                                            us_osc_msg_bundle_t **bundle);
+bool us_osc_io_packet_stream_get_msg_bundle( us_osc_io_packet_stream_t *self,
+                                             us_allocator_t *allocator,
+                                             us_osc_msg_bundle_t **bundle );
 
-bool us_osc_io_packet_stream_put_msg(us_osc_io_packet_stream_t *self, us_osc_msg_t *msg);
+bool us_osc_io_packet_stream_put_msg( us_osc_io_packet_stream_t *self, us_osc_msg_t *msg );
 
-bool us_osc_io_packet_stream_put_bundle(us_osc_io_packet_stream_t *self, us_osc_msg_bundle_t *bundle);
+bool us_osc_io_packet_stream_put_bundle( us_osc_io_packet_stream_t *self, us_osc_msg_bundle_t *bundle );
 
 /*@}*/
 

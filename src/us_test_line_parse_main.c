@@ -36,24 +36,27 @@
 /** \addtogroup us_test_line_parse */
 /*@{*/
 
-static bool us_test_line_parse(void);
+static bool us_test_line_parse( void );
 
-static bool us_test_line_parse(void) {
+static bool us_test_line_parse( void )
+{
     bool r = true;
     return r;
 }
 
-int us_test_line_parse_main(int argc, const char **argv) {
+int us_test_line_parse_main( int argc, const char **argv )
+{
     int r = 1;
-    if (us_testutil_start(2048, 2048, argc, argv)) {
+    if ( us_testutil_start( 2048, 2048, argc, argv ) )
+    {
 #if US_ENABLE_LOGGING
-        us_logger_printer_start(us_testutil_printer_stdout, us_testutil_printer_stderr);
+        us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-        us_log_set_level(US_LOG_LEVEL_DEBUG);
-        us_log_info("Hello world from %s compiled on %s", __FILE__, __DATE__);
-        if (us_test_line_parse())
+        us_log_set_level( US_LOG_LEVEL_DEBUG );
+        us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+        if ( us_test_line_parse() )
             r = 0;
-        us_log_info("Finishing us_test_buffer");
+        us_log_info( "Finishing us_test_buffer" );
         us_logger_finish();
         us_testutil_finish();
     }

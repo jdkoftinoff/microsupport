@@ -31,12 +31,11 @@
 #include "us_world.h"
 #endif
 #include "us_net.h"
-#if defined(US_ENABLE_RAW_ETHERNET)
+#if defined( US_ENABLE_RAW_ETHERNET )
 #include "us_rawnet.h"
 #include "us_rawnet_multi.h"
 #endif
 #include "us_time.h"
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,7 +46,7 @@ extern "C" {
 /*@{*/
 
 #ifndef US_SOCKET_COLLECTION_MAX_SOCKETS
-#define US_SOCKET_COLLECTION_MAX_SOCKETS (8)
+#define US_SOCKET_COLLECTION_MAX_SOCKETS ( 8 )
 #endif
 
 /// us_socket_collection manages a collection of similiar sockets
@@ -55,7 +54,8 @@ extern "C" {
 /// and receiving data is the same. Handles a maximum
 /// of US_SOCKET_COLLECTION_MAX_SOCKETS at a time, along with
 /// a context pointer for each
-typedef struct us_socket_collection_s {
+typedef struct us_socket_collection_s
+{
 
     /// The current number of active sockets
     int num_sockets;
@@ -70,87 +70,60 @@ typedef struct us_socket_collection_s {
     void *user_context;
 
     /// The list of context pointters for each socket
-    void *socket_context[ US_SOCKET_COLLECTION_MAX_SOCKETS ];
-
+    void *socket_context[US_SOCKET_COLLECTION_MAX_SOCKETS];
 
     /// The function to call to destroy this collection
-    void (*destroy)(
-            struct us_socket_collection_s *self);
-
+    void ( *destroy )( struct us_socket_collection_s *self );
 
     /// The function that is called in order to close a socket in this
     /// collection and free associated information
-    void (*close)(
-            struct us_socket_collection_s *self,
-            int fd,
-            void * context);
+    void ( *close )( struct us_socket_collection_s *self, int fd, void *context );
 
     /// The function to call in order to send data to a socket in this collection
-    ssize_t (*send_data)(
-            struct us_socket_collection_s *self,
-            void * context,
-            int fd,
-            struct sockaddr const *to_addr,
-            socklen_t to_addrlen,
-            uint8_t const *buf,
-            size_t len );
+    ssize_t ( *send_data )( struct us_socket_collection_s *self,
+                            void *context,
+                            int fd,
+                            struct sockaddr const *to_addr,
+                            socklen_t to_addrlen,
+                            uint8_t const *buf,
+                            size_t len );
 
     /// The function to call in order to receive data from a socket in this collection
-    ssize_t (*receive_data)(
-            struct us_socket_collection_s *self,
-            void * context,
-            int fd,
-            uint64_t current_time_in_milliseconds,
-            void *buf,
-            size_t buflen,
-            struct sockaddr *from_addr,
-            socklen_t *from_addrlen);
+    ssize_t ( *receive_data )( struct us_socket_collection_s *self,
+                               void *context,
+                               int fd,
+                               uint64_t current_time_in_milliseconds,
+                               void *buf,
+                               size_t buflen,
+                               struct sockaddr *from_addr,
+                               socklen_t *from_addrlen );
 
     /// The function the collection calls in order to find out if a handler
     /// for a specific socket is interested in reading from the socket
-    bool (*interested_in_reading)(
-            struct us_socket_collection_s *self,
-            void * context,
-            int fd
-            );
+    bool ( *interested_in_reading )( struct us_socket_collection_s *self, void *context, int fd );
 
     /// The function the collection calls in order to find out if a handler
     /// for a specific socket is interested in writing to the socket
-    bool (*interested_in_writing)(
-            struct us_socket_collection_s *self,
-            void * context,
-            int fd
-            );
+    bool ( *interested_in_writing )( struct us_socket_collection_s *self, void *context, int fd );
 
     /// The function the collection calls when data is received on the socket
-    void (*readable)(
-            struct us_socket_collection_s *self,
-            void * context,
-            int fd,
-            uint64_t current_time_in_milliseconds,
-            struct sockaddr const *from_addr,
-            socklen_t from_addrlen,
-            uint8_t const *buf,
-            ssize_t len );
+    void ( *readable )( struct us_socket_collection_s *self,
+                        void *context,
+                        int fd,
+                        uint64_t current_time_in_milliseconds,
+                        struct sockaddr const *from_addr,
+                        socklen_t from_addrlen,
+                        uint8_t const *buf,
+                        ssize_t len );
 
     /// The function the collection calls when the socket is writable
-    void (*writable)(
-            struct us_socket_collection_s *self,
-            void * context,
-            int fd,
-            uint64_t current_time_in_milliseconds);
+    void ( *writable )( struct us_socket_collection_s *self, void *context, int fd, uint64_t current_time_in_milliseconds );
 
     /// The function the collection calls when it is time to do a tick
-    void (*tick)(
-            struct us_socket_collection_s *self,
-            void * context,
-            int fd,
-            uint64_t current_time_in_milliseconds
-            );
+    void ( *tick )( struct us_socket_collection_s *self, void *context, int fd, uint64_t current_time_in_milliseconds );
 
     /// The list of file descriptors for each socket
-    int socket_fd[ US_SOCKET_COLLECTION_MAX_SOCKETS ];
-
+    int socket_fd[US_SOCKET_COLLECTION_MAX_SOCKETS];
 
 } us_socket_collection_t;
 
@@ -187,71 +160,62 @@ int us_socket_collection_fill_write_set( us_socket_collection_t *self, fd_set *w
 void us_socket_collection_tick( us_socket_collection_t *self, uint64_t current_time_in_milliseconds );
 
 /// Try to read from each readable socket and call the data_received function for the socket
-void us_socket_collection_handle_readable_set(
-    us_socket_collection_t *self,
-    fd_set const *readable_set,
-    uint64_t current_time_in_milliseconds );
+void us_socket_collection_handle_readable_set( us_socket_collection_t *self,
+                                               fd_set const *readable_set,
+                                               uint64_t current_time_in_milliseconds );
 
 /// Try to call the writable function for each file descriptor that is marked writable
-void us_socket_collection_handle_writable_set(
-    us_socket_collection_t *self,
-    fd_set const *writable_set,
-    uint64_t current_time_in_milliseconds );
+void us_socket_collection_handle_writable_set( us_socket_collection_t *self,
+                                               fd_set const *writable_set,
+                                               uint64_t current_time_in_milliseconds );
 
 /// Create a TCP server socket, bound to a local address on a specific network port
-int us_socket_collection_add_tcp_server(
-    us_socket_collection_t *self,
-    const char *local_addr_name,
-    const char *local_port_name,
-    void * context );
+int us_socket_collection_add_tcp_server( us_socket_collection_t *self,
+                                         const char *local_addr_name,
+                                         const char *local_port_name,
+                                         void *context );
 
 /// Create a TCP client socket, trying to initiate a non-blocking connect to the specified remote address
-int us_socket_collection_add_tcp_client(
-    us_socket_collection_t *self,
-    const char *remote_addr_name,
-    const char *remote_port_name,
-    void * context );
+int us_socket_collection_add_tcp_client( us_socket_collection_t *self,
+                                         const char *remote_addr_name,
+                                         const char *remote_port_name,
+                                         void *context );
 
 /// Create a UDP socket, bound to a local address on a specific network port
-int us_socket_collection_add_udp(
-    us_socket_collection_t *self,
-    const char *local_addr_name,
-    const char *local_port_name,
-    void * context );
+int us_socket_collection_add_udp( us_socket_collection_t *self,
+                                  const char *local_addr_name,
+                                  const char *local_port_name,
+                                  void *context );
 
 /// Create a UDP socket, bound to a local address on a specific network port, that also joins
 /// the stated multicast address
-int us_socket_collection_add_multicast_udp(
-    us_socket_collection_t *self,
-    const char *local_addr_name,
-    const char *local_port_name,
-    const char *multicast_addr_name,
-    const char *multicast_port_name,
-    const char *network_port_name,
-    void * context );
+int us_socket_collection_add_multicast_udp( us_socket_collection_t *self,
+                                            const char *local_addr_name,
+                                            const char *local_port_name,
+                                            const char *multicast_addr_name,
+                                            const char *multicast_port_name,
+                                            const char *network_port_name,
+                                            void *context );
 
-#if defined(US_ENABLE_RAW_ETHERNET)
+#if defined( US_ENABLE_RAW_ETHERNET )
 /// Given a rawnet context, add it to the collection and set the context pointer to the rawnet_context
 /// If unable to add it to the collection, it closes the rawnet socket and returns -1
-int us_socket_collection_add_rawnet(
-    us_socket_collection_t *self,
-    us_rawnet_context_t *rawnet_context
-    );
+int us_socket_collection_add_rawnet( us_socket_collection_t *self, us_rawnet_context_t *rawnet_context );
 #endif
 
 /*@}*/
-
 
 /** \addtogroup us_socket_collection us_socket_collection_t Socket Collection Groups
  */
 /*@{*/
 
 #ifndef US_SOCKET_COLLECTION_GROUP_MAX_COLLECTIONS
-# define US_SOCKET_COLLECTION_GROUP_MAX_COLLECTIONS (8)
+#define US_SOCKET_COLLECTION_GROUP_MAX_COLLECTIONS ( 8 )
 #endif
 
 /// The us_socket_collection_group manages a group of socket collections
-typedef struct us_socket_collection_group_s {
+typedef struct us_socket_collection_group_s
+{
     int num_collections;
     us_socket_collection_t *collection[US_SOCKET_COLLECTION_GROUP_MAX_COLLECTIONS];
 } us_socket_collection_group_t;
@@ -267,35 +231,28 @@ int us_socket_collection_group_count_sockets( us_socket_collection_group_t *self
 
 /// Add a reference to the specified socket collection to the group.
 /// Returns false if the collection group is full
-bool us_socket_collection_group_add(
-    us_socket_collection_group_t *self,
-    us_socket_collection_t *c );
+bool us_socket_collection_group_add( us_socket_collection_group_t *self, us_socket_collection_t *c );
 
 /// Clean up all closed sockets in all socket collections
-void us_socket_collection_group_cleanup(
-    us_socket_collection_group_t *self );
+void us_socket_collection_group_cleanup( us_socket_collection_group_t *self );
 
 /// Fill the readable and writable fd_sets based on the requirements of all the sockets
 /// in all the socket collections.  Returns the largest file descriptor of them all
-int us_socket_collection_group_fill_sets(
-    us_socket_collection_group_t *self,
-    fd_set *readable,
-    fd_set *writable,
-    int largest_fd );
+int us_socket_collection_group_fill_sets( us_socket_collection_group_t *self,
+                                          fd_set *readable,
+                                          fd_set *writable,
+                                          int largest_fd );
 
 /// Send a tick message to all of the socket collections for each socket
 /// Automatically calls cleanup() afterwards
-void us_socket_collection_group_tick(
-    us_socket_collection_group_t *self,
-    uint64_t current_time_in_ms );
+void us_socket_collection_group_tick( us_socket_collection_group_t *self, uint64_t current_time_in_ms );
 
 /// Handle any readable or writable sockets within the contained socket groups.
 /// Automatically calls cleanup() aftwards
-void us_socket_collection_group_handle_sets(
-    us_socket_collection_group_t *self,
-    fd_set const *readable,
-    fd_set const *writable,
-    uint64_t current_time_in_ms );
+void us_socket_collection_group_handle_sets( us_socket_collection_group_t *self,
+                                             fd_set const *readable,
+                                             fd_set const *writable,
+                                             uint64_t current_time_in_ms );
 
 /// Scan through all socket collections and find out if an early tick is requested by any
 bool us_socket_collection_group_wants_early_tick( us_socket_collection_group_t *self );
@@ -303,44 +260,35 @@ bool us_socket_collection_group_wants_early_tick( us_socket_collection_group_t *
 /*@}*/
 
 /// Initialize a socket collection used for managing tcp server sockets
-void us_socket_collection_init_tcp_server(
-    us_socket_collection_t *self );
+void us_socket_collection_init_tcp_server( us_socket_collection_t *self );
 
 /// Initialize a socket collection used for managing tcp client sockets
-void us_socket_collection_init_tcp_client(
-    us_socket_collection_t *self );
+void us_socket_collection_init_tcp_client( us_socket_collection_t *self );
 
 /// Initialize a socket collection used for managing udp unicast sockets
-void us_socket_collection_init_udp_unicast(
-    us_socket_collection_t *self );
+void us_socket_collection_init_udp_unicast( us_socket_collection_t *self );
 
 /// Initialize a socket collection used for managing udp multicast sockets
-void us_socket_collection_init_udp_multicast(
-    us_socket_collection_t *self );
+void us_socket_collection_init_udp_multicast( us_socket_collection_t *self );
 
 /// Initialize a socket collection used for managing rawnet sockets
-void us_socket_collection_init_rawnet(
-    us_socket_collection_t *self );
+void us_socket_collection_init_rawnet( us_socket_collection_t *self );
 
-#if defined(US_ENABLE_RAW_ETHERNET)
+#if defined( US_ENABLE_RAW_ETHERNET )
 
 /// A subclass of socket_collection for managing a rawnet_multi object. Adds the rawnet_multi pointer.
-typedef struct us_socket_collection_rawnet_multi_s {
+typedef struct us_socket_collection_rawnet_multi_s
+{
     us_socket_collection_t base;
     us_rawnet_multi_t *rawnet_multi;
 } us_socket_collection_rawnet_multi_t;
 
 /// Initialize a socket collection of rawnet sockets based on the rawnet_multi object
-void us_socket_collection_init_rawnet_multi(
-        us_socket_collection_rawnet_multi_t *self,
-        us_rawnet_multi_t *rawnet_multi );
+void us_socket_collection_init_rawnet_multi( us_socket_collection_rawnet_multi_t *self, us_rawnet_multi_t *rawnet_multi );
 #endif
 
 /// Scan through all active sockets in all groups and call select()
-bool us_socket_collections_group_select(
-    us_socket_collection_group_t *self,
-    uint64_t cur_time,
-    uint64_t max_sleep_time_in_ms );
+bool us_socket_collections_group_select( us_socket_collection_group_t *self, uint64_t cur_time, uint64_t max_sleep_time_in_ms );
 
 #ifdef __cplusplus
 }

@@ -43,68 +43,68 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef US_ENABLE_UIPV4_STACK
-#define US_ENABLE_UIPV4_STACK (0)
+#define US_ENABLE_UIPV4_STACK ( 0 )
 #endif
 
 #ifndef US_ENABLE_LWIP_STACK
-#define US_ENABLE_LWIP_STACK (0)
+#define US_ENABLE_LWIP_STACK ( 0 )
 #endif
 
 #ifndef US_ENABLE_NETWORK
-#define US_ENABLE_NETWORK (1)
+#define US_ENABLE_NETWORK ( 1 )
 #endif
 
-#if defined(US_ENABLE_NETWORK) && defined(US_CONFIG_POSIX)
-#define US_ENABLE_NETWORK_IPV4 (1)
-#define US_ENABLE_NETWORK_IPV6 (1)
-#define US_ENABLE_BSD_SOCKETS (1)
-#elif defined(US_ENABLE_NETWORK) && defined(US_ENABLE_UIPV4_STACK)
-#define US_ENABLE_NETWORK_IPV4 (1)
-#define US_ENABLE_NETWORK_IPV6 (0)
-#define US_ENABLE_BSD_SOCKETS (0)
-#elif defined(US_ENABLE_NETWORK) && defined(US_ENABLE_UIPV6_STACK)
-#define US_ENABLE_NETWORK_IPV4 (1)
-#define US_ENABLE_NETWORK_IPV6 (1)
-#define US_ENABLE_BSD_SOCKETS (0)
-#elif defined(US_ENABLE_NETWORK) && defined(US_ENABLE_LWIP_STACK)
-#define US_ENABLE_NETWORK_IPV4 (1)
-#define US_ENABLE_NETWORK_IPV6 (0)
-#define US_ENABLE_BSD_SOCKETS (0)
-#elif defined(US_ENABLE_NETWORK) && defined(US_CONFIG_WIN32)
-#define US_ENABLE_NETWORK_IPV4 (1)
-#define US_ENABLE_NETWORK_IPV6 (1)
-#define US_ENABLE_BSD_SOCKETS (1)
+#if defined( US_ENABLE_NETWORK ) && defined( US_CONFIG_POSIX )
+#define US_ENABLE_NETWORK_IPV4 ( 1 )
+#define US_ENABLE_NETWORK_IPV6 ( 1 )
+#define US_ENABLE_BSD_SOCKETS ( 1 )
+#elif defined( US_ENABLE_NETWORK ) && defined( US_ENABLE_UIPV4_STACK )
+#define US_ENABLE_NETWORK_IPV4 ( 1 )
+#define US_ENABLE_NETWORK_IPV6 ( 0 )
+#define US_ENABLE_BSD_SOCKETS ( 0 )
+#elif defined( US_ENABLE_NETWORK ) && defined( US_ENABLE_UIPV6_STACK )
+#define US_ENABLE_NETWORK_IPV4 ( 1 )
+#define US_ENABLE_NETWORK_IPV6 ( 1 )
+#define US_ENABLE_BSD_SOCKETS ( 0 )
+#elif defined( US_ENABLE_NETWORK ) && defined( US_ENABLE_LWIP_STACK )
+#define US_ENABLE_NETWORK_IPV4 ( 1 )
+#define US_ENABLE_NETWORK_IPV6 ( 0 )
+#define US_ENABLE_BSD_SOCKETS ( 0 )
+#elif defined( US_ENABLE_NETWORK ) && defined( US_CONFIG_WIN32 )
+#define US_ENABLE_NETWORK_IPV4 ( 1 )
+#define US_ENABLE_NETWORK_IPV6 ( 1 )
+#define US_ENABLE_BSD_SOCKETS ( 1 )
 #endif
 
 #if US_ENABLE_RAW_ETHERNET
-#if defined(US_CONFIG_MACOSX) || defined(US_CONFIG_WIN32)
+#if defined( US_CONFIG_MACOSX ) || defined( US_CONFIG_WIN32 )
 #undef US_ENABLE_PCAP
 #define US_ENABLE_PCAP 1
 #undef US_ENABLE_RAW_ETHERNET
-#define US_ENABLE_RAW_ETHERNET (1)
+#define US_ENABLE_RAW_ETHERNET ( 1 )
 #endif
 #endif
 
 #ifndef US_ENABLE_RAW_ETHERNET
-#if defined(US_CONFIG_LINUX) || defined(__linux__)
-#define US_ENABLE_RAW_ETHERNET (1)
+#if defined( US_CONFIG_LINUX ) || defined( __linux__ )
+#define US_ENABLE_RAW_ETHERNET ( 1 )
 #endif
 #endif
 
 #ifndef US_MAX_ADDRESS_LENGTH
-#define US_MAX_ADDRESS_LENGTH (256)
+#define US_MAX_ADDRESS_LENGTH ( 256 )
 #endif
 
 #ifndef US_MAX_TYPETAGS
-#define US_MAX_TYPETAGS (16)
+#define US_MAX_TYPETAGS ( 16 )
 #endif
 
 #ifndef US_ENABLE_MALLOC
-#define US_ENABLE_MALLOC (1)
+#define US_ENABLE_MALLOC ( 1 )
 #endif
 
 #ifndef US_ENABLE_FLOAT
-#define US_ENABLE_FLOAT (1)
+#define US_ENABLE_FLOAT ( 1 )
 #endif
 
 #ifndef US_ENABLE_DOUBLE
@@ -112,34 +112,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef US_ENABLE_PRINTING
-#define US_ENABLE_PRINTING (1)
+#define US_ENABLE_PRINTING ( 1 )
 #endif
 
 #ifndef US_ENABLE_LOGGING
-#define US_ENABLE_LOGGING (1)
+#define US_ENABLE_LOGGING ( 1 )
 #endif
 
 #ifndef US_ENABLE_SYSLOG
-# if defined(US_CONFIG_POSIX)
-#  define US_ENABLE_SYSLOG (1)
-# else
-#  define US_ENABLE_SYSLOG (0)
-# endif
+#if defined( US_CONFIG_POSIX )
+#define US_ENABLE_SYSLOG ( 1 )
+#else
+#define US_ENABLE_SYSLOG ( 0 )
+#endif
 #endif
 
 #ifndef US_ENABLE_DAEMON
-# if defined(US_CONFIG_POSIX)
-#  define US_ENABLE_DAEMON (1)
-# else
-#  define US_ENABLE_DAEMON (0)
-# endif
+#if defined( US_CONFIG_POSIX )
+#define US_ENABLE_DAEMON ( 1 )
+#else
+#define US_ENABLE_DAEMON ( 0 )
+#endif
 #endif
 
 #ifndef US_ENABLE_STDIO
-#if defined(US_CONFIG_MICROCONTROLLER)
-#define US_ENABLE_STDIO (0)
+#if defined( US_CONFIG_MICROCONTROLLER )
+#define US_ENABLE_STDIO ( 0 )
 #else
-#define US_ENABLE_STDIO (1)
+#define US_ENABLE_STDIO ( 1 )
 #endif
 #endif
 

@@ -37,30 +37,30 @@ extern "C" {
 
 /**
 */
-int us_reactor_connect_or_open(const char *fname);
+int us_reactor_connect_or_open( const char *fname );
 
 /**
 */
-int us_reactor_tcp_blocking_connect(const char *connect_host, const char *connect_port);
+int us_reactor_tcp_blocking_connect( const char *connect_host, const char *connect_port );
 
-typedef bool (*us_reactor_handler_tcp_client_init_proc_t)(us_reactor_handler_t *self,
-                                                          us_allocator_t *allocator,
-                                                          int fd,
-                                                          void *extra,
-                                                          ssize_t queue_buf_size,
-                                                          const char *client_host,
-                                                          const char *client_port,
-                                                          bool keep_open);
+typedef bool ( *us_reactor_handler_tcp_client_init_proc_t )( us_reactor_handler_t *self,
+                                                             us_allocator_t *allocator,
+                                                             int fd,
+                                                             void *extra,
+                                                             ssize_t queue_buf_size,
+                                                             const char *client_host,
+                                                             const char *client_port,
+                                                             bool keep_open );
 
-bool us_reactor_create_tcp_client(us_reactor_t *self,
-                                  us_allocator_t *allocator,
-                                  void *extra,
-                                  ssize_t queue_buf_size,
-                                  const char *server_host,
-                                  const char *server_port,
-                                  bool keep_open,
-                                  us_reactor_handler_create_proc_t client_handler_create,
-                                  us_reactor_handler_tcp_client_init_proc_t client_handler_init);
+bool us_reactor_create_tcp_client( us_reactor_t *self,
+                                   us_allocator_t *allocator,
+                                   void *extra,
+                                   ssize_t queue_buf_size,
+                                   const char *server_host,
+                                   const char *server_port,
+                                   bool keep_open,
+                                   us_reactor_handler_create_proc_t client_handler_create,
+                                   us_reactor_handler_tcp_client_init_proc_t client_handler_init );
 
 /*@}*/
 
@@ -68,7 +68,8 @@ bool us_reactor_create_tcp_client(us_reactor_t *self,
 */
 /*@{*/
 
-typedef struct us_reactor_handler_tcp_server_s {
+typedef struct us_reactor_handler_tcp_server_s
+{
     us_reactor_handler_t m_base;
     us_reactor_handler_create_proc_t client_handler_create;
     us_reactor_handler_init_proc_t client_handler_init;
@@ -76,62 +77,64 @@ typedef struct us_reactor_handler_tcp_server_s {
 
 /**
 */
-us_reactor_handler_t *us_reactor_handler_tcp_server_create(us_allocator_t *allocator);
+us_reactor_handler_t *us_reactor_handler_tcp_server_create( us_allocator_t *allocator );
 
 /**
 */
-bool us_reactor_handler_tcp_server_init(us_reactor_handler_t *self,
-                                        us_allocator_t *allocator,
-                                        int fd,
-                                        void *client_extra,
-                                        us_reactor_handler_create_proc_t client_handler_create,
-                                        us_reactor_handler_init_proc_t client_handler_init);
+bool us_reactor_handler_tcp_server_init( us_reactor_handler_t *self,
+                                         us_allocator_t *allocator,
+                                         int fd,
+                                         void *client_extra,
+                                         us_reactor_handler_create_proc_t client_handler_create,
+                                         us_reactor_handler_init_proc_t client_handler_init );
 
 /**
 */
-bool us_reactor_handler_tcp_server_readable(us_reactor_handler_t *self);
+bool us_reactor_handler_tcp_server_readable( us_reactor_handler_t *self );
 
 /*@}*/
 
 /** \ingroup poll_reactor */
 /** \defgroup reactor_handler_tcp reactor_handler_tcp  */
 /*@{*/
-typedef struct us_reactor_handler_tcp_s {
+typedef struct us_reactor_handler_tcp_s
+{
     us_reactor_handler_t m_base;
     us_buffer_t m_outgoing_queue;
     us_buffer_t m_incoming_queue;
 
-    void (*close)(struct us_reactor_handler_tcp_s *self);
+    void ( *close )( struct us_reactor_handler_tcp_s *self );
 
-    bool (*connected)(struct us_reactor_handler_tcp_s *self, struct sockaddr *addr, socklen_t addrlen);
-    bool (*tick)(struct us_reactor_handler_tcp_s *self);
-    bool (*readable)(struct us_reactor_handler_tcp_s *self);
-    bool (*writable)(struct us_reactor_handler_tcp_s *self);
-    bool (*incoming_eof)(struct us_reactor_handler_tcp_s *self);
-    void (*closed)(struct us_reactor_handler_tcp_s *self);
+    bool ( *connected )( struct us_reactor_handler_tcp_s *self, struct sockaddr *addr, socklen_t addrlen );
+    bool ( *tick )( struct us_reactor_handler_tcp_s *self );
+    bool ( *readable )( struct us_reactor_handler_tcp_s *self );
+    bool ( *writable )( struct us_reactor_handler_tcp_s *self );
+    bool ( *incoming_eof )( struct us_reactor_handler_tcp_s *self );
+    void ( *closed )( struct us_reactor_handler_tcp_s *self );
 } us_reactor_handler_tcp_t;
 
-us_reactor_handler_t *us_reactor_handler_tcp_create(us_allocator_t *allocator);
+us_reactor_handler_t *us_reactor_handler_tcp_create( us_allocator_t *allocator );
 
-bool
-    us_reactor_handler_tcp_init(us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra, int queue_buf_size);
+bool us_reactor_handler_tcp_init(
+    us_reactor_handler_t *self, us_allocator_t *allocator, int fd, void *extra, int queue_buf_size );
 
-void us_reactor_handler_tcp_destroy(us_reactor_handler_t *self);
+void us_reactor_handler_tcp_destroy( us_reactor_handler_t *self );
 
-bool us_reactor_handler_tcp_tick(us_reactor_handler_t *self);
+bool us_reactor_handler_tcp_tick( us_reactor_handler_t *self );
 
-bool us_reactor_handler_tcp_readable(us_reactor_handler_t *self);
+bool us_reactor_handler_tcp_readable( us_reactor_handler_t *self );
 
-bool us_reactor_handler_tcp_writable(us_reactor_handler_t *self);
+bool us_reactor_handler_tcp_writable( us_reactor_handler_t *self );
 
-void us_reactor_handler_tcp_close(us_reactor_handler_tcp_t *self);
+void us_reactor_handler_tcp_close( us_reactor_handler_tcp_t *self );
 
 /*@}*/
 
 /** \ingroup poll_reactor */
 /** \defgroup reactor_handler_tcp_client reactor_handler_tcp_client  */
 /*@{*/
-typedef struct us_reactor_handler_tcp_client_s {
+typedef struct us_reactor_handler_tcp_client_s
+{
     us_reactor_handler_tcp_t m_base;
     const char *m_client_host;
     const char *m_client_port;
@@ -140,22 +143,22 @@ typedef struct us_reactor_handler_tcp_client_s {
     bool m_try_once;
 } us_reactor_handler_tcp_client_t;
 
-us_reactor_handler_t *us_reactor_handler_tcp_client_create(us_allocator_t *allocator);
+us_reactor_handler_t *us_reactor_handler_tcp_client_create( us_allocator_t *allocator );
 
-bool us_reactor_handler_tcp_client_init(us_reactor_handler_t *self,
-                                        us_allocator_t *allocator,
-                                        int fd,
-                                        void *extra,
-                                        int queue_buf_size,
-                                        const char *client_host,
-                                        const char *client_port,
-                                        bool keep_open);
+bool us_reactor_handler_tcp_client_init( us_reactor_handler_t *self,
+                                         us_allocator_t *allocator,
+                                         int fd,
+                                         void *extra,
+                                         int queue_buf_size,
+                                         const char *client_host,
+                                         const char *client_port,
+                                         bool keep_open );
 
-void us_reactor_handler_tcp_client_destroy(us_reactor_handler_t *self);
+void us_reactor_handler_tcp_client_destroy( us_reactor_handler_t *self );
 
-bool us_reactor_handler_tcp_client_tick(us_reactor_handler_tcp_t *self);
+bool us_reactor_handler_tcp_client_tick( us_reactor_handler_tcp_t *self );
 
-void us_reactor_handler_tcp_client_closed(struct us_reactor_handler_tcp_s *self);
+void us_reactor_handler_tcp_client_closed( struct us_reactor_handler_tcp_s *self );
 
 /*@}*/
 

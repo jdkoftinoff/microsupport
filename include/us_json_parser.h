@@ -43,7 +43,8 @@ typedef long us_json_int_t;
 #define US_JSON_PARSER_INTEGER_SPRINTF_TOKEN "%ld"
 #endif
 
-typedef enum {
+typedef enum
+{
     US_JSON_T_NONE = 0,
     US_JSON_T_ARRAY_BEGIN,
     US_JSON_T_ARRAY_END,
@@ -59,13 +60,16 @@ typedef enum {
     US_JSON_T_MAX
 } us_json_type;
 
-typedef struct us_json_value_struct {
-    union {
+typedef struct us_json_value_struct
+{
+    union
+    {
         us_json_int_t integer_value;
 
         double float_value;
 
-        struct {
+        struct
+        {
             const char *value;
             size_t length;
         } str;
@@ -85,7 +89,7 @@ typedef struct us_json_parser_struct *us_json_parser_t;
 
   \return Non-zero if parsing should continue, else zero.
 */
-typedef int (*us_json_parser_callback)(void *ctx, int type, const struct us_json_value_struct *value);
+typedef int ( *us_json_parser_callback )( void *ctx, int type, const struct us_json_value_struct *value );
 
 /*! \brief The structure used to configure a JSON parser object
 
@@ -99,7 +103,8 @@ typedef int (*us_json_parser_callback)(void *ctx, int type, const struct us_json
 
   \return The parser object.
 */
-typedef struct {
+typedef struct
+{
     us_json_parser_callback callback;
     void *callback_ctx;
     int depth;
@@ -116,7 +121,7 @@ typedef struct {
 
   \param config Used to configure the parser.
 */
-void us_json_config_init(us_json_config_t *config);
+void us_json_config_init( us_json_config_t *config );
 
 /*! \brief Create a JSON parser object
 
@@ -126,16 +131,16 @@ void us_json_config_init(us_json_config_t *config);
 
   \return The parser object.
 */
-extern us_json_parser_t us_json_parser_create(us_allocator_t *allocator, us_json_config_t *config);
+extern us_json_parser_t us_json_parser_create( us_allocator_t *allocator, us_json_config_t *config );
 
 /*! \brief Destroy a previously created JSON parser object. */
-extern void us_json_parser_destroy(us_json_parser_t jc);
+extern void us_json_parser_destroy( us_json_parser_t jc );
 
 /*! \brief Parse a character.
 
   \return Non-zero, if all characters passed to this function are part of are valid JSON.
 */
-extern int us_json_parser_char(us_json_parser_t jc, int next_char);
+extern int us_json_parser_char( us_json_parser_t jc, int next_char );
 
 /*! \brief Finalize parsing.
 
@@ -143,13 +148,13 @@ extern int us_json_parser_char(us_json_parser_t jc, int next_char);
 
   \return Non-zero, if all parsed characters are valid JSON, zero otherwise.
 */
-extern int us_json_parser_done(us_json_parser_t jc);
+extern int us_json_parser_done( us_json_parser_t jc );
 
 /*! \brief Determine if a given string is valid JSON white space
 
   \return Non-zero if the string is valid, zero otherwise.
 */
-extern int us_json_parser_is_legal_white_space_string(const char *s);
+extern int us_json_parser_is_legal_white_space_string( const char *s );
 
 #ifdef __cplusplus
 }

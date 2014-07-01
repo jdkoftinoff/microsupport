@@ -38,7 +38,8 @@ extern "C" {
 
 struct us_json_s;
 
-typedef enum {
+typedef enum
+{
     us_json_type_none,
     us_json_type_json,
     us_json_type_string_ptr,
@@ -47,11 +48,13 @@ typedef enum {
     us_json_type_int32
 } us_json_type_t;
 
-typedef struct us_json_entry_s {
+typedef struct us_json_entry_s
+{
     us_allocator_t *m_allocator;
     const char *m_key;
 
-    union {
+    union
+    {
         struct us_json_s *m_value_json;
         const char *m_value_string_ptr;
         int32_t *m_value_int32_ptr;
@@ -64,37 +67,41 @@ typedef struct us_json_entry_s {
     struct us_json_entry_s *m_next;
 } us_json_entry_t;
 
-us_json_entry_t *us_json_entry_create(us_allocator_t *allocator, const char *key);
-void us_json_entry_destroy(us_json_entry_t *self);
+us_json_entry_t *us_json_entry_create( us_allocator_t *allocator, const char *key );
+void us_json_entry_destroy( us_json_entry_t *self );
 
-void us_json_entry_remove_value(us_json_entry_t *self);
-void us_json_entry_set_value_json(us_json_entry_t *self, struct us_json_s *value);
-void us_json_entry_set_value_string_ptr(us_json_entry_t *self, const char *s);
-void us_json_entry_set_value_int32_ptr(us_json_entry_t *self, int32_t *value);
-void us_json_entry_set_value_string_buffer(us_json_entry_t *self, us_buffer_t *buf);
-void us_json_entry_set_value_int32(us_json_entry_t *self, int32_t value);
+void us_json_entry_remove_value( us_json_entry_t *self );
+void us_json_entry_set_value_json( us_json_entry_t *self, struct us_json_s *value );
+void us_json_entry_set_value_string_ptr( us_json_entry_t *self, const char *s );
+void us_json_entry_set_value_int32_ptr( us_json_entry_t *self, int32_t *value );
+void us_json_entry_set_value_string_buffer( us_json_entry_t *self, us_buffer_t *buf );
+void us_json_entry_set_value_int32( us_json_entry_t *self, int32_t value );
 
-bool us_json_entry_flatten_to_buffer(const us_json_entry_t *self, us_buffer_t *buffer);
+bool us_json_entry_flatten_to_buffer( const us_json_entry_t *self, us_buffer_t *buffer );
 
-typedef struct us_json_s {
-    void (*destroy)(struct us_json_s *self);
+typedef struct us_json_s
+{
+    void ( *destroy )( struct us_json_s *self );
     us_allocator_t *m_allocator;
     us_json_entry_t *m_first_item;
     us_json_entry_t *m_last_item;
     bool m_is_array;
 } us_json_t;
 
-us_json_t *us_json_create(us_allocator_t *allocator);
-void us_json_destroy(us_json_t *self);
+us_json_t *us_json_create( us_allocator_t *allocator );
+void us_json_destroy( us_json_t *self );
 
-static inline void us_json_set_array(us_json_t *self, bool f) { self->m_is_array = f; }
+static inline void us_json_set_array( us_json_t *self, bool f )
+{
+    self->m_is_array = f;
+}
 
-us_json_entry_t *us_json_append_entry(us_json_t *self, us_json_entry_t *entry);
-us_json_entry_t *us_json_append_string_ptr(us_json_t *self, const char *key, const char *value);
-us_json_entry_t *us_json_append_int32_ptr(us_json_t *self, const char *key, int32_t *value);
-us_json_t *us_json_append_object(us_json_t *self, const char *key);
+us_json_entry_t *us_json_append_entry( us_json_t *self, us_json_entry_t *entry );
+us_json_entry_t *us_json_append_string_ptr( us_json_t *self, const char *key, const char *value );
+us_json_entry_t *us_json_append_int32_ptr( us_json_t *self, const char *key, int32_t *value );
+us_json_t *us_json_append_object( us_json_t *self, const char *key );
 
-bool us_json_flatten_to_buffer(const us_json_t *self, us_buffer_t *buffer);
+bool us_json_flatten_to_buffer( const us_json_t *self, us_buffer_t *buffer );
 
 #ifdef __cplusplus
 }

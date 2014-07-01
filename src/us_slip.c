@@ -30,15 +30,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 us_slip_decoder_t *
-us_slip_decoder_create(us_allocator_t *allocator, int32_t max_packet_len, us_slip_decoder_proc packet_formed_callback) {
+    us_slip_decoder_create( us_allocator_t *allocator, int32_t max_packet_len, us_slip_decoder_proc packet_formed_callback )
+{
     us_slip_decoder_t *self;
     us_buffer_t *buffer;
-    self = us_new(allocator, us_slip_decoder_t);
-    if (self) {
-        buffer = us_buffer_create(allocator, max_packet_len);
-        if (buffer) {
-            self = us_slip_decoder_init(self, buffer, packet_formed_callback);
-        } else {
+    self = us_new( allocator, us_slip_decoder_t );
+    if ( self )
+    {
+        buffer = us_buffer_create( allocator, max_packet_len );
+        if ( buffer )
+        {
+            self = us_slip_decoder_init( self, buffer, packet_formed_callback );
+        }
+        else
+        {
             self = 0;
         }
     }
@@ -46,156 +51,194 @@ us_slip_decoder_create(us_allocator_t *allocator, int32_t max_packet_len, us_sli
 }
 
 us_slip_decoder_t *
-us_slip_decoder_init(us_slip_decoder_t *self, us_buffer_t *buffer, us_slip_decoder_proc packet_formed_callback) {
+    us_slip_decoder_init( us_slip_decoder_t *self, us_buffer_t *buffer, us_slip_decoder_proc packet_formed_callback )
+{
     self->m_state = us_slip_state_before_packet;
     self->m_buffer = buffer;
     self->m_packet_formed_callback = packet_formed_callback;
     return self;
 }
 
-void us_slip_decoder_reset(us_slip_decoder_t *self) {
+void us_slip_decoder_reset( us_slip_decoder_t *self )
+{
     self->m_state = us_slip_state_before_packet;
-    us_buffer_reset(self->m_buffer);
+    us_buffer_reset( self->m_buffer );
 }
 
-int us_slip_decoder_parse(us_slip_decoder_t *self, const uint8_t *data, int data_len) {
+int us_slip_decoder_parse( us_slip_decoder_t *self, const uint8_t *data, int data_len )
+{
     int packet_count = 0;
     int i;
-    for (i = 0; i < data_len; ++i) {
+    for ( i = 0; i < data_len; ++i )
+    {
         uint8_t c = data[i];
-        switch (self->m_state) {
+        switch ( self->m_state )
+        {
         case us_slip_state_before_packet:
             /* ignore data until we see a valid end of packet */
-            if (c == US_SLIP_END) {
+            if ( c == US_SLIP_END )
+            {
                 /* found end of packet byte, so start scanning for real data */
                 self->m_state = us_slip_state_in_packet;
             }
             break;
         case us_slip_state_in_packet:
             /* put unescaped data into buffer and check for END */
-            if (c == US_SLIP_END && us_buffer_readable_count(self->m_buffer) > 0) {
+            if ( c == US_SLIP_END && us_buffer_readable_count( self->m_buffer ) > 0 )
+            {
                 /* found a complete non empty packet - dispatch it */
-                self->m_packet_formed_callback(self, self->m_buffer);
+                self->m_packet_formed_callback( self, self->m_buffer );
                 /* clear the buffer */
-                us_buffer_reset(self->m_buffer);
+                us_buffer_reset( self->m_buffer );
                 /* increment packet counter */
                 packet_count++;
                 /* and stay in this state */
-            } else if (c == US_SLIP_ESC) {
+            }
+            else if ( c == US_SLIP_ESC )
+            {
                 /* found escape code, so go into ESC state */
                 self->m_state = us_slip_state_in_esc;
-            } else {
+            }
+            else
+            {
                 /* any other character gets appended into the buffer */
-                us_buffer_append_byte(self->m_buffer, c);
+                us_buffer_append_byte( self->m_buffer, c );
             }
             break;
         case us_slip_state_in_esc:
-            if (c == US_SLIP_ESC_END) {
+            if ( c == US_SLIP_ESC_END )
+            {
                 /* code was an escaped END character, so append an END char */
-                us_buffer_append_byte(self->m_buffer, US_SLIP_END);
+                us_buffer_append_byte( self->m_buffer, US_SLIP_END );
                 self->m_state = us_slip_state_in_packet;
-            } else if (c == US_SLIP_ESC_ESC) {
+            }
+            else if ( c == US_SLIP_ESC_ESC )
+            {
                 /* code was an escaped ESC character, so append an ESC char */
-                us_buffer_append_byte(self->m_buffer, US_SLIP_ESC);
+                us_buffer_append_byte( self->m_buffer, US_SLIP_ESC );
                 self->m_state = us_slip_state_in_packet;
-            } else {
+            }
+            else
+            {
                 /* unknown escape character, this is a protocol error so reset the buffer and state machine */
-                us_slip_decoder_reset(self);
+                us_slip_decoder_reset( self );
             }
             break;
         default:
             /* unknown state, reset everything */
-            us_slip_decoder_reset(self);
+            us_slip_decoder_reset( self );
             break;
         }
     }
     return packet_count;
 }
 
-int us_slip_decoder_parse_buffer(us_slip_decoder_t *self, us_buffer_t *buffer) {
+int us_slip_decoder_parse_buffer( us_slip_decoder_t *self, us_buffer_t *buffer )
+{
     int packet_count = 0;
     int i;
-    int len = (int)us_buffer_readable_count(buffer);
-    for (i = 0; i < len; ++i) {
-        uint8_t c = us_buffer_read_byte(buffer);
-        switch (self->m_state) {
+    int len = (int)us_buffer_readable_count( buffer );
+    for ( i = 0; i < len; ++i )
+    {
+        uint8_t c = us_buffer_read_byte( buffer );
+        switch ( self->m_state )
+        {
         case us_slip_state_before_packet:
             /* ignore data until we see a valid end of packet */
-            if (c == US_SLIP_END) {
+            if ( c == US_SLIP_END )
+            {
                 /* found end of packet byte, so start scanning for real data */
                 self->m_state = us_slip_state_in_packet;
             }
             break;
         case us_slip_state_in_packet:
             /* put unescaped data into buffer and check for END */
-            if (c == US_SLIP_END && us_buffer_readable_count(self->m_buffer) > 0) {
+            if ( c == US_SLIP_END && us_buffer_readable_count( self->m_buffer ) > 0 )
+            {
                 /* found a complete non empty packet - dispatch it */
-                self->m_packet_formed_callback(self, self->m_buffer);
+                self->m_packet_formed_callback( self, self->m_buffer );
                 /* clear the buffer */
-                us_buffer_reset(self->m_buffer);
+                us_buffer_reset( self->m_buffer );
                 /* increment packet counter */
                 packet_count++;
                 /* and stay in this state */
-            } else if (c == US_SLIP_ESC) {
+            }
+            else if ( c == US_SLIP_ESC )
+            {
                 /* found escape code, so go into ESC state */
                 self->m_state = us_slip_state_in_esc;
-            } else {
+            }
+            else
+            {
                 /* any other character gets appended into the buffer */
-                us_buffer_append_byte(self->m_buffer, c);
+                us_buffer_append_byte( self->m_buffer, c );
             }
             break;
         case us_slip_state_in_esc:
-            if (c == US_SLIP_ESC_END) {
+            if ( c == US_SLIP_ESC_END )
+            {
                 /* code was an escaped END character, so append an END char */
-                us_buffer_append_byte(self->m_buffer, US_SLIP_END);
+                us_buffer_append_byte( self->m_buffer, US_SLIP_END );
                 self->m_state = us_slip_state_in_packet;
-            } else if (c == US_SLIP_ESC_ESC) {
+            }
+            else if ( c == US_SLIP_ESC_ESC )
+            {
                 /* code was an escaped ESC character, so append an ESC char */
-                us_buffer_append_byte(self->m_buffer, US_SLIP_ESC);
+                us_buffer_append_byte( self->m_buffer, US_SLIP_ESC );
                 self->m_state = us_slip_state_in_packet;
-            } else {
+            }
+            else
+            {
                 /* unknown escape character, this is a protocol error so reset the buffer and state machine */
-                us_slip_decoder_reset(self);
+                us_slip_decoder_reset( self );
             }
             break;
         default:
             /* unknown state, reset everything */
-            us_slip_decoder_reset(self);
+            us_slip_decoder_reset( self );
             break;
         }
     }
     return packet_count;
 }
 
-bool us_slip_encode(us_buffer_t *dest_buffer, us_buffer_t *src_buffer) {
+bool us_slip_encode( us_buffer_t *dest_buffer, us_buffer_t *src_buffer )
+{
     bool r = true;
     int32_t i;
-    int32_t len = (int32_t)us_buffer_readable_count(src_buffer);
-    if (len > 0) {
+    int32_t len = (int32_t)us_buffer_readable_count( src_buffer );
+    if ( len > 0 )
+    {
         /* start the packet with an END code to ensure packet beginning is seen */
-        r &= us_buffer_append_byte(dest_buffer, US_SLIP_END);
-        for (i = 0; i < len; ++i) {
+        r &= us_buffer_append_byte( dest_buffer, US_SLIP_END );
+        for ( i = 0; i < len; ++i )
+        {
             uint8_t c;
             /* if appending buffer failed stop trying */
-            if (!r)
+            if ( !r )
                 break;
             /* get character to encode */
-            c = us_buffer_peek(src_buffer, i);
-            if (c == US_SLIP_END) {
+            c = us_buffer_peek( src_buffer, i );
+            if ( c == US_SLIP_END )
+            {
                 /* Send ESC code with code for escaped END */
-                r &= us_buffer_append_byte(dest_buffer, US_SLIP_ESC);
-                r &= us_buffer_append_byte(dest_buffer, US_SLIP_ESC_END);
-            } else if (c == US_SLIP_ESC) {
+                r &= us_buffer_append_byte( dest_buffer, US_SLIP_ESC );
+                r &= us_buffer_append_byte( dest_buffer, US_SLIP_ESC_END );
+            }
+            else if ( c == US_SLIP_ESC )
+            {
                 /* Send ESC code with code for escaped ESC */
-                r &= us_buffer_append_byte(dest_buffer, US_SLIP_ESC);
-                r &= us_buffer_append_byte(dest_buffer, US_SLIP_ESC_ESC);
-            } else {
+                r &= us_buffer_append_byte( dest_buffer, US_SLIP_ESC );
+                r &= us_buffer_append_byte( dest_buffer, US_SLIP_ESC_ESC );
+            }
+            else
+            {
                 /* Send raw data */
-                r &= us_buffer_append_byte(dest_buffer, c);
+                r &= us_buffer_append_byte( dest_buffer, c );
             }
         }
         /* end the packet with an END code */
-        r &= us_buffer_append_byte(dest_buffer, US_SLIP_END);
+        r &= us_buffer_append_byte( dest_buffer, US_SLIP_END );
     }
     return r;
 }

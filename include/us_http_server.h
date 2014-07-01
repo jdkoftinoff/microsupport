@@ -40,19 +40,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-#define US_HTTP_SERVER_HANDLER_REQUEST_HEADER_SIZE (8192)
-#define US_HTTP_SERVER_HANDLER_RESPONSE_HEADER_SIZE (8192)
-#define US_HTTP_SERVER_HANDLER_LOCAL_BUFFER_SIZE (16384)
+#define US_HTTP_SERVER_HANDLER_REQUEST_HEADER_SIZE ( 8192 )
+#define US_HTTP_SERVER_HANDLER_RESPONSE_HEADER_SIZE ( 8192 )
+#define US_HTTP_SERVER_HANDLER_LOCAL_BUFFER_SIZE ( 16384 )
 struct us_webapp_director_s;
 
-typedef enum us_http_server_handler_state_e {
+typedef enum us_http_server_handler_state_e
+{
     us_http_server_handler_state_waiting_for_connection,
     us_http_server_handler_state_receiving_request_header,
     us_http_server_handler_state_receiving_request_content,
     us_http_server_handler_state_sending_response
 } us_http_server_handler_state_t;
 
-typedef struct us_http_server_handler_s {
+typedef struct us_http_server_handler_s
+{
     us_reactor_handler_tcp_t m_base;
 
     us_simple_allocator_t m_local_allocator;
@@ -70,41 +72,41 @@ typedef struct us_http_server_handler_s {
 
 } us_http_server_handler_t;
 
-us_reactor_handler_t *us_http_server_handler_create(us_allocator_t *allocator);
+us_reactor_handler_t *us_http_server_handler_create( us_allocator_t *allocator );
 
-bool us_http_server_handler_init(us_reactor_handler_t *self,
-                                 us_allocator_t *allocator,
-                                 int fd,
-                                 void *extra,
-                                 int32_t max_response_buffer_size,
-                                 struct us_webapp_director_s *director);
+bool us_http_server_handler_init( us_reactor_handler_t *self,
+                                  us_allocator_t *allocator,
+                                  int fd,
+                                  void *extra,
+                                  int32_t max_response_buffer_size,
+                                  struct us_webapp_director_s *director );
 
-void us_http_server_handler_destroy(us_reactor_handler_t *self);
+void us_http_server_handler_destroy( us_reactor_handler_t *self );
 
-bool us_http_server_handler_connected(us_reactor_handler_tcp_t *self, struct sockaddr *addr, socklen_t addrlen);
+bool us_http_server_handler_connected( us_reactor_handler_tcp_t *self, struct sockaddr *addr, socklen_t addrlen );
 
-bool us_http_server_handler_readable_request_header(us_reactor_handler_tcp_t *self);
+bool us_http_server_handler_readable_request_header( us_reactor_handler_tcp_t *self );
 
-bool us_http_server_handler_parse_request_header(us_http_server_handler_t *self);
+bool us_http_server_handler_parse_request_header( us_http_server_handler_t *self );
 
-bool us_http_server_handler_readable_request_content(us_reactor_handler_tcp_t *self);
+bool us_http_server_handler_readable_request_content( us_reactor_handler_tcp_t *self );
 
-bool us_http_server_handler_eof_request_content(us_reactor_handler_tcp_t *self);
+bool us_http_server_handler_eof_request_content( us_reactor_handler_tcp_t *self );
 
-bool us_http_server_handler_writable_response(us_reactor_handler_tcp_t *self);
+bool us_http_server_handler_writable_response( us_reactor_handler_tcp_t *self );
 
-bool us_http_server_handler_eof_response(us_reactor_handler_tcp_t *self);
+bool us_http_server_handler_eof_response( us_reactor_handler_tcp_t *self );
 
-bool us_http_server_handler_dispatch(us_http_server_handler_t *self);
+bool us_http_server_handler_dispatch( us_http_server_handler_t *self );
 
-void us_http_server_handler_set_state_waiting_for_connection(us_http_server_handler_t *self);
-void us_http_server_handler_set_state_receiving_request_header(us_http_server_handler_t *self);
+void us_http_server_handler_set_state_waiting_for_connection( us_http_server_handler_t *self );
+void us_http_server_handler_set_state_receiving_request_header( us_http_server_handler_t *self );
 
-void us_http_server_handler_set_state_receiving_request_content(us_http_server_handler_t *self);
+void us_http_server_handler_set_state_receiving_request_content( us_http_server_handler_t *self );
 
-void us_http_server_handler_set_state_sending_response(us_http_server_handler_t *self);
+void us_http_server_handler_set_state_sending_response( us_http_server_handler_t *self );
 
-void us_http_server_handler_closed(us_reactor_handler_tcp_t *self);
+void us_http_server_handler_closed( us_reactor_handler_tcp_t *self );
 
 #ifdef __cplusplus
 }

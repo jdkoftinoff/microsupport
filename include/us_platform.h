@@ -39,31 +39,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-#define US_GET_BYTE_7(v) (uint8_t)((((v)) >> 56) & 0xff)
-#define US_GET_BYTE_6(v) (uint8_t)((((v)) >> 48) & 0xff)
-#define US_GET_BYTE_5(v) (uint8_t)((((v)) >> 40) & 0xff)
-#define US_GET_BYTE_4(v) (uint8_t)((((v)) >> 32) & 0xff)
-#define US_GET_BYTE_3(v) (uint8_t)((((v)) >> 24) & 0xff)
-#define US_GET_BYTE_2(v) (uint8_t)((((v)) >> 16) & 0xff)
-#define US_GET_BYTE_1(v) (uint8_t)((((v)) >> 8) & 0xff)
-#define US_GET_BYTE_0(v) (uint8_t)((((v)) >> 0) & 0xff)
+#define US_GET_BYTE_7( v ) ( uint8_t )( ( ( ( v ) ) >> 56 ) & 0xff )
+#define US_GET_BYTE_6( v ) ( uint8_t )( ( ( ( v ) ) >> 48 ) & 0xff )
+#define US_GET_BYTE_5( v ) ( uint8_t )( ( ( ( v ) ) >> 40 ) & 0xff )
+#define US_GET_BYTE_4( v ) ( uint8_t )( ( ( ( v ) ) >> 32 ) & 0xff )
+#define US_GET_BYTE_3( v ) ( uint8_t )( ( ( ( v ) ) >> 24 ) & 0xff )
+#define US_GET_BYTE_2( v ) ( uint8_t )( ( ( ( v ) ) >> 16 ) & 0xff )
+#define US_GET_BYTE_1( v ) ( uint8_t )( ( ( ( v ) ) >> 8 ) & 0xff )
+#define US_GET_BYTE_0( v ) ( uint8_t )( ( ( ( v ) ) >> 0 ) & 0xff )
 
-#define US_COUNTOF(x) (sizeof(x) / sizeof(x[0]))
+#define US_COUNTOF( x ) ( sizeof( x ) / sizeof( x[0] ) )
 
 #ifdef US_UNUSED
-#elif defined(__GNUC__)
-#define US_UNUSED(x) US_UNUSED_##x __attribute__((unused))
+#elif defined( __GNUC__ )
+#define US_UNUSED( x ) US_UNUSED_##x __attribute__( ( unused ) )
 #else
-#define US_UNUSED(x) US_UNUSED_##x
+#define US_UNUSED( x ) US_UNUSED_##x
 #endif
 
-#if US_ENABLE_BSD_SOCKETS && !defined(US_NO_DECLARE_CLOSESOCKET)
+#if US_ENABLE_BSD_SOCKETS && !defined( US_NO_DECLARE_CLOSESOCKET )
 #ifndef WIN32
-static inline int closesocket(int fd) { return close(fd); }
+static inline int closesocket( int fd )
+{
+    return close( fd );
+}
 #endif
 
 #ifdef WIN32
-bool us_platform_init_winsock(void);
+bool us_platform_init_winsock( void );
 #endif
 
 #ifndef WIN32
@@ -74,32 +77,33 @@ bool us_platform_init_winsock(void);
 #endif
 
 #ifdef WIN32
-#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+#if defined( _MSC_VER ) || defined( _MSC_EXTENSIONS )
 #define US_DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
 #else
 #define US_DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
 #endif
 
-struct timezone {
+struct timezone
+{
     int tz_minuteswest; /* minutes W of Greenwich */
     int tz_dsttime;     /* type of dst correction */
 };
 
-int gettimeofday(struct timeval *tv, struct timezone *tz);
+int gettimeofday( struct timeval *tv, struct timezone *tz );
 #endif
 
 #ifdef __AVR__
-struct timeval {
+struct timeval
+{
     int32_t tv_sec;
     int32_t tv_usec;
 };
 #endif
-void us_gettimeofday(struct timeval *tv);
-bool us_platform_init_sockets(void);
+void us_gettimeofday( struct timeval *tv );
+bool us_platform_init_sockets( void );
 
 extern volatile char us_platform_sigterm_seen;
 extern volatile char us_platform_sigint_seen;
-
 
 #ifdef __cplusplus
 }

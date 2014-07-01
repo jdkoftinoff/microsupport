@@ -38,7 +38,8 @@ extern "C" {
 /** \addtogroup us_mtc
 */
 /*@{*/
-typedef enum us_mtc_format_e {
+typedef enum us_mtc_format_e
+{
     US_MTC_RATE_24 = 0,
     US_MTC_RATE_25,
     US_MTC_RATE_2997,
@@ -57,7 +58,8 @@ extern const uint8_t us_mtc_typecode[];
 extern const char *us_mtc_format_string[];
 extern const us_mtc_format_t us_mtc_fmt_from_midi[];
 
-typedef struct us_mtc_s {
+typedef struct us_mtc_s
+{
     us_mtc_format_t m_fmt;
     uint8_t m_frame;
     uint8_t m_second;
@@ -68,24 +70,24 @@ typedef struct us_mtc_s {
 /**
    initialize mtc structure to 00:00:00:00 30FPS
  */
-void us_mtc_init(us_mtc_t *self);
+void us_mtc_init( us_mtc_t *self );
 
 /**
   Return True if the time code is valid.
   Invalid time code is any hour/minute/second/frame out of range as well
   as a time that does not exist in drop frame mode like 00:01:00;00
 */
-bool us_mtc_valid(us_mtc_t *self);
+bool us_mtc_valid( us_mtc_t *self );
 
 /**
 Increment the time to the next frame, skipping any drop frames when necessary.
 */
-void us_mtc_increment(us_mtc_t *self);
+void us_mtc_increment( us_mtc_t *self );
 
 /**
 Decrement the time to the previous frame, skipping any drop frames when necessary.
 */
-void us_mtc_decrement(us_mtc_t *self);
+void us_mtc_decrement( us_mtc_t *self );
 
 /**
 Compare two times, 'left' and 'right'
@@ -94,7 +96,7 @@ returns:
   - 0 if left == right
   - +1 if left > right
 */
-int us_mtc_compare(us_mtc_t *left, us_mtc_t *right);
+int us_mtc_compare( us_mtc_t *left, us_mtc_t *right );
 
 /**
 Print the time code to a buffer.
@@ -107,7 +109,7 @@ If the format is a non drop frame format then the time code time
 will be in the form:
   - "HH:MM:SS:FF"
 */
-bool us_mtc_print(us_mtc_t *self, bool print_fmt, char *buf, size_t buf_len);
+bool us_mtc_print( us_mtc_t *self, bool print_fmt, char *buf, size_t buf_len );
 
 /**
 Parse the ascii as a time code time passed as ascii text.
@@ -119,11 +121,11 @@ If the format is a non drop frame format then the time code time
 must be in the form:
   - "HH:MM:SS:FF"
 */
-bool us_mtc_parse(us_mtc_t *self, const char *ascii, us_mtc_format_t fmt);
-int32_t us_mtc_get_total_frames(us_mtc_t *self);
-void us_mtc_set_total_frames(us_mtc_t *self, int32_t tf);
-int us_mtc_extract_qf(us_mtc_t *self, int qf);
-bool us_mtc_store_qf(us_mtc_t *self, int qf, int qf_value);
+bool us_mtc_parse( us_mtc_t *self, const char *ascii, us_mtc_format_t fmt );
+int32_t us_mtc_get_total_frames( us_mtc_t *self );
+void us_mtc_set_total_frames( us_mtc_t *self, int32_t tf );
+int us_mtc_extract_qf( us_mtc_t *self, int qf );
+bool us_mtc_store_qf( us_mtc_t *self, int qf, int qf_value );
 
 /*@}*/
 

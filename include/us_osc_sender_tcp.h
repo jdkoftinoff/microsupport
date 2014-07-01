@@ -37,15 +37,16 @@
 extern "C" {
 #endif
 
-typedef struct us_osc_sender_tcp_s {
+typedef struct us_osc_sender_tcp_s
+{
     us_osc_sender_t m_base;
     us_reactor_handler_tcp_t *m_handler;
     size_t m_max_size;
 } us_osc_sender_tcp_t;
 
-bool us_osc_sender_tcp_init(us_osc_sender_tcp_t *self, us_reactor_handler_tcp_t *handler);
-bool us_osc_sender_tcp_send_msg(us_osc_sender_t *self, const us_osc_msg_t *msg);
-bool us_osc_sender_tcp_can_send(us_osc_sender_t *self);
+bool us_osc_sender_tcp_init( us_osc_sender_tcp_t *self, us_reactor_handler_tcp_t *handler );
+bool us_osc_sender_tcp_send_msg( us_osc_sender_t *self, const us_osc_msg_t *msg );
+bool us_osc_sender_tcp_can_send( us_osc_sender_t *self );
 
 #ifdef __cplusplus
 }

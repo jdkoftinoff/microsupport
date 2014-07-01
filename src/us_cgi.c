@@ -34,47 +34,61 @@ const char us_cgi_tohexdigit[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
 
 char const *const us_cgi_rfc3986_reserved_chars = "!*'();:@&=+$,/?%#[]";
 
-bool us_cgi_is_escapable(char c) {
+bool us_cgi_is_escapable( char c )
+{
     const char *p;
-    if ((c & 0x80) == 0x80) {
+    if ( ( c & 0x80 ) == 0x80 )
+    {
         return true;
     }
-    if (isalnum(c)) {
+    if ( isalnum( c ) )
+    {
         return false;
     }
-    for (p = us_cgi_rfc3986_reserved_chars; *p != 0; ++p) {
-        if (*p == c)
+    for ( p = us_cgi_rfc3986_reserved_chars; *p != 0; ++p )
+    {
+        if ( *p == c )
             return true;
     }
     return true;
 }
 
-bool us_cgi_unescape(const char *src, int src_len, us_buffer_t *dest_buf) {
+bool us_cgi_unescape( const char *src, int src_len, us_buffer_t *dest_buf )
+{
     int i;
     int in_percent = 0;
     int partial = 0;
-    for (i = 0; i < src_len; ++i) {
+    for ( i = 0; i < src_len; ++i )
+    {
         char c = src[i];
-        if (in_percent) {
+        if ( in_percent )
+        {
             int v;
-            c = toupper(c);
+            c = toupper( c );
             v = c - '0';
-            if (c > 9)
+            if ( c > 9 )
                 v = c - 'A' + 10;
             partial = partial << 4;
             partial += v;
             in_percent--;
-            if (in_percent == 0) {
+            if ( in_percent == 0 )
+            {
                 c = (char)partial;
-                if (!us_buffer_append_byte(dest_buf, c)) {
+                if ( !us_buffer_append_byte( dest_buf, c ) )
+                {
                     return false;
                 }
             }
-        } else if (c == '%') {
+        }
+        else if ( c == '%' )
+        {
             in_percent = 2;
             partial = 0;
-        } else {
-            if (!us_buffer_append_byte(dest_buf, c)) {
+        }
+        else
+        {
+            if ( !us_buffer_append_byte( dest_buf, c ) )
+            {
                 return false;
             }
         }
@@ -82,20 +96,27 @@ bool us_cgi_unescape(const char *src, int src_len, us_buffer_t *dest_buf) {
     return true;
 }
 
-bool us_cgi_escape(const char *src, int src_len, us_buffer_t *dest_buf) {
+bool us_cgi_escape( const char *src, int src_len, us_buffer_t *dest_buf )
+{
     int i;
-    for (i = 0; i < src_len; ++i) {
+    for ( i = 0; i < src_len; ++i )
+    {
         char c = src[i];
-        if (us_cgi_is_escapable(c)) {
+        if ( us_cgi_is_escapable( c ) )
+        {
             char escaped[4];
             escaped[0] = '%';
-            escaped[1] = us_cgi_tohexdigit[(c >> 4) & 0xf];
+            escaped[1] = us_cgi_tohexdigit[( c >> 4 ) & 0xf];
             escaped[2] = us_cgi_tohexdigit[c & 0xf];
-            if (!us_buffer_append_data(dest_buf, escaped, 3)) {
+            if ( !us_buffer_append_data( dest_buf, escaped, 3 ) )
+            {
                 return false;
             }
-        } else {
-            if (!us_buffer_append_byte(dest_buf, c)) {
+        }
+        else
+        {
+            if ( !us_buffer_append_byte( dest_buf, c ) )
+            {
                 return false;
             }
         }

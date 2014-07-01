@@ -98,79 +98,93 @@ const char *us_midi_sys_msg_name[16] = {"SYSEX       ", /**< 0xf0 */
                                         "META-EVENT  "  /**< 0xff */
 };
 
-const char *us_midi_msg_to_text(const us_midi_msg_t *self, char *txt, int max_len) {
+const char *us_midi_msg_to_text( const us_midi_msg_t *self, char *txt, int max_len )
+{
     char buf[64];
-    int buf_len = sizeof(buf);
-    int len = us_midi_msg_get_length(self);
-    if (max_len < 64) {
+    int buf_len = sizeof( buf );
+    int len = us_midi_msg_get_length( self );
+    if ( max_len < 64 )
+    {
         return 0;
     }
     *txt = 0;
-    if (us_midi_msg_is_all_notes_off(self)) {
+    if ( us_midi_msg_is_all_notes_off( self ) )
+    {
         US_DEFAULT_SNPRINTF(
-            buf, buf_len, "Ch %2d  All Notes Off  (ctrl=%3d)", (int)us_midi_msg_get_channel(self) + 1, (int)self->byte1);
-        strcat(txt, buf);
-    } else {
-        int type = (self->status & 0xf0) >> 4;
+            buf, buf_len, "Ch %2d  All Notes Off  (ctrl=%3d)", (int)us_midi_msg_get_channel( self ) + 1, (int)self->byte1 );
+        strcat( txt, buf );
+    }
+    else
+    {
+        int type = ( self->status & 0xf0 ) >> 4;
         /* if it is a note on with vel=0, call it a NOTE OFF */
-        if (type == 9 && self->byte2 == 0)
+        if ( type == 9 && self->byte2 == 0 )
             type = 8;
-        if (type != 0xf) {
-            US_DEFAULT_SNPRINTF(buf, buf_len, "Ch %2d  ", (int)us_midi_msg_get_channel(self) + 1);
-            strcat(txt, buf);
+        if ( type != 0xf )
+        {
+            US_DEFAULT_SNPRINTF( buf, buf_len, "Ch %2d  ", (int)us_midi_msg_get_channel( self ) + 1 );
+            strcat( txt, buf );
         }
-        strcat(txt, us_midi_chan_msg_name[type]);
-        if (self->status >= 0xf0) {
-            strcat(txt, us_midi_sys_msg_name[self->status - 0xf0]);
-            if (len > 1) {
-                US_DEFAULT_SNPRINTF(buf, buf_len, "%02x", (int)self->byte1);
-                strcat(txt, buf);
+        strcat( txt, us_midi_chan_msg_name[type] );
+        if ( self->status >= 0xf0 )
+        {
+            strcat( txt, us_midi_sys_msg_name[self->status - 0xf0] );
+            if ( len > 1 )
+            {
+                US_DEFAULT_SNPRINTF( buf, buf_len, "%02x", (int)self->byte1 );
+                strcat( txt, buf );
             }
-            if (len > 2) {
-                US_DEFAULT_SNPRINTF(buf, buf_len, ",%02x", (int)self->byte2);
-                strcat(txt, buf);
+            if ( len > 2 )
+            {
+                US_DEFAULT_SNPRINTF( buf, buf_len, ",%02x", (int)self->byte2 );
+                strcat( txt, buf );
             }
-            if (len > 3) {
-                US_DEFAULT_SNPRINTF(buf, buf_len, ",%02x", (int)self->byte3);
-                strcat(txt, buf);
+            if ( len > 3 )
+            {
+                US_DEFAULT_SNPRINTF( buf, buf_len, ",%02x", (int)self->byte3 );
+                strcat( txt, buf );
             }
-        } else {
-            int32_t l = (int32_t)strlen(txt);
+        }
+        else
+        {
+            int32_t l = (int32_t)strlen( txt );
             char *endtxt = txt + l;
             int32_t mx = 64 - l;
-            switch (self->status & 0xf0) {
+            switch ( self->status & 0xf0 )
+            {
             case US_MIDI_NOTE_ON:
-                if (self->byte2 == 0)
-                    US_DEFAULT_SNPRINTF(endtxt, mx, "Note %3d", (int)self->byte1);
+                if ( self->byte2 == 0 )
+                    US_DEFAULT_SNPRINTF( endtxt, mx, "Note %3d", (int)self->byte1 );
                 else
-                    US_DEFAULT_SNPRINTF(endtxt, mx, "Note %3d  Vel  %3d  ", (int)self->byte1, (int)self->byte2);
+                    US_DEFAULT_SNPRINTF( endtxt, mx, "Note %3d  Vel  %3d  ", (int)self->byte1, (int)self->byte2 );
                 break;
             case US_MIDI_NOTE_OFF:
-                US_DEFAULT_SNPRINTF(endtxt, mx, "Note %3d  Vel  %3d  ", (int)self->byte1, (int)self->byte2);
+                US_DEFAULT_SNPRINTF( endtxt, mx, "Note %3d  Vel  %3d  ", (int)self->byte1, (int)self->byte2 );
                 break;
             case US_MIDI_POLY_PRESSURE:
-                US_DEFAULT_SNPRINTF(endtxt, mx, "Note %3d  Pres %3d  ", (int)self->byte1, (int)self->byte2);
+                US_DEFAULT_SNPRINTF( endtxt, mx, "Note %3d  Pres %3d  ", (int)self->byte1, (int)self->byte2 );
                 break;
             case US_MIDI_CONTROL_CHANGE:
-                US_DEFAULT_SNPRINTF(endtxt, mx, "Ctrl %3d  Val  %3d  ", (int)self->byte1, (int)self->byte2);
+                US_DEFAULT_SNPRINTF( endtxt, mx, "Ctrl %3d  Val  %3d  ", (int)self->byte1, (int)self->byte2 );
                 break;
             case US_MIDI_PROGRAM_CHANGE:
-                US_DEFAULT_SNPRINTF(endtxt, mx, "PG   %3d  ", (int)self->byte1);
+                US_DEFAULT_SNPRINTF( endtxt, mx, "PG   %3d  ", (int)self->byte1 );
                 break;
             case US_MIDI_CHANNEL_PRESSURE:
-                US_DEFAULT_SNPRINTF(endtxt, mx, "Pres %3d  ", (int)self->byte1);
+                US_DEFAULT_SNPRINTF( endtxt, mx, "Pres %3d  ", (int)self->byte1 );
                 break;
             case US_MIDI_PITCH_BEND:
-                US_DEFAULT_SNPRINTF(endtxt, mx, "Val %5d", (int)us_midi_msg_get_bender_value(self));
+                US_DEFAULT_SNPRINTF( endtxt, mx, "Val %5d", (int)us_midi_msg_get_bender_value( self ) );
                 break;
             }
         }
     }
     /* pad the rest with spaces */
     {
-        int32_t l = (int32_t)strlen(txt);
+        int32_t l = (int32_t)strlen( txt );
         char *p = txt + l;
-        while (l < 45) {
+        while ( l < 45 )
+        {
             *p++ = ' ';
             ++l;
         }
@@ -179,105 +193,133 @@ const char *us_midi_msg_to_text(const us_midi_msg_t *self, char *txt, int max_le
     return txt;
 }
 
-int8_t us_midi_msg_get_length(const us_midi_msg_t *self) {
-    if ((self->status & 0xf0) == 0xf0) {
-        return us_midi_get_system_message_length(self->status);
-    } else {
-        return us_midi_get_message_length(self->status);
+int8_t us_midi_msg_get_length( const us_midi_msg_t *self )
+{
+    if ( ( self->status & 0xf0 ) == 0xf0 )
+    {
+        return us_midi_get_system_message_length( self->status );
+    }
+    else
+    {
+        return us_midi_get_message_length( self->status );
     }
 }
 
-us_midi_sysex_t *us_midi_sysex_create(us_allocator_t *allocator, int32_t max_length) {
+us_midi_sysex_t *us_midi_sysex_create( us_allocator_t *allocator, int32_t max_length )
+{
     us_midi_sysex_t *r = 0;
     us_midi_sysex_t *self = 0;
-    self = us_new(allocator, us_midi_sysex_t);
-    if (self) {
+    self = us_new( allocator, us_midi_sysex_t );
+    if ( self )
+    {
         self->destroy = us_midi_sysex_destroy;
         self->m_allocator = allocator;
-        self->m_buffer = us_buffer_create(allocator, max_length);
-        if (self->m_buffer) {
+        self->m_buffer = us_buffer_create( allocator, max_length );
+        if ( self->m_buffer )
+        {
             r = self;
         }
-        if (r == 0) {
-            us_midi_sysex_destroy(self);
+        if ( r == 0 )
+        {
+            us_midi_sysex_destroy( self );
         }
     }
     return r;
 }
 
-void us_midi_sysex_destroy(us_midi_sysex_t *self) {
-    if (self->m_buffer) {
-        self->m_buffer->destroy(self->m_buffer);
+void us_midi_sysex_destroy( us_midi_sysex_t *self )
+{
+    if ( self->m_buffer )
+    {
+        self->m_buffer->destroy( self->m_buffer );
     }
-    if (self->m_allocator) {
-        self->m_allocator->free(self->m_allocator, self);
+    if ( self->m_allocator )
+    {
+        self->m_allocator->free( self->m_allocator, self );
     }
 }
 
-us_midi_parser_t *us_midi_parser_create(us_allocator_t *allocator, int32_t max_sysex_size) {
+us_midi_parser_t *us_midi_parser_create( us_allocator_t *allocator, int32_t max_sysex_size )
+{
     us_midi_parser_t *r = 0;
     us_midi_parser_t *self = 0;
-    self = us_new(allocator, us_midi_parser_t);
-    if (self) {
+    self = us_new( allocator, us_midi_parser_t );
+    if ( self )
+    {
         self->destroy = us_midi_parser_destroy;
         self->m_allocator = allocator;
-        us_midi_msg_init(&self->m_tmp_msg);
-        self->m_sysex = us_midi_sysex_create(allocator, max_sysex_size);
+        us_midi_msg_init( &self->m_tmp_msg );
+        self->m_sysex = us_midi_sysex_create( allocator, max_sysex_size );
         self->m_state = US_MIDI_PARSER_STATE_FIND_STATUS;
-        if (self->m_sysex) {
+        if ( self->m_sysex )
+        {
             r = self;
         }
-        if (r == 0) {
-            us_midi_parser_destroy(self);
+        if ( r == 0 )
+        {
+            us_midi_parser_destroy( self );
         }
     }
     return r;
 }
 
-void us_midi_parser_destroy(us_midi_parser_t *self) {
-    if (self->m_sysex) {
-        self->m_sysex->destroy(self->m_sysex);
+void us_midi_parser_destroy( us_midi_parser_t *self )
+{
+    if ( self->m_sysex )
+    {
+        self->m_sysex->destroy( self->m_sysex );
     }
-    if (self->m_allocator) {
-        self->m_allocator->free(self->m_allocator, self);
+    if ( self->m_allocator )
+    {
+        self->m_allocator->free( self->m_allocator, self );
     }
 }
 
-bool us_midi_parser_parse(us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg) {
+bool us_midi_parser_parse( us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg )
+{
     /*
       No matter what state we are currently in we must deal
       with bytes with the high bit set first.
     */
-    us_midi_msg_init(msg);
-    if (b & 0x80) {
+    us_midi_msg_init( msg );
+    if ( b & 0x80 )
+    {
         /*
           check for system messages (>=0xf0)
         */
-        uint8_t status = (uint8_t)(b & 0xf0);
-        if (status == 0xf0) {
+        uint8_t status = ( uint8_t )( b & 0xf0 );
+        if ( status == 0xf0 )
+        {
             /*
               System messages get parsed by
               us_parser_system_byte()
             */
-            return us_midi_parser_system_byte(self, b, msg);
-        } else {
+            return us_midi_parser_system_byte( self, b, msg );
+        }
+        else
+        {
             /*
               Otherwise, this is a new status byte.
             */
-            us_midi_parser_status_byte(self, b, msg);
+            us_midi_parser_status_byte( self, b, msg );
             return false;
         }
-    } else {
+    }
+    else
+    {
         /*
           Try to parse the data byte
         */
-        return us_midi_parser_data_byte(self, b, msg);
+        return us_midi_parser_data_byte( self, b, msg );
     }
 }
 
-bool us_midi_parser_system_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg) {
-    switch (b) {
-    case US_MIDI_RESET: {
+bool us_midi_parser_system_byte( us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg )
+{
+    switch ( b )
+    {
+    case US_MIDI_RESET:
+    {
         /*
         // a reset byte always re-initializes our state
         // machine.
@@ -285,7 +327,8 @@ bool us_midi_parser_system_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t
         self->m_state = US_MIDI_PARSER_STATE_FIND_STATUS;
         return false;
     }
-    case US_MIDI_SYSEX_START: {
+    case US_MIDI_SYSEX_START:
+    {
         //
         // start receiving sys-ex data
         //
@@ -293,10 +336,11 @@ bool us_midi_parser_system_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t
         //
         // Prepare sysex buffer.
         //
-        us_midi_sysex_start(self->m_sysex);
+        us_midi_sysex_start( self->m_sysex );
         return false;
     }
-    case US_MIDI_SYSEX_END: {
+    case US_MIDI_SYSEX_END:
+    {
         //
         // We are finished receiving a sysex message.
         //
@@ -304,7 +348,8 @@ bool us_midi_parser_system_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t
         // If we were not in SYSEX_DATA mode, this
         // EOX means nothing.
         //
-        if (self->m_state != US_MIDI_PARSER_STATE_SYSEX_DATA) {
+        if ( self->m_state != US_MIDI_PARSER_STATE_SYSEX_DATA )
+        {
             return false;
         }
         //
@@ -314,41 +359,44 @@ bool us_midi_parser_system_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t
         //
         // finish up sysex buffer
         //
-        us_midi_sysex_end(self->m_sysex);
+        us_midi_sysex_end( self->m_sysex );
         //
         // return a MIDIMessage with status=SYSEX_START
         // so calling program can know to look at
         // the sysex buffer with GetSystemExclusive().
         //
-        us_midi_msg_set_status(msg, US_MIDI_SYSEX_START);
+        us_midi_msg_set_status( msg, US_MIDI_SYSEX_START );
         return true;
     }
-    case US_MIDI_MTC: {
+    case US_MIDI_MTC:
+    {
         //
         // Go into FIRST_OF_ONE_NORUN state.
         // this is required because MTC (F1) is not
         // allowed to be running status.
         //
-        us_midi_msg_set_status(&self->m_tmp_msg, US_MIDI_MTC);
+        us_midi_msg_set_status( &self->m_tmp_msg, US_MIDI_MTC );
         self->m_state = US_MIDI_PARSER_STATE_FIRST_OF_ONE_NORUN;
         return false;
     }
-    case US_MIDI_SONG_POSITION: {
+    case US_MIDI_SONG_POSITION:
+    {
         //
         // This is a two data byte message, so go into
         // FIRST_OF_TWO state.
         //
         self->m_state = US_MIDI_PARSER_STATE_FIRST_OF_TWO;
-        us_midi_msg_set_status(&self->m_tmp_msg, US_MIDI_SONG_POSITION);
+        us_midi_msg_set_status( &self->m_tmp_msg, US_MIDI_SONG_POSITION );
         return false;
     }
-    case US_MIDI_SONG_SELECT: {
+    case US_MIDI_SONG_SELECT:
+    {
         //
         // This is a one data byte message, so go into
         // the FIRST_OF_ONE state.
         //
         self->m_state = US_MIDI_PARSER_STATE_FIRST_OF_ONE;
-        us_midi_msg_set_status(&self->m_tmp_msg, US_MIDI_SONG_SELECT);
+        us_midi_msg_set_status( &self->m_tmp_msg, US_MIDI_SONG_SELECT );
         return false;
     }
     //
@@ -363,11 +411,13 @@ bool us_midi_parser_system_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t
     case US_MIDI_START:
     case US_MIDI_CONTINUE:
     case US_MIDI_STOP:
-    case US_MIDI_ACTIVE_SENSE: {
-        us_midi_msg_set_status(msg, b);
+    case US_MIDI_ACTIVE_SENSE:
+    {
+        us_midi_msg_set_status( msg, b );
         return true;
     }
-    default: {
+    default:
+    {
         //
         // any other byte must be ignored.
         // It is either a communicatin error or
@@ -381,85 +431,100 @@ bool us_midi_parser_system_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t
     }
 }
 
-bool us_midi_parser_status_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg) {
-    int8_t len = us_midi_get_message_length(b);
+bool us_midi_parser_status_byte( us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg )
+{
+    int8_t len = us_midi_get_message_length( b );
     (void)msg;
-    if (len == 2) {
+    if ( len == 2 )
+    {
         self->m_state = US_MIDI_PARSER_STATE_FIRST_OF_ONE;
-        us_midi_msg_set_status(&self->m_tmp_msg, b);
-    } else if (len == 3) {
+        us_midi_msg_set_status( &self->m_tmp_msg, b );
+    }
+    else if ( len == 3 )
+    {
         self->m_state = US_MIDI_PARSER_STATE_FIRST_OF_TWO;
-        us_midi_msg_set_status(&self->m_tmp_msg, b);
-    } else {
+        us_midi_msg_set_status( &self->m_tmp_msg, b );
+    }
+    else
+    {
         self->m_state = US_MIDI_PARSER_STATE_FIND_STATUS;
-        us_midi_msg_set_status(&self->m_tmp_msg, 0);
+        us_midi_msg_set_status( &self->m_tmp_msg, 0 );
     }
     return false;
 }
 
-bool us_midi_parser_data_byte(us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg) {
-    switch (self->m_state) {
-    case US_MIDI_PARSER_STATE_FIND_STATUS: {
+bool us_midi_parser_data_byte( us_midi_parser_t *self, uint8_t b, us_midi_msg_t *msg )
+{
+    switch ( self->m_state )
+    {
+    case US_MIDI_PARSER_STATE_FIND_STATUS:
+    {
         //
         // just eat data bytes until we get a status byte
         //
         return false;
     }
-    case US_MIDI_PARSER_STATE_FIRST_OF_ONE: {
+    case US_MIDI_PARSER_STATE_FIRST_OF_ONE:
+    {
         //
         // this is the only data byte of a message.
         // form the message and return it.
         //
-        us_midi_msg_set_byte1(&self->m_tmp_msg, b);
+        us_midi_msg_set_byte1( &self->m_tmp_msg, b );
         *msg = self->m_tmp_msg;
         //
         // stay in this state for running status
         //
         return true;
     }
-    case US_MIDI_PARSER_STATE_FIRST_OF_TWO: {
+    case US_MIDI_PARSER_STATE_FIRST_OF_TWO:
+    {
         //
         // this is the first byte of a two byte message.
         // read it in. go to SECOND_OF_TWO state. do not
         // return anything.
         //
-        us_midi_msg_set_byte1(&self->m_tmp_msg, b);
+        us_midi_msg_set_byte1( &self->m_tmp_msg, b );
         self->m_state = US_MIDI_PARSER_STATE_SECOND_OF_TWO;
         return false;
     }
-    case US_MIDI_PARSER_STATE_SECOND_OF_TWO: {
+    case US_MIDI_PARSER_STATE_SECOND_OF_TWO:
+    {
         //
         // this is the second byte of a two byte message.
         // read it in. form the message, and return in.
         // go back to FIRST_OF_TWO state to allow
         // running status.
         //
-        us_midi_msg_set_byte2(&self->m_tmp_msg, b);
+        us_midi_msg_set_byte2( &self->m_tmp_msg, b );
         self->m_state = US_MIDI_PARSER_STATE_FIRST_OF_TWO;
         *msg = self->m_tmp_msg;
         return true;
     }
-    case US_MIDI_PARSER_STATE_FIRST_OF_ONE_NORUN: {
+    case US_MIDI_PARSER_STATE_FIRST_OF_ONE_NORUN:
+    {
         //
         // Single data byte system message, like MTC.
         // form the message, return it, and go to FIND_STATUS
         // state. Do not allow running status.
         //
-        us_midi_msg_set_byte1(&self->m_tmp_msg, b);
+        us_midi_msg_set_byte1( &self->m_tmp_msg, b );
         self->m_state = US_MIDI_PARSER_STATE_FIND_STATUS;
         *msg = self->m_tmp_msg;
         return true;
     }
-    case US_MIDI_PARSER_STATE_SYSEX_DATA: {
+    case US_MIDI_PARSER_STATE_SYSEX_DATA:
+    {
         //
         // store the byte into the sysex buffer. Stay
         // in this state. Only a status byte can
         // change our state.
         //
-        us_midi_sysex_put_byte(self->m_sysex, b);
+        us_midi_sysex_put_byte( self->m_sysex, b );
         return false;
     }
-    default: {
+    default:
+    {
         //
         // UNKNOWN STATE! go into FIND_STATUS state
         //

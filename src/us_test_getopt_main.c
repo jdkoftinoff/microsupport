@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** \addtogroup us_test_getopt */
 /*@{*/
 
-bool us_test_getopt(int US_UNUSED(argc), const char **argv);
+bool us_test_getopt( int US_UNUSED( argc ), const char **argv );
 
 static int16_t log_level_default = 0;
 static int16_t log_level;
@@ -72,45 +72,51 @@ static const us_getopt_option_t control_options[]
 
 static us_getopt_t opt;
 
-bool us_test_getopt(int US_UNUSED(argc), const char **argv) {
+bool us_test_getopt( int US_UNUSED( argc ), const char **argv )
+{
     bool r = false;
     us_allocator_t *allocator = us_testutil_sys_allocator;
-    if (us_getopt_init(&opt, allocator)) {
+    if ( us_getopt_init( &opt, allocator ) )
+    {
         r = true;
-        r &= us_getopt_add_list(&opt, log_options, "log", "Logging options");
-        r &= us_getopt_add_list(&opt, control_options, "control", "Control Options");
-        r &= us_getopt_fill_defaults(&opt);
-        if (r) {
-            if (!us_getopt_parse_args(&opt, argv + 1)) {
-                us_getopt_print(&opt, us_testutil_printer_stdout);
+        r &= us_getopt_add_list( &opt, log_options, "log", "Logging options" );
+        r &= us_getopt_add_list( &opt, control_options, "control", "Control Options" );
+        r &= us_getopt_fill_defaults( &opt );
+        if ( r )
+        {
+            if ( !us_getopt_parse_args( &opt, argv + 1 ) )
+            {
+                us_getopt_print( &opt, us_testutil_printer_stdout );
             }
         }
-        us_log_info("Log Level is %d", log_level);
-        us_log_info("Greeting is %s", control_greeting);
-        us_log_info("Name is %s", control_name);
-        us_log_info("Mac addr is %02x:%02x:%02x:%02x:%02x:%02x",
-                    mac_addr[0],
-                    mac_addr[1],
-                    mac_addr[2],
-                    mac_addr[3],
-                    mac_addr[4],
-                    mac_addr[5]);
-        us_getopt_destroy(&opt);
+        us_log_info( "Log Level is %d", log_level );
+        us_log_info( "Greeting is %s", control_greeting );
+        us_log_info( "Name is %s", control_name );
+        us_log_info( "Mac addr is %02x:%02x:%02x:%02x:%02x:%02x",
+                     mac_addr[0],
+                     mac_addr[1],
+                     mac_addr[2],
+                     mac_addr[3],
+                     mac_addr[4],
+                     mac_addr[5] );
+        us_getopt_destroy( &opt );
     }
     return r;
 }
 
-int us_test_getopt_main(int argc, const char **argv) {
+int us_test_getopt_main( int argc, const char **argv )
+{
     int r = 1;
-    if (us_testutil_start(4096, 4096, argc, argv)) {
+    if ( us_testutil_start( 4096, 4096, argc, argv ) )
+    {
 #if US_ENABLE_LOGGING
-        us_logger_printer_start(us_testutil_printer_stdout, us_testutil_printer_stderr);
+        us_logger_printer_start( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
-        us_log_set_level(US_LOG_LEVEL_DEBUG);
-        us_log_info("Hello world from %s compiled on %s", __FILE__, __DATE__);
-        if (us_test_getopt(argc, argv))
+        us_log_set_level( US_LOG_LEVEL_DEBUG );
+        us_log_info( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
+        if ( us_test_getopt( argc, argv ) )
             r = 0;
-        us_log_info("Finishing us_test_getopt");
+        us_log_info( "Finishing us_test_getopt" );
         us_logger_finish();
         us_testutil_finish();
     }

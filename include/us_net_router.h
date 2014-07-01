@@ -33,7 +33,6 @@
 #include "us_net.h"
 #include "us_time.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,27 +43,27 @@ extern "C" {
 
 #ifndef US_NET_ROUTER_MAX_ROUTES
 /// The maximum number of unique non-multicast addresses we can keep track of
-#define US_NET_ROUTER_MAX_ROUTES (1024)
+#define US_NET_ROUTER_MAX_ROUTES ( 1024 )
 #endif
 
 #ifndef US_NET_ROUTER_ROUTE_EXPIRY_TIME_IN_SECONDS
 /// The time in seconds that we flush inactive addresses from the routing table
-#define US_NET_ROUTER_ROUTE_EXPIRY_TIME_IN_SECONDS (30)
+#define US_NET_ROUTER_ROUTE_EXPIRY_TIME_IN_SECONDS ( 30 )
 #endif
 
 #ifndef US_NET_ROUTER_ROUTE_CLEANUP_RATE_IN_SECONDS
 /// the time in seconds that we wait before trying to cleanup the routing table
-#define US_NET_ROUTER_ROUTE_CLEANUP_RATE_IN_SECONDS (120)
+#define US_NET_ROUTER_ROUTE_CLEANUP_RATE_IN_SECONDS ( 120 )
 #endif
 
 #ifndef US_NET_ROUTER_ROUTE_FLAP_RATE_IN_SECONDS
 /// The time in seconds that we wait after a route changes before changing it again
-#define US_NET_ROUTER_ROUTE_FLAP_RATE_IN_SECONDS (4)
+#define US_NET_ROUTER_ROUTE_FLAP_RATE_IN_SECONDS ( 4 )
 #endif
 
-
 /// Generic address format agnostic network address map/router item
-typedef struct us_net_router_item_s {
+typedef struct us_net_router_item_s
+{
     /// The context of the item
     void *context;
     /// The generic tag value of the item
@@ -79,24 +78,16 @@ typedef struct us_net_router_item_s {
     time_t last_changed_time;
 } us_net_router_item_t;
 
-
 /// Initialize a net_router_item
 void us_net_router_item_init(
-        us_net_router_item_t *self,
-        void *context,
-        int tag,
-        struct sockaddr *addr,
-        socklen_t addrlen,
-        time_t cur_time );
+    us_net_router_item_t *self, void *context, int tag, struct sockaddr *addr, socklen_t addrlen, time_t cur_time );
 
 /// Compare two router items
-int us_net_router_item_compare(
-        void const *lhs_,
-        void const *rhs_ );
-
+int us_net_router_item_compare( void const *lhs_, void const *rhs_ );
 
 /// Generic address format agnostic network address map/router item
-typedef struct us_net_router_s {
+typedef struct us_net_router_s
+{
     // the last time we did a cleanup
     time_t last_cleanup_time;
     // the count of the items in the routing table
@@ -110,29 +101,14 @@ void us_net_router_init( us_net_router_t *self );
 void us_net_router_tick( us_net_router_t *self, time_t cur_time );
 
 void us_net_router_add(
-        us_net_router_t *self,
-        void *context,
-        int tag,
-        struct sockaddr *addr,
-        socklen_t addrlen,
-        time_t cur_time );
+    us_net_router_t *self, void *context, int tag, struct sockaddr *addr, socklen_t addrlen, time_t cur_time );
 
 void us_net_router_update_or_add(
-        us_net_router_t *self,
-        void *context,
-        int tag,
-        struct sockaddr *addr,
-        socklen_t addrlen,
-        time_t cur_time );
+    us_net_router_t *self, void *context, int tag, struct sockaddr *addr, socklen_t addrlen, time_t cur_time );
 
-us_net_router_item_t * us_net_router_find(
-        us_net_router_t *self,
-        struct sockaddr *addr,
-        socklen_t addrlen );
+us_net_router_item_t *us_net_router_find( us_net_router_t *self, struct sockaddr *addr, socklen_t addrlen );
 
-void us_net_router_cleanup(
-        us_net_router_t *self,
-        time_t cur_time );
+void us_net_router_cleanup( us_net_router_t *self, time_t cur_time );
 /*@}*/
 
 #ifdef __cplusplus
@@ -140,4 +116,3 @@ void us_net_router_cleanup(
 #endif
 
 #endif
-

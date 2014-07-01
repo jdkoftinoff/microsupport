@@ -52,7 +52,7 @@ extern "C" {
     @param self allocator to print
     @param printer us_printbuf_t to print to
  */
-bool us_simple_allocator_print(us_simple_allocator_t *self, us_print_t *printer);
+bool us_simple_allocator_print( us_simple_allocator_t *self, us_print_t *printer );
 
 #endif
 

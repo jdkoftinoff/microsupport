@@ -44,9 +44,9 @@ extern "C" {
 #if US_ENABLE_PRINTING
 #include "us_print.h"
 
-bool us_buffer_print(us_buffer_t *self, us_print_t *printer);
+bool us_buffer_print( us_buffer_t *self, us_print_t *printer );
 
-bool us_buffer_print_string(us_buffer_t *self, us_print_t *printer);
+bool us_buffer_print_string( us_buffer_t *self, us_print_t *printer );
 
 #endif
 

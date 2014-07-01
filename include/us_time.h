@@ -38,11 +38,12 @@ extern "C" {
  */
 /*@{*/
 
-static inline uint64_t us_time_in_milliseconds( void ) {
+static inline uint64_t us_time_in_milliseconds( void )
+{
     uint64_t cur_time;
     struct timeval tv;
-    us_gettimeofday(&tv);
-    cur_time = ((uint64_t)tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    us_gettimeofday( &tv );
+    cur_time = ( (uint64_t)tv.tv_sec * 1000 ) + ( tv.tv_usec / 1000 );
     return cur_time;
 }
 

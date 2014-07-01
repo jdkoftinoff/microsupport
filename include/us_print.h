@@ -45,7 +45,8 @@ extern "C" {
  interface for printing functions; can be used by implementations
  to direct printf's to files, streams or memory buffers.
  */
-typedef struct us_print_s {
+typedef struct us_print_s
+{
     /** destroy
 
        Function pointer to destroy the print object.
@@ -53,7 +54,7 @@ typedef struct us_print_s {
        @param self ptr to object
        @returns void
      */
-    void (*destroy)(struct us_print_s *self);
+    void ( *destroy )( struct us_print_s *self );
 
     /** printf
 
@@ -63,7 +64,7 @@ typedef struct us_print_s {
        @param fmt standard sprintf formatting string
        @returns bool true on success, false on memory of file error
      */
-    bool (*printf)(struct us_print_s *self, const char *fmt, ...);
+    bool ( *printf )( struct us_print_s *self, const char *fmt, ... );
 
     /** vprintf
 
@@ -74,7 +75,7 @@ typedef struct us_print_s {
      @param ap reference to va_list of parameters
      @returns bool true on success, false on memory of file error
      */
-    bool (*vprintf)(struct us_print_s *self, const char *fmt, va_list ap);
+    bool ( *vprintf )( struct us_print_s *self, const char *fmt, va_list ap );
 
 } us_print_t;
 
@@ -89,7 +90,8 @@ extern us_print_t *us_stderr;
  printer which prints to a stdio FILE
  */
 
-typedef struct us_print_file_s {
+typedef struct us_print_file_s
+{
     us_print_t m_base;
     FILE *m_f;
 } us_print_file_t;
@@ -103,13 +105,13 @@ typedef struct us_print_file_s {
  @return self
  */
 
-us_print_t *us_print_file_init(us_print_file_t *self, FILE *f);
+us_print_t *us_print_file_init( us_print_file_t *self, FILE *f );
 
-void us_print_file_destroy(us_print_t *self_);
+void us_print_file_destroy( us_print_t *self_ );
 
-bool us_print_file_printf(us_print_t *self_, const char *fmt, ...);
+bool us_print_file_printf( us_print_t *self_, const char *fmt, ... );
 
-bool us_print_file_vprintf(us_print_t *self_, const char *fmt, va_list ap);
+bool us_print_file_vprintf( us_print_t *self_, const char *fmt, va_list ap );
 
 extern us_print_t *us_stdout;
 extern us_print_t *us_stderr;
@@ -118,43 +120,49 @@ extern us_print_t *us_stderr;
 
 /**
  */
-typedef struct us_printraw_s {
+typedef struct us_printraw_s
+{
     us_print_t m_base;
     char *m_buffer;
     int m_max_length;
     int m_cur_length;
 } us_printraw_t;
 
-us_print_t *us_printraw_init(us_printraw_t *self, void *raw_memory, int raw_memory_length);
+us_print_t *us_printraw_init( us_printraw_t *self, void *raw_memory, int raw_memory_length );
 
-void us_printraw_destroy(us_print_t *self);
+void us_printraw_destroy( us_print_t *self );
 
-bool us_printraw_printf(us_print_t *self, const char *fmt, ...);
+bool us_printraw_printf( us_print_t *self, const char *fmt, ... );
 
-bool us_printraw_vprintf(us_print_t *self, const char *fmt, va_list ap);
+bool us_printraw_vprintf( us_print_t *self, const char *fmt, va_list ap );
 
-static inline const char *us_printraw_get(us_print_t *self_) {
+static inline const char *us_printraw_get( us_print_t *self_ )
+{
     us_printraw_t *self = (us_printraw_t *)self_;
     return (const char *)self->m_buffer;
 }
 
-static inline size_t us_printraw_length(us_print_t *self_) {
+static inline size_t us_printraw_length( us_print_t *self_ )
+{
     us_printraw_t *self = (us_printraw_t *)self_;
     return self->m_cur_length;
 }
 
-typedef struct us_printbuf_s {
+typedef struct us_printbuf_s
+{
     us_printraw_t m_base;
 } us_printbuf_t;
 
-us_print_t *us_printbuf_create(us_allocator_t *allocator, int memory_length);
+us_print_t *us_printbuf_create( us_allocator_t *allocator, int memory_length );
 
-static inline const char *us_printbuf_get(us_print_t *self_) {
+static inline const char *us_printbuf_get( us_print_t *self_ )
+{
     us_printbuf_t *self = (us_printbuf_t *)self_;
     return self->m_base.m_buffer;
 }
 
-static inline size_t us_printbuf_length(us_print_t *self_) {
+static inline size_t us_printbuf_length( us_print_t *self_ )
+{
     us_printbuf_t *self = (us_printbuf_t *)self_;
     return self->m_base.m_cur_length;
 }

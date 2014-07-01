@@ -48,16 +48,16 @@ extern "C" {
 #endif
 
 #ifndef US_TESTUTIL_PRINTBUFFER_SIZE
-#define US_TESTUTIL_PRINTBUFFER_SIZE (8192)
+#define US_TESTUTIL_PRINTBUFFER_SIZE ( 8192 )
 #endif
 
 #ifndef US_TESTUTIL_BUFFER_SIZE_IN_WORDS
-#define US_TESTUTIL_BUFFER_SIZE_IN_WORDS (4096)
+#define US_TESTUTIL_BUFFER_SIZE_IN_WORDS ( 4096 )
 #endif
 
-bool us_testutil_start(int32_t sys_allocator_size, int32_t session_allocator_size, int argc, const char **argv);
+bool us_testutil_start( int32_t sys_allocator_size, int32_t session_allocator_size, int argc, const char **argv );
 
-void us_testutil_finish(void);
+void us_testutil_finish( void );
 
 extern us_allocator_t *us_testutil_sys_allocator;
 extern us_allocator_t *us_testutil_session_allocator;

@@ -38,16 +38,16 @@ extern "C" {
  */
 /*@{*/
 
-void us_daemon_drop_root(const char *uid_name);
+void us_daemon_drop_root( const char *uid_name );
 
 void us_daemon_daemonize(
-    bool real_daemon, const char *identity, const char *home_dir, const char *pid_file, const char *new_uid);
+    bool real_daemon, const char *identity, const char *home_dir, const char *pid_file, const char *new_uid );
 
-void us_daemon_prepare_child_start(void);
+void us_daemon_prepare_child_start( void );
 
-pid_t us_daemon_fork(void);
+pid_t us_daemon_fork( void );
 
-void us_daemon_end(void);
+void us_daemon_end( void );
 
 /*@}*/
 

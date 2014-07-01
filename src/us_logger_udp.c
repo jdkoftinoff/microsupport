@@ -40,82 +40,98 @@ us_printraw_t us_logger_udp_printer_impl; /**! printer object to use to form buf
 
 struct addrinfo *us_logger_udp_dest_addrinfo;
 
-void us_log_udp_send(void);
+void us_log_udp_send( void );
 
-void us_log_udp_send(void) {
-    if (us_logger_udp_socket != -1) {
-        if (sendto(us_logger_udp_socket,
-                   us_logger_udp_printer_impl.m_buffer,
-                   us_logger_udp_printer_impl.m_cur_length,
-                   0,
-                   us_logger_udp_dest_addrinfo->ai_addr,
-                   us_logger_udp_dest_addrinfo->ai_addrlen) < 0) {
+void us_log_udp_send( void )
+{
+    if ( us_logger_udp_socket != -1 )
+    {
+        if ( sendto( us_logger_udp_socket,
+                     us_logger_udp_printer_impl.m_buffer,
+                     us_logger_udp_printer_impl.m_cur_length,
+                     0,
+                     us_logger_udp_dest_addrinfo->ai_addr,
+                     us_logger_udp_dest_addrinfo->ai_addrlen ) < 0 )
+        {
             /* Do nothing upon error here. What could we do anyways? log it? ;-) */
         }
     }
 }
 
-bool us_logger_udp_start(const char *dest_addr, const char *service) {
+bool us_logger_udp_start( const char *dest_addr, const char *service )
+{
     bool r = false;
 
     struct addrinfo hints, *ai;
     int gai;
 
-    us_logger_udp_printer = us_printraw_init(&us_logger_udp_printer_impl, us_logger_udp_buffer, sizeof(us_logger_udp_buffer));
+    us_logger_udp_printer
+        = us_printraw_init( &us_logger_udp_printer_impl, us_logger_udp_buffer, sizeof( us_logger_udp_buffer ) );
 
-    if (us_logger_udp_printer) {
+    if ( us_logger_udp_printer )
+    {
         /* resolve address */
-        memset(&hints, 0, sizeof(hints));
+        memset( &hints, 0, sizeof( hints ) );
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = SOCK_DGRAM;
         hints.ai_protocol = IPPROTO_UDP;
 
-        gai = getaddrinfo(dest_addr, service, &hints, &ai);
-        if (gai) {
-            fprintf(stderr,
-                    "getaddrinfo(): %s service:%s: %s\n",
-                    dest_addr != NULL ? dest_addr : "(null)",
-                    service,
-                    gai_strerror(gai));
-            return (r);
+        gai = getaddrinfo( dest_addr, service, &hints, &ai );
+        if ( gai )
+        {
+            fprintf( stderr,
+                     "getaddrinfo(): %s service:%s: %s\n",
+                     dest_addr != NULL ? dest_addr : "(null)",
+                     service,
+                     gai_strerror( gai ) );
+            return ( r );
         }
         us_logger_udp_socket = -1;
-        if (us_logger_udp_dest_addrinfo != NULL) {
-            freeaddrinfo(us_logger_udp_dest_addrinfo);
+        if ( us_logger_udp_dest_addrinfo != NULL )
+        {
+            freeaddrinfo( us_logger_udp_dest_addrinfo );
             us_logger_udp_dest_addrinfo = NULL;
         }
         us_logger_udp_dest_addrinfo = ai;
-        us_logger_udp_socket = socket(us_logger_udp_dest_addrinfo->ai_family,
-                                      us_logger_udp_dest_addrinfo->ai_socktype,
-                                      us_logger_udp_dest_addrinfo->ai_protocol);
-        if (us_logger_udp_socket >= 0) {
+        us_logger_udp_socket = socket( us_logger_udp_dest_addrinfo->ai_family,
+                                       us_logger_udp_dest_addrinfo->ai_socktype,
+                                       us_logger_udp_dest_addrinfo->ai_protocol );
+        if ( us_logger_udp_socket >= 0 )
+        {
             r = true;
         }
     }
-    if (r) {
+    if ( r )
+    {
         us_log_error_proc = us_log_error_udp;
         us_log_warn_proc = us_log_warn_udp;
         us_log_info_proc = us_log_info_udp;
         us_log_debug_proc = us_log_debug_udp;
         us_log_trace_proc = us_log_trace_udp;
         us_logger_finish = us_logger_udp_finish;
-    } else {
-        if (us_logger_udp_socket != -1) {
-            closesocket(us_logger_udp_socket);
+    }
+    else
+    {
+        if ( us_logger_udp_socket != -1 )
+        {
+            closesocket( us_logger_udp_socket );
         }
         us_logger_udp_socket = -1;
     }
     return r;
 }
 
-void us_logger_udp_finish() {
-    if (us_logger_udp_socket != -1) {
-        closesocket(us_logger_udp_socket);
+void us_logger_udp_finish()
+{
+    if ( us_logger_udp_socket != -1 )
+    {
+        closesocket( us_logger_udp_socket );
         us_logger_udp_socket = -1;
     }
 
-    if (us_logger_udp_dest_addrinfo != NULL) {
-        freeaddrinfo(us_logger_udp_dest_addrinfo);
+    if ( us_logger_udp_dest_addrinfo != NULL )
+    {
+        freeaddrinfo( us_logger_udp_dest_addrinfo );
         us_logger_udp_dest_addrinfo = NULL;
     }
 
@@ -126,54 +142,59 @@ void us_logger_udp_finish() {
     us_logger_finish = us_logger_null_finish;
 }
 
-void us_log_error_udp(const char *fmt, ...) {
+void us_log_error_udp( const char *fmt, ... )
+{
     va_list ap;
-    va_start(ap, fmt);
+    va_start( ap, fmt );
     us_logger_udp_printer_impl.m_cur_length = 0;
-    us_logger_udp_printer->printf(us_logger_udp_printer, "ERROR:\t");
-    us_logger_udp_printer->vprintf(us_logger_udp_printer, fmt, ap);
+    us_logger_udp_printer->printf( us_logger_udp_printer, "ERROR:\t" );
+    us_logger_udp_printer->vprintf( us_logger_udp_printer, fmt, ap );
     us_log_udp_send();
-    va_end(ap);
+    va_end( ap );
 }
 
-void us_log_warn_udp(const char *fmt, ...) {
+void us_log_warn_udp( const char *fmt, ... )
+{
     va_list ap;
-    va_start(ap, fmt);
+    va_start( ap, fmt );
     us_logger_udp_printer_impl.m_cur_length = 0;
-    us_logger_udp_printer->printf(us_logger_udp_printer, "WARNING:\t");
-    us_logger_udp_printer->vprintf(us_logger_udp_printer, fmt, ap);
+    us_logger_udp_printer->printf( us_logger_udp_printer, "WARNING:\t" );
+    us_logger_udp_printer->vprintf( us_logger_udp_printer, fmt, ap );
     us_log_udp_send();
-    va_end(ap);
+    va_end( ap );
 }
 
-void us_log_info_udp(const char *fmt, ...) {
+void us_log_info_udp( const char *fmt, ... )
+{
     va_list ap;
-    va_start(ap, fmt);
+    va_start( ap, fmt );
     us_logger_udp_printer_impl.m_cur_length = 0;
-    us_logger_udp_printer->printf(us_logger_udp_printer, "INFO:\t");
-    us_logger_udp_printer->vprintf(us_logger_udp_printer, fmt, ap);
+    us_logger_udp_printer->printf( us_logger_udp_printer, "INFO:\t" );
+    us_logger_udp_printer->vprintf( us_logger_udp_printer, fmt, ap );
     us_log_udp_send();
-    va_end(ap);
+    va_end( ap );
 }
 
-void us_log_debug_udp(const char *fmt, ...) {
+void us_log_debug_udp( const char *fmt, ... )
+{
     va_list ap;
-    va_start(ap, fmt);
+    va_start( ap, fmt );
     us_logger_udp_printer_impl.m_cur_length = 0;
-    us_logger_udp_printer->printf(us_logger_udp_printer, "DEBUG:\t");
-    us_logger_udp_printer->vprintf(us_logger_udp_printer, fmt, ap);
+    us_logger_udp_printer->printf( us_logger_udp_printer, "DEBUG:\t" );
+    us_logger_udp_printer->vprintf( us_logger_udp_printer, fmt, ap );
     us_log_udp_send();
-    va_end(ap);
+    va_end( ap );
 }
 
-void us_log_trace_udp(const char *fmt, ...) {
+void us_log_trace_udp( const char *fmt, ... )
+{
     va_list ap;
-    va_start(ap, fmt);
+    va_start( ap, fmt );
     us_logger_udp_printer_impl.m_cur_length = 0;
-    us_logger_udp_printer->printf(us_logger_udp_printer, "TRACE:\t");
-    us_logger_udp_printer->vprintf(us_logger_udp_printer, fmt, ap);
+    us_logger_udp_printer->printf( us_logger_udp_printer, "TRACE:\t" );
+    us_logger_udp_printer->vprintf( us_logger_udp_printer, fmt, ap );
     us_log_udp_send();
-    va_end(ap);
+    va_end( ap );
 }
 
 #endif

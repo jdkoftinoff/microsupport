@@ -38,8 +38,8 @@ extern "C" {
  */
 /*@{*/
 
-bool us_parse_hexdig(uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos);
-bool us_parse_hexoctet(uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos);
+bool us_parse_hexdig( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos );
+bool us_parse_hexoctet( uint8_t *val, const char *buf, size_t buf_len, size_t *buf_pos );
 
 #ifdef __cplusplus
 }

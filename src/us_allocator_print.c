@@ -34,15 +34,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if US_ENABLE_PRINTING
 
-bool us_simple_allocator_print(us_simple_allocator_t *self, us_print_t *printer) {
+bool us_simple_allocator_print( us_simple_allocator_t *self, us_print_t *printer )
+{
     bool r = true;
-    r &= printer->printf(printer,
-                         "Allocator:\n current_position: %d\n"
-                         " raw_memory: 0x%08p\n"
-                         " raw_memory_length: 0x%08lx\n",
-                         self->m_current_position,
-                         self->m_raw_memory,
-                         self->m_raw_memory_length);
+    r &= printer->printf( printer,
+                          "Allocator:\n current_position: %d\n"
+                          " raw_memory: 0x%08p\n"
+                          " raw_memory_length: 0x%08lx\n",
+                          self->m_current_position,
+                          self->m_raw_memory,
+                          self->m_raw_memory_length );
     return r;
 }
 

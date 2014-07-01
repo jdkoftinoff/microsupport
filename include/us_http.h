@@ -37,44 +37,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-typedef struct us_http_header_item_s {
+typedef struct us_http_header_item_s
+{
     const char *m_key;
     const char *m_value;
     struct us_http_header_item_s *m_next;
 } us_http_header_item_t;
 
-typedef struct us_http_header_item_list_s {
-    void (*destroy)(struct us_http_header_item_list_s *self);
+typedef struct us_http_header_item_list_s
+{
+    void ( *destroy )( struct us_http_header_item_list_s *self );
 
-    us_http_header_item_t *(*add)(struct us_http_header_item_list_s *self, const char *key, const char *value);
+    us_http_header_item_t *( *add )( struct us_http_header_item_list_s *self, const char *key, const char *value );
 
     us_http_header_item_t
-        *(*addn)(struct us_http_header_item_list_s *self, const char *key, int key_len, const char *value, int value_len);
+        *( *addn )( struct us_http_header_item_list_s *self, const char *key, int key_len, const char *value, int value_len );
 
-    bool (*remove)(struct us_http_header_item_list_s *self, us_http_header_item_t *item);
+    bool ( *remove )( struct us_http_header_item_list_s *self, us_http_header_item_t *item );
 
-    us_http_header_item_t *(*find)(struct us_http_header_item_list_s *self, const char *key);
+    us_http_header_item_t *( *find )( struct us_http_header_item_list_s *self, const char *key );
 
     us_allocator_t *m_allocator;
     us_http_header_item_t *m_first;
 
 } us_http_header_item_list_t;
 
-us_http_header_item_list_t *us_http_header_item_list_create(us_allocator_t *allocator);
+us_http_header_item_list_t *us_http_header_item_list_create( us_allocator_t *allocator );
 
-void us_http_header_item_list_destroy(us_http_header_item_list_t *self);
+void us_http_header_item_list_destroy( us_http_header_item_list_t *self );
 
-us_http_header_item_t *us_http_header_item_list_add(us_http_header_item_list_t *self, const char *key, const char *value);
+us_http_header_item_t *us_http_header_item_list_add( us_http_header_item_list_t *self, const char *key, const char *value );
 
 us_http_header_item_t *us_http_header_item_list_addn(
-    us_http_header_item_list_t *self, const char *key, int key_len, const char *value, int value_len);
+    us_http_header_item_list_t *self, const char *key, int key_len, const char *value, int value_len );
 
-bool us_http_header_item_list_remove(us_http_header_item_list_t *self, us_http_header_item_t *item);
+bool us_http_header_item_list_remove( us_http_header_item_list_t *self, us_http_header_item_t *item );
 
-us_http_header_item_t *us_http_header_item_list_find(us_http_header_item_list_t *self, const char *key);
+us_http_header_item_t *us_http_header_item_list_find( us_http_header_item_list_t *self, const char *key );
 
-typedef struct us_http_request_header_s {
-    void (*destroy)(struct us_http_request_header_s *);
+typedef struct us_http_request_header_s
+{
+    void ( *destroy )( struct us_http_request_header_s * );
 
     us_allocator_t *m_allocator;
 
@@ -86,49 +89,50 @@ typedef struct us_http_request_header_s {
 
 } us_http_request_header_t;
 
-us_http_request_header_t *us_http_request_header_create(us_allocator_t *allocator);
+us_http_request_header_t *us_http_request_header_create( us_allocator_t *allocator );
 
-void us_http_request_header_destroy(us_http_request_header_t *self);
+void us_http_request_header_destroy( us_http_request_header_t *self );
 
-bool us_http_request_header_set_method(us_http_request_header_t *self, const char *method);
-bool us_http_request_header_set_methodn(us_http_request_header_t *self, const char *method, int len);
+bool us_http_request_header_set_method( us_http_request_header_t *self, const char *method );
+bool us_http_request_header_set_methodn( us_http_request_header_t *self, const char *method, int len );
 
-bool us_http_request_header_set_version(us_http_request_header_t *self, const char *version);
-bool us_http_request_header_set_versionn(us_http_request_header_t *self, const char *version, int len);
+bool us_http_request_header_set_version( us_http_request_header_t *self, const char *version );
+bool us_http_request_header_set_versionn( us_http_request_header_t *self, const char *version, int len );
 
-bool us_http_request_header_set_path(us_http_request_header_t *self, const char *path);
+bool us_http_request_header_set_path( us_http_request_header_t *self, const char *path );
 
-bool us_http_request_header_set_pathn(us_http_request_header_t *self, const char *path, int len);
+bool us_http_request_header_set_pathn( us_http_request_header_t *self, const char *path, int len );
 
-bool us_http_request_header_set_content_type(us_http_request_header_t *self, const char *content_mime_type);
+bool us_http_request_header_set_content_type( us_http_request_header_t *self, const char *content_mime_type );
 
-bool us_http_request_header_set_content_length(us_http_request_header_t *self, int32_t content_length);
+bool us_http_request_header_set_content_length( us_http_request_header_t *self, int32_t content_length );
 
-bool us_http_request_header_set_connection_close(us_http_request_header_t *self);
+bool us_http_request_header_set_connection_close( us_http_request_header_t *self );
 
-int32_t us_http_request_header_get_content_length(const us_http_request_header_t *self, int32_t default_length);
+int32_t us_http_request_header_get_content_length( const us_http_request_header_t *self, int32_t default_length );
 
-const char *us_http_request_header_get_content_type(const us_http_request_header_t *self);
+const char *us_http_request_header_get_content_type( const us_http_request_header_t *self );
 
-bool us_http_request_header_init_helper(us_http_request_header_t *self,
-                                        const char *method,
-                                        const char *host,
-                                        const char *path,
-                                        const char *content_type,
-                                        int32_t content_length);
+bool us_http_request_header_init_helper( us_http_request_header_t *self,
+                                         const char *method,
+                                         const char *host,
+                                         const char *path,
+                                         const char *content_type,
+                                         int32_t content_length );
 
-bool us_http_request_header_init_get(us_http_request_header_t *self, const char *host, const char *path);
+bool us_http_request_header_init_get( us_http_request_header_t *self, const char *host, const char *path );
 
-bool us_http_request_header_init_delete(us_http_request_header_t *self, const char *host, const char *path);
+bool us_http_request_header_init_delete( us_http_request_header_t *self, const char *host, const char *path );
 
 bool us_http_request_header_init_post(
-    us_http_request_header_t *self, const char *host, const char *path, const char *content_type, uint32_t content_length);
+    us_http_request_header_t *self, const char *host, const char *path, const char *content_type, uint32_t content_length );
 
 bool us_http_request_header_init_put(
-    us_http_request_header_t *self, const char *host, const char *path, const char *content_type, uint32_t content_length);
+    us_http_request_header_t *self, const char *host, const char *path, const char *content_type, uint32_t content_length );
 
-typedef struct us_http_response_header_s {
-    void (*destroy)(struct us_http_response_header_s *);
+typedef struct us_http_response_header_s
+{
+    void ( *destroy )( struct us_http_response_header_s * );
 
     us_allocator_t *m_allocator;
     int m_code;
@@ -136,59 +140,59 @@ typedef struct us_http_response_header_s {
     us_http_header_item_list_t *m_items;
 } us_http_response_header_t;
 
-us_http_response_header_t *us_http_response_header_create(us_allocator_t *allocator);
+us_http_response_header_t *us_http_response_header_create( us_allocator_t *allocator );
 
-void us_http_response_header_destroy(us_http_response_header_t *self);
+void us_http_response_header_destroy( us_http_response_header_t *self );
 
-bool us_http_response_header_set_version(us_http_response_header_t *self, const char *version);
+bool us_http_response_header_set_version( us_http_response_header_t *self, const char *version );
 
-bool us_http_response_header_set_versionn(us_http_response_header_t *self, const char *version, int len);
+bool us_http_response_header_set_versionn( us_http_response_header_t *self, const char *version, int len );
 
-bool us_http_response_header_set_content_length(us_http_response_header_t *self, ssize_t content_length);
+bool us_http_response_header_set_content_length( us_http_response_header_t *self, ssize_t content_length );
 
-bool us_http_response_header_set_connection_close(us_http_response_header_t *self);
+bool us_http_response_header_set_connection_close( us_http_response_header_t *self );
 
-bool us_http_response_header_set_content_type(us_http_response_header_t *self, const char *content_mime_type);
+bool us_http_response_header_set_content_type( us_http_response_header_t *self, const char *content_mime_type );
 
-bool us_http_response_header_set_no_cache(us_http_response_header_t *self);
+bool us_http_response_header_set_no_cache( us_http_response_header_t *self );
 
-int32_t us_http_response_header_get_content_length(const us_http_response_header_t *self, int32_t default_length);
+int32_t us_http_response_header_get_content_length( const us_http_response_header_t *self, int32_t default_length );
 
-const char *us_http_response_header_get_content_type(const us_http_response_header_t *self);
+const char *us_http_response_header_get_content_type( const us_http_response_header_t *self );
 
-bool us_http_response_header_init_error(us_http_response_header_t *self,
-                                        int32_t http_error_code,
+bool us_http_response_header_init_error( us_http_response_header_t *self,
+                                         int32_t http_error_code,
+                                         const char *content_type,
+                                         uint32_t content_length );
+
+bool us_http_response_header_init_redirect( us_http_response_header_t *self,
+                                            int32_t http_redirect_code,
+                                            const char *redirect_to_url );
+
+bool us_http_response_header_init_ok( us_http_response_header_t *self,
+                                      int32_t http_ok_code,
+                                      const char *content_type,
+                                      ssize_t content_length,
+                                      bool connection_close );
+
+bool us_http_response_header_create_ok( us_http_response_header_t *self,
+                                        int32_t http_ok_code,
                                         const char *content_type,
-                                        uint32_t content_length);
+                                        uint32_t content_length );
 
-bool us_http_response_header_init_redirect(us_http_response_header_t *self,
-                                           int32_t http_redirect_code,
-                                           const char *redirect_to_url);
+bool us_http_response_header_flatten( us_http_response_header_t *self, us_buffer_t *buf );
 
-bool us_http_response_header_init_ok(us_http_response_header_t *self,
-                                     int32_t http_ok_code,
-                                     const char *content_type,
-                                     ssize_t content_length,
-                                     bool connection_close);
+bool us_http_request_header_flatten( us_http_request_header_t *self, us_buffer_t *buf );
 
-bool us_http_response_header_create_ok(us_http_response_header_t *self,
-                                       int32_t http_ok_code,
-                                       const char *content_type,
-                                       uint32_t content_length);
+bool us_http_header_item_list_flatten( us_http_header_item_list_t *self, us_buffer_t *buf );
 
-bool us_http_response_header_flatten(us_http_response_header_t *self, us_buffer_t *buf);
+bool us_http_response_header_parse( us_http_response_header_t *self, us_buffer_t *buf );
 
-bool us_http_request_header_flatten(us_http_request_header_t *self, us_buffer_t *buf);
+bool us_http_request_header_parse( us_http_request_header_t *self, us_buffer_t *buf );
 
-bool us_http_header_item_list_flatten(us_http_header_item_list_t *self, us_buffer_t *buf);
+bool us_http_header_item_list_parse( us_http_header_item_list_t *self, us_buffer_t *buf );
 
-bool us_http_response_header_parse(us_http_response_header_t *self, us_buffer_t *buf);
-
-bool us_http_request_header_parse(us_http_request_header_t *self, us_buffer_t *buf);
-
-bool us_http_header_item_list_parse(us_http_header_item_list_t *self, us_buffer_t *buf);
-
-const char *us_http_reason_phrase(int code);
+const char *us_http_reason_phrase( int code );
 
 #ifdef __cplusplus
 }
