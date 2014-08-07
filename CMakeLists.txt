@@ -20,13 +20,6 @@ endif(WIN32)
 
 add_library (microsupport ${MICROSUPPORT_SRC} ${MICROSUPPORT_INCLUDES})
 
-INSTALL(FILES
-        ${MICROSUPPORT_INCLUDES}
-        DESTINATION include
-)
-
-INSTALL(TARGETS microsupport DESTINATION "lib")
-
 link_directories( ${MICROSUPPORT_BINARY_DIR} )
 
 file(GLOB MICROSUPPORT_TESTS "tests/*.c")
@@ -44,4 +37,15 @@ foreach(item ${MICROSUPPORT_EXAMPLES})
   target_link_libraries(${examplename} ${LIBS} )
 endforeach(item)
 
+
+INSTALL(TARGETS microsupport DESTINATION "lib" EXPORT microsupport-exports.cmake)
+
+EXPORT(TARGETS microsupport FILE microsupport-exports.cmake)
+
+INSTALL(FILES
+        ${MICROSUPPORT_INCLUDES}
+        DESTINATION include        
+)
+
+INSTALL(EXPORT microsupport-exports.cmake DESTINATION "lib")
 
