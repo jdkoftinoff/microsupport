@@ -2,6 +2,20 @@ cmake_minimum_required (VERSION 2.8)
 project (microsupport)
 enable_testing()
 
+
+if(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake|MSBuild)")
+    add_definitions("/W2")
+    add_definitions("-DUS_ENABLE_PCAP=1")
+    add_definitions("-DUS_ENABLE_RAW_ETHERNET=1")
+    include_directories($ENV{PCAP_INCLUDE})
+    set(LIBS ${LIBS} wpcap)
+    link_directories($ENV{PCAP_LIBRARY})
+else()
+    add_definitions("-Wall -Wextra")
+endif()
+
+
+
 set(LIBS ${LIBS} ${CHECK_LIBRARIES} microsupport)
 
 include_directories( include )

@@ -87,8 +87,27 @@ static inline uint8_t const *us_sockaddr_dl_get_mac( struct sockaddr const *addr
     us_sockaddr_dl const *dl = (us_sockaddr_dl const *)addr;
     return (uint8_t const *)dl->sdl_data + dl->sdl_nlen;
 }
-#elif defined( WIN32 )
-//#warning TODO: AF_LINK for Win32
+#elif defined( _WIN32 )
+#undef AF_MAX
+#define AF_LINK 33
+#define AF_MAX 34
+#define US_AF_LINK AF_LINK
+typedef struct {
+   ADDRESS_FAMILY sdl_family;
+   UCHAR sdl_data[8];
+   UCHAR sdl_zero[4];
+} us_sockaddr_dl;
+static inline void us_sockaddr_dl_set_mac( struct sockaddr *addr, uint8_t const mac[6] )
+{
+    us_sockaddr_dl *dl = (us_sockaddr_dl *)addr;
+    dl->sdl_family = US_AF_LINK;
+    memcpy( dl->sdl_data, mac, 6 );
+}
+static inline uint8_t const *us_sockaddr_dl_get_mac( struct sockaddr const *addr )
+{
+    us_sockaddr_dl const *dl = (us_sockaddr_dl const *)addr;
+    return (uint8_t const *)dl->sdl_data;
+}
 #else
 #define US_AF_LINK AF_LINK
 #define US_PF_LINK PF_LINK
