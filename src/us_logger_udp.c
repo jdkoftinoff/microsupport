@@ -196,5 +196,6 @@ void us_log_trace_udp( const char *fmt, ... )
     us_log_udp_send();
     va_end( ap );
 }
-
+#else
+const char *us_logger_udp_filename = __FILE__;
 #endif

@@ -100,6 +100,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <Iphlpapi.h>
 #include <mswsock.h>
 
 #include <errno.h>
@@ -116,6 +117,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_ms.h"
 
 #endif
+
+#ifdef _WIN32
+#include <strsafe.h>
+#define us_snprintf StringCbPrintfA
+#else
+#define us_snprintf snprintf
+#endif
+
 
 #if defined( US_CONFIG_POSIX )
 #ifndef _BSD_SOURCE

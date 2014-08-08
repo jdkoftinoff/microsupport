@@ -140,5 +140,8 @@ bool us_mdns_avahi_write_xml( const char *avahi_services_dir,
     }
     return r;
 }
+#else
+
+const char *us_mdns_avahi_filename=__FILE__;
 
 #endif

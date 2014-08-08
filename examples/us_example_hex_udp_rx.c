@@ -55,7 +55,7 @@ int main ( int argc, char **argv )
                 remote_addr_len = sizeof( remote_addr );
                 pkt_len = recvfrom (
                               incoming_sock_fd,
-                              &pkt_buf, sizeof ( pkt_buf ),
+                              (char *)&pkt_buf, sizeof ( pkt_buf ),
                               0,
                               ( struct sockaddr * ) & remote_addr, &remote_addr_len
                           );

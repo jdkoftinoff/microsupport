@@ -40,13 +40,13 @@
 bool us_example_mudp_rx (
     const char *multicast_address,
     const char *multicast_service,
-    const char *interface
+    const char *net_interface
 );
 
 bool us_example_mudp_rx (
     const char *multicast_address,
     const char *multicast_service,
-    const char *interface
+    const char *net_interface
 )
 {
     int fd;
@@ -65,7 +65,7 @@ bool us_example_mudp_rx (
             perror ( "getnameinfo:" );
         }
     }
-    fd = us_net_create_multicast_rx_udp_socket ( 0, multicastgroup, interface );
+    fd = us_net_create_multicast_rx_udp_socket ( 0, multicastgroup, net_interface );
     if ( fd > 0 )
     {
         while ( 1 )
@@ -103,16 +103,20 @@ int main ( int argc, const char **argv )
     {
         const char *multicast_address = argv[1];
         const char *multicast_service = argv[2];
-        const char *interface = "";
+        const char *net_interface = "";
         if ( argc > 3 )
-            interface = argv[3];
+        {
+            net_interface = argv[3];
+        }
 #if US_ENABLE_LOGGING
         us_logger_printer_start ( us_testutil_printer_stdout, us_testutil_printer_stderr );
 #endif
         us_log_set_level ( US_LOG_LEVEL_DEBUG );
         us_log_info ( "Hello world from %s compiled on %s", __FILE__, __DATE__ );
-        if ( us_example_mudp_rx ( multicast_address, multicast_service, interface ) )
+        if ( us_example_mudp_rx ( multicast_address, multicast_service, net_interface ) )
+        {
             r = 0;
+        }
         us_log_info ( "Finishing %s", argv[0] );
         us_logger_finish();
         us_testutil_finish();

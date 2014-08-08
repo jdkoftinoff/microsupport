@@ -486,5 +486,6 @@ bool us_rawnet_join_multicast( us_rawnet_context_t *self, const uint8_t multicas
     }
     return r;
 }
-
+#else
+const char *us_rawnet_filename=__FILE__;
 #endif

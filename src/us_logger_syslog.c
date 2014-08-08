@@ -94,5 +94,6 @@ void us_log_trace_syslog( const char *fmt, ... )
     syslog( LOG_DEBUG, fmt, ap );
     va_end( ap );
 }
-
+#else
+const char *us_logger_syslog_filename = __FILE__;
 #endif

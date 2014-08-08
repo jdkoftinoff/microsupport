@@ -623,5 +623,7 @@ void us_rawnet_multi_rawnet_poll_incoming(
         }
     }
 }
+#else
+const char *us_rawnet_multi_filename=__FILE__;
 
 #endif

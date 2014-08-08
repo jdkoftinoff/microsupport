@@ -169,5 +169,6 @@ bool us_osc_io_packet_stream_put_bundle(
 )
 {
 }
-
+#else
+const char *us_osc_io_filename=__FILE__;
 #endif

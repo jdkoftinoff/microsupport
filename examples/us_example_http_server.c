@@ -123,7 +123,7 @@ int us_webapp_json_test_dispatch(
     (void)self_;
     (void)request_header;
     (void)request_content;
-    sprintf( json, "{ \"time\" : \%ld, \"access_count\" = %d }", (long)time(0), (int)cnt++ );
+    us_snprintf( json, sizeof(json)-1, "{ \"time\" : %d, \"access_count\" = %d }", (int)time(0), (int)cnt++ );
     r&=us_buffer_append_string( response_content, json );
     r&=us_http_response_header_init_ok( response_header, 200, "application/json", (ssize_t)us_buffer_readable_count( response_content ),true);
     r&=us_http_response_header_set_no_cache( response_header );

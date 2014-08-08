@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "us_rawnet.h"
 #endif
 
-#if US_ENABLE_BSD_SOCKETS
+#if US_ENABLE_BSD_SOCKETS==1 || defined(US_CONFIG_WIN32)
 
 struct addrinfo *us_net_get_addrinfo( const char *ip_addr, const char *ip_port, int type, bool for_server )
 {
@@ -109,7 +109,7 @@ bool us_net_convert_sockaddr_to_string( struct sockaddr const *addr, socklen_t a
             {
                 uint8_t mac[6];
                 memcpy( mac, us_sockaddr_dl_get_mac( addr ), 6 );
-                snprintf( buf, buflen - 1, "[%02x:%02x:%02x:%02x:%02x:%02x]", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] );
+                us_snprintf( buf, buflen - 1, "[%02x:%02x:%02x:%02x:%02x:%02x]", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] );
                 r = true;
             }
         }
@@ -126,7 +126,7 @@ bool us_net_convert_sockaddr_to_string( struct sockaddr const *addr, socklen_t a
 
             if ( e == 0 )
             {
-                snprintf( buf, buflen - 1, "[%s]:%s", hostbuf, servbuf );
+                us_snprintf( buf, buflen - 1, "[%s]:%s", hostbuf, servbuf );
                 r = true;
             }
             else
@@ -290,7 +290,7 @@ int us_net_create_multicast_rx_udp_socket( struct addrinfo *listenaddr,
             closesocket( s );
             return -1;
         }
-        if ( setsockopt( s, IPPROTO_IPV6, IPV6_MULTICAST_IF, &if_index, sizeof( if_index ) ) < 0 )
+        if ( setsockopt( s, IPPROTO_IPV6, IPV6_MULTICAST_IF, (char *)&if_index, sizeof( if_index ) ) < 0 )
         {
             us_log_error(
                 "socket: %d unable to IPV6_MULTICAST_IF for multicast via interface %s (%d)", s, interface_name, if_index );
@@ -360,7 +360,7 @@ int us_net_create_multicast_tx_udp_socket( struct addrinfo *localaddr,
                 closesocket( s );
                 return -1;
             }
-            if ( setsockopt( s, IPPROTO_IPV6, IPV6_MULTICAST_IF, &if_index, sizeof( if_index ) ) < 0 )
+            if ( setsockopt( s, IPPROTO_IPV6, IPV6_MULTICAST_IF, (char *)&if_index, sizeof( if_index ) ) < 0 )
             {
                 us_log_error(
                     "socket: %d unable to IPV6_MULTICAST_IF for multicast via interface %s (%d)", s, interface_name, if_index );
@@ -657,7 +657,7 @@ void us_net_set_socket_nonblocking( int fd )
     fcntl( fd, F_SETFL, val );
 #elif defined( WIN32 )
     u_long mode = 1;
-    if ( ioctlsocket( fd, FIOBIO, &mode ) != NO_ERROR )
+    if ( ioctlsocket( fd, FIONBIO, &mode ) != NO_ERROR )
     {
         us_log_error( "fcntl F_SETFL O_NONBLOCK failed" );
     }
@@ -675,7 +675,7 @@ void us_net_set_socket_blocking( int fd )
     fcntl( fd, F_SETFL, val );
 #elif defined( WIN32 )
     u_long mode = 0;
-    if ( ioctlsocket( fd, FIOBIO, &mode ) != NO_ERROR )
+    if ( ioctlsocket( fd, FIONBIO, &mode ) != NO_ERROR )
     {
         us_log_error( "fcntl F_SETFL O_NONBLOCK failed" );
     }

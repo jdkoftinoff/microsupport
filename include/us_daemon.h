@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
+#if !defined(_WIN32)
 /**
  \addtogroup us_daemon Daemonizing
  */
@@ -50,6 +51,7 @@ pid_t us_daemon_fork( void );
 void us_daemon_end( void );
 
 /*@}*/
+#endif
 
 #ifdef __cplusplus
 }

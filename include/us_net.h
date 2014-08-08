@@ -36,6 +36,11 @@
 #include "us_buffer.h"
 #include "us_queue.h"
 
+#if defined( US_CONFIG_WIN32 )
+#pragma comment( lib, "Ws2_32.lib" )
+#pragma comment (lib, "iphlpapi.lib")
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -59,7 +59,7 @@ bool us_example_reactor_handler_http_init (
     us_allocator_t *allocator,
     int fd,
     void *extra,
-    int queue_buf_size,
+    ssize_t queue_buf_size,
     const char *server_host,
     const char *server_port,
     bool keep_open
@@ -139,7 +139,7 @@ bool us_example_reactor_handler_http_init (
     us_allocator_t *allocator,
     int fd,
     void *extra,
-    int queue_buf_size,
+    ssize_t queue_buf_size,
     const char *server_host,
     const char *server_port,
     bool keep_open
@@ -366,12 +366,13 @@ bool us_example_reactor ( us_allocator_t *allocator )
         );
     if ( r )
     {
+        const char *host = US_EXAMPLE_HTTP_HOST;
         r = us_reactor_create_tcp_client(
                 &reactor,
                 allocator,
                 (void *)stdout,
                 4096,
-                US_EXAMPLE_HTTP_HOST, "80", false,
+                host, "80", false,
                 us_example_reactor_handler_http_create,
                 us_example_reactor_handler_http_init
             );

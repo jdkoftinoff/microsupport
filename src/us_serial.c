@@ -311,5 +311,6 @@ void us_serial_close( int fd )
     if ( fd != -1 )
         close( fd );
 }
-
+#else
+const char *us_serial_filename=__FILE__;
 #endif

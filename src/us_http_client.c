@@ -29,3 +29,5 @@
 #include "us_world.h"
 
 #include "us_http_client.h"
+
+const char *us_http_client_filename=__FILE__;

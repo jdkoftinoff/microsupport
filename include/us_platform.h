@@ -57,7 +57,7 @@ extern "C" {
 #define US_UNUSED( x ) US_UNUSED_##x
 #endif
 
-#if US_ENABLE_BSD_SOCKETS && !defined( US_NO_DECLARE_CLOSESOCKET )
+#if (US_ENABLE_BSD_SOCKETS==1 || defined(US_CONFIG_WIN32)) && !defined( US_NO_DECLARE_CLOSESOCKET )
 #ifndef WIN32
 static inline int closesocket( int fd )
 {
@@ -90,6 +90,11 @@ struct timezone
 };
 
 int gettimeofday( struct timeval *tv, struct timezone *tz );
+
+static inline void sleep(int s) 
+{
+    Sleep(s*1000);
+}
 #endif
 
 #ifdef __AVR__

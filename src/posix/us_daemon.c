@@ -1,9 +1,9 @@
 #include "us_world.h"
 #include "us_daemon.h"
 #include "us_logger.h"
-#include <pwd.h>
 
 #if defined(US_CONFIG_POSIX)
+#include <pwd.h>
 #include <unistd.h>
 
 static char us_daemon_pid_file_name[1024];
@@ -159,6 +159,7 @@ void us_daemon_end(void)
         }
     }
 }
-
+#else
+const char * us_daemon_filename = __FILE__;
 #endif
 
